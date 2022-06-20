@@ -14,8 +14,10 @@
         </div>
         <div class="author">
             {document.author}
+            <button>Rediger</button>
         </div>
     </div>
+    
 
     <div class="content">
         {@html  marked(document.context)}
@@ -25,6 +27,9 @@
 <style>
     .main{
         padding: 2em;
+    }
+    .main:hover{
+        background-color: whitesmoke
     }
 
     .meta{
@@ -36,6 +41,19 @@
 
     .date, .meta{
         font-weight: bold;
+        
+    }
+
+    button{
+        margin-left: 2em;
+        border: solid 0.1em;
+        border-radius: 10%;
+    }
+
+    button:hover{
+        border: solid 0.1em;
+        border-color: red;
+        border-radius: 20%;
     }
 
 </style>

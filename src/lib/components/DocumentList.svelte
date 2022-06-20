@@ -2,7 +2,7 @@
 
     import DocumentItem from "./DocumentItem.svelte";
 
-    import {documentList} from './stores.js';
+    import {documentList} from '../stores/stores.js';
 
    let sortedData = $documentList;
    const tableHeaders = ["title", "date","author"];

@@ -2,7 +2,7 @@
 import { current_component, onDestroy } from 'svelte/internal';
 
     //import { DocumentObject } from './document.js';
-    import {currentDocumentObject} from './stores.js';
+    import {currentDocumentObject} from '../stores/stores.js';
     export let document;
 
     $: color = '';

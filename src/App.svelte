@@ -1,10 +1,10 @@
 <script>
-  import { DocumentObject } from './document';
-  import DocumentList from './DocumentList.svelte';
-  import ContentView from './ContentView.svelte';
-  import ScrollView from './ScrollView.svelte';
-  import {documentList} from './stores.js';
-
+  import { DocumentObject } from './lib/document';
+  import DocumentList from './lib/components/DocumentList.svelte';
+  import ContentView from './lib/components/ContentView.svelte';
+  import ScrollView from './lib/components/ScrollView.svelte';
+  import {documentList} from './lib/stores/stores.js';
+  /*
   let doc1 = new DocumentObject("Notat", "01.01.01", "Dr.Thor", "# Dette er tekst.");
   let doc2 = new DocumentObject("Undersøkelse", "02.02.02", "Dr.Sindre", "Dette er underøkelse");
   let doc3 = new DocumentObject("Operasjon", "09.03.11", "Dr.Torkild", "Dette er operasjon");
@@ -22,7 +22,8 @@
   let doc15 = new DocumentObject("Lab", "11.11.20", "Dr.Trond", "Dette er lab");
 
   $documentList = [doc1, doc2, doc3, doc4, doc5, doc6, doc7, doc8, doc9, doc10, doc11, doc12, doc13, doc14, doc15];
-  console.log($documentList);
+  console.log($documentList);*/
+
 
   let showSideview = true;
 
@@ -37,7 +38,8 @@
   <div class="meny">
     <button on:click={changeView}>
       Bytt visning
-    </button>    
+    </button>
+    <button>Ny notat</button>    
   </div>
 
   {#if showSideview}
@@ -70,14 +72,22 @@
   }
 
   main {
-    padding: 1em;
-    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
   }
 
   .meny{
+    width: 5%;
+    height:97vh;
+    text-align: center;
+    border-bottom: solid;
+    border-left: solid;
+    border-top: solid;
+    background-color: lightgray;
+  }
+
+  .scroll-container{
     width: 100%;
-    text-align: right;
-    margin-bottom: 0.8em;
   }
 
   .side-container{
@@ -87,11 +97,25 @@
     justify-content: space-evenly;
   }
 
+  button{
+    background:whitesmoke;
+    border: thin;
+    width:10vh;
+    height:7.4vh;
+    margin-bottom: 3vh;
+  }
+
+  button:hover{
+    border: solid 0.3em;
+    border-color: #ccebff;
+    border-radius: 20%;
+  }
+
   
 
   .content-view, .document-list{
     width: 100%;
-    height: 85vh;
+    height: 97vh;
     background: #ffffff;
     border: solid 1px black;
   }

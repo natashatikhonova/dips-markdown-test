@@ -16,12 +16,12 @@
     <div class="main">
         <div class="container">
             {#if visibleInput}
-                <button on:click={manageInput}>Lagre</button>
-                <button on:click={manageInput}>Avbryt</button>
+                <button on:click={manageInput} class = "saveButton">Lagre</button>
+                <button on:click={manageInput} class = "cancelButton">Avbryt</button>
                 <textarea>
                 </textarea>
             {:else}
-                <button on:click={manageInput}>Ny notat</button>
+                <button on:click={manageInput} class="cancelButton">Ny notat</button>
             {/if}
             {#each $documentList as item}
                 <ScrollItem document = {item}/>
@@ -57,11 +57,27 @@
         position: fixed;
     }
 
+    .saveButton{
+        width:10vh;
+        margin:2vh;
+        align-self: flex-end;
+        position: fixed;
+        right: 25%;
+    }
+
+    .cancelButton {
+        width:10vh;
+        margin:2vh;
+        align-self: flex-end;
+        position: fixed;
+        right: 18%;
+    }
+
     textarea{
         width:100vh;
         align-self: center;
         min-height:30vh;
         margin-bottom: 5vh;
-        position: sticky;
+        position: fixed;
     }
 </style>

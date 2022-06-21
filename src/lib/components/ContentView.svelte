@@ -4,8 +4,10 @@
     import { Editor } from 'typewriter-editor';
     import asRoot from 'typewriter-editor/lib/asRoot';
     import Toolbar from 'typewriter-editor/lib/Toolbar.svelte';
-    import converter from 'html-to-markdown';
     import {documentList} from '../stores/stores.js';
+
+    //npm install to-markdown
+    import toMarkdown from 'to-markdown';
     
 
     let edit = false;
@@ -22,7 +24,7 @@
 
     function save(){
       changeEdit();
-      $documentList[$currentDocumentObject.id].context = converter.convert(editor.getHTML());
+      $documentList[$currentDocumentObject.id].context = toMarkdown(editor.getHTML());
     }
    
         

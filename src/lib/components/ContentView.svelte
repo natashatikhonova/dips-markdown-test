@@ -6,7 +6,13 @@
 
 
 {#if $currentDocumentObject!=null}
+<button>Rediger</button>
     <p>{@html  marked($currentDocumentObject.context)}</p>
 {/if}
+
+<style>
+
+</style>
+
 
     

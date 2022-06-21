@@ -24,13 +24,25 @@
   $documentList = [doc1, doc2, doc3, doc4, doc5, doc6, doc7, doc8, doc9, doc10, doc11, doc12, doc13, doc14, doc15];
   console.log($documentList);*/
 
+  
+  //get data from file
+  fetch('src/data/documents.json')
+  .then(response => response.json())
+  .then(jsonResponse => jsonResponse.documents.forEach(putInDocumentList));  
+
+  function putInDocumentList(item){
+    let document = new DocumentObject(item.id, item.date, item.content);
+    $documentList.push(document);
+    $documentList = $documentList;
+  }
 
   let showSideview = true;
-
 
   function changeView(){
     showSideview = !showSideview;
   }
+
+  
 
 </script>
 
@@ -111,7 +123,7 @@
     border-radius: 20%;
   }
 
-  
+
 
   .content-view, .document-list{
     width: 100%;
@@ -122,7 +134,9 @@
 
   .content-view{
     overflow: auto;
-  }
+    padding: 3vh; 
+    height:91vh;
+   }
 
  
 

@@ -1,9 +1,9 @@
 export class DocumentObject{
-    constructor(title, date, author, context){
-        this.title = title;
+    constructor(id, date, context){
+        this.id = id;
+        this.title = "Dokument";
         this.date = new Date(date);
-        this.author = author;
+        this.author = "Dr.Who";
         this.context = context;
-        this.chosen = false;
     }
 }

@@ -89,7 +89,8 @@
   }
 
   .meny{
-    width: 5%;
+    width: 8vh;
+    min-width: none;
     height:97vh;
     text-align: center;
     border-bottom: solid;
@@ -112,9 +113,10 @@
   button{
     background:whitesmoke;
     border: thin;
-    width:10vh;
+    width: 8vh;
     height:7.4vh;
     margin-bottom: 3vh;
+
   }
 
   button:hover{
@@ -123,12 +125,12 @@
     border-radius: 20%;
   }
 
-
   .document-list{
     resize: horizontal;
+    min-width: none;
   }
 
-  .content-view, .document-list{
+  .document-list{
     overflow:auto;
     width: 100%;
     height: 97vh;
@@ -138,8 +140,12 @@
 
   .content-view{
     overflow: auto;
-    padding: 3vh; 
-    height:91vh;
+    padding: 3vh;
+    padding-top: 0vh; 
+    height:94vh;
+    width: 100%;
+    background: #ffffff;
+    border: solid 1px black;
    }
 
  

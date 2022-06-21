@@ -55,11 +55,11 @@
   </div>
 
   {#if showSideview}
-    <div class="side-container">
-      <div class = "document-list">
+    <div class="side-container"  >
+      <div class = "document-list" >
         <DocumentList/>
       </div>
-      <div class = "content-view">
+      <div class = "content-view" >
         <ContentView/>
       </div>
     </div>
@@ -124,8 +124,12 @@
   }
 
 
+  .document-list{
+    resize: horizontal;
+  }
 
   .content-view, .document-list{
+    overflow:auto;
     width: 100%;
     height: 97vh;
     background: #ffffff;

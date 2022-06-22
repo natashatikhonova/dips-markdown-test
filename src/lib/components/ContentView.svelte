@@ -5,8 +5,6 @@
     import asRoot from 'typewriter-editor/lib/asRoot';
     import Toolbar from 'typewriter-editor/lib/Toolbar.svelte';
     import {documentList} from '../stores/stores.js';
-
-    //npm install to-markdown
     import toMarkdown from 'to-markdown';
     
 
@@ -24,6 +22,7 @@
 
     function save(){
       changeEdit();
+      console.log(toMarkdown(editor.getHTML()));
       $documentList[$currentDocumentObject.id].context = toMarkdown(editor.getHTML());
     }
    
@@ -71,7 +70,6 @@
         <div use:asRoot = {editor} ></div>
     {:else}
         <button class="edit" on:click={changeEdit}>Rediger</button>
-        {console.log($currentDocumentObject.context)}
         <div>{@html marked($currentDocumentObject.context)}</div>
 
     {/if}

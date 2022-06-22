@@ -13,6 +13,11 @@
         edit=!edit;
     }
 
+    function cancel(){
+      changeEdit();
+      editor.setHTML(marked($currentDocumentObject.context));
+    }
+
     const editor = new Editor();
 
     $: if ($currentDocumentObject!=null){
@@ -25,53 +30,72 @@
       console.log(toMarkdown(editor.getHTML()));
       $documentList[$currentDocumentObject.id].context = toMarkdown(editor.getHTML());
     }
+    
    
         
 </script>
-
+  <head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+  
 
   {#if $currentDocumentObject!=null}
     {#if edit} 
-        <button class = "cancel" on:click={changeEdit} >Avbryt</button>
-        <button class="save" on:click={save}>Lagre</button>
         <Toolbar {editor} let:active let:commands>
             <div class="toolbar">
               <button
                 class="toolbar-button"
                 class:active={active.header === 1}
-                on:click={commands.header1}>H1</button>
+                on:click={commands.header1}><i class="material-icons">title</i></button>
           
               <button
                 class="toolbar-button"
                 class:active={active.header === 2}
-                on:click={commands.header2}>H2</button>
+                on:click={commands.header2}><i class="material-icons header2">title</i></button>
           
               <button
                 class="toolbar-button"
                 class:active={active.bold}
-                on:click={commands.bold}>B</button>
+                on:click={commands.bold}><i class="material-icons">format_bold</i></button>
           
               <button
                 class="toolbar-button"
                 class:active={active.italic}
-                on:click={commands.italic}>I</button>
-          
+                on:click={commands.italic}><i class="material-icons">format_italic</i></button>
+        
               <button
                 class="toolbar-button"
+                class:active={active.bulletList}
+                on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
+              <button
+                class="toolbar-button"
+                class:active={active.orderedList}
+                on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
+              <button
+                class="toolbar-button arrow"
                 disabled={!active.undo}
                 on:click={commands.undo}>←</button>
-          
+        
               <button
-                class="toolbar-button"
+                class="toolbar-button arrow"
                 disabled={!active.redo}
                 on:click={commands.redo}>→</button>
+
+              <div class = "controls">
+                <button class=" toolbar-button save " on:click={save}> Lagre</button>
+                <button class = "toolbar-button save" on:click={cancel} >Avbryt</button>
+              </div>
             </div>
         </Toolbar>
-        <div use:asRoot = {editor} ></div>
+        <div class="editor" use:asRoot = {editor} ></div>
     {:else}
-        <button class="edit" on:click={changeEdit}>Rediger</button>
+        <div class="editBox">
+          <h3>{$currentDocumentObject.title.toUpperCase()}</h3>
+          <button class="edit" on:click={changeEdit}>Rediger</button>
+        </div>
         
-        <div class = "onlyText">{@html marked($currentDocumentObject.context)}</div>
+        
+        <div class = "editor ">{@html marked($currentDocumentObject.context)}</div>
 
 
     {/if}
@@ -79,32 +103,61 @@
   
 
 <style>
-    .onlyText{
-      padding-top: 3vh;
-    }
+    
 
-    .cancel, .edit {
-        position: absolute;
-        top:2vh;
+    .edit {
+        position: fixed;
         right:10vh;
-
-    }
-
-    .save{
-        position: absolute;
         top:2vh;
-        right:10vh;
-        margin-right: 10vh;
+        width:13vh;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        cursor: pointer;
+
     }
+
+    h3{
+      align-self: center;
+      position: fixed;
+      right:50vh;
+    }
+
+    .editor{
+      margin-top: 10vh;
+      border: none;
+    }
+
 
     .toolbar {
     display: flex;
     background: #eee;
+    width: 90vh;
+    position: fixed;
     padding: 8px;
     margin-bottom: 8px;
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
   }
+
+  .editBox{
+    display: flex;
+    width: 90vh;
+    position: fixed;
+    height:5vh;
+    padding: 8px;
+    margin-bottom: 8px;
+    background: #eee;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
+    
+  }
+
   .toolbar-button {
     display: flex;
     align-items: center;
@@ -128,4 +181,22 @@
     border-color: #80bdff;
     background: #eaf4ff;
   }
+
+  .header2{
+    font-size:large;
+  }
+
+  .arrow{
+    color:black;
+    font-weight: bolder;
+    font-size:x-large;
+  }
+
+  .controls{
+    margin-left: auto;
+    margin-right: 0;
+    display: inline-flex;
+  }
+
+
 </style>

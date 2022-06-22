@@ -70,32 +70,31 @@
         <div use:asRoot = {editor} ></div>
     {:else}
         <button class="edit" on:click={changeEdit}>Rediger</button>
-        <div>{@html marked($currentDocumentObject.context)}</div>
+        
+        <div class = "onlyText">{@html marked($currentDocumentObject.context)}</div>
+
 
     {/if}
 {/if}
   
 
 <style>
-
-    .edit{
-        position: absolute;
-        top:0;
-        right:0;
-        margin: 3vh;
+    .onlyText{
+      padding-top: 3vh;
     }
-    .cancel {
+
+    .cancel, .edit {
         position: absolute;
-        top:2;
-        right:1.5vh;
-        margin: 3vh;
+        top:2vh;
+        right:10vh;
+
     }
 
     .save{
         position: absolute;
-        top:2;
-        right:10vh;    
-        margin: 3vh;
+        top:2vh;
+        right:10vh;
+        margin-right: 10vh;
     }
 
     .toolbar {

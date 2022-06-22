@@ -99,6 +99,8 @@
     background-color: lightgray;
   }
 
+  
+
   .scroll-container{
     width: 100%;
   }
@@ -119,10 +121,10 @@
 
   }
 
-  button:hover{
-    border: solid 0.3em;
-    border-color: #ccebff;
-    border-radius: 20%;
+  button:hover {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
   }
 
   .document-list{

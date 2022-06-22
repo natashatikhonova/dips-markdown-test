@@ -1,6 +1,6 @@
 <script>
     
-    import {documentList} from './stores.js';
+    import {documentList} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
 
     let visibleInput = false;
@@ -42,12 +42,11 @@
         overflow-y: auto;
         display: flex; 
         flex-direction: column-reverse;
-        background-color: bisque;
-        width: 70%;
-        max-height: 88vh;
+        background-color: white;
+        width: 100%;
+        max-height: 97vh;
         position:sticky;
-        margin-left: 15%;
-        margin-right: 15%;
+        border: solid;
     }
     
     button {

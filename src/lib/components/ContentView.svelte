@@ -29,7 +29,7 @@
           <button class="edit" on:click={changeEdit}>Rediger</button>
         </div>
         
-        
+        <div class="test">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
         <div class = "editor ">{@html marked($currentDocumentObject.context)}</div>
 
 
@@ -37,6 +37,11 @@
 {/if} 
 
 <style>
+
+  .test{
+    margin-top: 10vh;
+    font-style: italic;
+  }
     
     .edit {
         position: fixed;
@@ -69,7 +74,6 @@
   }
 
   .editor{
-    margin-top: 10vh;
     border: none;
   }
 

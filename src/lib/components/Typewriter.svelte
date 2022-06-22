@@ -82,11 +82,22 @@
       </div>
     </div>
 </Toolbar>
+<div class="title">{$currentDocumentObject.title}</div>
+<div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
 <div class="editor" use:asRoot = {editor} ></div>
 
 <style>
+    .title{
+        font-weight: bold;
+        font-style: italic;
+        margin-top: 10vh;
+    }
+
+    .meta{
+        font-style: italic;
+    }
+
     .editor{
-      margin-top: 10vh;
       border: none;
     }
 

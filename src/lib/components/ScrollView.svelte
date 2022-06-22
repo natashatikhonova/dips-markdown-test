@@ -7,6 +7,8 @@
     import {editor} from '../stores/stores.js';
     
 
+    let container;
+
     let show = false;
     function save(){ 
         $documentList[$currentDocumentObject.id].context = toMarkdown(editor.getHTML());
@@ -16,6 +18,13 @@
         show = !show
         
     }
+    function update(e){
+        container =e.currentTarget.scrollTop;
+        console.log(container);
+    }
+    
+        
+    
    
 
 </script>
@@ -23,7 +32,7 @@
     <div class="main">
 
         {#if show}
-            <div class="container">
+            <div class="container"  bind:this={container} on:load={(e)=> e.currentTarget.scrollTop = container}> 
                 {#each $documentList as item}
                     <ScrollItem on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                 {/each}
@@ -33,7 +42,7 @@
                 <Typewriter on:cancel = {cancel} on:save = {save}/>
             </div>
         {:else}
-            <div class="full-container">
+            <div class="full-container"  on:scroll={(e)=>update(e)}>
                 {#each $documentList as item}
                     <ScrollItem on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                 {/each}

@@ -2,8 +2,9 @@
 
     import DocumentItem from "./DocumentItem.svelte";
 
-    import {documentList} from '../stores/stores.js';
-
+    import {currentDocumentObject, documentList} from '../stores/stores.js';
+import { onDestroy } from "svelte";
+    
    let sortedData = $documentList;
    const tableHeaders = ["title", "date","author"];
 
@@ -21,6 +22,8 @@
 	}*/
 	
 	// SORT BY STRINGs
+
+
 	const sortByString = (colHeader) => {
         console.log("click tittel");
 		sortedData = sortedData.sort((obj1, obj2) => {
@@ -31,19 +34,25 @@
 			}
 			return 0; //string code values are equal		
 		});
+
 		if (!ascendingOrder) {
 			sortedData = sortedData.reverse()
 		}
-		selectedHeader = colHeader;
+        
+        selectedHeader = colHeader;
 
         console.log(sortedData);
 
         $documentList = sortedData;
         ascendingOrder = !ascendingOrder;
+
+
 	}
+
 
     //sorting by default
     sortByString(selectedHeader);
+
 
 </script>
 
@@ -69,7 +78,11 @@
     
         <tbody>
             {#each $documentList as item}
-                <DocumentItem document = {item} />
+                {#if $currentDocumentObject === item}
+                    <DocumentItem document = {item} chosen = {true} />
+                {:else} 
+                    <DocumentItem document = {item} chosen = {false} />
+                {/if}
             {/each} 
         </tbody>
     </table>

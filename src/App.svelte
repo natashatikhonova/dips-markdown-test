@@ -78,10 +78,7 @@
   </body>
 
 <style>
-  	:global(*) {
-		margin: 0;
-		padding: 0;
-	}
+
   :root {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -94,7 +91,9 @@
     padding: 0;
     display: flex;
     align-items: flex-start;
-    height: 95vh;
+    height: 98vh;
+    width:100%;
+
   }
 
   .meny{
@@ -104,7 +103,7 @@
     text-align: center;
     border-bottom: solid;
     border-left: solid;
-    border-top: solid;
+    border-top:solid;
     background-color: lightgray;
   }
 
@@ -129,6 +128,7 @@
     border: thin;
     width: 8vh;
     height:7.4vh;
+    margin-top: 0.8vh;
 
   }
 

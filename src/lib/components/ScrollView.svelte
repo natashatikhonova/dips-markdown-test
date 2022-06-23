@@ -20,7 +20,6 @@
 
 </script>
 
-    <div id="main" class="main">
         <div class="box">
             <div id="container" class:container={show} class:full-container={!show}> 
 
@@ -35,8 +34,6 @@
             {/if}
         </div>
 
-    </div>
-
 
 <style>
     .box{
@@ -44,10 +41,6 @@
       flex-direction: column;
       height: 100%;
       width: 100%;
-    }
-    .main{
-        height: 100%;
-        width: 100%;
     }
 
     .container{
@@ -59,31 +52,29 @@
         height: 100%;
         border: solid;
         resize: vertical;
-        min-width: none;
+
     }
 
     .full-container{
+        flex-grow: 1;
         overflow-y: auto;
         display: flex; 
         flex-direction: column-reverse;
         background-color: white;
         width: 100%;
-        max-height: 97vh;
+        height: 100%;
         border: solid;
-        resize: vertical;
         min-width: none;
 
     }
 
     .editor{
-        flex-grow: 1;
-        overflow: auto;
-        display:flexbox;
+        display:flex;
         flex-direction: column;
-        padding: 3vh;
-        height:100%;
-        padding-top: 0vh; 
+        overflow-y:auto;
+        width: 100%;
         background: #ffffff;
         border: solid 1px black;
+        flex-grow: 1;
     }
 </style>

@@ -53,6 +53,7 @@
 
   .test{
     font-style: italic;
+    margin-left:1vh;
   }
     
   .edit {

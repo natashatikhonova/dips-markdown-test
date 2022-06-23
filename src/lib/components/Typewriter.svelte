@@ -28,7 +28,12 @@
       changeEdit();
       dispatch("save");
       console.log(toMarkdown(editor.getHTML()));
-      $documentList[$currentDocumentObject.id].context = toMarkdown(editor.getHTML());
+      $documentList.forEach((element)=>{
+        if (element.id === $currentDocumentObject.id){
+            element.context= toMarkdown(editor.getHTML());
+        }
+      })
+
     }
     
 </script>
@@ -36,7 +41,7 @@
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<div class="main-conteiner">
+
   <div class="toolbar">
     <Toolbar {editor} let:active let:commands>
         <button
@@ -90,15 +95,13 @@
 
   <div class="editor" use:asRoot = {editor} ></div>
 </div>
-</div>
+
 
 
 <style>
-    .main-conteiner{
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
+    
+
+    
     .text-conteiner{
       height: 100%;
       overflow-y: auto;
@@ -106,14 +109,19 @@
     .title{
         font-weight: bold;
         font-style: italic;
+        margin-left: 1vh;
+        margin-top:1vh;
     }
 
     .meta{
         font-style: italic;
+        margin-left:1vh;
+        margin-top:1vh;
     }
 
     .editor{
-      padding: 1vh;
+      margin-top: 1vh;
+      padding:0.7vh;
     }
 
     .toolbar {

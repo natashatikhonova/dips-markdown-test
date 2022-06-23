@@ -7,8 +7,6 @@
     import {editor} from '../stores/stores.js';
     
 
-    let container;
-
     let show = false;
     function save(){ 
         $documentList[$currentDocumentObject.id].context = toMarkdown(editor.getHTML());
@@ -18,39 +16,24 @@
         show = !show
         
     }
-    function update(e){
-        container =e.currentTarget.scrollTop;
-        console.log(container);
-    }
-    
-        
-    
-   
+
 
 </script>
 
-    <div class="main">
-
-        {#if show}
+    <div id="main" class="main">
         <div class="box">
-            <div class="container"  bind:this={container} on:load={(e)=> e.currentTarget.scrollTop = container}> 
+            <div id="container" class:container={show} class:full-container={!show}> 
+
                 {#each $documentList as item}
-                    <ScrollItem on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                        <ScrollItem on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                 {/each}
-                
             </div>
-            <div class="editor">
-                <Typewriter on:cancel = {cancel} on:save = {save}/>
-            </div>
+            {#if show}
+                <div class="editor">
+                    <Typewriter on:cancel = {cancel} on:save = {save}/>
+                </div>
+            {/if}
         </div>
-        {:else}
-            <div class="full-container"  on:scroll={(e)=>update(e)}>
-                {#each $documentList as item}
-                    <ScrollItem on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
-                {/each}
-                
-            </div>
-        {/if}
 
     </div>
 
@@ -68,12 +51,12 @@
     }
 
     .container{
-        overflow-y: auto;
-        display: flex; 
+        overflow-y: auto; 
+        display:flex;
         flex-direction: column-reverse;
         background-color: white;
         width: 100%;
-        height: 66vh;
+        height: 100%;
         border: solid;
         resize: vertical;
         min-width: none;
@@ -95,10 +78,12 @@
     .editor{
         flex-grow: 1;
         overflow: auto;
+        display:flexbox;
+        flex-direction: column;
         padding: 3vh;
+        height:100%;
         padding-top: 0vh; 
         background: #ffffff;
         border: solid 1px black;
-        resize: vertical;
     }
 </style>

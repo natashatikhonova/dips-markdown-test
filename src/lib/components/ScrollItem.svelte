@@ -59,15 +59,24 @@
     }
 
     button{
-        margin-left: 2em;
-        border: solid 0.1em;
-        border-radius: 10%;
+        right:10vh;
+        width:12vh;
+        margin-left: 2vh;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        cursor: pointer;
     }
 
     button:hover{
         border: solid 0.1em;
-        border-color: red;
-        border-radius: 20%;
-    }
+        outline: none;
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
 
 </style>

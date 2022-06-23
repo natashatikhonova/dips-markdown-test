@@ -23,6 +23,7 @@
     <div id="main" class="main">
         <div class="box">
             <div id="container" class:container={show} class:full-container={!show}> 
+
                 {#each $documentList as item}
                         <ScrollItem on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                 {/each}
@@ -33,24 +34,20 @@
                 </div>
             {/if}
         </div>
-            
-    
 
     </div>
 
 
 <style>
-    .main{
-        width: 100%;
-        height:97.2vh;
-        display:flex; 
-        justify-content: space-evenly;     
-    }
-
     .box{
         display: flex;
-        flex-direction: column;
-        height:100%;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+    }
+    .main{
+        height: 100%;
+        width: 100%;
     }
 
     .container{
@@ -79,13 +76,13 @@
     }
 
     .editor{
+        flex-grow: 1;
         overflow: auto;
         display:flexbox;
         flex-direction: column;
         padding: 3vh;
         height:100%;
         padding-top: 0vh; 
-        width: 96.9%;
         background: #ffffff;
         border: solid 1px black;
     }

@@ -46,7 +46,7 @@
 
 </script>
 
-<main>
+<body>
   <div class="meny">
     <button on:click={changeView}>
       Bytt visning
@@ -75,23 +75,32 @@
 
 
  
-</main>
+  </body>
 
 <style>
+  	:global(*) {
+		margin: 0;
+		padding: 0;
+	}
   :root {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin: 0;
+    padding: 0;
   }
 
-  main {
+   body {
+    margin: 0;
+    padding: 0;
     display: flex;
     align-items: flex-start;
+    height: 95vh;
   }
 
   .meny{
+    height: 100%;
     width: 8vh;
     min-width: none;
-    height:97vh;
     text-align: center;
     border-bottom: solid;
     border-left: solid;
@@ -102,10 +111,13 @@
   
 
   .scroll-container{
+    height: 100%;
     width: 100%;
+    display: flex;
   }
 
   .side-container{
+    height: 100%;
     width: 100%;
     display: flex;
     align-items: flex-start;
@@ -117,7 +129,6 @@
     border: thin;
     width: 8vh;
     height:7.4vh;
-    margin-bottom: 3vh;
 
   }
 
@@ -135,18 +146,15 @@
   .document-list{
     overflow:auto;
     width: 100%;
-    height: 97vh;
+    height: 100%;
     background: #ffffff;
     border: solid 1px black;
   }
 
   .content-view{
-    overflow: auto;
-    padding: 3vh;
-    padding-top: 0vh; 
-    height:94vh;
+    height:100%;
     width: 100%;
-    background: #ffffff;
+    min-width: min-content;
     border: solid 1px black;
    }
 

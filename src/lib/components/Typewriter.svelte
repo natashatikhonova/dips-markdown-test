@@ -36,61 +36,76 @@
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<Toolbar {editor} let:active let:commands>
-    <div class="toolbar">
-      <button
-        class="toolbar-button"
-        class:active={active.header === 1}
-        on:click={commands.header1}><i class="material-icons">title</i></button>
+<div class="main-conteiner">
+  <div class="toolbar">
+    <Toolbar {editor} let:active let:commands>
+        <button
+          class="toolbar-button"
+          class:active={active.header === 1}
+          on:click={commands.header1}><i class="material-icons">title</i></button>
+    
+        <button
+          class="toolbar-button"
+          class:active={active.header === 2}
+          on:click={commands.header2}><i class="material-icons header2">title</i></button>
+    
+        <button
+          class="toolbar-button"
+          class:active={active.bold}
+          on:click={commands.bold}><i class="material-icons">format_bold</i></button>
+    
+        <button
+          class="toolbar-button"
+          class:active={active.italic}
+          on:click={commands.italic}><i class="material-icons">format_italic</i></button>
   
-      <button
-        class="toolbar-button"
-        class:active={active.header === 2}
-        on:click={commands.header2}><i class="material-icons header2">title</i></button>
+        <button
+          class="toolbar-button"
+          class:active={active.bulletList}
+          on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
+        <button
+          class="toolbar-button"
+          class:active={active.orderedList}
+          on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
+        <button
+          class="toolbar-button arrow"
+          disabled={!active.undo}
+          on:click={commands.undo}>←</button>
   
-      <button
-        class="toolbar-button"
-        class:active={active.bold}
-        on:click={commands.bold}><i class="material-icons">format_bold</i></button>
+        <button
+          class="toolbar-button arrow"
+          disabled={!active.redo}
+          on:click={commands.redo}>→</button>
   
-      <button
-        class="toolbar-button"
-        class:active={active.italic}
-        on:click={commands.italic}><i class="material-icons">format_italic</i></button>
+        <div class = "controls">
+          <button class=" toolbar-button save " on:click={save}> Lagre</button>
+          <button class = "toolbar-button save" on:click={cancel} >Avbryt</button>
+        </div>
+  </Toolbar>
+</div>
 
-      <button
-        class="toolbar-button"
-        class:active={active.bulletList}
-        on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
-      <button
-        class="toolbar-button"
-        class:active={active.orderedList}
-        on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
-      <button
-        class="toolbar-button arrow"
-        disabled={!active.undo}
-        on:click={commands.undo}>←</button>
+  <div class="text-conteiner">
+  <div class="title">{$currentDocumentObject.title}</div>
+  <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
 
-      <button
-        class="toolbar-button arrow"
-        disabled={!active.redo}
-        on:click={commands.redo}>→</button>
+  <div class="editor" use:asRoot = {editor} ></div>
+</div>
+</div>
 
-      <div class = "controls">
-        <button class=" toolbar-button save " on:click={save}> Lagre</button>
-        <button class = "toolbar-button save" on:click={cancel} >Avbryt</button>
-      </div>
-    </div>
-</Toolbar>
-<div class="title">{$currentDocumentObject.title}</div>
-<div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
-<div class="editor" use:asRoot = {editor} ></div>
 
 <style>
+    .main-conteiner{
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .text-conteiner{
+      height: 100%;
+      overflow-y: auto;
+    }
     .title{
         font-weight: bold;
         font-style: italic;
-        margin-top: 10vh;
     }
 
     .meta{
@@ -98,18 +113,23 @@
     }
 
     .editor{
-      border: none;
+      padding: 1vh;
     }
 
     .toolbar {
-    display: flex;
+      display: flex;
+      background: #eee;
+      padding: 8px;
+      border-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
+    /* display: flex;
     background: #eee;
     width: 90vh;
     position: fixed;
     padding: 8px;
     margin-bottom: 8px;
     border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1); */
   }
 
   .toolbar-button {

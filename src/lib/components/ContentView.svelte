@@ -25,7 +25,7 @@
         <Typewriter on:editable={changeEdit}/>
     {:else}
         <div class="editBox">
-          <h3>{$currentDocumentObject.title.toUpperCase()}</h3>
+          <div id="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>
           <button class="edit" on:click={changeEdit}>Rediger</button>
         </div>
         
@@ -43,21 +43,41 @@
     font-style: italic;
   }
     
-    .edit {
-        position: fixed;
-        right:10vh;
-        top:2vh;
-        width:13vh;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #fff;
-        border-radius: 4px;
-        border: 1px solid #ced4da;
-        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        cursor: pointer;
+  .edit {
 
+    margin-left: auto;
+    margin-right: 0;
+    display: inline-flex;
+    align-items: center;
+    background: #fff;
+    height: 40px;
+    margin-right: 4px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    cursor: pointer;
+      /* position: fixed;
+      right:10vh;
+      top:2vh;
+      width:13vh;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border-radius: 4px;
+      border: 1px solid #ced4da;
+      transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+      cursor: pointer; */
+
+  }
+
+    #doc-title{
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
     }
 
   .edit:hover {
@@ -79,6 +99,12 @@
 
   .editBox{
     display: flex;
+      background: #eee;
+      padding: 8px;
+      margin-bottom: 8px;
+      border-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
+    /* display: flex;
     width: 90vh;
     position: fixed;
     height:5vh;
@@ -86,7 +112,7 @@
     margin-bottom: 8px;
     background: #eee;
     border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1); */
     
   }
 

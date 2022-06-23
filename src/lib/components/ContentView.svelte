@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
   
-
+  <div class="main-conteiner">
   {#if $currentDocumentObject!=null}
     {#if edit} 
         <Typewriter on:editable={changeEdit}/>
@@ -28,23 +28,34 @@
           <div id="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>
           <button class="edit" on:click={changeEdit}>Rediger</button>
         </div>
-        
-        <div class="test">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
-        <div class = "editor ">{@html marked($currentDocumentObject.context)}</div>
-
-
+        <div class="text-conteiner">
+          <br>
+          <div class="test">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
+          <div class = "editor ">{@html marked($currentDocumentObject.context)}</div>
+        </div>
     {/if}
-{/if} 
+{/if}
+</div>
 
 <style>
 
+.main-conteiner{
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+.text-conteiner{
+      height: 100%;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
   .test{
-    margin-top: 10vh;
     font-style: italic;
   }
     
   .edit {
-
     margin-left: auto;
     margin-right: 0;
     display: inline-flex;
@@ -87,23 +98,17 @@
   }
 
 
-  h3{
-    align-self: center;
-    position: fixed;
-    right:50vh;
-  }
-
   .editor{
-    border: none;
+    padding: 1vh;
   }
 
   .editBox{
     display: flex;
       background: #eee;
       padding: 8px;
-      margin-bottom: 8px;
       border-radius: 3px;
       box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
+      border-bottom: solid 1px black;
     /* display: flex;
     width: 90vh;
     position: fixed;

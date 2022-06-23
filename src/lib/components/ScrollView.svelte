@@ -32,6 +32,7 @@
     <div class="main">
 
         {#if show}
+        <div class="box">
             <div class="container"  bind:this={container} on:load={(e)=> e.currentTarget.scrollTop = container}> 
                 {#each $documentList as item}
                     <ScrollItem on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
@@ -41,6 +42,7 @@
             <div class="editor">
                 <Typewriter on:cancel = {cancel} on:save = {save}/>
             </div>
+        </div>
         {:else}
             <div class="full-container"  on:scroll={(e)=>update(e)}>
                 {#each $documentList as item}
@@ -54,9 +56,15 @@
 
 
 <style>
+    .box{
+        display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+    }
     .main{
+        height: 100%;
         width: 100%;
-        justify-content: space-evenly;
     }
 
     .container{
@@ -85,11 +93,10 @@
     }
 
     .editor{
+        flex-grow: 1;
         overflow: auto;
         padding: 3vh;
         padding-top: 0vh; 
-        height:27.7vh;
-        width: 96.9%;
         background: #ffffff;
         border: solid 1px black;
         resize: vertical;

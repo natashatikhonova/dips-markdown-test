@@ -1,6 +1,6 @@
 <script>
     import { currentDocumentObject } from '../stores/stores.js';
-    import {marked, } from 'marked';
+    import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
     import asRoot from 'typewriter-editor/lib/asRoot';
     import Toolbar from 'typewriter-editor/lib/Toolbar.svelte';

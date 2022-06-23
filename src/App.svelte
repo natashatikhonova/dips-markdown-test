@@ -86,6 +86,7 @@
   main {
     display: flex;
     align-items: flex-start;
+    height:100%;
   }
 
   .meny{
@@ -103,6 +104,7 @@
 
   .scroll-container{
     width: 100%;
+    height:97.2vh;
   }
 
   .side-container{

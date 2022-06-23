@@ -1,18 +1,20 @@
 <script>
     import {marked} from 'marked';
     export let document;
-    import { Editor } from 'typewriter-editor';
-    import asRoot from 'typewriter-editor/lib/asRoot';
-    import Toolbar from 'typewriter-editor/lib/Toolbar.svelte';
+    import {currentDocumentObject} from '../stores/stores.js';
+    import {createEventDispatcher} from 'svelte';
 
-    const editor = new Editor();
-    let edit = false;
-    function changeEdit(){
-        edit = !edit;
+    export let deactivate = false; 
+    
+    const dispatch = createEventDispatcher();
+
+    function editItem(){
+        currentDocumentObject.set(document);
+        console.log($currentDocumentObject);
+        dispatch('editItem');
     }
-    function save(){
-        console.log("lagret");
-    }
+
+    
 </script>
 
 <div class="main">
@@ -24,56 +26,16 @@
         </div>
         <div class="author">
             {document.author}
-            <button on:click={changeEdit}>Rediger</button>
+            {#if deactivate}
+                <button disabled>Rediger</button>
+            {:else}
+                <button on:click={editItem}>Rediger</button>
+            {/if}
         </div>
     </div>
-    
-
-    {#if edit}
-        <button class = "cancel" on:click={changeEdit} >Avbryt</button>
-        <button class="save" on:click={save}>Lagre</button>
-        <Toolbar {editor} let:active let:commands>
-            <div class="toolbar">
-            <button
-                class="toolbar-button"
-                class:active={active.header === 1}
-                on:click={commands.header1}>H1</button>
-        
-            <button
-                class="toolbar-button"
-                class:active={active.header === 2}
-                on:click={commands.header2}>H2</button>
-        
-            <button
-                class="toolbar-button"
-                class:active={active.bold}
-                on:click={commands.bold}>B</button>
-        
-            <button
-                class="toolbar-button"
-                class:active={active.italic}
-                on:click={commands.italic}>I</button>
-        
-            <button
-                class="toolbar-button"
-                disabled={!active.undo}
-                on:click={commands.undo}>←</button>
-        
-            <button
-                class="toolbar-button"
-                disabled={!active.redo}
-                on:click={commands.redo}>→</button>
-            </div>
-        </Toolbar>
-        <div use:asRoot = {editor} >
-            <div class="content">
-                {@html  marked(document.context)}
-            </div></div>
-    {:else}
-        <div class="content">
-            {@html  marked(document.context)}
-        </div>
-    {/if}
+    <div class="content">
+        {@html  marked(document.context)}
+    </div>
 </div>
 
 <style>

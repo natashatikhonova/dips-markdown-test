@@ -1,38 +1,19 @@
 <script>
     import { currentDocumentObject } from '../stores/stores.js';
-    import {marked, } from 'marked';
-    import { Editor } from 'typewriter-editor';
-    import asRoot from 'typewriter-editor/lib/asRoot';
-    import Toolbar from 'typewriter-editor/lib/Toolbar.svelte';
-    import {documentList} from '../stores/stores.js';
-    import toMarkdown from 'to-markdown';
-    
+    import {marked } from 'marked';
+    import Typewriter from './Typewriter.svelte';
+    import {editor} from '../stores/stores.js';
 
     let edit = false;
     function changeEdit(){
         edit=!edit;
     }
 
-    function cancel(){
-      changeEdit();
-      editor.setHTML(marked($currentDocumentObject.context));
-    }
-
-    const editor = new Editor();
-
     $: if ($currentDocumentObject!=null){
         edit = false;
         editor.setHTML(marked($currentDocumentObject.context));
     }
-
-    function save(){
-      changeEdit();
-      console.log(toMarkdown(editor.getHTML()));
-      $documentList[$currentDocumentObject.id].context = toMarkdown(editor.getHTML());
-    }
-    
-   
-        
+       
 </script>
   <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -41,70 +22,27 @@
 
   {#if $currentDocumentObject!=null}
     {#if edit} 
-        <Toolbar {editor} let:active let:commands>
-            <div class="toolbar">
-              <button
-                class="toolbar-button"
-                class:active={active.header === 1}
-                on:click={commands.header1}><i class="material-icons">title</i></button>
-          
-              <button
-                class="toolbar-button"
-                class:active={active.header === 2}
-                on:click={commands.header2}><i class="material-icons header2">title</i></button>
-          
-              <button
-                class="toolbar-button"
-                class:active={active.bold}
-                on:click={commands.bold}><i class="material-icons">format_bold</i></button>
-          
-              <button
-                class="toolbar-button"
-                class:active={active.italic}
-                on:click={commands.italic}><i class="material-icons">format_italic</i></button>
-        
-              <button
-                class="toolbar-button"
-                class:active={active.bulletList}
-                on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
-              <button
-                class="toolbar-button"
-                class:active={active.orderedList}
-                on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
-              <button
-                class="toolbar-button arrow"
-                disabled={!active.undo}
-                on:click={commands.undo}>←</button>
-        
-              <button
-                class="toolbar-button arrow"
-                disabled={!active.redo}
-                on:click={commands.redo}>→</button>
-
-              <div class = "controls">
-                <button class=" toolbar-button save " on:click={save}> Lagre</button>
-                <button class = "toolbar-button save" on:click={cancel} >Avbryt</button>
-              </div>
-            </div>
-        </Toolbar>
-        <div class="editor" use:asRoot = {editor} ></div>
+        <Typewriter on:editable={changeEdit}/>
     {:else}
         <div class="editBox">
           <h3>{$currentDocumentObject.title.toUpperCase()}</h3>
           <button class="edit" on:click={changeEdit}>Rediger</button>
         </div>
         
-        
+        <div class="test">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
         <div class = "editor ">{@html marked($currentDocumentObject.context)}</div>
 
 
     {/if}
-{/if}
-  
+{/if} 
 
 <style>
-    
 
+  .test{
+    margin-top: 10vh;
+    font-style: italic;
+  }
+    
     .edit {
         position: fixed;
         right:10vh;
@@ -122,27 +60,21 @@
 
     }
 
-    h3{
-      align-self: center;
-      position: fixed;
-      right:50vh;
-    }
-
-    .editor{
-      margin-top: 10vh;
-      border: none;
-    }
+  .edit:hover {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
 
 
-    .toolbar {
-    display: flex;
-    background: #eee;
-    width: 90vh;
+  h3{
+    align-self: center;
     position: fixed;
-    padding: 8px;
-    margin-bottom: 8px;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
+    right:50vh;
+  }
+
+  .editor{
+    border: none;
   }
 
   .editBox{
@@ -157,46 +89,5 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
     
   }
-
-  .toolbar-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
-    margin: 0;
-    width: 40px;
-    height: 40px;
-    margin-right: 4px;
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    cursor: pointer;
-  }
-  .toolbar-button:hover {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-  }
-  .toolbar-button.active {
-    border-color: #80bdff;
-    background: #eaf4ff;
-  }
-
-  .header2{
-    font-size:large;
-  }
-
-  .arrow{
-    color:black;
-    font-weight: bolder;
-    font-size:x-large;
-  }
-
-  .controls{
-    margin-left: auto;
-    margin-right: 0;
-    display: inline-flex;
-  }
-
 
 </style>

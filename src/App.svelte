@@ -108,15 +108,13 @@ import Typewriter from './lib/components/Typewriter.svelte';
     padding: 0;
     display: flex;
     align-items: flex-start;
-    height: 98vh;
+    height: 97vh;
     width:100%;
-
   }
 
   .meny{
     height: 100%;
-    width: 8%;
-    min-width: none;
+    width: 4em;
     text-align: center;
     border-bottom: solid;
     border-left: solid;
@@ -129,22 +127,20 @@ import Typewriter from './lib/components/Typewriter.svelte';
   .scroll-container{
     height: 100%;
     width: 100%;
-    display: flex;
   }
 
   .side-container{
     height: 100%;
     width: 100%;
     display: flex;
-    align-items: flex-start;
-    justify-content: space-evenly;
+    flex-direction: row;
   }
 
   button{
     background:whitesmoke;
     border: thin;
-    width: 8vh;
-    height:7.4vh;
+    width: 4em;
+    height:4em;
     margin-top: 0.8vh;
 
   }
@@ -156,20 +152,17 @@ import Typewriter from './lib/components/Typewriter.svelte';
   }
 
   .document-list{
-    resize: horizontal;
-    min-width: none;
-  }
-
-  .document-list{
-    overflow-y:auto;
-    overflow-x:none;
-    width: 100%;
+    display: flex;
+    flex-grow: 1;
+    width: fit-content;
     height: 100%;
     background: #ffffff;
     border: solid 1px black;
   }
 
   .content-view{
+    display: flex;
+    flex-grow: 1;
     height:100%;
     width: 100%;
     border: solid 1px black;

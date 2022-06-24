@@ -98,7 +98,7 @@
 
   .meny{
     height: 100%;
-    width: 8vh;
+    width: 8%;
     min-width: none;
     text-align: center;
     border-bottom: solid;
@@ -154,7 +154,6 @@
   .content-view{
     height:100%;
     width: 100%;
-    min-width: min-content;
     border: solid 1px black;
    }
 

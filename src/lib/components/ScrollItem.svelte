@@ -1,7 +1,7 @@
 <script>
     import {marked} from 'marked';
     export let document;
-    import {currentDocumentObject} from '../stores/stores.js';
+    import {currentDocumentObject, currentlyAddingNewNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
     export let deactivate = false; 
@@ -18,7 +18,7 @@
 </script>
 
 <div class="main">
-    <div class="date">{document.date}</div>
+    <div class="date">{document.date.toDateString()}</div>
 
     <div class="meta">
         <div class="title">
@@ -29,7 +29,7 @@
             {#if deactivate}
                 <button disabled>Rediger</button>
             {:else}
-                <button on:click={editItem}>Rediger</button>
+                <button class:visible={$currentlyAddingNewNote} on:click={editItem}>Rediger</button>
             {/if}
         </div>
     </div>
@@ -50,12 +50,15 @@
         display: flex;
         align-items: flex-start;
         justify-content:space-between
-        
     }
 
     .date, .meta{
         font-weight: bold;
         
+    }
+
+    .visible{
+        visibility: hidden;
     }
 
     button{

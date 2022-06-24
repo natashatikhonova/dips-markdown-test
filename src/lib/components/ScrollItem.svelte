@@ -1,8 +1,8 @@
 <script>
     import {marked} from 'marked';
-    export let document;
     import {currentDocumentObject, currentlyAddingNewNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
+    export let document;
 
     export let deactivate = false; 
     
@@ -80,6 +80,6 @@
         outline: none;
         border-color: #80bdff;
         box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-        }
+    }
 
 </style>

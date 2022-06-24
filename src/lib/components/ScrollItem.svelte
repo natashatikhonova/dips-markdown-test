@@ -2,8 +2,8 @@
     import {marked} from 'marked';
     import {currentDocumentObject, currentlyAddingNewNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
-    export let document;
 
+    export let document;
     export let deactivate = false; 
     
     const dispatch = createEventDispatcher();
@@ -14,16 +14,12 @@
         dispatch('editItem');
     }
 
-    
 </script>
 
-<div class="main">
+<div class="item-container">
     <div class="date">{document.date.toDateString()}</div>
-
     <div class="meta">
-        <div class="title">
-            {document.title}
-        </div>
+        <div class="title">{document.title}</div>
         <div class="author">
             {document.author}
             {#if deactivate}
@@ -39,10 +35,11 @@
 </div>
 
 <style>
-    .main{
+    .item-container{
         padding: 2em;
     }
-    .main:hover{
+
+    .item-container:hover{
         background-color: whitesmoke
     }
 
@@ -53,14 +50,9 @@
     }
 
     .date, .meta{
-        font-weight: bold;
-        
+        font-weight: bold; 
     }
-
-    .visible{
-        visibility: hidden;
-    }
-
+    
     button{
         right:10vh;
         width:12vh;
@@ -77,9 +69,12 @@
 
     button:hover{
         border: solid 0.1em;
-        outline: none;
         border-color: #80bdff;
         box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
     }
+    .visible{
+        visibility: hidden;
+    }
+
 
 </style>

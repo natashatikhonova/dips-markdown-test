@@ -1,20 +1,15 @@
 <script>
-// import { onDestroy } from 'svelte/internal';
-
-
-    //import { DocumentObject } from './document.js';
     import {currentDocumentObject} from '../stores/stores.js';
     export let document;
     export let chosen = false;
 
-    $: color = '';
+    let color = '';
 
     $: if (chosen) {
         color = ' #ccebff';
     } else {
         color = '#fff';
     }
-   
 
     function handleClick(){
         currentDocumentObject.set(document);
@@ -28,7 +23,6 @@
     <td>{document.author}</td>
 </tr>
 
-
 <style>
     .selected{
         background-color: #ccebff;
@@ -39,8 +33,7 @@
     td {
 		text-align: left;
 		padding: 16px;
-        border-bottom:1px solid rgb(97, 96, 96);
-        height: 1px;
+        border-bottom:1px solid rgb(97, 96, 96);  
 	}
 
     tr:hover{

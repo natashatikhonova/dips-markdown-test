@@ -8,14 +8,55 @@
     
 
     let show = false;
+    
     function save(){ 
-        $documentList[$currentDocumentObject.id].context = toMarkdown(editor.getHTML());
+        $documentList.forEach((element)=>{
+          if (element.id === $currentDocumentObject.id){
+              element.context= toMarkdown(editor.getHTML());
+          }
+        })
         show = !show;
     }
     function cancel(){
         show = !show
         
     }
+
+    
+    // let sortedData = $documentList;
+    // let ascendingOrder = false;
+    // let lengde = 0;
+    // const sortByString = (colHeader) => {
+    //     console.log("click tittel");
+	// 	sortedData = sortedData.sort((obj1, obj2) => {
+	// 		if (obj1[colHeader] < obj2[colHeader]) {
+	// 				return -1;
+	// 		} else if (obj1[colHeader] > obj2[colHeader]) {
+	// 			return 1;
+	// 		}
+	// 		return 0; //string code values are equal		
+	// 	});
+
+	// 	if (!ascendingOrder) {
+	// 		sortedData = sortedData.reverse()
+	// 	}
+        
+
+    //     console.log(sortedData);
+
+    //     $documentList = sortedData;
+    //     ascendingOrder = !ascendingOrder;
+    //     lengde = $documentList.length-1;
+    //     console.log("lengde:"+lengde);
+	// }
+    
+    // console.log("lengde1:"+lengde);
+    // console.log("lengde2:"+ $documentList.length);
+    // $: if ($documentList.length>lengde) {
+    //     ("er her");
+    //     ascendingOrder = false;
+    //     sortByString("date");
+    // }
 
 
 </script>

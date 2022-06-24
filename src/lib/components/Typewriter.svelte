@@ -7,10 +7,16 @@
     import {documentList} from '../stores/stores.js';
     import toMarkdown from 'to-markdown';
     import {createEventDispatcher} from 'svelte';
+    import { DocumentObject } from '../document.js';
 
-    $: if ($currentDocumentObject!=null){
+    export let newNote = false;
+
+    $: if ($currentDocumentObject!=null && !newNote){
         editor.setHTML(marked($currentDocumentObject.context));
+    } else if($currentDocumentObject!=null && newNote){
+      editor.setHTML(marked(""));
     }
+   
     
     const dispatch = createEventDispatcher();
 
@@ -26,13 +32,23 @@
 
     function save(){
       changeEdit();
-      dispatch("save");
-      console.log(toMarkdown(editor.getHTML()));
-      $documentList.forEach((element)=>{
-        if (element.id === $currentDocumentObject.id){
-            element.context= toMarkdown(editor.getHTML());
-        }
-      })
+      if(!newNote){
+        dispatch("save");
+        console.log(toMarkdown(editor.getHTML()));
+        $documentList.forEach((element)=>{
+          if (element.id === $currentDocumentObject.id){
+              element.context= toMarkdown(editor.getHTML());
+          }
+        })
+      } else{
+        let newElement = new DocumentObject($documentList.length, "2022-02-21T19:38:03+02:00", toMarkdown(editor.getHTML()));
+        $documentList.push(document);
+        $documentList = $documentList;
+        //sortere documentList
+        $currentDocumentObject = newElement;
+        newNote = false;
+        console.log("lengde etter ny notat: "+$documentList.length);
+      }
 
     }
     
@@ -90,9 +106,10 @@
 </div>
 
   <div class="text-conteiner">
-  <div class="title">{$currentDocumentObject.title}</div>
-  <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
-
+   {#if !newNote} 
+    <div class="title">{$currentDocumentObject.title}</div>
+    <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
+  {/if}
   <div class="editor" use:asRoot = {editor} ></div>
 </div>
 

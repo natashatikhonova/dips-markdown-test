@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject } from '../stores/stores.js';
+    import { currentDocumentObject, currentlyAddingNewNote } from '../stores/stores.js';
     import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
     import asRoot from 'typewriter-editor/lib/asRoot';
@@ -7,10 +7,17 @@
     import {documentList} from '../stores/stores.js';
     import toMarkdown from 'to-markdown';
     import {createEventDispatcher} from 'svelte';
+    import { DocumentObject } from '../document.js';
 
-    $: if ($currentDocumentObject!=null){
+    
+
+    $: if ($currentDocumentObject!=null && !$currentlyAddingNewNote){
         editor.setHTML(marked($currentDocumentObject.context));
-    }
+        console.log("er her hello");
+    } else if($currentDocumentObject!=null && $currentlyAddingNewNote){
+        editor.setHTML(marked(""));
+    } 
+   
     
     const dispatch = createEventDispatcher();
 
@@ -21,18 +28,27 @@
     function cancel(){
       changeEdit();
       dispatch("cancel");
+      $currentlyAddingNewNote=false;
       editor.setHTML(marked($currentDocumentObject.context));
     }
 
     function save(){
       changeEdit();
-      dispatch("save");
-      console.log(toMarkdown(editor.getHTML()));
-      $documentList.forEach((element)=>{
-        if (element.id === $currentDocumentObject.id){
-            element.context= toMarkdown(editor.getHTML());
-        }
-      })
+      if(!$currentlyAddingNewNote){
+        console.log("er i dispatch");
+        dispatch("save");
+        console.log(toMarkdown(editor.getHTML()));
+      } else{
+        let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML()));
+        $documentList.push(newElement);
+        $documentList = $documentList;
+        //sortere documentList
+        $currentDocumentObject = newElement;
+        $currentlyAddingNewNote = false;
+        console.log($documentList.length);
+
+        
+      }
 
     }
     
@@ -90,9 +106,10 @@
 </div>
 
   <div class="text-conteiner">
-  <div class="title">{$currentDocumentObject.title}</div>
-  <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
-
+   {#if !$currentlyAddingNewNote} 
+    <div class="title">{$currentDocumentObject.title}</div>
+    <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
+  {/if}
   <div class="editor" use:asRoot = {editor} ></div>
 </div>
 

@@ -93,13 +93,11 @@
     align-items: flex-start;
     height: 97vh;
     width:100%;
-
   }
 
   .meny{
     height: 100%;
-    width: 4%;
-    min-width: none;
+    width: 4em;
     text-align: center;
     border-bottom: solid;
     border-left: solid;
@@ -112,12 +110,10 @@
   .scroll-container{
     height: 100%;
     width: 100%;
-    display: flex;
   }
 
   .side-container{
     height: 100%;
-    width: 100%;
     display: flex;
     flex-direction: row;
   }
@@ -125,8 +121,8 @@
   button{
     background:whitesmoke;
     border: thin;
-    width: 8vh;
-    height:7.4vh;
+    width: 4em;
+    height:4em;
     margin-top: 0.8vh;
 
   }

@@ -3,7 +3,7 @@
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import {currentDocumentObject, documentList} from './lib/stores/stores.js';
+  import {currentDocumentObject, documentList, currentlyAddingNewNote} from './lib/stores/stores.js';
 import Typewriter from './lib/components/Typewriter.svelte';
   /*
   let doc1 = new DocumentObject("Notat", "01.01.01", "Dr.Thor", "# Dette er tekst.");
@@ -40,17 +40,16 @@ import Typewriter from './lib/components/Typewriter.svelte';
   let showSideview = true;
 
   function changeView(){
-    if(adding){
+    if($currentlyAddingNewNote){
       alert("Vennligst lagre eller avbryt!");
     } else{
       showSideview = !showSideview;
     }
   }
 
-  let adding  = false;
 
   function addNote(){
-    adding = true;
+    $currentlyAddingNewNote = true;
   }
 
 
@@ -61,16 +60,16 @@ import Typewriter from './lib/components/Typewriter.svelte';
     <button on:click={changeView}>
       Bytt visning
     </button>
-    <button on:click={addNote}>Ny notat</button>    
+    <button class:visible={!showSideview} on:click={addNote}>Ny notat</button>    
   </div>
 
   {#if showSideview}
     <div class="side-container"  >
-     {#if adding}
+     {#if $currentlyAddingNewNote}
       <div class = "document-list">
         <ScrollView/>
       </div>
-      <div class = "content-view"><ContentView newNote={adding}/></div>
+      <div class = "content-view"><ContentView /></div>
      {:else}
       <div class = "document-list" >
         <DocumentList/>
@@ -112,6 +111,10 @@ import Typewriter from './lib/components/Typewriter.svelte';
     width:100%;
 
   }
+
+  .visible{
+        visibility: hidden;
+    }
 
   .meny{
     height: 100%;

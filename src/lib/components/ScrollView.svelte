@@ -4,59 +4,60 @@
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
     import toMarkdown from 'to-markdown';
-    import {editor} from '../stores/stores.js';
+    import {editor, currentlyAddingNewNote} from '../stores/stores.js';
+    import {marked} from 'marked';
     
 
     let show = false;
     
     function save(){ 
+        console.log("sjekker save");
+        console.log($currentDocumentObject);
         $documentList.forEach((element)=>{
           if (element.id === $currentDocumentObject.id){
               element.context= toMarkdown(editor.getHTML());
+              console.log(element.context);
           }
         })
-        show = !show;
+        $documentList = $documentList;
+        console.log($currentDocumentObject);
+        console.log($documentList);
+        console.log("sjekker save");
+        show = false;
     }
     function cancel(){
         show = !show
-        
+
+        console.log("sjekker cancel");
     }
 
+    let sortedData = $documentList;
+    let ascendingOrder = false;
+    let lengde = $documentList.length;
+    const sortByString = (colHeader) => {
+        console.log("click tittel");
+		sortedData = sortedData.sort((obj1, obj2) => {
+			if (obj1[colHeader] < obj2[colHeader]) {
+					return -1;
+			} else if (obj1[colHeader] > obj2[colHeader]) {
+				return 1;
+			}
+			return 0; //string code values are equal		
+		});
+
+		if (!ascendingOrder) {
+			sortedData = sortedData.reverse()
+		}
+
+        $documentList = sortedData;
+        ascendingOrder = !ascendingOrder;
+	}
     
-    // let sortedData = $documentList;
-    // let ascendingOrder = false;
-    // let lengde = 0;
-    // const sortByString = (colHeader) => {
-    //     console.log("click tittel");
-	// 	sortedData = sortedData.sort((obj1, obj2) => {
-	// 		if (obj1[colHeader] < obj2[colHeader]) {
-	// 				return -1;
-	// 		} else if (obj1[colHeader] > obj2[colHeader]) {
-	// 			return 1;
-	// 		}
-	// 		return 0; //string code values are equal		
-	// 	});
-
-	// 	if (!ascendingOrder) {
-	// 		sortedData = sortedData.reverse()
-	// 	}
-        
-
-    //     console.log(sortedData);
-
-    //     $documentList = sortedData;
-    //     ascendingOrder = !ascendingOrder;
-    //     lengde = $documentList.length-1;
-    //     console.log("lengde:"+lengde);
-	// }
-    
-    // console.log("lengde1:"+lengde);
-    // console.log("lengde2:"+ $documentList.length);
-    // $: if ($documentList.length>lengde) {
-    //     ("er her");
-    //     ascendingOrder = false;
-    //     sortByString("date");
-    // }
+   
+    $: if ($documentList.length>lengde) {
+        ascendingOrder = false;
+        sortByString("date");
+    }
 
 
 </script>
@@ -65,12 +66,12 @@
             <div id="container" class:container={show} class:full-container={!show}> 
 
                 {#each $documentList as item}
-                        <ScrollItem on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                    <ScrollItem on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                 {/each}
             </div>
             {#if show}
                 <div class="editor">
-                    <Typewriter on:cancel = {cancel} on:save = {save}/>
+                    <Typewriter on:save = {save} on:cancel={cancel} />
                 </div>
             {/if}
         </div>

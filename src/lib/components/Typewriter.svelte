@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject } from '../stores/stores.js';
+    import { currentDocumentObject, currentlyAddingNewNote } from '../stores/stores.js';
     import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
     import asRoot from 'typewriter-editor/lib/asRoot';
@@ -9,13 +9,14 @@
     import {createEventDispatcher} from 'svelte';
     import { DocumentObject } from '../document.js';
 
-    export let newNote = false;
+    
 
-    $: if ($currentDocumentObject!=null && !newNote){
+    $: if ($currentDocumentObject!=null && !$currentlyAddingNewNote){
         editor.setHTML(marked($currentDocumentObject.context));
-    } else if($currentDocumentObject!=null && newNote){
-      editor.setHTML(marked(""));
-    }
+        console.log("er her hello");
+    } else if($currentDocumentObject!=null && $currentlyAddingNewNote){
+        editor.setHTML(marked(""));
+    } 
    
     
     const dispatch = createEventDispatcher();
@@ -27,27 +28,26 @@
     function cancel(){
       changeEdit();
       dispatch("cancel");
+      $currentlyAddingNewNote=false;
       editor.setHTML(marked($currentDocumentObject.context));
     }
 
     function save(){
       changeEdit();
-      if(!newNote){
+      if(!$currentlyAddingNewNote){
+        console.log("er i dispatch");
         dispatch("save");
         console.log(toMarkdown(editor.getHTML()));
-        $documentList.forEach((element)=>{
-          if (element.id === $currentDocumentObject.id){
-              element.context= toMarkdown(editor.getHTML());
-          }
-        })
       } else{
-        let newElement = new DocumentObject($documentList.length, "2022-02-21T19:38:03+02:00", toMarkdown(editor.getHTML()));
-        $documentList.push(document);
+        let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML()));
+        $documentList.push(newElement);
         $documentList = $documentList;
         //sortere documentList
         $currentDocumentObject = newElement;
-        newNote = false;
-        console.log("lengde etter ny notat: "+$documentList.length);
+        $currentlyAddingNewNote = false;
+        console.log($documentList.length);
+
+        
       }
 
     }
@@ -106,7 +106,7 @@
 </div>
 
   <div class="text-conteiner">
-   {#if !newNote} 
+   {#if !$currentlyAddingNewNote} 
     <div class="title">{$currentDocumentObject.title}</div>
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}

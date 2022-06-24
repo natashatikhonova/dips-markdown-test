@@ -1,28 +1,25 @@
 <script>
-    import { currentDocumentObject } from '../stores/stores.js';
+    import { currentDocumentObject, currentlyAddingNewNote } from '../stores/stores.js';
     import {marked } from 'marked';
     import Typewriter from './Typewriter.svelte';
     import {editor} from '../stores/stores.js';
 
-    export let newNote = false;
+    
 
-    let edit = (newNote)? true: false;
+    let edit = ($currentlyAddingNewNote)? true: false;
 
     function changeEdit(){
           edit=!edit;
       
     }
 
-    $: if ($currentDocumentObject!=null && !newNote){
+    $: if ($currentDocumentObject!=null && !$currentlyAddingNewNote){
         editor.setHTML(marked($currentDocumentObject.context));
         console.log("1");
-    } else if($currentDocumentObject!=null && newNote){
-      editor.setHTML(marked(""));
-      console.log("2");
-    } else if($currentDocumentObject==null && newNote){
-      editor.setHTML(marked(""));
-      console.log("3");
-    }
+    } else if($currentlyAddingNewNote){
+        editor.setHTML(marked(""));
+        console.log("2");
+    } 
        
 </script>
   <head>
@@ -30,9 +27,9 @@
   </head>
   
   <div class="main-conteiner">
-  {#if $currentDocumentObject!=null || newNote}
+  {#if $currentDocumentObject!=null || $currentlyAddingNewNote}
     {#if edit} 
-        <Typewriter on:editable={changeEdit} newNote={newNote}/>
+        <Typewriter on:editable={changeEdit} />
     {:else}
         <div class="editBox">
           <div id="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>

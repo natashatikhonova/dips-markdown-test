@@ -7,3 +7,5 @@ export const currentDocumentObject = writable();
 export const documentList=writable([]);
 
 export const editor = new Editor();
+
+export let currentlyAddingNewNote = writable(false);

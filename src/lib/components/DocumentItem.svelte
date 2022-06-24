@@ -1,7 +1,6 @@
 <script>
-import { onDestroy } from 'svelte/internal';
-import { forEach } from 'to-markdown/lib/md-converters.js';
-import {documentList} from '../stores/stores.js';
+// import { onDestroy } from 'svelte/internal';
+
 
     //import { DocumentObject } from './document.js';
     import {currentDocumentObject} from '../stores/stores.js';
@@ -17,29 +16,13 @@ import {documentList} from '../stores/stores.js';
     }
    
 
-
-    const unsubscribe = currentDocumentObject.subscribe((value)=> {
-        if(value){
-            if (value === document){
-                color = ' #ccebff';
-            }else{
-                color = '#fff';
-            }
-        } else{
-            color = '#fff';
-        }
-    }
-
-    )
     function handleClick(){
         currentDocumentObject.set(document);
     }
 
-    onDestroy(unsubscribe);
-
 </script>
 
-<tr style="background-color: {color}; :hover background-color: #e6f5ff" on:click={handleClick} >
+<tr class:selected = {chosen} class:notSelected = {!chosen} on:click={handleClick} >
     <td>{document.title}</td>
     <td>{document.date.toDateString()}</td>
     <td>{document.author}</td>
@@ -47,10 +30,17 @@ import {documentList} from '../stores/stores.js';
 
 
 <style>
+    .selected{
+        background-color: #ccebff;
+    }
+    .notSelected:hover{
+        background-color: #e6f2ff;
+    }
     td {
 		text-align: left;
 		padding: 16px;
         border-bottom:1px solid rgb(97, 96, 96);
+        height: 1px;
 	}
 
     tr:hover{

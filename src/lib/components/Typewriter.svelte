@@ -9,16 +9,12 @@
     import {createEventDispatcher} from 'svelte';
     import { DocumentObject } from '../document.js';
 
-    
-
-    $: if ($currentDocumentObject!=null && !$currentlyAddingNewNote){
+    $: if ($currentDocumentObject && !$currentlyAddingNewNote){
         editor.setHTML(marked($currentDocumentObject.context));
-        console.log("er her hello");
-    } else if($currentDocumentObject!=null && $currentlyAddingNewNote){
+    } else if($currentDocumentObject && $currentlyAddingNewNote){
         editor.setHTML(marked(""));
     } 
    
-    
     const dispatch = createEventDispatcher();
 
     function changeEdit(){
@@ -35,21 +31,22 @@
     function save(){
       changeEdit();
       if(!$currentlyAddingNewNote){
-        console.log("er i dispatch");
-        dispatch("save");
-        console.log(toMarkdown(editor.getHTML()));
-      } else{
-        let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML()));
-        $documentList.push(newElement);
-        $documentList = $documentList;
-        //sortere documentList
-        $currentDocumentObject = newElement;
-        $currentlyAddingNewNote = false;
-        console.log($documentList.length);
-
-        
-      }
-
+          dispatch("save");
+          $documentList.forEach((element)=>{
+            if (element.id === $currentDocumentObject.id){
+                element.context= toMarkdown(editor.getHTML());
+                console.log(element.context);
+            }
+          })
+          $documentList = $documentList;
+        } else{
+          let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML()));
+          $documentList.push(newElement);
+          $documentList = $documentList;
+          $currentDocumentObject = newElement;
+          $currentlyAddingNewNote = false;
+          dispatch("saveScroll"); 
+        } 
     }
     
 </script>
@@ -58,103 +55,69 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-  <div class="toolbar">
-    <Toolbar {editor} let:active let:commands>
-        <button
-          class="toolbar-button"
-          class:active={active.header === 1}
-          on:click={commands.header1}><i class="material-icons">title</i></button>
-    
-        <button
-          class="toolbar-button"
-          class:active={active.header === 2}
-          on:click={commands.header2}><i class="material-icons header2">title</i></button>
-    
-        <button
-          class="toolbar-button"
-          class:active={active.bold}
-          on:click={commands.bold}><i class="material-icons">format_bold</i></button>
-    
-        <button
-          class="toolbar-button"
-          class:active={active.italic}
-          on:click={commands.italic}><i class="material-icons">format_italic</i></button>
+<div class="toolbar">
+  <Toolbar {editor} let:active let:commands>
+      <button
+        class="toolbar-button"
+        class:active={active.header === 1}
+        on:click={commands.header1}><i class="material-icons">title</i></button>
   
-        <button
-          class="toolbar-button"
-          class:active={active.bulletList}
-          on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
-        <button
-          class="toolbar-button"
-          class:active={active.orderedList}
-          on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
-        <button
-          class="toolbar-button arrow"
-          disabled={!active.undo}
-          on:click={commands.undo}>←</button>
+      <button
+        class="toolbar-button"
+        class:active={active.header === 2}
+        on:click={commands.header2}><i class="material-icons header2">title</i></button>
   
-        <button
-          class="toolbar-button arrow"
-          disabled={!active.redo}
-          on:click={commands.redo}>→</button>
+      <button
+        class="toolbar-button"
+        class:active={active.bold}
+        on:click={commands.bold}><i class="material-icons">format_bold</i></button>
   
-        <div class = "controls">
-          <button class=" toolbar-button save " on:click={save}> Lagre</button>
-          <button class = "toolbar-button save" on:click={cancel} >Avbryt</button>
-        </div>
+      <button
+        class="toolbar-button"
+        class:active={active.italic}
+        on:click={commands.italic}><i class="material-icons">format_italic</i></button>
+
+      <button
+        class="toolbar-button"
+        class:active={active.bulletList}
+        on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
+      <button
+        class="toolbar-button"
+        class:active={active.orderedList}
+        on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
+      <button
+        class="toolbar-button arrow"
+        disabled={!active.undo}
+        on:click={commands.undo}>←</button>
+
+      <button
+        class="toolbar-button arrow"
+        disabled={!active.redo}
+        on:click={commands.redo}>→</button>
+
+      <div class = "controls">
+        <button class=" toolbar-button save " on:click={save}> Lagre</button>
+        <button class = "toolbar-button save" on:click={cancel} >Avbryt</button>
+      </div>
   </Toolbar>
 </div>
 
-  <div class="text-conteiner">
-   {#if !$currentlyAddingNewNote} 
+<div class="textfield">
+  {#if !$currentlyAddingNewNote} 
     <div class="title">{$currentDocumentObject.title}</div>
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}
   <div class="editor" use:asRoot = {editor} ></div>
 </div>
 
-
-
 <style>
-    
 
-    
-    .text-conteiner{
-      height: 100%;
-      overflow-y: auto;
-    }
-    .title{
-        font-weight: bold;
-        font-style: italic;
-        margin-left: 1vh;
-        margin-top:1vh;
-    }
-
-    .meta{
-        font-style: italic;
-        margin-left:1vh;
-        margin-top:1vh;
-    }
-
-    .editor{
-      margin-top: 1vh;
-      padding:0.7vh;
-    }
-
-    .toolbar {
-      display: flex;
-      background: #eee;
-      padding: 8px;
-      border-radius: 3px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
-    /* display: flex;
+  .toolbar {
+    display: flex;
     background: #eee;
-    width: 90vh;
-    position: fixed;
     padding: 8px;
-    margin-bottom: 8px;
     border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1); */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
   }
 
   .toolbar-button {
@@ -162,7 +125,6 @@
     align-items: center;
     justify-content: center;
     background: #fff;
-    margin: 0;
     width: 40px;
     height: 40px;
     margin-right: 4px;
@@ -171,14 +133,15 @@
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;
   }
+
   .toolbar-button:hover {
     outline: none;
     border-color: #80bdff;
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
   }
+
   .toolbar-button.active {
     border-color: #80bdff;
-    background: #eaf4ff;
   }
 
   .header2{
@@ -196,6 +159,28 @@
     margin-right: 0;
     display: inline-flex;
   }
+  
+  .textfield{
+    height: 100%;
+    overflow-y: auto;
+  }
 
+  .title{
+    font-weight: bold;
+    font-style: italic;
+    margin-left: 1vh;
+    margin-top:1vh;
+  }
+
+  .meta{
+    font-style: italic;
+    margin-left:1vh;
+    margin-top:1vh;
+  }
+
+  .editor{
+    margin-top: 1vh;
+    padding:0.7vh;
+  }
 
 </style>

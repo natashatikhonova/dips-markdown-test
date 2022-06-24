@@ -91,14 +91,14 @@
     padding: 0;
     display: flex;
     align-items: flex-start;
-    height: 98vh;
+    height: 97vh;
     width:100%;
 
   }
 
   .meny{
     height: 100%;
-    width: 8%;
+    width: 4%;
     min-width: none;
     text-align: center;
     border-bottom: solid;
@@ -119,8 +119,7 @@
     height: 100%;
     width: 100%;
     display: flex;
-    align-items: flex-start;
-    justify-content: space-evenly;
+    flex-direction: row;
   }
 
   button{
@@ -139,19 +138,17 @@
   }
 
   .document-list{
-    resize: horizontal;
-    min-width: none;
-  }
-
-  .document-list{
-    overflow:auto;
-    width: 100%;
+    display: flex;
+    flex-grow: 1;
+    width: fit-content;
     height: 100%;
     background: #ffffff;
     border: solid 1px black;
   }
 
   .content-view{
+    display: flex;
+    flex-grow: 1;
     height:100%;
     width: 100%;
     border: solid 1px black;

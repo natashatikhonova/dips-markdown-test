@@ -119,14 +119,16 @@ import { onDestroy } from "svelte";
 	}
 
     .fixedTable{
+        resize: horizontal;
+        min-width: none;
         overflow-y: auto;
         height: 100%;
+        width: 80vh;
     }
     .fixedTable thead th{
         position:sticky;
         top:0;
     }
-
 
 
 </style>

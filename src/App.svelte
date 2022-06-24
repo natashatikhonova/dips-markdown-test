@@ -3,7 +3,8 @@
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import {documentList} from './lib/stores/stores.js';
+  import {currentDocumentObject, documentList} from './lib/stores/stores.js';
+import Typewriter from './lib/components/Typewriter.svelte';
   /*
   let doc1 = new DocumentObject("Notat", "01.01.01", "Dr.Thor", "# Dette er tekst.");
   let doc2 = new DocumentObject("Undersøkelse", "02.02.02", "Dr.Sindre", "Dette er underøkelse");
@@ -39,10 +40,19 @@
   let showSideview = true;
 
   function changeView(){
-    showSideview = !showSideview;
+    if(adding){
+      alert("Vennligst lagre eller avbryt!");
+    } else{
+      showSideview = !showSideview;
+    }
   }
 
-  
+  let adding  = false;
+
+  function addNote(){
+    adding = true;
+  }
+
 
 </script>
 
@@ -51,17 +61,24 @@
     <button on:click={changeView}>
       Bytt visning
     </button>
-    <button>Ny notat</button>    
+    <button on:click={addNote}>Ny notat</button>    
   </div>
 
   {#if showSideview}
     <div class="side-container"  >
+     {#if adding}
+      <div class = "document-list">
+        <ScrollView/>
+      </div>
+      <div class = "content-view"><ContentView newNote={adding}/></div>
+     {:else}
       <div class = "document-list" >
         <DocumentList/>
       </div>
       <div class = "content-view" >
         <ContentView/>
       </div>
+     {/if}
     </div>
 
   {:else}

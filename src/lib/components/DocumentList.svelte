@@ -3,13 +3,15 @@
     import DocumentItem from "./DocumentItem.svelte";
 
     import {currentDocumentObject, documentList} from '../stores/stores.js';
-import { onDestroy } from "svelte";
+
+
     
    let sortedData = $documentList;
    const tableHeaders = ["title", "date","author"];
 
    let selectedHeader = "date";
    let ascendingOrder = false;
+   let lengde;
 	
 	// SORT BY NUMBER
     /*
@@ -22,7 +24,6 @@ import { onDestroy } from "svelte";
 	}*/
 	
 	// SORT BY STRINGs
-
 
 	const sortByString = (colHeader) => {
         console.log("click tittel");
@@ -45,13 +46,22 @@ import { onDestroy } from "svelte";
 
         $documentList = sortedData;
         ascendingOrder = !ascendingOrder;
-
-
+        lengde = $documentList.length;
+        console.log("lengde:"+lengde);
 	}
 
 
     //sorting by default
     sortByString(selectedHeader);
+
+    $: if ($documentList.length>lengde) {
+        ("er her");
+        ascendingOrder = false;
+        sortByString("date");
+    }
+
+    
+    
 
 
 </script>

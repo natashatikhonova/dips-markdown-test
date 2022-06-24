@@ -18,7 +18,7 @@
 </script>
 
 <div class="main">
-    <div class="date">{document.date.toDateString()}</div>
+    <div class="date">{document.date}</div>
 
     <div class="meta">
         <div class="title">

@@ -4,14 +4,24 @@
     import Typewriter from './Typewriter.svelte';
     import {editor} from '../stores/stores.js';
 
-    let edit = false;
+    export let newNote = false;
+
+    let edit = (newNote)? true: false;
+
     function changeEdit(){
-        edit=!edit;
+          edit=!edit;
+      
     }
 
-    $: if ($currentDocumentObject!=null){
-        edit = false;
+    $: if ($currentDocumentObject!=null && !newNote){
         editor.setHTML(marked($currentDocumentObject.context));
+        console.log("1");
+    } else if($currentDocumentObject!=null && newNote){
+      editor.setHTML(marked(""));
+      console.log("2");
+    } else if($currentDocumentObject==null && newNote){
+      editor.setHTML(marked(""));
+      console.log("3");
     }
        
 </script>
@@ -20,9 +30,9 @@
   </head>
   
   <div class="main-conteiner">
-  {#if $currentDocumentObject!=null}
+  {#if $currentDocumentObject!=null || newNote}
     {#if edit} 
-        <Typewriter on:editable={changeEdit}/>
+        <Typewriter on:editable={changeEdit} newNote={newNote}/>
     {:else}
         <div class="editBox">
           <div id="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>

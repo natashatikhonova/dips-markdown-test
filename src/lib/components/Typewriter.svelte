@@ -9,6 +9,10 @@
     import {createEventDispatcher} from 'svelte';
     import { DocumentObject } from '../document.js';
 
+    let selectedDocType = "Velg dokumenttype";
+
+    const documentTypes = ["Velg dokumenttype", "Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
+
     $: if ($currentDocumentObject && !$currentlyAddingNewNote){
         editor.setHTML(marked($currentDocumentObject.context));
     } else if($currentDocumentObject && $currentlyAddingNewNote){
@@ -25,12 +29,22 @@
       changeEdit();
       dispatch("cancel");
       $currentlyAddingNewNote=false;
-      editor.setHTML(marked($currentDocumentObject.context));
+      if($currentDocumentObject){
+        editor.setHTML(marked($currentDocumentObject.context));
+      } else{
+        editor.setHTML("");
+      }
+      
     }
 
     function save(){
       changeEdit();
-      if(!$currentlyAddingNewNote){
+      if( toMarkdown(editor.getHTML()) === ""){
+        alert("Tom notat!");
+        $currentlyAddingNewNote=false;
+        dispatch("saveScroll");
+      }else{
+        if(!$currentlyAddingNewNote){
           dispatch("save");
           $documentList.forEach((element)=>{
             if (element.id === $currentDocumentObject.id){
@@ -40,13 +54,21 @@
           })
           $documentList = $documentList;
         } else{
-          let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML()));
-          $documentList.push(newElement);
-          $documentList = $documentList;
-          $currentDocumentObject = newElement;
-          $currentlyAddingNewNote = false;
-          dispatch("saveScroll"); 
+          if (selectedDocType !==documentTypes[0]){
+            let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML()));
+            newElement.title = selectedDocType;
+            $documentList.push(newElement);
+            $documentList = $documentList;
+            $currentDocumentObject = newElement;
+            $currentlyAddingNewNote = false;
+            dispatch("saveScroll");
+          } else{
+            alert("Vennligst velg dokumenttype!");
+            changeEdit();
+          }  
         } 
+      }
+      
     }
     
 </script>
@@ -101,7 +123,13 @@
       </div>
   </Toolbar>
 </div>
-
+{#if $currentlyAddingNewNote}
+  <div class="dropdown">
+    <select class="dropdown-menu" bind:value={selectedDocType} >
+      {#each documentTypes as value}<option {value}>{value}</option>{/each}
+    </select>
+  </div>
+{/if}
 <div class="textfield">
   {#if !$currentlyAddingNewNote} 
     <div class="title">{$currentDocumentObject.title}</div>
@@ -159,6 +187,25 @@
     margin-right: 0;
     display: inline-flex;
   }
+
+  .dropdown{
+    margin: 1.5vh;
+  }
+
+  .dropdown-menu {
+    background: #fff;
+    width: 20vh;
+    height: 40px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    cursor: pointer;
+  }
+
+  .dropdown-menu:hover {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
   
   .textfield{
     height: 100%;
@@ -182,5 +229,6 @@
     margin-top: 1vh;
     padding:0.7vh;
   }
+
 
 </style>

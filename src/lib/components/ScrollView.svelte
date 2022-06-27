@@ -8,6 +8,10 @@
     let sortedData = $documentList;
     let ascendingOrder = false;
     let lengde = $documentList.length;
+    let searchValue = "";
+    let searchResult = $documentList;
+
+    $: searchResult = $documentList.filter(item => item.context.toLowerCase().includes(searchValue.toLowerCase()));
     
     function save(){ 
         show = false;
@@ -45,14 +49,20 @@
     }
 
 </script>
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
 
     <div class="scroll-container">
         <div class:container={show} class:full-container={!show}> 
-            {#each $documentList as item}
-                <ScrollItem on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+            <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
+            {#each searchResult as item}
+                
+                <ScrollItem searchWord = {searchValue} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+
             {/each}
             {#if !show}
-                <button on:click = {addNote}>+</button>
+                <button class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
             {/if}
         </div>
         {#if show}
@@ -94,6 +104,17 @@
         resize: vertical;
     }
 
+    input[type=text] {
+        position: absolute;
+        top: 2vh;
+        right:4vh;
+        padding: 6px;
+        border: solid;
+        border-radius: 5px;
+        font-size: 17px;
+     }
+
+
     .editor{
         display:flex;
         flex-direction: column;
@@ -104,7 +125,7 @@
         flex-grow: 1;
     }
 
-    button{
+    .add-button{
         position: absolute;
         margin-bottom: 1vh;
         font-size:xx-large;
@@ -121,8 +142,12 @@
         cursor: pointer;
     }
 
-    button:hover{
+    .add-button:hover{
         border: solid 0.1em;
         box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    .visible{
+        visibility: hidden;
     }
 </style>

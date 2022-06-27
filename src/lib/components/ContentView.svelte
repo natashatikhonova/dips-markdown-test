@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, currentlyAddingNewNote } from '../stores/stores.js';
+    import { currentDocumentObject, currentlyAddingNewNote, documentList } from '../stores/stores.js';
     import {marked } from 'marked';
     import Typewriter from './Typewriter.svelte';
     import {editor} from '../stores/stores.js';
@@ -9,6 +9,17 @@
     function changeEdit(){
           edit=!edit;
     }
+
+    function deleteNote(){
+      let retval = confirm("Er du sikker på at du vil slette notat?");
+      if (retval == true){
+        for (let i = 0; i<$documentList.length; i++){
+          $documentList = $documentList.filter((value) => value.id !== $currentDocumentObject.id);
+        }
+        $currentDocumentObject = null;
+     }  
+    }
+      
 
     $: if ($currentDocumentObject!=null && !$currentlyAddingNewNote){
         editor.setHTML(marked($currentDocumentObject.context));
@@ -30,6 +41,7 @@
         <div class="header-bar">
           <div class="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>
           <button class="edit-button" on:click={changeEdit}>Rediger</button>
+          <button class="edit-button" on:click={deleteNote}>Slett</button>
         </div>
         <div class="textfield">
           <br>

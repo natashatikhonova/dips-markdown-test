@@ -2,10 +2,33 @@
     import {marked} from 'marked';
     import {currentDocumentObject, currentlyAddingNewNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
+    import highlightWords from "highlight-words";
+    
 
     export let document;
     export let deactivate = false; 
+    export let searchWord="";
     
+    let htmlText =  marked(document.context);
+    console.log(htmlText);
+
+    while(htmlText){
+        
+    }
+
+
+    // console.log("hei")
+    // const { convert } = require('html-to-text')
+
+    // let text = convert(htmlText, {wordwrap: 130})
+    // let arrayText = text.split(" ")
+
+    // $: chunks = highlightWords({
+    //     text:  htmlText,
+    //     query: searchWord
+    // });
+
+
     const dispatch = createEventDispatcher();
 
     function editItem(){
@@ -30,7 +53,7 @@
         </div>
     </div>
     <div class="content">
-        {@html  marked(document.context)}
+        {@html htmlText}
     </div>
 </div>
 
@@ -74,6 +97,11 @@
     }
     .visible{
         visibility: hidden;
+    }
+
+    .highlight {
+        border-bottom: 3px solid red;
+        color: red;
     }
 
 

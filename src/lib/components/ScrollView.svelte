@@ -26,6 +26,19 @@
         show =true;
     }
 
+    function searchWord() {
+        let searched = searchValue;
+        console.log(1)
+        if (searched !== "") {
+            console.log(2)
+            let text = document.getElementById("text").innerHTML;
+            console.log("TEXT: "+text)
+            let re = new RegExp(searched,"g"); // search for all instances
+            let newText = text.replace(re, `<mark>${searched}</mark>`);
+            document.getElementById("text").innerHTML = newText;
+        }
+    }
+
     const sortByString = (colHeader) => {
 		sortedData = sortedData.sort((obj1, obj2) => {
 			if (obj1[colHeader] < obj2[colHeader]) {
@@ -56,11 +69,12 @@
     <div class="scroll-container">
         <div class:container={show} class:full-container={!show}> 
             <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
-            {#each searchResult as item}
-                
-                <ScrollItem searchWord = {searchValue} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
 
-            {/each}
+                {#each searchResult as item}
+                    <ScrollItem searchWord = {searchValue} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                {/each}
+
+            
             {#if !show}
                 <button class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
             {/if}

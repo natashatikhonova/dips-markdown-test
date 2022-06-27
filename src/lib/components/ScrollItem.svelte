@@ -8,26 +8,10 @@
     export let document;
     export let deactivate = false; 
     export let searchWord="";
+
+    console.log(searchWord);
     
     let htmlText =  marked(document.context);
-    console.log(htmlText);
-
-    while(htmlText){
-        
-    }
-
-
-    // console.log("hei")
-    // const { convert } = require('html-to-text')
-
-    // let text = convert(htmlText, {wordwrap: 130})
-    // let arrayText = text.split(" ")
-
-    // $: chunks = highlightWords({
-    //     text:  htmlText,
-    //     query: searchWord
-    // });
-
 
     const dispatch = createEventDispatcher();
 
@@ -38,6 +22,7 @@
     }
 
 </script>
+
 
 <div class="item-container">
     <div class="date">{document.date.toDateString()}</div>
@@ -52,12 +37,13 @@
             {/if}
         </div>
     </div>
-    <div class="content">
+    <div class="content" id="content">
         {@html htmlText}
     </div>
 </div>
 
 <style>
+    span { border: 1px solid red; }
     .item-container{
         padding: 2em;
     }

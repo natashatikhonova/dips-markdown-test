@@ -3,6 +3,7 @@
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
     import {currentlyAddingNewNote} from '../stores/stores.js';
+    import { marked } from 'marked';
     
     let show = false;
     let sortedData = $documentList;
@@ -24,19 +25,6 @@
     function addNote(){
         $currentlyAddingNewNote = true;
         show =true;
-    }
-
-    function searchWord() {
-        let searched = searchValue;
-        console.log(1)
-        if (searched !== "") {
-            console.log(2)
-            let text = document.getElementById("text").innerHTML;
-            console.log("TEXT: "+text)
-            let re = new RegExp(searched,"g"); // search for all instances
-            let newText = text.replace(re, `<mark>${searched}</mark>`);
-            document.getElementById("text").innerHTML = newText;
-        }
     }
 
     const sortByString = (colHeader) => {
@@ -61,6 +49,55 @@
         sortByString("date");
     }
 
+    function wrapWord(el, word){
+        var expr = new RegExp(word, "gi");
+        console.log(expr)
+        var nodes = [].slice.call(el.childNodes, 0);
+        for (var i = 0; i < nodes.length; i++)
+        {
+            var node = nodes[i];
+            if (node.nodeType == 3) // textNode
+            {
+                var matches = node.nodeValue.match(expr);
+                if (matches)
+                {
+                    var parts = node.nodeValue.split(expr);
+                    for (var n = 0; n < parts.length; n++)
+                    {
+                        if (n)
+                        {
+                            var span = el.insertBefore(document.createElement("span"), node);
+                            span.appendChild(document.createTextNode(matches[n - 1]));
+                            span.style = "color:red; border-bottom: 3px solid red"
+                        }
+                        if (parts[n])
+                        {
+                            el.insertBefore(document.createTextNode(parts[n]), node);
+                        }
+                    }
+                    el.removeChild(node);
+                }
+            }
+            else
+            {
+                wrapWord(node, word);
+            }
+        }
+    }
+
+    function highlightWord(htmlText) {
+        if (searchValue!== "") {
+            let container
+            container = document.createElement("div")
+            container.innerHTML = htmlText
+            wrapWord(container, searchValue)
+            let after = document.createTextNode(container.innerHTML)
+            return container.innerHTML
+        } else{
+            return htmlText
+        }
+    }
+
 </script>
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -71,7 +108,7 @@
             <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
 
                 {#each searchResult as item}
-                    <ScrollItem searchWord = {searchValue} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                    <ScrollItem htmlText = {highlightWord(marked(item.context))} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                 {/each}
 
             

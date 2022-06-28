@@ -1,26 +1,19 @@
 <script>
-    import {marked} from 'marked';
     import {currentDocumentObject, currentlyAddingNewNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
-    import highlightWords from "highlight-words";
-    
 
     export let document;
     export let deactivate = false; 
-    export let searchWord="";
-
-    console.log(searchWord);
-    
-    let htmlText =  marked(document.context);
+    export let htmlText
 
     const dispatch = createEventDispatcher();
 
     function editItem(){
         currentDocumentObject.set(document);
-        console.log($currentDocumentObject);
         dispatch('editItem');
     }
 
+ 
 </script>
 
 
@@ -37,13 +30,13 @@
             {/if}
         </div>
     </div>
-    <div class="content" id="content">
+    <div>
         {@html htmlText}
     </div>
 </div>
 
 <style>
-    span { border: 1px solid red; }
+
     .item-container{
         padding: 2em;
     }

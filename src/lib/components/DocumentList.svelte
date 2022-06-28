@@ -114,7 +114,7 @@
         min-width: none;
         overflow-y: auto;
         height: 100%;
-        width: 80vh;
+        width: 100%;
     }
     .table-container thead th{
         position:sticky;

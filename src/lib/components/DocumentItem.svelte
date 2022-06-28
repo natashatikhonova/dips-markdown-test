@@ -30,9 +30,15 @@
     .notSelected:hover{
         background-color: #e6f2ff;
     }
+    tr {
+     height: 5vh;
+    }
     td {
 		text-align: left;
-		padding: 16px;
+		padding-top: 1%;
+		padding-bottom: 1%;
+        padding-right: 16px;
+        padding-left: 1%;
         border-bottom:1px solid rgb(97, 96, 96);  
 	}
 

@@ -16,6 +16,8 @@
     
     function save(){ 
         show = false;
+        ascendingOrder= true;
+        sortByString("date")
     }
 
     function cancel(){
@@ -106,10 +108,16 @@
     <div class="scroll-container">
         <div class:container={show} class:full-container={!show}> 
             <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
+            {#if searchResult.length > 0}
+            <div class = "dokumenter">
 
                 {#each searchResult as item}
                     <ScrollItem htmlText = {highlightWord(marked(item.context))} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                 {/each}
+            </div>
+            {:else}
+                <div class = "no-result"> Ingen Søkeresultater</div>
+            {/if}
 
             
             {#if !show}
@@ -125,11 +133,24 @@
     </div>
 
 <style>
+    .no-result{
+        display:flex;
+        font-size: xx-large;
+        align-self: center;
+        justify-self: center;
+        position: absolute;
+        top: 40%;
+    }
+    .dokumenter {
+        margin-top: 4vh;
+    }
     .scroll-container{ 
+    position: relative;
       display: flex;
       flex-direction: column;
       height: 100%;
       width: 100%;
+
     }
     
     .full-container{
@@ -142,6 +163,7 @@
         height: 100%;
         border: solid;
         resize: horizontal;
+
     }
 
     .container{
@@ -153,12 +175,13 @@
         height: 100%;
         border: solid;
         resize: vertical;
+        min-width: 20%;
     }
 
     input[type=text] {
         position: absolute;
         top: 2vh;
-        right:4vh;
+        right:14vh;
         padding: 6px;
         border: solid;
         border-radius: 5px;

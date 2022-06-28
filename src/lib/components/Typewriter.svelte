@@ -9,6 +9,11 @@
     import {createEventDispatcher} from 'svelte';
     import { DocumentObject } from '../document.js';
 
+    let selectedDocType = "Velg dokumenttype";
+
+    const documentTypes = ["Velg dokumenttype", "Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
+
+    //Sets text in editor
     $: if ($currentDocumentObject && !$currentlyAddingNewNote){
         editor.setHTML(marked($currentDocumentObject.context));
     } else if($currentDocumentObject && $currentlyAddingNewNote){
@@ -17,36 +22,55 @@
    
     const dispatch = createEventDispatcher();
 
+    //Either editor shows or just the text
     function changeEdit(){
         dispatch('editable');
     }
 
+    //Sets the text back to the previous shown text
     function cancel(){
       changeEdit();
       dispatch("cancel");
       $currentlyAddingNewNote=false;
-      editor.setHTML(marked($currentDocumentObject.context));
+      if($currentDocumentObject){
+        editor.setHTML(marked($currentDocumentObject.context));
+      } else{
+        editor.setHTML("");
+      }
+      
     }
-
+    //Saves the text if the text is not empty and stores the text
     function save(){
       changeEdit();
-      if(!$currentlyAddingNewNote){
+      if( toMarkdown(editor.getHTML()) === ""){
+        alert("Tom notat!");
+        $currentlyAddingNewNote=false;
+        dispatch("save");
+      }else{
+        if(!$currentlyAddingNewNote){
           dispatch("save");
           $documentList.forEach((element)=>{
             if (element.id === $currentDocumentObject.id){
                 element.context= toMarkdown(editor.getHTML());
-                console.log(element.context);
             }
           })
           $documentList = $documentList;
         } else{
-          let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML()));
-          $documentList.push(newElement);
-          $documentList = $documentList;
-          $currentDocumentObject = newElement;
-          $currentlyAddingNewNote = false;
-          dispatch("saveScroll"); 
+          if (selectedDocType !==documentTypes[0]){
+            let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML()));
+            newElement.title = selectedDocType;
+            $documentList.push(newElement);
+            $documentList = $documentList;
+            $currentDocumentObject = newElement;
+            $currentlyAddingNewNote = false;
+            dispatch("save");
+          } else{ //must save the document
+            alert("Vennligst velg dokumenttype!");
+            changeEdit();
+          }  
         } 
+      }
+      
     }
     
 </script>
@@ -54,43 +78,51 @@
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-
+<!-- source: https://github.com/typewriter-editor/typewriter -->
 <div class="toolbar">
   <Toolbar {editor} let:active let:commands>
       <button
+        title="Overskrift"
         class="toolbar-button"
         class:active={active.header === 1}
         on:click={commands.header1}><i class="material-icons">title</i></button>
   
       <button
+        title="Underskrift"
         class="toolbar-button"
         class:active={active.header === 2}
         on:click={commands.header2}><i class="material-icons header2">title</i></button>
   
       <button
+        title="Uthevet"
         class="toolbar-button"
         class:active={active.bold}
         on:click={commands.bold}><i class="material-icons">format_bold</i></button>
   
       <button
+        title="Kursiv"
         class="toolbar-button"
         class:active={active.italic}
         on:click={commands.italic}><i class="material-icons">format_italic</i></button>
 
       <button
+        title="Punktliste"
         class="toolbar-button"
         class:active={active.bulletList}
         on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
       <button
+        title="Nummeret liste"
         class="toolbar-button"
         class:active={active.orderedList}
         on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
       <button
+        title="Angre"
         class="toolbar-button arrow"
         disabled={!active.undo}
         on:click={commands.undo}>←</button>
 
       <button
+        title="Gjøre om"
         class="toolbar-button arrow"
         disabled={!active.redo}
         on:click={commands.redo}>→</button>
@@ -101,7 +133,13 @@
       </div>
   </Toolbar>
 </div>
-
+{#if $currentlyAddingNewNote}
+  <div class="dropdown">
+    <select class="dropdown-menu" bind:value={selectedDocType} >
+      {#each documentTypes as value}<option {value}>{value}</option>{/each}
+    </select>
+  </div>
+{/if}
 <div class="textfield">
   {#if !$currentlyAddingNewNote} 
     <div class="title">{$currentDocumentObject.title}</div>
@@ -159,6 +197,25 @@
     margin-right: 0;
     display: inline-flex;
   }
+
+  .dropdown{
+    margin: 1.5vh;
+  }
+
+  .dropdown-menu {
+    background: #fff;
+    width: 20vh;
+    height: 40px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    cursor: pointer;
+  }
+
+  .dropdown-menu:hover {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
   
   .textfield{
     height: 100%;
@@ -182,5 +239,6 @@
     margin-top: 1vh;
     padding:0.7vh;
   }
+
 
 </style>

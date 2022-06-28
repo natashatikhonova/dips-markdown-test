@@ -3,7 +3,7 @@
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import { documentList, currentlyAddingNewNote} from './lib/stores/stores.js';
+  import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
 
 
   let showSideview = true;
@@ -46,8 +46,11 @@
       <div class = "document-list"><ScrollView/></div>
       <div class = "content-view"><ContentView /></div>
     {:else}
+
       <div class = "document-list" ><DocumentList/></div>
-      <div class = "content-view" ><ContentView/></div>
+      {#if $currentDocumentObject}
+        <div class = "content-view" ><ContentView/></div>
+      {/if}
     {/if}
     </div>
 
@@ -74,7 +77,7 @@
 
   .menu{
     height: 100%;
-    width: 4em;
+    width: 60px;
     text-align: center;
     border-bottom: solid;
     border-left: solid;

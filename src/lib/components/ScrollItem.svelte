@@ -1,20 +1,21 @@
 <script>
-    import {marked} from 'marked';
     import {currentDocumentObject, currentlyAddingNewNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
     export let document;
     export let deactivate = false; 
-    
+    export let htmlText
+
     const dispatch = createEventDispatcher();
 
     function editItem(){
         currentDocumentObject.set(document);
-        console.log($currentDocumentObject);
         dispatch('editItem');
     }
 
+ 
 </script>
+
 
 <div class="item-container">
     <div class="date">{document.date.toDateString()}</div>
@@ -29,12 +30,13 @@
             {/if}
         </div>
     </div>
-    <div class="content">
-        {@html  marked(document.context)}
+    <div>
+        {@html htmlText}
     </div>
 </div>
 
 <style>
+
     .item-container{
         padding: 2em;
     }
@@ -74,6 +76,11 @@
     }
     .visible{
         visibility: hidden;
+    }
+
+    .highlight {
+        border-bottom: 3px solid red;
+        color: red;
     }
 
 

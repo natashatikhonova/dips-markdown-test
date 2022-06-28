@@ -45,6 +45,7 @@
     //sorting by default
     sortByString(selectedHeader);
 
+    //if documentlist updates, then sort
     $: if ($documentList.length>lengde) {
         ascendingOrder = false;
         sortByString("date");
@@ -52,7 +53,7 @@
 
 </script>
 
-<div class="table-container">
+<div class="table-container" class:resizeable={$currentDocumentObject}>
     <table>
         <!--copied from https://svelte.dev/repl/f04266dcd39c4024b1e89084aa549844?version=3.31.2 -->
         <thead>
@@ -75,7 +76,7 @@
         <tbody>
             {#each $documentList as item}
                 {#if $currentDocumentObject === item}
-                    <DocumentItem document = {item} chosen = {true} />
+                    <DocumentItem document = {item} chosen = {true} /> <!--add color if file is chosen -->
                 {:else} 
                     <DocumentItem document = {item} chosen = {false} />
                 {/if}
@@ -110,11 +111,14 @@
 	}
 
     .table-container{
-        resize: horizontal;
         min-width: none;
         overflow-y: auto;
         height: 100%;
         width: 100%;
+    }
+    .resizeable{
+        resize: horizontal;
+        
     }
     .table-container thead th{
         position:sticky;

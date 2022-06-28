@@ -13,6 +13,7 @@
 
     const documentTypes = ["Velg dokumenttype", "Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
 
+    //Sets text in editor
     $: if ($currentDocumentObject && !$currentlyAddingNewNote){
         editor.setHTML(marked($currentDocumentObject.context));
     } else if($currentDocumentObject && $currentlyAddingNewNote){
@@ -21,10 +22,12 @@
    
     const dispatch = createEventDispatcher();
 
+    //Either editor shows or just the text
     function changeEdit(){
         dispatch('editable');
     }
 
+    //Sets the text back to the previous shown text
     function cancel(){
       changeEdit();
       dispatch("cancel");
@@ -36,20 +39,19 @@
       }
       
     }
-
+    //Saves the text if the text is not empty and stores the text
     function save(){
       changeEdit();
       if( toMarkdown(editor.getHTML()) === ""){
         alert("Tom notat!");
         $currentlyAddingNewNote=false;
-        dispatch("saveScroll");
+        dispatch("save");
       }else{
         if(!$currentlyAddingNewNote){
           dispatch("save");
           $documentList.forEach((element)=>{
             if (element.id === $currentDocumentObject.id){
                 element.context= toMarkdown(editor.getHTML());
-                console.log(element.context);
             }
           })
           $documentList = $documentList;
@@ -61,8 +63,8 @@
             $documentList = $documentList;
             $currentDocumentObject = newElement;
             $currentlyAddingNewNote = false;
-            dispatch("saveScroll");
-          } else{
+            dispatch("save");
+          } else{ //must save the document
             alert("Vennligst velg dokumenttype!");
             changeEdit();
           }  
@@ -76,43 +78,51 @@
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-
+<!-- source: https://github.com/typewriter-editor/typewriter -->
 <div class="toolbar">
   <Toolbar {editor} let:active let:commands>
       <button
+        title="Overskrift"
         class="toolbar-button"
         class:active={active.header === 1}
         on:click={commands.header1}><i class="material-icons">title</i></button>
   
       <button
+        title="Underskrift"
         class="toolbar-button"
         class:active={active.header === 2}
         on:click={commands.header2}><i class="material-icons header2">title</i></button>
   
       <button
+        title="Uthevet"
         class="toolbar-button"
         class:active={active.bold}
         on:click={commands.bold}><i class="material-icons">format_bold</i></button>
   
       <button
+        title="Kursiv"
         class="toolbar-button"
         class:active={active.italic}
         on:click={commands.italic}><i class="material-icons">format_italic</i></button>
 
       <button
+        title="Punktliste"
         class="toolbar-button"
         class:active={active.bulletList}
         on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
       <button
+        title="Nummeret liste"
         class="toolbar-button"
         class:active={active.orderedList}
         on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
       <button
+        title="Angre"
         class="toolbar-button arrow"
         disabled={!active.undo}
         on:click={commands.undo}>←</button>
 
       <button
+        title="Gjøre om"
         class="toolbar-button arrow"
         disabled={!active.redo}
         on:click={commands.redo}>→</button>

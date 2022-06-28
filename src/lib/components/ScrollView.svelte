@@ -7,7 +7,7 @@
     
     let show = false;
     let sortedData = $documentList;
-    let ascendingOrder = false;
+    let ascendingOrder = true;
     let lengde = $documentList.length;
     let searchValue = "";
     let searchResult = $documentList;
@@ -47,9 +47,11 @@
 	}
     
     $: if ($documentList.length>lengde) {
-        ascendingOrder = false;
+        ascendingOrder = true;
         sortByString("date");
     }
+    //sorting by default
+    sortByString("date");
 
     function wrapWord(el, word){
         var expr = new RegExp(word, "gi");
@@ -106,7 +108,7 @@
 </head>
 
     <div class="scroll-container">
-        <div class:container={show} class:full-container={!show}> 
+        <div class:container={show} class:full-container={!show} class:resizeable={$currentlyAddingNewNote}> 
             <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
             {#if searchResult.length > 0}
             <div class = "dokumenter">
@@ -121,12 +123,12 @@
 
             
             {#if !show}
-                <button class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
+                <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
             {/if}
         </div>
         {#if show}
             <div class="editor">
-                <Typewriter on:save = {save} on:cancel={cancel} on:saveScroll={save} />
+                <Typewriter on:save = {save} on:cancel={cancel} />
             </div>
         {/if}
 
@@ -162,8 +164,11 @@
         width: 100%;
         height: 100%;
         border: solid;
-        resize: horizontal;
+        
 
+    }
+    .resizeable{
+        resize: horizontal;
     }
 
     .container{

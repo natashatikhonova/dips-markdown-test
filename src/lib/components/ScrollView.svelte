@@ -2,10 +2,10 @@
     import {documentList} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
-    import {currentlyAddingNewNote, currentDocumentObject} from '../stores/stores.js';
+    import {currentlyAddingNewNote} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
-    
+
     let show = false;
     let sortedData = $documentList;
     let ascendingOrder = true;
@@ -22,8 +22,8 @@
     }
 
     function cancel(){
-        console.log("tester cancel")
         show = false;
+        console.log("tester cancel")
     }
 
     function addNote(){
@@ -139,9 +139,8 @@
     
                     </div>
                 </Pane>
-            {/if}
 
-            
+            {/if}
         </Splitpanes>
     </div>
 
@@ -174,7 +173,6 @@
         background-color: white;
         width: 100%;
         height: 100%;
-        border: solid;
         
 
     }
@@ -187,19 +185,18 @@
         background-color: white;
         width: 100%;
         height: 100%;
-        border: solid;
-        resize: vertical;
-        min-width: 20%;
+        min-width: 17%;
     }
 
     input[type=text] {
         position: absolute;
         top: 2vh;
-        right:14vh;
+        right:3.2vw;
         padding: 6px;
         border: solid;
         border-radius: 5px;
         font-size: 17px;
+        width:20%;
      }
 
 

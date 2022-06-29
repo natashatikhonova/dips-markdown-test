@@ -35,13 +35,14 @@
 
 </script>
 
+<header>
+<div class="menu">
+  <button on:click={changeView}>Bytt visning</button>
+  <button class:visible={!showSideview} on:click={addNote}>Ny notat</button>    
+</div> 
+</header>
+
 <body>
-  <div class="menu">
-    <button on:click={changeView}>Bytt visning</button>
-    <button class:visible={!showSideview} on:click={addNote}>Ny notat</button>    
-  </div> 
-
-
 
   {#if showSideview}
     <div class="side-container"  >
@@ -63,9 +64,11 @@
     </div>
 
   {:else}
-    <div class="scroll-container"><ScrollView/></div>
+    <div class="scroll-container"><ScrollView /></div>
   {/if}
-</body>
+
+  </body>
+
 
 <style>
 
@@ -82,23 +85,27 @@
     
   }
 
+  header{
+    width:100%;
+    height:7vh;
+  }
+
    body {
     margin: 0;
     padding: 0;
     display: flex;
-    align-items: flex-start;
-    height: 97vh;
+    height: 90vh;
     width:100%;
   }
 
   .menu{
-    height: 100%;
-    width: 60px;
-    text-align: center;
-    border-bottom: solid;
+    margin: 0;
+    padding: 0;
+    text-align: right;
+    border-top: solid;
+    border-right: solid;
     border-left: solid;
-    border-top:solid;
-    background-color: lightgray;
+    background-color: white;
   }
 
   .side-container{
@@ -106,9 +113,10 @@
     width: 100%;
     display: flex;
     flex-direction: row;
+    border: solid;
   }
 
-  .document-list{
+  /* .document-list{
     display: flex;
     flex-grow: 1;
     width: fit-content;
@@ -124,19 +132,24 @@
     height:100%;
     width: 100%;
     border: solid 1px black;
-   }
+   } */
 
   .scroll-container{
     height: 100%;
     width: 100%;
+    border: solid;
   }
 
   button{
-    background:whitesmoke;
-    border: thin;
-    width: 4em;
-    height:4em;
-    margin-top: 0.8vh;
+    display: inline-flex;
+    align-items: center;
+    background:#fff;
+    margin: 0.5em;
+    height:3em;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    cursor: pointer;
   }
 
   button:hover {

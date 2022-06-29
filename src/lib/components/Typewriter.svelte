@@ -141,8 +141,8 @@
   </div>
 {/if}
 <div class="textfield">
-  {#if !$currentlyAddingNewNote  } 
-  
+  {#if !$currentlyAddingNewNote  && $currentDocumentObject} 
+
     <div class="title">{$currentDocumentObject.title}</div>
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}

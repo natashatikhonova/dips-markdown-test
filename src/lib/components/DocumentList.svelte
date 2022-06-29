@@ -89,7 +89,6 @@
     
     table {
 		width: 100%;
-		border: 1px solid rgb(97, 96, 96);
         border-collapse: collapse;
         background-color: white;
 	}

@@ -37,8 +37,8 @@
 
 <header>
 <div class="menu">
-  <button on:click={changeView}>Bytt visning</button>
   <button class:visible={!showSideview} on:click={addNote}>Ny notat</button>    
+  <button on:click={changeView}>Bytt visning</button>
 </div> 
 </header>
 

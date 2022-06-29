@@ -59,6 +59,7 @@
     flex-direction: column;
     height: 100%;
     flex-grow:1;
+    background-color: white;
   }
   
   .header-bar{

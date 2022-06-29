@@ -53,7 +53,7 @@
 
 </script>
 
-<div class="table-container" class:resizeable={$currentDocumentObject}>
+<div class="table-container" >
     <table>
         <!--copied from https://svelte.dev/repl/f04266dcd39c4024b1e89084aa549844?version=3.31.2 -->
         <thead>
@@ -91,6 +91,7 @@
 		width: 100%;
 		border: 1px solid rgb(97, 96, 96);
         border-collapse: collapse;
+        background-color: white;
 	}
 	
 	th {
@@ -116,10 +117,7 @@
         height: 100%;
         width: 100%;
     }
-    .resizeable{
-        resize: horizontal;
-        
-    }
+
     .table-container thead th{
         position:sticky;
         top:0;

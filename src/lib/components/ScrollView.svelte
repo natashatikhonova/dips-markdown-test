@@ -2,8 +2,9 @@
     import {documentList} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
-    import {currentlyAddingNewNote} from '../stores/stores.js';
+    import {currentlyAddingNewNote, currentDocumentObject} from '../stores/stores.js';
     import { marked } from 'marked';
+    import { Pane, Splitpanes } from 'svelte-splitpanes';
     
     let show = false;
     let sortedData = $documentList;
@@ -21,7 +22,8 @@
     }
 
     function cancel(){
-        show = !show
+        console.log("tester cancel")
+        show = false;
     }
 
     function addNote(){
@@ -107,31 +109,40 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-    <div class="scroll-container">
-        <div class:container={show} class:full-container={!show} class:resizeable={$currentlyAddingNewNote}> 
-            <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
-            {#if searchResult.length > 0}
-            <div class = "dokumenter">
-
-                {#each searchResult as item}
-                    <ScrollItem htmlText = {highlightWord(marked(item.context))} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
-                {/each}
-            </div>
-            {:else}
-                <div class = "no-result"> Ingen Søkeresultater</div>
+<div class="scroll-container">
+    <Splitpanes horizontal={true}>
+            <Pane> 
+                <div class:container={show} class:full-container={!show} >
+                    <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
+                    {#if searchResult.length > 0}
+                    <div class = "dokumenter">
+        
+                        {#each searchResult as item}
+                            <ScrollItem htmlText = {highlightWord(marked(item.context))} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                        {/each}
+                    </div>
+                    {:else}
+                        <div class = "no-result"> Ingen Søkeresultater</div>
+                    {/if}
+        
+                    
+                    {#if !show}
+                        <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
+                    {/if}
+                </div>
+            </Pane>
+            {#if show}
+            
+                <Pane >
+                    <div class="editor">
+                        <Typewriter on:save = {save} on:cancel = {cancel} />
+    
+                    </div>
+                </Pane>
             {/if}
 
             
-            {#if !show}
-                <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
-            {/if}
-        </div>
-        {#if show}
-            <div class="editor">
-                <Typewriter on:save = {save} on:cancel={cancel} />
-            </div>
-        {/if}
-
+        </Splitpanes>
     </div>
 
 <style>
@@ -167,9 +178,7 @@
         
 
     }
-    .resizeable{
-        resize: horizontal;
-    }
+
 
     .container{
         overflow-y: auto; 
@@ -199,9 +208,11 @@
         flex-direction: column;
         overflow-y:auto;
         width: 100%;
+        height: 100%;
         background: #ffffff;
         border: solid 1px black;
         flex-grow: 1;
+        background-color: white;
     }
 
     .add-button{

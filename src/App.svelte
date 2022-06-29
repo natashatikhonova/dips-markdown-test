@@ -4,6 +4,7 @@
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
   import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
+  import { Pane, Splitpanes } from 'svelte-splitpanes';
 
 
   let showSideview = true;
@@ -38,19 +39,26 @@
   <div class="menu">
     <button on:click={changeView}>Bytt visning</button>
     <button class:visible={!showSideview} on:click={addNote}>Ny notat</button>    
-  </div>
+  </div> 
+
+
 
   {#if showSideview}
     <div class="side-container"  >
     {#if $currentlyAddingNewNote}
-      <div class = "document-list"><ScrollView/></div>
-      <div class = "content-view"><ContentView /></div>
+    <Splitpanes>
+      <Pane class = "document-list"><ScrollView/></Pane>
+      <Pane class = "content-view" minSize="30"><ContentView /></Pane>
+    </Splitpanes>
     {:else}
+    <Splitpanes>
 
-      <div class = "document-list" ><DocumentList/></div>
-      {#if $currentDocumentObject}
-        <div class = "content-view" ><ContentView/></div>
-      {/if}
+      <Pane class = "document-list" ><DocumentList/></Pane>
+    {#if $currentDocumentObject}
+      <Pane class = "content-view" minSize="20" ><ContentView/></Pane>
+    {/if}
+    </Splitpanes>
+
     {/if}
     </div>
 
@@ -64,6 +72,14 @@
   :root {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+  :global(.splitpanes__pane) {
+    box-shadow: 0 0 3px rgba(0, 0, 0, .2) inset;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    position: relative;
+    
   }
 
    body {
@@ -99,6 +115,7 @@
     height: 100%;
     background: #ffffff;
     border: solid 1px black;
+    
   }
 
   .content-view{

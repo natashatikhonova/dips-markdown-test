@@ -31,12 +31,12 @@
     function cancel(){
       changeEdit();
       dispatch("cancel");
-      $currentlyAddingNewNote=false;
       if($currentDocumentObject){
         editor.setHTML(marked($currentDocumentObject.context));
       } else{
         editor.setHTML("");
       }
+      $currentlyAddingNewNote=false;
       
     }
     //Saves the text if the text is not empty and stores the text
@@ -141,7 +141,8 @@
   </div>
 {/if}
 <div class="textfield">
-  {#if !$currentlyAddingNewNote} 
+  {#if !$currentlyAddingNewNote  } 
+  
     <div class="title">{$currentDocumentObject.title}</div>
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}

@@ -13,7 +13,7 @@
     let searchValue = "";
     let searchResult = $documentList;
 
-    $: searchResult = $documentList.filter(item => item.context.toLowerCase().includes(searchValue.toLowerCase()));
+    $: searchResult = $documentList.filter(item => (item.context.toLowerCase().includes(searchValue.toLowerCase()))  || (item.author.toLowerCase().includes(searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes(searchValue.toLowerCase()))|| (item.title.toLowerCase().includes(searchValue.toLowerCase())));
     
     function save(){ 
         show = false;
@@ -57,7 +57,6 @@
 
     function wrapWord(el, word){
         var expr = new RegExp(word, "gi");
-        console.log(expr)
         var nodes = [].slice.call(el.childNodes, 0);
         for (var i = 0; i < nodes.length; i++)
         {
@@ -116,9 +115,8 @@
                     <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
                     {#if searchResult.length > 0}
                         <div class = "dokumenter">
-            
                             {#each searchResult as item}
-                                <ScrollItem htmlText = {highlightWord(marked(item.context))} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                                <ScrollItem htmlText = {highlightWord(marked(item.context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                             {/each}
                         </div>
                     {:else}

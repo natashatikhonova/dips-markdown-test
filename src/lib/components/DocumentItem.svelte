@@ -3,14 +3,6 @@
     export let document;
     export let chosen = false;
 
-    let color = '';
-
-    $: if (chosen) {
-        color = ' #ccebff';
-    } else {
-        color = '#fff';
-    }
-
     function handleClick(){
         currentDocumentObject.set(document);
     }

@@ -12,7 +12,6 @@
         currentDocumentObject.set(document);
         dispatch('editItem');
     }
-
  
 </script>
 
@@ -76,11 +75,6 @@
     }
     .visible{
         visibility: hidden;
-    }
-
-    .highlight {
-        border-bottom: 3px solid red;
-        color: red;
     }
 
 

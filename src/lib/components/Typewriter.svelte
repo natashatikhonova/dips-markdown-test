@@ -128,8 +128,8 @@
         on:click={commands.redo}>→</button>
 
       <div class = "controls">
-        <button class=" toolbar-button save " on:click={save}> Lagre</button>
-        <button class = "toolbar-button save" on:click={cancel} >Avbryt</button>
+        <button title="Lagre"class="save " on:click={save}> <i class="material-icons">save</i></button>
+        <button title="Avbryt" class = "save" on:click={cancel} > <i class="material-icons">close</i></button>
       </div>
   </Toolbar>
 </div>
@@ -241,5 +241,24 @@
     padding:0.7vh;
   }
 
+  .save{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    width: 40px;
+    height: 40px;
+    margin-right: 4px;
+    border:none;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    cursor: pointer;
+  }
+
+  .save:hover{
+    color:#d43838;
+    border:none;
+    border-color: none;
+    box-shadow: none;
+  }  
 
 </style>

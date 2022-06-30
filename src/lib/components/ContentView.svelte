@@ -40,8 +40,8 @@
     {:else}
         <div class="header-bar">
           <div class="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>
-          <button class="edit-button" on:click={changeEdit}>Rediger</button>
-          <button class="edit-button" on:click={deleteNote}>Slett</button>
+          <button  title="Rediger" class="edit-button" on:click={changeEdit}><i class="material-icons">edit</i></button>
+          <button  title="Slett" class="edit-button" on:click={deleteNote}><i class="material-icons">delete</i></button>
         </div>
         <div class="textfield">
           <br>
@@ -82,19 +82,16 @@
   .edit-button {
     display: inline-flex;
     align-items: center;
-    background: #fff;
+    background: none;
     height: 40px;
     margin-right: 4px;
-    border-radius: 4px;
-    border: 1px solid #ced4da;
+    border:none;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;
   }
 
   .edit-button:hover {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    color: #d43838;
   }
 
   .doc-meta{

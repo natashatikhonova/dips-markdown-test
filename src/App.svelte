@@ -6,7 +6,6 @@
   import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
 
-
   let showSideview = true;
 
   //get data from file
@@ -28,47 +27,39 @@
     }
   }
 
-  function addNote(){
-    $currentlyAddingNewNote = true;
-  }
-
-
 </script>
 
+<head>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
 <header>
-<div class="menu">
-  <button class:visible={!showSideview} on:click={addNote}>Ny notat</button>    
-  <button on:click={changeView}>Bytt visning</button>
-</div> 
+  <img src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test" />
+  <h3>PASIENTJOURNAL</h3>
+  <button on:click={changeView}><i class="material-icons">autorenew</i></button>
 </header>
 
 <body>
-
   {#if showSideview}
     <div class="side-container"  >
-    {#if $currentlyAddingNewNote}
-    <Splitpanes>
-      <Pane class = "document-list"><ScrollView/></Pane>
-      <Pane class = "content-view" minSize="30"><ContentView /></Pane>
-    </Splitpanes>
-    {:else}
-    <Splitpanes>
-
-      <Pane class = "document-list" ><DocumentList/></Pane>
-    {#if $currentDocumentObject}
-      <Pane class = "content-view" minSize="20" ><ContentView/></Pane>
-    {/if}
-    </Splitpanes>
-
-    {/if}
+      {#if $currentlyAddingNewNote}
+        <Splitpanes>
+          <Pane ><ScrollView/></Pane>
+          <Pane minSize="30"><ContentView /></Pane>
+        </Splitpanes>
+      {:else}
+        <Splitpanes>
+          <Pane ><DocumentList/></Pane>
+        {#if $currentDocumentObject}
+          <Pane minSize="20" ><ContentView/></Pane>
+        {/if}
+        </Splitpanes>
+      {/if}
     </div>
-
   {:else}
     <div class="scroll-container"><ScrollView /></div>
   {/if}
-
   </body>
-
 
 <style>
 
@@ -76,36 +67,42 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
+
   :global(.splitpanes__pane) {
     box-shadow: 0 0 3px rgba(0, 0, 0, .2) inset;
     justify-content: center;
     align-items: center;
     display: flex;
     position: relative;
-    
   }
 
   header{
     width:100%;
     height:6vh;
+    background-color: #fcd7d7;
+    border-top: solid;
+    border-right: solid;
+    border-left: solid;
+    display: flex;
+    align-items: flex-start;
+    justify-content:space-between;
+  }
+
+  img{
+    margin: 0.5vh;
+    height:5vh;
+  }
+
+  h3{
+    margin-top:0.8%;
+    margin-bottom:0.8%;
   }
 
    body {
     margin: 0;
     padding: 0;
-    display: flex;
-    height: 90vh;
+    height: 91vh;
     width:100%;
-  }
-
-  .menu{
-    margin: 0;
-    padding: 0;
-    text-align: right;
-    border-top: solid;
-    border-right: solid;
-    border-left: solid;
-    background-color: white;
   }
 
   .side-container{
@@ -116,24 +113,6 @@
     border: solid;
   }
 
-  /* .document-list{
-    display: flex;
-    flex-grow: 1;
-    width: fit-content;
-    height: 100%;
-    background: #ffffff;
-    border: solid 1px black;
-    
-  }
-
-  .content-view{
-    display: flex;
-    flex-grow: 1;
-    height:100%;
-    width: 100%;
-    border: solid 1px black;
-   } */
-
   .scroll-container{
     height: 100%;
     width: 100%;
@@ -143,24 +122,23 @@
   button{
     display: inline-flex;
     align-items: center;
-    background:#fff;
-    margin: 0.5vh;
+    background: none;;
+    margin-top: 0.5vh;
+    margin-bottom: 0.5vh;
+    margin-right: 3vh;
     height:5vh;
-    border-radius: 4px;
-    border: 1px solid #ced4da;
+    border:none;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;
   }
 
-  button:hover {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  i{
+    font-size: xx-large;
   }
 
-   .visible{
-        visibility: hidden;
-    }
+  button:hover {
+      color:#d43838;
+  }
 
   @media (min-width: 480px) {
     h1 {

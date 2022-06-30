@@ -74,7 +74,7 @@
                         {
                             var span = el.insertBefore(document.createElement("span"), node);
                             span.appendChild(document.createTextNode(matches[n - 1]));
-                            span.style = "color:red; border-bottom: 3px solid red"
+                            span.style = "color:#d43838; border-bottom: 3px solid #d43838"
                         }
                         if (parts[n])
                         {
@@ -115,12 +115,12 @@
                 <div class:container={show} class:full-container={!show} >
                     <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
                     {#if searchResult.length > 0}
-                    <div class = "dokumenter">
-        
-                        {#each searchResult as item}
-                            <ScrollItem htmlText = {highlightWord(marked(item.context))} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
-                        {/each}
-                    </div>
+                        <div class = "dokumenter">
+            
+                            {#each searchResult as item}
+                                <ScrollItem htmlText = {highlightWord(marked(item.context))} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                            {/each}
+                        </div>
                     {:else}
                         <div class = "no-result"> Ingen Søkeresultater</div>
                     {/if}
@@ -132,7 +132,6 @@
                 </div>
             </Pane>
             {#if show}
-            
                 <Pane >
                     <div class="editor">
                         <Typewriter on:save = {save} on:cancel = {cancel} />
@@ -173,10 +172,7 @@
         background-color: white;
         width: 100%;
         height: 100%;
-        
-
     }
-
 
     .container{
         overflow-y: auto; 
@@ -214,7 +210,7 @@
 
     .add-button{
         position: absolute;
-        margin-bottom: 1vh;
+        margin-bottom: 4vh;
         font-size:xx-large;
         color:#ffffff;
         right:5vh;
@@ -222,7 +218,7 @@
         height: 8vh;
         align-items: center;
         justify-content: center;
-        background: #80bdff;
+        background: #d43838;
         border-radius: 50%;
         border: 1px solid #ced4da;
         transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
@@ -231,7 +227,7 @@
 
     .add-button:hover{
         border: solid 0.1em;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
     }
 
     .visible{

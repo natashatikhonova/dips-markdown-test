@@ -1,25 +1,28 @@
 <script>
-
     import DocumentItem from "./DocumentItem.svelte";
-    import {currentDocumentObject, documentList} from '../stores/stores.js';
+    import {currentDocumentObject, documentList, currentlyAddingNewNote} from '../stores/stores.js';
 
     let sortedData = $documentList;
     const tableHeaders = ["title", "date","author"];
     let selectedHeader = "date";
     let ascendingOrder = false;
     let lengde;
+
+    function addNote(){
+        $currentlyAddingNewNote = true;
+    }
         
-        // SORT BY NUMBER
-        /*
-        const sortByNumber = (colHeader) => {
-            sortedPersonData = sortedPersonData.sort((obj1, obj2) => {
-                return ascendingOrder ? Number(obj1[colHeader]) - Number(obj2[colHeader])
-                : Number(obj2[colHeader]) - Number(obj1[colHeader])
-            });
-            selectedHeader = colHeader;
-        }*/
+    // SORT BY NUMBER
+    /*
+    const sortByNumber = (colHeader) => {
+        sortedPersonData = sortedPersonData.sort((obj1, obj2) => {
+            return ascendingOrder ? Number(obj1[colHeader]) - Number(obj2[colHeader])
+            : Number(obj2[colHeader]) - Number(obj1[colHeader])
+        });
+        selectedHeader = colHeader;
+    }*/
         
-        // SORT BY STRINGs
+    // SORT BY STRINGs
 
     const sortByString = (colHeader) => {
         console.log("click tittel");
@@ -82,8 +85,10 @@
                 {/if}
             {/each} 
         </tbody>
+        
     </table>
 </div>
+<button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
 
 <style>
     
@@ -95,11 +100,12 @@
 	
 	th {
 		text-transform: uppercase;
-        background: #f2f2f2;
+        background: rgb(253, 253, 253);
 		cursor: pointer;
         text-align: left;
 		padding: 16px;
-        border-bottom:1px solid rgb(97, 96, 96);
+        border-top:0.5px solid rgb(0, 0, 0);
+        border-bottom:1.5px solid rgb(0, 0, 0);
 	}
 	
 	.order-icon {
@@ -120,6 +126,28 @@
     .table-container thead th{
         position:sticky;
         top:0;
+    }
+
+    .add-button{
+        position: absolute;
+        bottom: 4vh;
+        font-size:xx-large;
+        color:#ffffff;
+        right:5vh;
+        width:8vh;
+        height: 8vh;
+        align-items: center;
+        justify-content: center;
+        background: #d43838;
+        border-radius: 50%;
+        border: 1px solid #ced4da;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        cursor: pointer;
+    }
+
+    .add-button:hover{
+        border: solid 0.1em;
+        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
     }
 
 </style>

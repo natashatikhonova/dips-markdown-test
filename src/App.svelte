@@ -87,7 +87,7 @@
 
   header{
     width:100%;
-    height:7vh;
+    height:6vh;
   }
 
    body {
@@ -144,8 +144,8 @@
     display: inline-flex;
     align-items: center;
     background:#fff;
-    margin: 0.5em;
-    height:3em;
+    margin: 0.5vh;
+    height:5vh;
     border-radius: 4px;
     border: 1px solid #ced4da;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;

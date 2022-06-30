@@ -3,6 +3,9 @@
     import {createEventDispatcher} from 'svelte';
 
     export let document;
+    export let date;
+    export let title;
+    export let author;
     export let deactivate = false; 
     export let htmlText
 
@@ -17,11 +20,11 @@
 
 
 <div class="item-container">
-    <div class="date">{document.date.toDateString()}</div>
+    <div class="date">{@html date}</div>
     <div class="meta">
-        <div class="title">{document.title}</div>
+        <div class="title">{@html title}</div>
         <div class="author">
-            {document.author}
+            {@html author}
             {#if deactivate}
                 <button disabled>Rediger</button>
             {:else}

@@ -36,7 +36,7 @@
 <header>
   <img src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test" />
   <h3>PASIENTJOURNAL</h3>
-  <button on:click={changeView}><i class="material-icons">autorenew</i></button>
+  <button title="Bytt visning" on:click={changeView}><i class="material-icons">autorenew</i></button>
 </header>
 
 <body>

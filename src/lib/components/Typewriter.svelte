@@ -72,6 +72,7 @@
       }
       
     }
+
     
 </script>
 
@@ -146,7 +147,8 @@
     <div class="title">{$currentDocumentObject.title}</div>
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}
-  <div class="editor" use:asRoot = {editor} ></div>
+  <!-- svelte-ignore a11y-autofocus -->
+  <div class="editor" style="border:none" autofocus use:asRoot = {editor} ></div>
 </div>
 
 <style>
@@ -180,6 +182,7 @@
   }
 
   .toolbar-button.active {
+    border: solid 2px;
     border-color: #80bdff;
   }
 
@@ -220,7 +223,6 @@
   
   .textfield{
     height: 100%;
-    overflow-y: auto;
   }
 
   .title{
@@ -239,6 +241,8 @@
   .editor{
     margin-top: 1vh;
     padding:0.7vh;
+    height: 95%;
+    overflow-y: auto;
   }
 
   .save{

@@ -28,11 +28,9 @@
 
 </script>
 
-<head>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
 
 <header>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <img src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test" />
   <h3>PASIENTJOURNAL</h3>
   <div>
@@ -41,7 +39,7 @@
   </div>
 </header>
 
-<body>
+<div class="main">
   {#if showSideview}
     <div class="side-container"  >
       {#if $currentlyAddingNewNote}
@@ -61,7 +59,7 @@
   {:else}
     <div class="scroll-container"><ScrollView /></div>
   {/if}
-  </body>
+  </div>
 
 <style>
 
@@ -79,12 +77,11 @@
   }
 
   header{
-    width:100%;
-    height:6vh;
-    background-color: #fcd7d7;
-    border-top: solid;
-    border-right: solid;
-    border-left: solid;
+    width:100vw;
+    margin:0;
+    padding: 0;
+    height:5vh;
+    background-color: #dadada;
     display: flex;
     align-items: flex-start;
     justify-content:space-between;
@@ -92,19 +89,19 @@
 
   img{
     margin: 0.5vh;
-    height:5vh;
+    height:4vh;
   }
 
   h3{
-    margin-top:0.8%;
-    margin-bottom:0.8%;
+    margin-top:0.5%;
+    margin-bottom:0.5%;
   }
 
-   body {
+   .main {
     margin: 0;
     padding: 0;
-    height: 91vh;
-    width:100%;
+    height: 95vh;
+    width:100vw;
   }
 
   .side-container{
@@ -112,13 +109,14 @@
     width: 100%;
     display: flex;
     flex-direction: row;
-    border: solid;
+
+    
   }
 
   .scroll-container{
     height: 100%;
     width: 100%;
-    border: solid;
+   
   }
 
   button{
@@ -127,8 +125,8 @@
     background: none;;
     margin-top: 0.5vh;
     margin-bottom: 0.5vh;
-    margin-right: 3vh;
-    height:5vh;
+    margin-right: 2vh;
+    height:4vh;
     border:none;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;

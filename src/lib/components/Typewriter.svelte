@@ -120,13 +120,13 @@
         title="Angre"
         class="toolbar-button arrow"
         disabled={!active.undo}
-        on:click={commands.undo}>←</button>
+        on:click={commands.undo}><i class="material-icons">undo</i></button>
 
       <button
         title="Gjøre om"
         class="toolbar-button arrow"
         disabled={!active.redo}
-        on:click={commands.redo}>→</button>
+        on:click={commands.redo}><i class="material-icons">redo</i></button>
 
       <div class = "controls">
         <button title="Lagre"class="save " on:click={save}> <i class="material-icons">save</i></button>

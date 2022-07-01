@@ -187,8 +187,9 @@
         top: 2vh;
         right:3.2vw;
         padding: 6px;
-        border: solid;
-        border-radius: 5px;
+        border: none;
+        border-bottom: solid;
+       
         font-size: 17px;
         width:20%;
      }
@@ -231,4 +232,5 @@
     .visible{
         visibility: hidden;
     }
+
 </style>

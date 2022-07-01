@@ -18,6 +18,9 @@
  
 </script>
 
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
 
 <div class="item-container">
     <div class="date">{@html date}</div>
@@ -26,9 +29,9 @@
         <div class="author">
             {@html author}
             {#if deactivate}
-                <button disabled>Rediger</button>
+                <button title ="Rediger" disabled><i class="material-icons">edit</i></button>
             {:else}
-                <button class:visible={$currentlyAddingNewNote} on:click={editItem}>Rediger</button>
+                <button title ="Rediger" class:visible={$currentlyAddingNewNote} on:click={editItem}><i class="material-icons">edit</i></button>
             {/if}
         </div>
     </div>
@@ -45,6 +48,7 @@
 
     .item-container:hover{
         background-color: whitesmoke
+        
     }
 
     .meta{
@@ -58,23 +62,21 @@
     }
     
     button{
-        right:10vh;
-        width:12vh;
-        margin-left: 2vh;
-        height: 40px;
+        right:10vw;
+        width:2vw;
+        margin-left: 2vw;
+        padding: 0;
+        height: 4vh;
         align-items: center;
         justify-content: center;
         background: #fff;
-        border-radius: 4px;
-        border: 1px solid #ced4da;
-        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        border:none;
         cursor: pointer;
+        background: none;
     }
 
     button:hover{
-        border: solid 0.1em;
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        color: #d43838;
     }
     .visible{
         visibility: hidden;

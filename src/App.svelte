@@ -1,4 +1,5 @@
 <script>
+  import documents from './assets/documents.json'
   import { DocumentObject } from './lib/document';
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
@@ -9,9 +10,7 @@
   let showSideview = true;
 
   //get data from file
-  fetch('src/data/documents.json')
-  .then(response => response.json())
-  .then(jsonResponse => jsonResponse.documents.forEach(putInDocumentList));  
+  documents.forEach(putInDocumentList);  
 
   function putInDocumentList(item){
     let document = new DocumentObject(item.id, item.date, item.content);
@@ -36,7 +35,10 @@
 <header>
   <img src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test" />
   <h3>PASIENTJOURNAL</h3>
-  <button title="Bytt visning" on:click={changeView}><i class="material-icons">autorenew</i></button>
+  <div>
+    <button disabled={showSideview} title="Liste visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
+    <button disabled={!showSideview} title="Kontinuerlig visning" on:click={changeView}><i class="material-icons">horizontal_split</i></button>
+  </div>
 </header>
 
 <body>
@@ -132,12 +134,19 @@
     cursor: pointer;
   }
 
+  button
+
   i{
     font-size: xx-large;
   }
 
   button:hover {
-      color:#d43838;
+    color:#666363;
+  }
+
+  button:disabled,
+  button[disabled]{
+    color:#d43838;
   }
 
   @media (min-width: 480px) {

@@ -4,6 +4,8 @@
     import Typewriter from './Typewriter.svelte';
     import {editor} from '../stores/stores.js';
 
+    export let goBackButton = false;
+
     let edit = ($currentlyAddingNewNote)? true: false;
 
     function changeEdit(){
@@ -26,6 +28,9 @@
     } else if($currentlyAddingNewNote){
         editor.setHTML(marked(""));
     } 
+    function goBack(){
+      $currentDocumentObject = null;
+    }
        
 </script>
 
@@ -39,6 +44,9 @@
         <Typewriter on:editable={changeEdit} />
     {:else}
         <div class="header-bar">
+          {#if goBackButton } 
+            <button title = "tilbake" class="back" on:click={goBack}><i class="material-icons">arrow_back</i></button>
+          {/if}
           <div class="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>
           <button  title="Rediger" class="edit-button" on:click={changeEdit}><i class="material-icons">edit</i></button>
           <button  title="Slett" class="edit-button" on:click={deleteNote}><i class="material-icons">delete</i></button>
@@ -69,6 +77,15 @@
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
     border-bottom: solid 1px black;
+  }
+  .back {
+    display: inline-flex;
+    align-items: center;
+    background: none;
+    height: 40px;
+    border:none;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    cursor: pointer;
   }
 
   .doc-title{

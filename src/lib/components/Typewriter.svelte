@@ -159,6 +159,7 @@
     padding: 8px;
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
+    min-width: 440px;
   }
 
   .toolbar-button {
@@ -198,7 +199,7 @@
 
   .controls{
     margin-left: auto;
-    margin-right: 0;
+    margin-right: 6px;
     display: inline-flex;
   }
 

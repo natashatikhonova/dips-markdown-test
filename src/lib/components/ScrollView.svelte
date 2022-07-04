@@ -6,7 +6,7 @@
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
 
-    let show = false;
+    export let show = false;
     let sortedData = $documentList;
     let ascendingOrder = true;
     let lengde = $documentList.length;

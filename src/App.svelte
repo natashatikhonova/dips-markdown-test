@@ -6,6 +6,7 @@
   import ScrollView from './lib/components/ScrollView.svelte';
   import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
+import ScrollItem from './lib/components/ScrollItem.svelte';
 
   let showSideview = true;
 
@@ -25,6 +26,11 @@
       showSideview = !showSideview;
     }
   }
+  let w
+  let h
+  $: w = window.innerWidth;
+  $: h = window.innerHeight;
+
 
 </script>
 
@@ -43,15 +49,24 @@
   {#if showSideview}
     <div class="side-container"  >
       {#if $currentlyAddingNewNote}
-        <Splitpanes>
-          <Pane ><ScrollView/></Pane>
-          <Pane minSize="30"><ContentView /></Pane>
-        </Splitpanes>
+        {#if w > 900}
+          <Splitpanes>
+            <Pane ><ScrollView/></Pane>
+            <Pane minSize="30"><ContentView /></Pane>
+          </Splitpanes>
+        {:else}
+          <ScrollView show={true}/>
+        {/if}
       {:else}
         <Splitpanes>
           <Pane ><DocumentList/></Pane>
         {#if $currentDocumentObject}
-          <Pane minSize="20" ><ContentView/></Pane>
+          {#if w < 600}
+            <Pane size="100"><ContentView goBackButton={true}/></Pane>
+            
+          {:else}
+            <Pane minSize="20"><ContentView/></Pane>
+          {/if}
         {/if}
         </Splitpanes>
       {/if}
@@ -85,6 +100,7 @@
     display: flex;
     align-items: flex-start;
     justify-content:space-between;
+    
   }
 
   img{
@@ -132,9 +148,7 @@
     cursor: pointer;
   }
 
-  button
-
-  i{
+  button i{
     font-size: xx-large;
   }
 
@@ -147,14 +161,30 @@
     color:#d43838;
   }
 
-  @media (min-width: 480px) {
-    h1 {
-      max-width: none;
+
+  /* Tilpasser skjermen og innholdet til vinduet */
+  @media (max-width: 430px) {
+    button i {
+      font-size: x-large;
+    }
+    img {
+      height: small;
+    }
+    h3 {
+      font-size: medium;
     }
 
-    p {
-      max-width: none;
+  }
+
+  @media (max-height: 1000px) {
+    header {
+      height: 35px;
     }
+
+    img {
+      height: 22px;
+    }
+
   }
 
 </style>

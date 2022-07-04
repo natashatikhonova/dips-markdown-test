@@ -7,6 +7,7 @@
   import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
 import ScrollItem from './lib/components/ScrollItem.svelte';
+import Typewriter from './lib/components/Typewriter.svelte';
 
   let showSideview = true;
 
@@ -40,7 +41,7 @@ import ScrollItem from './lib/components/ScrollItem.svelte';
   <img src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test" />
   <h3>PASIENTJOURNAL</h3>
   <div>
-    <button disabled={showSideview} title="Liste visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
+    <button disabled={showSideview} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
     <button disabled={!showSideview} title="Kontinuerlig visning" on:click={changeView}><i class="material-icons">horizontal_split</i></button>
   </div>
 </header>
@@ -50,13 +51,18 @@ import ScrollItem from './lib/components/ScrollItem.svelte';
     <div class="side-container"  >
       {#if $currentlyAddingNewNote}
         {#if w > 900}
-          <Splitpanes>
+        <Splitpanes>
+          <Pane ><ScrollView/></Pane>
+          <Pane minSize="30"><ContentView /></Pane>
+        </Splitpanes>
+        {:else} <!-- For smaaler platforms -->
+          <Splitpanes horizontal={true}>
             <Pane ><ScrollView/></Pane>
-            <Pane minSize="30"><ContentView /></Pane>
+            <Pane ><ContentView/></Pane><!--  Uses the typewriter in this component -->
           </Splitpanes>
-        {:else}
-          <ScrollView show={true}/>
+          
         {/if}
+
       {:else}
         <Splitpanes>
           <Pane ><DocumentList/></Pane>

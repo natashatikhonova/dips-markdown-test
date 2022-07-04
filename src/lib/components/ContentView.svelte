@@ -6,7 +6,7 @@
 
     export let goBackButton = false;
 
-    let edit = ($currentlyAddingNewNote)? true: false;
+    let edit = $currentlyAddingNewNote;
 
     function changeEdit(){
           edit=!edit;

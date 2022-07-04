@@ -62,9 +62,20 @@
         <thead>
             <tr>
                 {#each tableHeaders as header}
-                    <th class:highlighted={selectedHeader === header}
-                                on:click={() => sortByString(header)}>
-                            {header.replace("_", " ")}
+                    <th class:highlighted={selectedHeader === header} on:click={() => sortByString(header)}>
+                        <!-- {header.replace("_", " ")} -->
+                        <!-- Swithes language to norwegian -->
+                        {#if header == "title"}
+                            {"Tittel".replace("_", " ")}
+                        
+                        {:else if header == "date"}
+                            {"Dato".replace("_", " ")}
+                        
+                        {:else if header == "author"}
+                            {"Forfatter".replace("_", " ")}
+
+                        {/if}
+                          
             
                         {#if header === selectedHeader}	
                             <span class="order-icon" on:click={() => ascendingOrder = !ascendingOrder}>

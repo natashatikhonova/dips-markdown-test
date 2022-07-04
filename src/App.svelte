@@ -6,8 +6,8 @@
   import ScrollView from './lib/components/ScrollView.svelte';
   import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
-import ScrollItem from './lib/components/ScrollItem.svelte';
-import Typewriter from './lib/components/Typewriter.svelte';
+ 
+
 
   let showSideview = true;
 
@@ -19,6 +19,8 @@ import Typewriter from './lib/components/Typewriter.svelte';
     $documentList.push(document);
     $documentList = $documentList;
   }
+
+
 
   function changeView(){
     if($currentlyAddingNewNote){

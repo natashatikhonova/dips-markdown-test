@@ -5,6 +5,7 @@
     import {currentlyAddingNewNote} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
+    import SearchResults from './searchResults.svelte';
 
     let show = false;
     let sortedData = $documentList;
@@ -107,7 +108,7 @@
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-
+<SearchResults/>
 <div class="scroll-container">
     <Splitpanes horizontal={true}>
             <Pane> 

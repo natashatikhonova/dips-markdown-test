@@ -53,12 +53,12 @@ import Typewriter from './lib/components/Typewriter.svelte';
         {#if w > 900}
         <Splitpanes>
           <Pane ><ScrollView/></Pane>
-          <Pane minSize="30"><ContentView /></Pane>
+          <Pane minSize="30"><ContentView width={w} /></Pane>
         </Splitpanes>
         {:else} <!-- For smaaler platforms -->
           <Splitpanes horizontal={true}>
             <Pane ><ScrollView/></Pane>
-            <Pane ><ContentView/></Pane><!--  Uses the typewriter in this component -->
+            <Pane ><ContentView width={w}/></Pane><!--  Uses the typewriter in this component -->
           </Splitpanes>
           
         {/if}
@@ -68,10 +68,10 @@ import Typewriter from './lib/components/Typewriter.svelte';
           <Pane ><DocumentList/></Pane>
         {#if $currentDocumentObject}
           {#if w < 600}
-            <Pane size="100"><ContentView goBackButton={true}/></Pane>
+            <Pane size="100"><ContentView goBackButton={true} width={w}/></Pane>
             
           {:else}
-            <Pane minSize="20"><ContentView/></Pane>
+            <Pane minSize="30"><ContentView width={w}/></Pane>
           {/if}
         {/if}
         </Splitpanes>
@@ -127,7 +127,7 @@ import Typewriter from './lib/components/Typewriter.svelte';
   }
 
   .side-container{
-    height: 100%;
+    height: calc(100%);
     width: 100%;
     display: flex;
     flex-direction: row;

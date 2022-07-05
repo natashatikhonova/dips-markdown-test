@@ -5,6 +5,7 @@
     import {editor} from '../stores/stores.js';
 
     export let goBackButton = false;
+    export let width;
 
     let edit = $currentlyAddingNewNote;
 
@@ -38,7 +39,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
   
-<div class="content-container">
+<div class="content-container" class:mobile={width<600}>
   {#if $currentDocumentObject || $currentlyAddingNewNote}
     {#if edit} 
         <Typewriter on:editable={changeEdit} />
@@ -73,7 +74,9 @@
   .header-bar{
     display: flex;
     background: #eee;
-    padding: 8px;
+    margin-left:1%;
+    margin-right:1%;
+    padding: 0.6%;
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
     border-bottom: solid 1px black;
@@ -124,6 +127,10 @@
     
   .editor{
     padding: 1vh;
+  }
+
+  .mobile{
+    width: calc(100vw);
   }
 
 </style>

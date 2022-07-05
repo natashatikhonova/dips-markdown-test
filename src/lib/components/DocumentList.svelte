@@ -1,7 +1,8 @@
 <script>
     import DocumentItem from "./DocumentItem.svelte";
     import {currentDocumentObject, documentList, currentlyAddingNewNote} from '../stores/stores.js';
-
+    let w
+    $: w = window.innerWidth;
     let sortedData = $documentList;
     const tableHeaders = ["title", "date","author"];
     let selectedHeader = "date";
@@ -99,7 +100,7 @@
         
     </table>
 </div>
-<button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
+<button title="Ny notat"class="add-button" class:mobile = {w<600} class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
 
 <style>
     
@@ -115,7 +116,6 @@
 		cursor: pointer;
         text-align: left;
 		padding: 16px;
-        border-top:0.5px solid rgb(0, 0, 0);
         border-bottom:1.5px solid rgb(0, 0, 0);
 	}
 	
@@ -159,6 +159,14 @@
     .add-button:hover{
         border: solid 0.1em;
         box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
+    }
+
+    .mobile{
+        right: 2vh;
+        bottom: 3vh;
+        height: 6vh;
+        width: 6vh;
+        font-size:x-large;
     }
 
 </style>

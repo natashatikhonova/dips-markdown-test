@@ -13,6 +13,11 @@
 
     const documentTypes = ["Velg dokumenttype", "Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
 
+    let w
+    let h
+    $: w = window.innerWidth;
+    $: h = window.innerHeight;
+
     //Sets text in editor
     $: if ($currentDocumentObject && !$currentlyAddingNewNote){
         editor.setHTML(marked($currentDocumentObject.context));
@@ -86,51 +91,59 @@
         title="Overskrift"
         class="toolbar-button"
         class:active={active.header === 1}
+        class:mobile={w<600}
         on:click={commands.header1}><i class="material-icons">title</i></button>
   
       <button
         title="Underskrift"
         class="toolbar-button"
         class:active={active.header === 2}
+        class:mobile={w<600}
         on:click={commands.header2}><i class="material-icons header2">title</i></button>
   
       <button
         title="Uthevet"
         class="toolbar-button"
         class:active={active.bold}
+        class:mobile={w<600}
         on:click={commands.bold}><i class="material-icons">format_bold</i></button>
   
       <button
         title="Kursiv"
         class="toolbar-button"
         class:active={active.italic}
+        class:mobile={w<600}
         on:click={commands.italic}><i class="material-icons">format_italic</i></button>
 
       <button
         title="Punktliste"
         class="toolbar-button"
         class:active={active.bulletList}
+        class:mobile={w<600}
         on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
       <button
         title="Nummeret liste"
         class="toolbar-button"
         class:active={active.orderedList}
+        class:mobile={w<600}
         on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
       <button
         title="Angre"
         class="toolbar-button arrow"
         disabled={!active.undo}
+        class:mobile={w<600}
         on:click={commands.undo}><i class="material-icons">undo</i></button>
 
       <button
         title="Gjøre om"
         class="toolbar-button arrow"
         disabled={!active.redo}
+        class:mobile={w<600}
         on:click={commands.redo}><i class="material-icons">redo</i></button>
 
       <div class = "controls">
-        <button title="Lagre"class="save " on:click={save}> <i class="material-icons">save</i></button>
-        <button title="Avbryt" class = "save" on:click={cancel} > <i class="material-icons">close</i></button>
+        <button title="Lagre"class="save " class:mobile={w<600} on:click={save}> <i class="material-icons">save</i></button>
+        <button title="Avbryt" class = "save" class:mobile={w<600} on:click={cancel} > <i class="material-icons">close</i></button>
       </div>
   </Toolbar>
 </div>
@@ -156,10 +169,12 @@
   .toolbar {
     display: flex;
     background: #eee;
-    padding: 8px;
+    margin-left:1%;
+    margin-right:2%;
+    padding: 0.6%;
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
-    min-width: 440px;
+    min-width: 15vw;
   }
 
   .toolbar-button {
@@ -167,9 +182,10 @@
     align-items: center;
     justify-content: center;
     background: #fff;
-    width: 40px;
-    height: 40px;
-    margin-right: 4px;
+    margin-top: 0.5vh;
+    width: calc(2.5vw);
+    height: calc(4.5vh);
+    margin-right: calc(0.5vw);
     border-radius: 4px;
     border: 1px solid #ced4da;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
@@ -199,12 +215,12 @@
 
   .controls{
     margin-left: auto;
-    margin-right: 6px;
+    margin-right: calc(0.5vw);
     display: inline-flex;
   }
 
   .dropdown{
-    margin: 1.5vh;
+    margin: 2vh;
   }
 
   .dropdown-menu {
@@ -224,6 +240,8 @@
   
   .textfield{
     height: 100%;
+    margin-right: 1vh;
+    margin-left: 1vh;
   }
 
   .title{
@@ -241,7 +259,9 @@
 
   .editor{
     margin-top: 1vh;
-    padding:0.7vh;
+    margin-right: 1vh;
+    margin-left: 1vh;
+    padding:0.5vh;
     height: 95%;
     overflow-y: auto;
   }
@@ -251,9 +271,9 @@
     align-items: center;
     justify-content: center;
     background: none;
-    width: 40px;
-    height: 40px;
-    margin-right: 4px;
+    width: calc(3vw);
+    height: calc(5vh);
+    margin-right: calc(0.3vh);
     border:none;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;
@@ -265,5 +285,12 @@
     border-color: none;
     box-shadow: none;
   }  
+
+
+  .mobile{
+    margin: 1vw;
+    height: calc(4vh);
+    width: calc(7vw);
+  }
 
 </style>

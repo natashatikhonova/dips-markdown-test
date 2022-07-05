@@ -8,6 +8,7 @@
     import toMarkdown from 'to-markdown';
     import {createEventDispatcher} from 'svelte';
     import { DocumentObject } from '../document.js';
+import { ParseMarkdown } from '../ParseMarkdown.js';
 
     let selectedDocType = "Velg dokumenttype";
 
@@ -57,8 +58,16 @@
           $documentList = $documentList;
         } else{
           if (selectedDocType !==documentTypes[0]){
-            let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML()));
+            let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML())+"\n");
             newElement.title = selectedDocType;
+
+            //Lager et tre over markdown overskriftene i teksten
+            let parse = new ParseMarkdown();
+            console.log("Før parse")
+            let tree = parse.parseAndSetIntoTree(newElement) //Her henger programmet!!. FIKSET:)
+            console.log("Etter parse")
+            newElement.markdownTree = tree;
+
             $documentList.push(newElement);
             $documentList = $documentList;
             $currentDocumentObject = newElement;

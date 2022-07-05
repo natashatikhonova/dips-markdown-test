@@ -17,10 +17,10 @@ export class ParseMarkdown{
         let indeks = 0;
         while(indeks < content.length) {
             let char = content.charAt(indeks);
+
     
             if (char == "#") {
-                if (substring != "" && started) {
-                    overskrift = markdownCode + overskrift;
+                if (substring != "" && started) {;
                     // console.log(markdownCode)
                     // console.log(overskrift)
                     newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring);
@@ -53,6 +53,7 @@ export class ParseMarkdown{
                         overskrift += char;
                         indeks++;
                         char = content.charAt(indeks);
+                        console.log("newLine check")
                     }
                     overskrift += char;
                     indeks++;
@@ -69,10 +70,9 @@ export class ParseMarkdown{
             }
         }
 
-        if (substring != "" && started) {
-            console.log("Siste node")
-            overskrift = markdownCode + overskrift;
+        if (substring != "" && started) { //Legger til den siste noden
             newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring)
+            this.tree.insert(possible_parent, newNode)
             // newNode.printNode(newNode)
         }
         return this.tree

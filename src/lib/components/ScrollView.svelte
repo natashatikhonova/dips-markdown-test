@@ -160,7 +160,7 @@
                 {:else}
                 <Pane size="10" maxSize="40">
                     <div class="searched-titles">
-                        <FilteredByTitles/>
+                        <FilteredByTitles searched_value = {searchValue}/>
                     </div>
                 </Pane>
                 {/if}
@@ -182,7 +182,7 @@
         color: #d43838;
     }
     .searched-titles{
-        background-color: #d43838;
+        background-color: white;
         height: 100%;
         width: 100%;
     }

@@ -1,90 +1,26 @@
-import { DocumentObject } from "./document";
 
 export class MarkdownNode{
-    constructor(id, overskrift, content, level, documentObject){
+    constructor(id, markdownCode, overskrift, content){
         this.id = id;
-        this.overskrft = overskrift;
+        this.markdownCode = markdownCode;
+        this.overskrift = overskrift;
         this.content = content;
-        this.parent = null;
-        this.level = level; //Overskrift <nummer>
+        this.level = null; //Hvilket nivå i treet/ settes når den blir satt inn i treet
+        this.parent = null; 
         this.children = [];
-        this.documentObject = documentObject;
     }
     isLeaf(){
         return this.children.length == 0;
     }
     printNode(node){
-        console.log(node.id)
-        console.log(node.overskrift)
-        console.log(node.content)
-        console.log(node.level)
-        console.log(node.documentObject)
-
-
+        console.log("\nNODEN: ")
+        console.log("id: " + node.id)
+        console.log("Overskrift: " + node.overskrift)
+        console.log("Content: " + node.content)
+        console.log("Level: " + node.level)
+        console.log("\n")
     }
 }
-export class Tree {
-    contructor() {
-        this.root = new MarkdownNode(0, "Root" , "", 0)
-    }
-
-    insert(newNode) {
-        BFS(this.root, newNode)
-
-    }
-}
-
-function BFS(node, newNode){
-    let last_level_added_dummy = -1;
-    let previousNode = node;
-    let currentNode;
-    let q = new Queue();
-    let explored = new Set();
-
-    q.enqueue(node);
-    explored.add(node);
-
-    // We'll continue till our queue gets empty
-    while (!q.isEmpty()) {
-        currentNode = q.dequeue();
-
-        if (previousNode.level != currentNode.level){ //Går til et nytt nivå
-            if (last_level_added_dummy != previousNode.level) {
-                //lager dummyNode
-                let dummyNode = new MarkdownNode(-1, "Dummy", "", previousNode.level, newNode.documentObject)
-                //Setter inn i forrige nivå
-                dummyNode.parent = previousNode.parent;
-                previousNode.parent.children.push(dummyNode)
-                last_level_added_dummy = previousNode.level;
-            }
-        }
-        
-        if ( (currentNode.level == newNode.level-1) && (currentNode.documentObject.id == newNode.documentObject.id) ) {
-            if (currentNode.documentObject.id == newNode.documentObject.id){
-                currentNode.children.push(newNode)
-                newNode.parent = currentNode; //Setter current node til å være foreldrenoden til
-                return;
-            } 
-        }
-
-        console.log(currentNode);
-  
-        // 1. In the edges object, we search for nodes this node is directly connected to.
-        // 2. We filter out the nodes that have already been explored.
-        // 3. Then we mark each unexplored node as explored and add it to the queue.
-
-        let notExplored = currentNode.children.filter(n => !explored.has(n));
-        notExplored.forEach(n => {
-           explored.add(n);
-           q.enqueue(n);
-        });
-        previousNode = currentNode;
-
-     }
-}
-
-// program to implement queue data structure
-
 class Queue {
     constructor() {
         this.items = [];
@@ -109,16 +45,70 @@ class Queue {
     
     // check if the queue is empty
     isEmpty(){
-       return this.items.length == 0;
+    return this.items.length == 0;
     }
-   
+
     // the size of the queue
     size(){
         return this.items.length;
     }
- 
+
     // empty the queue
     clear(){
         this.items = [];
     }
 }
+
+export class Tree {
+    root = new MarkdownNode(0, "", "Root" , "")
+
+    insert(parent, newNode) { 
+        newNode.level = parent.level+1;
+        parent.children.push(newNode)
+        newNode.parent = parent; 
+    }
+    // program to implement queue data structure
+
+    traverseBFS() {
+        //if there is no root, return false
+        if (!this.root) {
+          return [];
+        }
+        //start a new Queue
+        let queue = new Queue();
+        //keep a tally of all values in the tree
+        let treeValues = [];
+        //add root to queue
+        queue.enqueue(this.root);
+        //while queue is not empty
+        while (queue.size() !== 0) {
+          //get TreeNode Children
+          let nodeChildren = queue.items[0].children;
+          //if node has children, loop and add each to queue
+          if (nodeChildren.length !== 0) {
+            nodeChildren.forEach(child => queue.enqueue(child));
+          }
+          //push the first item in the queue to the tree values
+          treeValues.push(queue.items[0]);
+          //remove first node from queue
+          queue.dequeue();
+        }
+        //return values, should be all TreeNodes
+        return treeValues;
+    }
+    
+    indent = 1;
+    print_tree(tree) {
+        tree.forEach((node) => {
+            console.log('--' + Array(this.indent).join('--'), node.overskrift);
+            if(node.children) {
+                this.indent ++;
+                this.print_tree(node.children);
+            }
+            if(tree.indexOf(node) === tree.length - 1) {
+                this.indent--;
+            }
+        })
+    }
+}
+

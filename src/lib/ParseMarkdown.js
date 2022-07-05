@@ -1,20 +1,17 @@
 import { MarkdownNode, Tree } from './MarkdownTree';
-import { DocumentObject } from './document';
 
 export class ParseMarkdown{
     idCounter = 1;
-    constructor() {
-        this.tree = new Tree();
-    }
 
     parseAndSetIntoTree(object){
-    
+        this.tree = new Tree();
         let content = object.context;
         let substring = "";
         let markdownCode = "";
         let overskrift = "";
         let newNode;
-        let level;
+        let prevNode = this.tree.root;
+        let possible_parent = null;
         let started = false
 
         let indeks = 0;
@@ -23,56 +20,61 @@ export class ParseMarkdown{
     
             if (char == "#") {
                 if (substring != "" && started) {
-                    overskrift = markdownCode.concat(overskrift);
-                    newNode = new MarkdownNode(this.idCounter++, overskrift, substring, level, object);
-                    newNode.printNode(newNode)
-                    this.tree.insert(newNode);
+                    overskrift = markdownCode + overskrift;
+                    // console.log(markdownCode)
+                    // console.log(overskrift)
+                    newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring);
+                    // newNode.printNode(newNode)
+                    this.tree.insert(possible_parent, newNode);
+                    prevNode = newNode;
                 }
-                started = true;
-
+                overskrift = ""
+                substring = ""
+            
                 markdownCode = "#";
                 indeks++;
-                while (content.charAt[indeks] == "#") {
-                    markdownCode = markdownCode + "#";
+                //Lagrer alle hashtaggen i markdownCode variabelen
+                while (content.charAt(indeks) == "#") {
+                    // console.log(content.charAt(indeks))
+                    markdownCode = markdownCode + "#" ;
                     indeks++;
                 }
-
-                if (markdownCode == "#") { //Overskrift 1
-                    level = 1;
-                } else if (markdownCode == "##") { //Overskrift 2
-                    level = 2;
-                    
-                } else if (markdownCode == "###") { //Overskrift 3
-                    level = 3;
-    
-                } else if (markdownCode == "####") { //Overskrift 4
-                    level = 4;
-    
-                } else if (markdownCode == "#####") { //Overskrift 5
-                    level = 5;
-    
-                } else if (markdownCode == "######") { //Overskrift 6
-                    level = 6;
+         
+                //Finner parentnoden til neste node som skal settes inn
+                possible_parent = prevNode
+                while( markdownCode.length <= possible_parent.markdownCode.length ){ //Hvis denne markdowntaggen er mindre (større overskrift) så fortsetter vi opp i treet til vi har funnet en parent som har mindre tag (større overskrift). Roten har en tom streng som vil si at den har mindre tag enn alle andre markdown noder
+                    possible_parent = possible_parent.parent;
                 }
-
+            
+       
                 let char = content.charAt(indeks);
-
-                while (char != "\n") {
+                if (char == " ") { //Må være mellomrom etter markdownkoden
+                    while (char != "\n") {
+                        overskrift += char;
+                        indeks++;
+                        char = content.charAt(indeks);
+                    }
                     overskrift += char;
                     indeks++;
-                    char = content.charAt(indeks);
+                    // console.log("Overskrift: " + overskrift)
+                
+                    started = true;
+                } else {
+                    started = false;
                 }
-                overskrift += char;
-                indeks++;
-                substring = ""; //Registrerer teksten som følger fram til neste #
-            } else {
+            } else { //Registrerer teksten som følger fram til neste #
+                // console.log("Substring: " + substring)
                 substring += char; //Legger til den neste bokstaven
                 indeks++;
             }
         }
 
-        if (substring != "") {
-            newNode = new MarkdownNode(this.idCounter++, markdownCode, substring, )
+        if (substring != "" && started) {
+            console.log("Siste node")
+            overskrift = markdownCode + overskrift;
+            newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring)
+            // newNode.printNode(newNode)
         }
+        return this.tree
     }
 }

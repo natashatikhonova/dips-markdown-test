@@ -67,14 +67,11 @@
                         <!-- {header.replace("_", " ")} -->
                         <!-- Swithes language to norwegian -->
                         {#if header == "title"}
-                            {"Tittel".replace("_", " ")}
-                        
+                            {"Tittel"}
                         {:else if header == "date"}
-                            {"Dato".replace("_", " ")}
-                        
+                            {"Dato"}
                         {:else if header == "author"}
-                            {"Forfatter".replace("_", " ")}
-
+                            {"Forfatter"}
                         {/if}
                           
             

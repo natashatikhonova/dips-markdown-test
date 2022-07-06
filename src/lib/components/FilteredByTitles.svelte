@@ -14,7 +14,7 @@
         })
     })
     
-     $: searched_titles = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())));
+     $: searched_titles = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) || item.overskrift != "Root");
 
      let last_printed_node = null;
      function set_last_printed(node){

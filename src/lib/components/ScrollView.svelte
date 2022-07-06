@@ -108,7 +108,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<!-- <div class="scroll-container"> -->
+<div class="scroll-container">
     <Splitpanes horizontal={true}>
             <Pane size=100> 
                 <div class:container={show} class:full-container={!show} >
@@ -133,13 +133,11 @@
                 <Pane >
                     <div class="editor">
                         <Typewriter on:save = {save} on:cancel = {cancel} />
-    
                     </div>
                 </Pane>
-
             {/if}
         </Splitpanes>
-    <!-- </div> -->
+    </div>
 
 <style>
     .no-result{
@@ -154,13 +152,13 @@
         margin-top: 4vh;
     }
     
-    /* .scroll-container{
+    .scroll-container{
         position: relative;
         display: flex;
         flex-direction: column;
         height: 100%;
         width: 100%;
-    } */
+    }
     
     .full-container{
         flex-grow: 1;

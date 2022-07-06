@@ -65,11 +65,10 @@ import Typewriter from './lib/components/Typewriter.svelte';
 
       {:else}
         <Splitpanes>
-          <Pane ><DocumentList/></Pane>
+          <Pane size=100><DocumentList/></Pane>
         {#if $currentDocumentObject}
           {#if w < 600}
             <Pane size="100"><ContentView goBackButton={true} width={w}/></Pane>
-            
           {:else}
             <Pane minSize="30"><ContentView width={w}/></Pane>
           {/if}

@@ -85,84 +85,84 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <!-- source: https://github.com/typewriter-editor/typewriter -->
-<div class="toolbar">
-  <Toolbar {editor} let:active let:commands>
-      <button
-        title="Overskrift"
-        class="toolbar-button"
-        class:active={active.header === 1}
-        class:mobile={w<600}
-        on:click={commands.header1}><i class="material-icons">title</i></button>
-  
-      <button
-        title="Underskrift"
-        class="toolbar-button"
-        class:active={active.header === 2}
-        class:mobile={w<600}
-        on:click={commands.header2}><i class="material-icons header2">title</i></button>
-  
-      <button
-        title="Uthevet"
-        class="toolbar-button"
-        class:active={active.bold}
-        class:mobile={w<600}
-        on:click={commands.bold}><i class="material-icons">format_bold</i></button>
-  
-      <button
-        title="Kursiv"
-        class="toolbar-button"
-        class:active={active.italic}
-        class:mobile={w<600}
-        on:click={commands.italic}><i class="material-icons">format_italic</i></button>
 
-      <button
-        title="Punktliste"
-        class="toolbar-button"
-        class:active={active.bulletList}
-        class:mobile={w<600}
-        on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
-      <button
-        title="Nummeret liste"
-        class="toolbar-button"
-        class:active={active.orderedList}
-        class:mobile={w<600}
-        on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
-      <button
-        title="Angre"
-        class="toolbar-button arrow"
-        disabled={!active.undo}
-        class:mobile={w<600}
-        on:click={commands.undo}><i class="material-icons">undo</i></button>
+  <div class="toolbar">
+    <Toolbar {editor} let:active let:commands>
+        <button
+          title="Overskrift"
+          class="toolbar-button"
+          class:active={active.header === 1}
+          class:mobile={w<600}
+          on:click={commands.header1}><i class="material-icons">title</i></button>
+    
+        <button
+          title="Underskrift"
+          class="toolbar-button"
+          class:active={active.header === 2}
+          class:mobile={w<600}
+          on:click={commands.header2}><i class="material-icons header2">title</i></button>
+    
+        <button
+          title="Uthevet"
+          class="toolbar-button"
+          class:active={active.bold}
+          class:mobile={w<600}
+          on:click={commands.bold}><i class="material-icons">format_bold</i></button>
+    
+        <button
+          title="Kursiv"
+          class="toolbar-button"
+          class:active={active.italic}
+          class:mobile={w<600}
+          on:click={commands.italic}><i class="material-icons">format_italic</i></button>
 
-      <button
-        title="Gjøre om"
-        class="toolbar-button arrow"
-        disabled={!active.redo}
-        class:mobile={w<600}
-        on:click={commands.redo}><i class="material-icons">redo</i></button>
+        <button
+          title="Punktliste"
+          class="toolbar-button"
+          class:active={active.bulletList}
+          class:mobile={w<600}
+          on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
+        <button
+          title="Nummeret liste"
+          class="toolbar-button"
+          class:active={active.orderedList}
+          class:mobile={w<600}
+          on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
+        <button
+          title="Angre"
+          class="toolbar-button arrow"
+          disabled={!active.undo}
+          class:mobile={w<600}
+          on:click={commands.undo}><i class="material-icons">undo</i></button>
 
-      <div class = "controls">
-        <button title="Lagre"class="save " class:mobile={w<600} on:click={save}> <i class="material-icons">save</i></button>
-        <button title="Avbryt" class = "save" class:mobile={w<600} on:click={cancel} > <i class="material-icons">close</i></button>
-      </div>
-  </Toolbar>
-</div>
-{#if $currentlyAddingNewNote}
-  <div class="dropdown">
-    <select class="dropdown-menu" bind:value={selectedDocType} >
-      {#each documentTypes as value}<option {value}>{value}</option>{/each}
-    </select>
+        <button
+          title="Gjøre om"
+          class="toolbar-button arrow"
+          disabled={!active.redo}
+          class:mobile={w<600}
+          on:click={commands.redo}><i class="material-icons">redo</i></button>
+
+        <div class = "controls">
+          <button title="Lagre"class="save " class:mobile={w<600} on:click={save}> <i class="material-icons">save</i></button>
+          <button title="Avbryt" class = "save" class:mobile={w<600} on:click={cancel} > <i class="material-icons">close</i></button>
+        </div>
+    </Toolbar>
   </div>
-{/if}
-<div class="textfield">
+  {#if $currentlyAddingNewNote}
+    <div class="dropdown">
+      <select class="dropdown-menu" bind:value={selectedDocType} >
+        {#each documentTypes as value}<option {value}>{value}</option>{/each}
+      </select>
+    </div>
+  {/if}
+
   {#if !$currentlyAddingNewNote  && $currentDocumentObject} 
 
     <div class="title">{$currentDocumentObject.title}</div>
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
-  <div class="editor" style="border:none" autofocus use:asRoot = {editor} ></div>
-</div>
+    <div class="editor" style="border:none" autofocus use:asRoot = {editor} ></div>
 
 <style>
 
@@ -237,13 +237,6 @@
     border-color: #80bdff;
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
   }
-  
-  .textfield{
-    height: 100%;
-    margin-right: 1vh;
-    margin-left: 1vh;
-  }
-
   .title{
     font-weight: bold;
     font-style: italic;
@@ -262,7 +255,7 @@
     margin-right: 1vh;
     margin-left: 1vh;
     padding:0.5vh;
-    height: 95%;
+    height: 100%;
     overflow-y: auto;
   }
 
@@ -285,7 +278,6 @@
     border-color: none;
     box-shadow: none;
   }  
-
 
   .mobile{
     margin: 1vw;

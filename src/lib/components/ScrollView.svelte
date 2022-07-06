@@ -108,9 +108,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<div class="scroll-container">
+<!-- <div class="scroll-container"> -->
     <Splitpanes horizontal={true}>
-            <Pane> 
+            <Pane size=100> 
                 <div class:container={show} class:full-container={!show} >
                     <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
                     {#if searchResult.length > 0}
@@ -139,7 +139,7 @@
 
             {/if}
         </Splitpanes>
-    </div>
+    <!-- </div> -->
 
 <style>
     .no-result{
@@ -153,14 +153,14 @@
     .dokumenter {
         margin-top: 4vh;
     }
-    .scroll-container{ 
-    position: relative;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      width: 100%;
-
-    }
+    
+    /* .scroll-container{
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+    } */
     
     .full-container{
         flex-grow: 1;
@@ -189,7 +189,6 @@
         padding: 6px;
         border: none;
         border-bottom: solid;
-       
         font-size: 17px;
         width:20%;
      }
@@ -198,12 +197,11 @@
     .editor{
         display:flex;
         flex-direction: column;
-        overflow-y:auto;
+        /* overflow-y: auto; */
         width: 100%;
         height: 100%;
         background: #ffffff;
         border: solid 1px black;
-        flex-grow: 1;
         background-color: white;
     }
 

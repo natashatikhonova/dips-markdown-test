@@ -72,7 +72,7 @@ class Queue {
 export class Tree {
     
     constructor(object){
-        this.root = new MarkdownNode(0, "", "Root", "")
+        this.root = new MarkdownNode(0, "", "Root", "", object)
         
     }
     insert(parent, newNode) { 

@@ -16,7 +16,13 @@
     
      $: searched_titles = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())));
 
-     let last_printed_object = null;
+     let last_printed_node = null;
+     function set_last_printed(node){
+        console.log("Setter last_printed")
+        last_printed_node = node
+        return ""
+
+     }
 
 </script>
 
@@ -29,19 +35,25 @@
     {:else}
     
         {#each searched_titles as node}
-            <!-- {console.log(node)} -->
-            {#if last_printed_object != null}
-                <!-- {console.log(last_printed_node)}
-                {console.log(node)} -->
-                {#if last_printed_object.id === node.object.id}
+
+            <!-- {console.log(last_printed_node)}
+            {console.log(node)} -->
+
+            {#if last_printed_node == null}
+                <!-- {console.log("første")} -->
+                {set_last_printed(node)}
+                <div style="font-weight: bold">{ node.object.date.toDateString() + ": " + node.object.title}</div>
+            {:else }
+
+                {#if last_printed_node.object!= node.object}
+                    <!-- {console.log("IKKE FRA SAMME DOK")} -->
+                    {set_last_printed(node)}
                     <div style="font-weight: bold">{ node.object.date.toDateString() + ": " + node.object.title}</div> 
                 {/if}
-            {:else}
-                <div style="font-weight: bold">{ node.object.date.toDateString() + ": " + node.object.title}</div>
             {/if}
 
             <div>{ node.format_string()}</div> 
-            {last_printed_object = node.object}
+            
             
         {/each} 
     {/if}

@@ -71,7 +71,7 @@ export class ParseMarkdown{
         }
 
         if (started) { //Legger til den siste noden
-            newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring)
+            newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring, object)
             this.tree.insert(possible_parent, newNode)
             // newNode.printNode(newNode)
         }

@@ -9,6 +9,7 @@ export class MarkdownNode{
         this.parent = null; 
         this.children = [];
         this.object = object;
+        this.show_Title = false;
     }
     isLeaf(){
         return this.children.length == 0;
@@ -29,6 +30,9 @@ export class MarkdownNode{
         console.log("Content: " + node.content)
         console.log("Level: " + node.level)
         console.log("\n")
+    }
+    isTitle(){
+        this.show_Title = true;
     }
 }
 class Queue {

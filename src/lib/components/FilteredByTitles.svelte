@@ -1,4 +1,6 @@
 <script>
+import { DocumentObject } from '../document';
+
 
 
 
@@ -14,23 +16,49 @@
         })
     })
     
-     $: searched_titles = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) || item.overskrift != "Root");
+     $: searched_titles = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0);
 
-     let last_printed_node = null;
-     function set_last_printed(node){
-        if(last_printed_node == null){
-            last_printed_node = node
-            return "<div style=\"font-weight: bold\">" + node.object.date.toDateString() + ": " + node.object.title +"</div><div>" + node.format_string() +"</div>"
+     function make_titles_string_list(titles_list, node_list){
+        let previous_node = null;
+        let element = null;
+        for (let i = 0; i < node_list.length; i++){
+            let node = node_list[i];
+            element = node;
+            if(previous_node == null){
+                element.isTitle()
+
+            } else if(previous_node.object!= node.object){
+                element.isTitle()
+            } 
+
+           
+            titles_list.push(element)
+            previous_node = node;
         }
-        if(last_printed_node.object!= node.object){
-            last_printed_node = node
-            return "<div style=\"font-weight: bold\">" + node.object.date.toDateString() + ": " + node.object.title +"</div><div>" + node.format_string() +"</div>"
-            
+        
+        console.log(titles_list)
+        return titles_list
+    }
+
+    
+     $: titles_list = make_titles_string_list([], searched_titles)
+
+     function show_children(node){
+        console.log(titles_list)
+        let new_titles_list = []
+        for(let i = 0; i < titles_list.length; i++){
+            new_titles_list.push(titles_list[i])
+
+            if(titles_list[i] == node) {
+                console.log(node)
+                node.children.forEach((node) => {
+                    new_titles_list.push(node)
+                })
+            }
         }
-        else{
-            return "<div>" + node.format_string() +"</div>"
-        }
-     }
+        titles_list = new_titles_list
+        console.log(titles_list)
+    }
 
 </script>
 
@@ -41,8 +69,13 @@
     {#if searched_titles.length == 0}
         <div>Ingen overskrifter</div>
     {:else}
-        {#each searched_titles as node}
-            {@html set_last_printed(node)}    
+    
+        {#each titles_list as node}
+            {#if node.show_Title}
+                <div style="font-weight: bold">{(node.object.date.toDateString() + ": " + node.object.title)} </div>
+            {/if}
+            <div on:click={() => show_children(node)}> {node.format_string()} </div>
+            
         {/each} 
     {/if}
  

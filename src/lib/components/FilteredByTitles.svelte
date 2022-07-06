@@ -18,10 +18,18 @@
 
      let last_printed_node = null;
      function set_last_printed(node){
-        console.log("Setter last_printed")
-        last_printed_node = node
-        return ""
-
+        if(last_printed_node == null){
+            last_printed_node = node
+            return "<div style=\"font-weight: bold\">" + node.object.date.toDateString() + ": " + node.object.title +"</div><div>" + node.format_string() +"</div>"
+        }
+        if(last_printed_node.object!= node.object){
+            last_printed_node = node
+            return "<div style=\"font-weight: bold\">" + node.object.date.toDateString() + ": " + node.object.title +"</div><div>" + node.format_string() +"</div>"
+            
+        }
+        else{
+            return "<div>" + node.format_string() +"</div>"
+        }
      }
 
 </script>
@@ -33,28 +41,8 @@
     {#if searched_titles.length == 0}
         <div>Ingen overskrifter</div>
     {:else}
-    
         {#each searched_titles as node}
-
-            <!-- {console.log(last_printed_node)}
-            {console.log(node)} -->
-
-            {#if last_printed_node == null}
-                <!-- {console.log("første")} -->
-                {set_last_printed(node)}
-                <div style="font-weight: bold">{ node.object.date.toDateString() + ": " + node.object.title}</div>
-            {:else }
-
-                {#if last_printed_node.object!= node.object}
-                    <!-- {console.log("IKKE FRA SAMME DOK")} -->
-                    {set_last_printed(node)}
-                    <div style="font-weight: bold">{ node.object.date.toDateString() + ": " + node.object.title}</div> 
-                {/if}
-            {/if}
-
-            <div>{ node.format_string()}</div> 
-            
-            
+            {@html set_last_printed(node)}    
         {/each} 
     {/if}
  

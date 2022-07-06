@@ -1,9 +1,4 @@
 <script>
-import { DocumentObject } from '../document';
-
-
-
-
     import { documentList } from '../stores/stores';
     export let searched_value = "";
     let show = false;
@@ -18,46 +13,74 @@ import { DocumentObject } from '../document';
     
      $: searched_titles = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0);
 
-     function make_titles_string_list(titles_list, node_list){
+     function make_titles_obj_list(obj_list, node_list){
         let previous_node = null;
-        let element = null;
+        let element = {};
+
         for (let i = 0; i < node_list.length; i++){
             let node = node_list[i];
-            element = node;
+            element = {node: node, show_title: false, show_children: false};
             if(previous_node == null){
-                element.isTitle()
+                element.show_title = true;
 
             } else if(previous_node.object!= node.object){
-                element.isTitle()
+                element.show_title = true;
             } 
 
            
-            titles_list.push(element)
+            obj_list.push(element)
             previous_node = node;
         }
         
-        console.log(titles_list)
-        return titles_list
+        console.log(obj_list)
+        return obj_list
     }
 
     
-     $: titles_list = make_titles_string_list([], searched_titles)
+     $: titles_list_obj = make_titles_obj_list([], searched_titles)
 
-     function show_children(node){
-        console.log(titles_list)
-        let new_titles_list = []
-        for(let i = 0; i < titles_list.length; i++){
-            new_titles_list.push(titles_list[i])
 
-            if(titles_list[i] == node) {
-                console.log(node)
-                node.children.forEach((node) => {
-                    new_titles_list.push(node)
-                })
+
+
+     function show_children(obj){
+         if(obj.node.children.length > 0) {
+            console.log(titles_list_obj)
+
+            let new_titles_list_obj = []
+            for(let i = 0; i < titles_list_obj.length; i++){
+                new_titles_list_obj.push(titles_list_obj[i])
+    
+                if(titles_list_obj[i].node.id == obj.node.id) {//Adds the node's children to the list
+    
+                    if(obj.show_children == false) {
+                            console.log("Legger til barn")
+                            obj.node.children.forEach((node) => {
+                                let newElement = {node: node, show_title: false, show_children: false}
+                                new_titles_list_obj.push(newElement)
+                            })
+                            titles_list_obj[i].show_children = true;
+    
+                        } else { //Removes the node's children
+                            console.log("Fjerner barna")
+                            titles_list_obj[i].show_children = false;
+                            i++;
+                            while(i < titles_list_obj.length){
+                                if (titles_list_obj[i].node.parent.id == obj.node.id) {
+                                    console.log("Legger ikke til " + titles_list_obj[i].node.overskrift + " i listen")
+                                    i++;
+    
+                                } else {
+                                    break
+                                }
+                            }
+                            i--
+                        }
+                    
+                }
             }
+            titles_list_obj = new_titles_list_obj
+            console.log(titles_list_obj)
         }
-        titles_list = new_titles_list
-        console.log(titles_list)
     }
 
 </script>
@@ -70,11 +93,11 @@ import { DocumentObject } from '../document';
         <div>Ingen overskrifter</div>
     {:else}
     
-        {#each titles_list as node}
-            {#if node.show_Title}
-                <div style="font-weight: bold">{(node.object.date.toDateString() + ": " + node.object.title)} </div>
+        {#each titles_list_obj as elementObj}
+            {#if elementObj.show_title}
+                <div style="font-weight: bold">{(elementObj.node.object.date.toDateString() + ": " + elementObj.node.object.title)} </div>
             {/if}
-            <div on:click={() => show_children(node)}> {node.format_string()} </div>
+            <div class="title" on:click={() => show_children(elementObj)}> {elementObj.node.format_string()} </div>
             
         {/each} 
     {/if}
@@ -88,5 +111,12 @@ import { DocumentObject } from '../document';
         overflow-y: scroll;
     }
 
+    .title{
+        cursor: pointer;
+    }
+
+    .title:hover{
+        color:#d43838;
+    }
 
 </style>

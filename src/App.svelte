@@ -6,7 +6,7 @@
   import ScrollView from './lib/components/ScrollView.svelte';
   import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
-import { ParseMarkdown } from './lib/ParseMarkdown';
+  import {parse} from './lib/stores/stores.js'
  
 
 
@@ -18,8 +18,8 @@ import { ParseMarkdown } from './lib/ParseMarkdown';
   function putInDocumentList(item){
     let document = new DocumentObject(item.id, item.date, item.content);
     //Lager et tre over markdown overskriftene i teksten
-    let parse = new ParseMarkdown();
-    let tree = parse.parseAndSetIntoTree(document) //Her henger programmet!!
+
+    let tree = $parse.parseAndSetIntoTree(document) //Her henger programmet!!
     document.markdownTree = tree;
     $documentList.push(document);
     $documentList = $documentList;

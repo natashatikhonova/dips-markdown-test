@@ -1,17 +1,27 @@
 
 export class MarkdownNode{
-    constructor(id, markdownCode, overskrift, content){
+    constructor(id, markdownCode, overskrift, content, object){
         this.id = id;
         this.markdownCode = markdownCode;
         this.overskrift = overskrift;
         this.content = content;
-        this.level = null; //Hvilket nivå i treet/ settes når den blir satt inn i treet
+        this.level = 0; //Hvilket nivå i treet/ settes når den blir satt inn i treet
         this.parent = null; 
         this.children = [];
+        this.object = object;
     }
     isLeaf(){
         return this.children.length == 0;
     }
+    format_string(){
+        let string = "";
+        for(let i = 0; i < this.markdownCode.length; i++){
+            string += "-"
+        }
+        string += " " + this.overskrift
+        return string
+    }
+ 
     printNode(node){
         console.log("\nNODEN: ")
         console.log("id: " + node.id)
@@ -60,8 +70,11 @@ class Queue {
 }
 
 export class Tree {
-    root = new MarkdownNode(0, "", "Root" , "")
-
+    
+    constructor(object){
+        this.root = new MarkdownNode(0, "", "Root", "")
+        
+    }
     insert(parent, newNode) { 
         newNode.level = parent.level+1;
         parent.children.push(newNode)

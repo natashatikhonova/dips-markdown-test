@@ -4,7 +4,7 @@ export class ParseMarkdown{
     idCounter = 1;
 
     parseAndSetIntoTree(object){
-        this.tree = new Tree();
+        this.tree = new Tree(object);
         let content = object.context;
         let substring = "";
         let markdownCode = "";
@@ -20,10 +20,10 @@ export class ParseMarkdown{
 
     
             if (char == "#") {
-                if (substring != "" && started) {;
+                if (started) {;
                     // console.log(markdownCode)
                     // console.log(overskrift)
-                    newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring);
+                    newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring, object);
                     // newNode.printNode(newNode)
                     this.tree.insert(possible_parent, newNode);
                     prevNode = newNode;
@@ -70,7 +70,7 @@ export class ParseMarkdown{
             }
         }
 
-        if (substring != "" && started) { //Legger til den siste noden
+        if (started) { //Legger til den siste noden
             newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring)
             this.tree.insert(possible_parent, newNode)
             // newNode.printNode(newNode)

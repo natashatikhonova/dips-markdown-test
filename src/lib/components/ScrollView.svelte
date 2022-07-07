@@ -5,7 +5,10 @@
     import {currentlyAddingNewNote} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
+    import FilteredByTitles from './FilteredByTitles.svelte';
 
+    $: not_empty_search = (searchValue != "") && (searchResult.length>0);
+    $: show_titles_button = not_empty_search? false: false; //sets to false when when searchbar is empty
     let show = false;
     let sortedData = $documentList;
     let ascendingOrder = true;
@@ -102,44 +105,87 @@
             return htmlText
         }
     }
+    
 
 </script>
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<div class="scroll-container">
-    <Splitpanes horizontal={true}>
-            <Pane size=100> 
-                <div class:container={show} class:full-container={!show} >
-                    <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
-                    {#if searchResult.length > 0}
-                        <div class = "dokumenter">
-                            {#each searchResult as item}
-                                <ScrollItem htmlText = {highlightWord(marked(item.context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
-                            {/each}
+
+
+
+    <div class="scroll-container">
+        <Splitpanes>
+            <Pane size="100">
+                <Splitpanes horizontal={true}>
+                    <Pane> 
+                        <div class:container={show} class:full-container={!show} >
+                            <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
+    
+                            {#if searchResult.length > 0}
+                                <div class = "dokumenter">
+                                    {#each searchResult as item}
+                                        <ScrollItem htmlText = {highlightWord(marked(item.context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                                    {/each}
+                                </div>
+                            {:else}
+                                <div class = "no-result"> Ingen Søkeresultater</div>
+                            {/if}
+                  
+                            {#if !show}
+                                <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
+                            {/if}
                         </div>
-                    {:else}
-                        <div class = "no-result"> Ingen Søkeresultater</div>
+                    </Pane>
+                    {#if show}
+                        <Pane >
+                            <div class="editor">
+                                <Typewriter on:save = {save} on:cancel = {cancel} />
+            
+                            </div>
+                        </Pane>
+    
                     {/if}
-        
-                    
-                    {#if !show}
-                        <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
-                    {/if}
-                </div>
+                </Splitpanes>
             </Pane>
-            {#if show}
-                <Pane >
-                    <div class="editor">
-                        <Typewriter on:save = {save} on:cancel = {cancel} />
+
+            
+            {#if not_empty_search}
+                {#if !show_titles_button}
+                    <button class = "searched-titles-button" on:click={() => {show_titles_button = true}}>
+                        <i class="material-icons">read_more</i>
+                    </button>
+    
+                {:else}
+                <Pane size="10" maxSize="40">
+                    <div class="searched-titles">
+                        <FilteredByTitles searched_value = {searchValue}/>
                     </div>
                 </Pane>
+                {/if}
             {/if}
+
         </Splitpanes>
+
     </div>
 
 <style>
+    .searched-titles-button{
+        background: none;
+        border:none;
+        position: absolute;
+        right: 2vw;
+        top: 10vh;
+    }
+    .searched-titles-button:hover{
+        color: #d43838;
+    }
+    .searched-titles{
+        background-color: white;
+        height: 100%;
+        width: 100%;
+    }
     .no-result{
         display:flex;
         font-size: xx-large;

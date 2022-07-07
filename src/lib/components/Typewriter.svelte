@@ -8,6 +8,9 @@
     import toMarkdown from 'to-markdown';
     import {createEventDispatcher} from 'svelte';
     import { DocumentObject } from '../document.js';
+    import {parse} from '../stores/stores.js';
+
+
 
     let selectedDocType = "Velg dokumenttype";
 
@@ -56,14 +59,29 @@
           dispatch("save");
           $documentList.forEach((element)=>{
             if (element.id === $currentDocumentObject.id){
-                element.context= toMarkdown(editor.getHTML());
+                element.context= toMarkdown(editor.getHTML() + " \n");
+                //Lager et tre over markdown overskriftene i teksten
+                console.log("Før parse")
+                let tree = $parse.parseAndSetIntoTree(element) //Her henger programmet!!. FIKSET:)
+                console.log("Etter parse")
+                element.markdownTree = tree;
+
             }
           })
           $documentList = $documentList;
         } else{
           if (selectedDocType !==documentTypes[0]){
-            let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML()));
+            let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML())+" \n");
             newElement.title = selectedDocType;
+
+            //Lager et tre over markdown overskriftene i teksten
+     
+            console.log("Før parse")
+            let tree = $parse.parseAndSetIntoTree(newElement) //Her henger programmet!!. FIKSET:)
+            console.log("Etter parse")
+            newElement.markdownTree = tree;
+            console.log(newElement.markdownTree)
+
             $documentList.push(newElement);
             $documentList = $documentList;
             $currentDocumentObject = newElement;

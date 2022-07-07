@@ -23,9 +23,9 @@
             })
             // console.log("\n all_nodes: ")
             // console.log(all_nodes)
-            searched_titles_nodes = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0);
-            console.log("\n searched_titles_nodes: ")
-            console.log(searched_titles_nodes)
+            searched_titles_nodes = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0); //***************Denne må endres til å filtrere at bare parentNodene som inneholder teksten legges i listen, ikke alle childNodene også!*****************************************
+            // console.log("\n searched_titles_nodes: ")
+            // console.log(searched_titles_nodes)
             
     }
 
@@ -45,12 +45,12 @@
                 element.show_title = true;
 
             } else if ( (obj_list[obj_list.length-1].node.is_parent_of(node)) || (previous_node.id == node.parent.id)) { //If the last added element is parent of the current
-                    console.log(previous_node.overskrift + " er parent til " + node.overskrift)
+                    // console.log(previous_node.overskrift + " er parent til " + node.overskrift)
                     previous_node = node;
                     continue;
 
             }else if (previous_node.id == node.parent.id){
-                console.log(previous_node.overskrift + " er parent til " + node.overskrift)
+                // console.log(previous_node.overskrift + " er parent til " + node.overskrift)
                 previous_node = node;
                 continue;
             }
@@ -58,8 +58,8 @@
             obj_list.push(element)
             previous_node = node;
         }
-        console.log("\n titles_list_obj: ")
-        console.log(obj_list)
+        // console.log("\n titles_list_obj: ")
+        // console.log(obj_list)
         return obj_list
     }
     
@@ -67,7 +67,6 @@
 
      function show_children(obj){
          if(obj.node.children.length > 0) {
-            // console.log(titles_list_obj)
 
             let new_titles_list_obj = []
 
@@ -77,7 +76,7 @@
                 if(titles_list_obj[i].node.id == obj.node.id) {//Adds the node's children to the list
     
                     if(obj.show_children == false) {
-                            console.log("Legger til barn")
+                            // console.log("Legger til barn")
                             obj.node.children.forEach((node) => {
                                 let newElement = {node: node, show_title: false, show_children: false}
                                 new_titles_list_obj.push(newElement)
@@ -87,36 +86,32 @@
                             titles_list_obj[i].show_children = true;
     
                     } else { //Removes the node's children
-                        console.log("Fjerner barna")
+                        // console.log("Fjerner barna")
                         
                         titles_list_obj[i].show_children = false;
                         let previous_obj = titles_list_obj[i];
 
                         i++;
                         while(i<titles_list_obj.length){ 
-                            console.log((previous_obj.show_children == false))
-                            console.log((previous_obj.node.is_parent_of(titles_list_obj[i].node)))
 
                             if( (previous_obj.show_children == false) && (previous_obj.node.is_parent_of(titles_list_obj[i].node)) ) {
-                                console.log("Hopper over " + titles_list_obj[i].node.overskrift)
+                                // console.log("Hopper over " + titles_list_obj[i].node.overskrift)
                                 titles_list_obj[i].show_children = false;
                                 previous_obj = titles_list_obj[i]; 
                                 i++;
                             } 
                             else if (obj.node.is_parent_of(titles_list_obj[i].node)){
-                                console.log("Hopper over " + titles_list_obj[i].node.overskrift)
+                                // console.log("Hopper over " + titles_list_obj[i].node.overskrift)
                                 titles_list_obj[i].show_children = false;
                                 previous_obj = titles_list_obj[i]; 
                                 i++;
                             
                             } 
                             else{
-                                console.log("Break")
                                 break;
                             }
                         }
-                        i--;
-                        console.log("Etter while")
+                        i--; //It is i-- here because the for-loop does i++ at the end, therefor we must compensate by doing i--. If not, one element get surpassed. 
                     }
                             
                 }
@@ -124,8 +119,8 @@
             }
 
             titles_list_obj = new_titles_list_obj
-            console.log("\n NEW titles_list_obj: ")
-            console.log(titles_list_obj)
+            // console.log("\n NEW titles_list_obj: ")
+            // console.log(titles_list_obj)
         }
     }
 

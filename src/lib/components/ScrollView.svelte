@@ -114,6 +114,7 @@
 
 
 
+
     <div class="scroll-container">
         <Splitpanes>
             <Pane size="100">
@@ -131,8 +132,7 @@
                             {:else}
                                 <div class = "no-result"> Ingen Søkeresultater</div>
                             {/if}
-                
-                            
+                  
                             {#if !show}
                                 <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
                             {/if}
@@ -197,13 +197,13 @@
     .dokumenter {
         margin-top: 4vh;
     }
-    .scroll-container{ 
-    position: relative;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      width: 100%;
-
+    
+    .scroll-container{
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
     }
     
     .full-container{
@@ -233,7 +233,6 @@
         padding: 6px;
         border: none;
         border-bottom: solid;
-       
         font-size: 17px;
         width:20%;
      }
@@ -242,12 +241,11 @@
     .editor{
         display:flex;
         flex-direction: column;
-        overflow-y:auto;
+        /* overflow-y: auto; */
         width: 100%;
         height: 100%;
         background: #ffffff;
         border: solid 1px black;
-        flex-grow: 1;
         background-color: white;
     }
 

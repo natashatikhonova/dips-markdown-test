@@ -119,7 +119,7 @@
         <Splitpanes>
             <Pane size="100">
                 <Splitpanes horizontal={true}>
-                    <Pane> 
+                    <Pane size="100"> 
                         <div class:container={show} class:full-container={!show} >
                             <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
     

@@ -30,6 +30,7 @@
         editor.setHTML(marked(""));
     } 
     function goBack(){
+      editor.setHTML(marked(""));
       $currentDocumentObject = null;
     }
        

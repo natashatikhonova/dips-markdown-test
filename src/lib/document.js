@@ -5,5 +5,6 @@ export class DocumentObject{
         this.date = new Date(date);
         this.author = "Dr.Who";
         this.context = context;
+        this.markdownTree = null;
     }
 }

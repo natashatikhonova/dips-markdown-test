@@ -6,8 +6,9 @@
   import ScrollView from './lib/components/ScrollView.svelte';
   import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
-import ScrollItem from './lib/components/ScrollItem.svelte';
-import Typewriter from './lib/components/Typewriter.svelte';
+  import {parse} from './lib/stores/stores.js'
+ 
+
 
   let showSideview = true;
 
@@ -16,9 +17,15 @@ import Typewriter from './lib/components/Typewriter.svelte';
 
   function putInDocumentList(item){
     let document = new DocumentObject(item.id, item.date, item.content);
+    //Lager et tre over markdown overskriftene i teksten
+
+    let tree = $parse.parseAndSetIntoTree(document) //Her henger programmet!!
+    document.markdownTree = tree;
     $documentList.push(document);
     $documentList = $documentList;
   }
+
+
 
   function changeView(){
     if($currentlyAddingNewNote){

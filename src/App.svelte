@@ -4,9 +4,11 @@
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import { documentList, currentlyAddingNewNote, currentDocumentObject, documentFilter} from './lib/stores/stores.js';
+  import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {parse} from './lib/stores/stores.js'
+  import ToolMenu from './lib/components/ToolMenu.svelte';
+
 
 
   let showSideview = true;
@@ -15,7 +17,7 @@
   documents.forEach(putInDocumentList);  
 
   function putInDocumentList(item){
-    let document = new DocumentObject(item.id, item.date, item.content);
+    let document = new DocumentObject(item.id, item.date, item.content, item.title);
     //Lager et tre over markdown overskriftene i teksten
 
     let tree = $parse.parseAndSetIntoTree(document) //Her henger programmet!!
@@ -38,14 +40,7 @@
   $: w = window.innerWidth;
   $: h = window.innerHeight;
 
-
-  
-
-  const documentTypes = ["Alle", "Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
-
-
 </script>
-
 
 <header>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -58,10 +53,7 @@
 </header>
 
 <header class="tool-menu">
-
-    <select class="dropdown-menu" bind:value={$documentFilter} >
-      {#each documentTypes as value}<option {value}>{value}</option>{/each}
-    </select>
+  <ToolMenu/>
 </header>
 
 <div class="main">
@@ -127,25 +119,8 @@
   }
 
   .tool-menu{
-    align-items: center;
-    justify-content:flex-start;
     background-color: #eeeeee;
-  }
-
-
-  .dropdown-menu {
-    background: #fff;
-    width: 20vh;
-    height: 80%;
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    cursor: pointer;
-  }
-
-  .dropdown-menu:hover {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    align-items: center;
   }
 
   img{

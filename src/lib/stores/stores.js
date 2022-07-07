@@ -14,4 +14,6 @@ export let currentlyAddingNewNote = writable(false);
 let parseMarkdown = new ParseMarkdown();
 export let parse = writable(parseMarkdown);
 
-export let documentFilter = writable("Alle");
+export let filterGroup =writable(["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"]);
+
+export let noDocumentFilter = writable(true);

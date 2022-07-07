@@ -6,19 +6,19 @@
     let show = false;
     const dispatch = createEventDispatcher();
     let all_nodes = []
-    let searched_titles
+    let searched_titles_nodes
     
     $: if($documentList) {
             all_nodes = []
             $documentList.forEach((document) => {
-                console.log(document)
+                // console.log(document)
                 let nodes_array = document.markdownTree.traverseBFS()
                 nodes_array.forEach((node)=> {
                     all_nodes.push(node)
                 })
             })
-            searched_titles = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0);
-            console.log(searched_titles)
+            searched_titles_nodes = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0);
+            // console.log(searched_titles_nodes)
 
     }
 
@@ -45,37 +45,19 @@
             previous_node = node;
         }
         
-        console.log(obj_list)
+        // console.log(obj_list)
         return obj_list
     }
 
     
-     $: titles_list_obj = make_titles_obj_list([], searched_titles)
+    $: titles_list_obj = make_titles_obj_list([], searched_titles_nodes)
+    $: console.log(titles_list_obj)
 
-
-    function abort_children(parent_obj, index, titles_list_obj){
-   
-        // if (parent_obj.show_children && index < titles_list_obj.length) { 
-        //     index++;
-        //     index = abort_children(titles_list_obj[index], index, titles_list_obj)
-        //     titles_list_obj[index].show_children = false;
-        // }
-        if(parent_obj.show_children){
-
-            for(let i = index; i< (index + parent_obj.node.children.length); i++){
-                if (titles_list_obj[i].show_children){
-                    titles_list_obj[i].show_children = false;
-                    index++;
-                    index = abort_children(titles_list_obj[i], index, titles_list_obj)
-                }
-            }
-        }
-        return index;
-    }
+    
 
      function show_children(obj){
          if(obj.node.children.length > 0) {
-            console.log(titles_list_obj)
+            // console.log(titles_list_obj)
 
             let new_titles_list_obj = []
             for(let i = 0; i < titles_list_obj.length; i++){
@@ -84,7 +66,7 @@
                 if(titles_list_obj[i].node.id == obj.node.id) {//Adds the node's children to the list
     
                     if(obj.show_children == false) {
-                            console.log("Legger til barn")
+                            // console.log("Legger til barn")
                             obj.node.children.forEach((node) => {
                                 let newElement = {node: node, show_title: false, show_children: false}
                                 new_titles_list_obj.push(newElement)
@@ -92,9 +74,34 @@
                             titles_list_obj[i].show_children = true;
     
                         } else { //Removes the node's children
-                            console.log("Fjerner barna")
-                            i = abort_children(obj, i, titles_list_obj)
+                            // console.log("Fjerner barna")
+                           
                             titles_list_obj[i].show_children = false;
+
+                            let previous_node = obj;
+                            i++;
+
+                            while(i<titles_list_obj.length){ 
+                                if(titles_list_obj[i].node.parent.id == obj.node.id){
+                                    previous_node = titles_list_obj[i].node; 
+                                    titles_list_obj[i].show_children = false;
+                                    i++;
+                                }else{
+                                    if(titles_list_obj[i].node.parent.overskrift!="Root"){
+                                        previous_node = titles_list_obj[i].node; 
+                                        titles_list_obj[i].show_children = false;
+                                        i++;
+                                    }else{
+                                        break;
+                                    }
+                                }
+                            }
+                            i--;
+
+
+                            
+
+                            
 
                             // let previous_node = null;
                             // i++;
@@ -123,7 +130,7 @@
                 }
             }
             titles_list_obj = new_titles_list_obj
-            console.log(titles_list_obj)
+            // console.log(titles_list_obj)
         }
     }
 
@@ -136,11 +143,13 @@
         <h2>Overskrifter</h2>
         <button class="close" on:click={()=>dispatch("close")}><i class="material-icons">close</i></button>
         <input bind:value={searched_value} type="text" placeholder="Søk.." name="search">
-    {#if searched_titles.length == 0}
+    {#if searched_titles_nodes.length == 0}
         <div>Ingen overskrifter</div>
     {:else}
-    
+
+        
         {#each titles_list_obj as elementObj}
+
             {#if elementObj.show_title}
                 <div style="font-weight: bold">{(elementObj.node.object.date.toDateString() + ": " + elementObj.node.object.title)} </div>
             {/if}

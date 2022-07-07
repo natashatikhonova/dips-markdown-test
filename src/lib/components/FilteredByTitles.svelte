@@ -1,33 +1,46 @@
 <script>
     import { documentList } from '../stores/stores';
-    export let searched_value = "";
-    let show = false;
+    import {createEventDispatcher} from 'svelte';
 
+    let searched_value = "";
+    let show = false;
+    const dispatch = createEventDispatcher();
     let all_nodes = []
-    $documentList.forEach((document) => {
-        let nodes_array = document.markdownTree.traverseBFS()
-        nodes_array.forEach((node)=> {
-            all_nodes.push(node)
-        })
-    })
+    let searched_titles
     
-     $: searched_titles = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0);
+    $: if($documentList) {
+            all_nodes = []
+            $documentList.forEach((document) => {
+                console.log(document)
+                let nodes_array = document.markdownTree.traverseBFS()
+                nodes_array.forEach((node)=> {
+                    all_nodes.push(node)
+                })
+            })
+            searched_titles = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0);
+            console.log(searched_titles)
+
+    }
 
      function make_titles_obj_list(obj_list, node_list){
-        let previous_node = null;
+        let previous_node = {};
         let element = {};
 
         for (let i = 0; i < node_list.length; i++){
             let node = node_list[i];
             element = {node: node, show_title: false, show_children: false};
+
             if(previous_node == null){
                 element.show_title = true;
 
             } else if(previous_node.object!= node.object){
                 element.show_title = true;
-            } 
 
-           
+            } else if (previous_node.children.includes(node)){
+                previous_node = node;
+                continue;
+            }
+
             obj_list.push(element)
             previous_node = node;
         }
@@ -85,10 +98,13 @@
 
 </script>
 
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
 <div class="main">
-    <h2>
-        Overskrifter
-    </h2>
+        <h2>Overskrifter</h2>
+        <button class="close" on:click={()=>dispatch("close")}><i class="material-icons">close</i></button>
+        <input bind:value={searched_value} type="text" placeholder="Søk.." name="search">
     {#if searched_titles.length == 0}
         <div>Ingen overskrifter</div>
     {:else}
@@ -107,9 +123,21 @@
 
 <style>
     .main{
+        overflow-y: auto;
         height: 100%;
-        overflow-y: scroll;
+        padding-left: 2vw;
+        padding-right: 2vw;
     }
+
+    input[type=text] {
+
+        padding: 6px;
+        border: none;
+        border-bottom: solid;
+        margin-bottom: 2vh;
+        font-size: 17px;
+        width:90%;
+     }
 
     .title{
         cursor: pointer;
@@ -118,5 +146,18 @@
     .title:hover{
         color:#d43838;
     }
+
+    .close{
+        position: absolute;
+        right: 2vw;
+        top: 2vh;
+        background: none;
+        border: none;
+    }
+    .close:hover {
+        color:#d43838; 
+    }
+
+    
 
 </style>

@@ -105,6 +105,21 @@
             return htmlText
         }
     }
+    let current_size= "0";
+    let scrollview_size = "125";
+
+    function close(){
+        //show_titles_button=!show_titles_button;
+        current_size = "0";
+        scrollview_size = "125";
+        show_titles_button = false;
+    }
+
+    function open(){
+        show_titles_button = true;
+        current_size = "25";
+        scrollview_size = "100";
+    }
     
 
 </script>
@@ -115,12 +130,23 @@
 
 
     <div class="scroll-container">
-        <Splitpanes>
-            <Pane size="100">
-                <Splitpanes horizontal={true}>
+        <Splitpanes >
+            
+            <Pane minSize="15" size={current_size} maxSize="50">
+                <div class="searched-titles">
+                    <FilteredByTitles  on:close={close}/>
+                </div>
+            </Pane>
+            <Pane size={scrollview_size} >
+                <Splitpanes horizontal={true} >
                     <Pane> 
                         <div class:container={show} class:full-container={!show} >
                             <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
+                            {#if !show_titles_button}
+                                <button class = "searched-titles-button" on:click={open}>
+                                    <i class="material-icons">read_more</i>
+                                </button>
+                            {/if}
     
                             {#if searchResult.length > 0}
                                 <div class = "dokumenter">
@@ -150,27 +176,12 @@
                 </Splitpanes>
             </Pane>
 
-            
-            {#if not_empty_search}
-                {#if !show_titles_button}
-                    <button class = "searched-titles-button" on:click={() => {show_titles_button = true}}>
-                        <i class="material-icons">read_more</i>
-                    </button>
-    
-                {:else}
-                <Pane size="10" maxSize="40">
-                    <div class="searched-titles">
-                        <FilteredByTitles searched_value = {searchValue}/>
-                    </div>
-                </Pane>
-                {/if}
-            {/if}
-
         </Splitpanes>
 
     </div>
 
 <style>
+
     .searched-titles-button{
         background: none;
         border:none;
@@ -198,13 +209,15 @@
         margin-top: 4vh;
     }
     .scroll-container{ 
-    position: relative;
+        position: relative;
       display: flex;
       flex-direction: column;
       height: 100%;
       width: 100%;
 
     }
+    
+    
     
     .full-container{
         flex-grow: 1;

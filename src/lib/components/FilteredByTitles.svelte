@@ -53,7 +53,25 @@
      $: titles_list_obj = make_titles_obj_list([], searched_titles)
 
 
+    function abort_children(parent_obj, index, titles_list_obj){
+   
+        // if (parent_obj.show_children && index < titles_list_obj.length) { 
+        //     index++;
+        //     index = abort_children(titles_list_obj[index], index, titles_list_obj)
+        //     titles_list_obj[index].show_children = false;
+        // }
+        if(parent_obj.show_children){
 
+            for(let i = index; i< (index + parent_obj.node.children.length); i++){
+                if (titles_list_obj[i].show_children){
+                    titles_list_obj[i].show_children = false;
+                    index++;
+                    index = abort_children(titles_list_obj[i], index, titles_list_obj)
+                }
+            }
+        }
+        return index;
+    }
 
      function show_children(obj){
          if(obj.node.children.length > 0) {
@@ -75,18 +93,31 @@
     
                         } else { //Removes the node's children
                             console.log("Fjerner barna")
+                            i = abort_children(obj, i, titles_list_obj)
                             titles_list_obj[i].show_children = false;
-                            i++;
-                            while(i < titles_list_obj.length){
-                                if (titles_list_obj[i].node.parent.id == obj.node.id) {
-                                    console.log("Legger ikke til " + titles_list_obj[i].node.overskrift + " i listen")
-                                    i++;
-    
-                                } else {
-                                    break
-                                }
-                            }
-                            i--
+
+                            // let previous_node = null;
+                            // i++;
+                            // while(i < titles_list_obj.length){
+                            //     if ((titles_list_obj[i].node.parent.id == obj.node.id) && previous_node == null){
+                            //         console.log("Legger ikke til " + titles_list_obj[i].node.overskrift + " i listen")
+                            //         i++;
+                            //         previous_node = titles_list_obj[i].node;         
+                            //     }
+                            //     else if ((titles_list_obj[i].node.parent.id == obj.node.id)) { //If obj.node is parent of the node or if the previous_node is the parent of the node 
+                            //         console.log("Legger ikke til " + titles_list_obj[i].node.overskrift + " i listen")
+                            //         i++;
+                            //         previous_node = titles_list_obj[i].node;
+
+                            //     } else if (previous_node.id == titles_list_obj[i].node.parent.id){
+                            //         console.log("Legger ikke til " + titles_list_obj[i].node.overskrift + " i listen")
+                            //         i++;
+                            //         previous_node = titles_list_obj[i].node;
+                            //     } else {
+                            //         break
+                            //     }
+                            // }
+                            // i--
                         }
                     
                 }
@@ -113,7 +144,17 @@
             {#if elementObj.show_title}
                 <div style="font-weight: bold">{(elementObj.node.object.date.toDateString() + ": " + elementObj.node.object.title)} </div>
             {/if}
-            <div class="title" on:click={() => show_children(elementObj)}> {elementObj.node.format_string()} </div>
+            <div class="title" on:click={() => show_children(elementObj)}> 
+                {elementObj.node.format_string()} 
+                {#if elementObj.node.children.length>0}
+
+                    {#if elementObj.show_children}
+                        <i class="material-icons">expand_less</i>
+                    {:else }
+                        <i class="material-icons">expand_more</i>
+                    {/if}
+                {/if}
+            </div>
             
         {/each} 
     {/if}
@@ -138,9 +179,14 @@
         font-size: 17px;
         width:90%;
      }
+     i{
+        font-size: large;
+        margin-top:0.2em;
+     }
 
     .title{
         cursor: pointer;
+        display: flex;
     }
 
     .title:hover{

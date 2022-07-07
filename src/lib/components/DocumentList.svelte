@@ -1,6 +1,6 @@
 <script>
     import DocumentItem from "./DocumentItem.svelte";
-    import {currentDocumentObject, documentList, currentlyAddingNewNote} from '../stores/stores.js';
+    import {currentDocumentObject, documentList, currentlyAddingNewNote, documentFilter} from '../stores/stores.js';
     let w
     $: w = window.innerWidth;
     let sortedData = $documentList;
@@ -8,6 +8,8 @@
     let selectedHeader = "date";
     let ascendingOrder = false;
     let lengde;
+
+    $: filteredDocumentlist = $documentList.filter(item => ((item.title.toLowerCase() === ($documentFilter.toLowerCase())) || ($documentFilter.toLowerCase() === "alle")));
 
     function addNote(){
         $currentlyAddingNewNote = true;
@@ -86,7 +88,8 @@
         </thead>
     
         <tbody>
-            {#each $documentList as item}
+            <!-- {#each $documentList as item} -->
+            {#each filteredDocumentlist as item}
                 {#if $currentDocumentObject === item}
                     <DocumentItem document = {item} chosen = {true} /> <!--add color if file is chosen -->
                 {:else} 

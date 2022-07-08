@@ -25,5 +25,5 @@ export let myFilters =writable({
     "Filter 2": ["Epikrise"],
     "Filter 3": ["Epikrise", "Rutinekontroll"],
     "Filter 4": ["Sykepleier notat", "Rutinekontroll"],
-    "Filter 5": ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat"]}
-    );
+    "Filter 5": ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat"]
+});

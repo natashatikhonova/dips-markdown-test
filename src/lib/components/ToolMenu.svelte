@@ -2,6 +2,7 @@
     import { noDocumentFilter, filterGroup, myFilters} from '../stores/stores.js';
 
     const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
+
     let filterMenuOpen = false;
 
     let newFilterMode = false;
@@ -10,7 +11,11 @@
 
     let newFilterName ="";
 
+    let newFilterGroup = $filterGroup;
+
     let searched_value = "";
+
+
 
     const filterMenuHandler = () => {
         filterMenuOpen = !filterMenuOpen
@@ -18,24 +23,24 @@
 
     function clickedAll(){
         if($noDocumentFilter){
-            $filterGroup = []
+            newFilterGroup = []
         }
         else{
-            $filterGroup = documentTypes
+            newFilterGroup = $filterGroup
         }
     }
 
 
-    $: if($filterGroup.length == documentTypes.length){
+    $: if(newFilterGroup.length == $filterGroup.length){
     $noDocumentFilter = true
     }
-    else if($filterGroup.length < documentTypes.length){
+    else if(newFilterGroup.length < $filterGroup.length){
         $noDocumentFilter = false
     }
 
     function turnOffFilter(){
         $noDocumentFilter = true
-        $filterGroup = documentTypes
+        newFilterGroup = $filterGroup
     }
 
     function newFilterClicked(){
@@ -56,6 +61,7 @@
         <div class:show={filterMenuOpen} class="filtermenu-dropdown" >
 
             <button on:click={newFilterClicked}>{newFilterButtonName}</button>
+
             {#if newFilterMode}
             <input bind:value={newFilterName} type="text" placeholder="Filternavn..." name="search">
             <input bind:value={searched_value} type="text" placeholder="Søk.." name="search">
@@ -67,7 +73,7 @@
                 {#each documentTypes as item}
             
                 <label class="filterItem" >
-                <input type="checkbox"  bind:group={$filterGroup} value={item} >
+                <input type="checkbox"  bind:group={newFilterGroup} value={item} >
                 {item}
                 <span class="checkmark"></span>
                 </label>

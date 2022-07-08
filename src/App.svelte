@@ -10,6 +10,7 @@
   import {ParseMarkdown} from './lib/ParseMarkdown'
 
   import ToolMenu from './lib/components/ToolMenu.svelte';
+import { MarkdownNode } from './lib/MarkdownTree';
 
 
 
@@ -25,9 +26,9 @@
     //Lager et tre over markdown overskriftene i teksten
     let tree = parse.parseAndSetIntoTree(document) 
     document.markdownTree = tree;
-    let nodes_array = document.markdownTree.get_nodes_in_order() //Return the nodes in the same order as it was read from file
+    let nodes_array = document.markdownTree.get_nodes_in_order(null) //Return the nodes in the same order as it was read from file
 
-    // console.log("\nnodes_array: ")
+    // console.log("\nnodes_array ")
     // console.log(nodes_array)
     $documentList.push(document);
     $documentList = $documentList;

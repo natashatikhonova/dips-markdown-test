@@ -1,11 +1,13 @@
 <script>
-    import {documentList, selectedDocumentList} from '../stores/stores.js';
+    import {documentList, selectedTitlesList} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
     import {currentlyAddingNewNote, noDocumentFilter, filterGroup} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
+import { element } from 'svelte/internal';
+import { DocumentObject } from '../document.js';
 
     $: not_empty_search = (searchValue != "") && (searchResult.length>0);
     $: show_titles_button = not_empty_search? false: false; //sets to false when when searchbar is empty
@@ -15,22 +17,58 @@
     let lengde = $documentList.length;
     let searchValue = "";
     let searchResult = $documentList;
-    let selectedList = []
-
+    
+    
     $: filteredDocumentlist = $noDocumentFilter ? $documentList :($documentList.filter(item => ($filterGroup.includes(item.title))));
-
+    
     $: searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes(searchValue.toLowerCase()))  || (item.author.toLowerCase().includes(searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes(searchValue.toLowerCase()))|| (item.title.toLowerCase().includes(searchValue.toLowerCase())));
+    $: console.log($selectedTitlesList)
+    
+    let selected_titles_nodes_List = []
 
-    $: $selectedDocumentList.forEach((item)=>{
-        if (!selectedList){
-            
-            selectedList.push(item)
-        }else{
-            if (selectedList.some(node => (node.object.id == item.object.id))){
+    $: $selectedTitlesList.forEach((item)=>{
+        
+        // console.log(item)
 
+        item.nodes.forEach((node)=> {
+            let indeks = -1
+            for (let i = 0; i < selected_titles_nodes_List.length; i++) { //check if document have been created
+                if (selected_titles_nodes_List[i].object.id == node.object.id) { //If they belong to the same object
+                    console.log("found object")
+                    indeks = i;
+                    break;
+                }
+            }
+            if (indeks != -1){ //Add to this node's document
+                console.log("Endrer context")
+                if (add_node_to_document(selected_titles_nodes_List[indeks], node)){
+                    node.object.context = node.object.markdownTree.get_text_under(node)
+
+                    selected_titles_nodes_List[indeks] = node;
+                } 
+
+            } else { //Make a new documentObj
+                console.log("Lager nytt documentObject")
+                let cpy_documentObj = node.object;
+                cpy_documentObj.context = node.object.markdownTree.get_text_under(node)
+
+                node.object = cpy_documentObj;
+                selected_titles_nodes_List.push(node)
+            }
+        })
+
+        // console.log(selected_titles_nodes_List)
+    })
+    function add_node_to_document(to_node, add_node){
+        for(let i = 0; i < to_node.object.markdownTree.queue_read.length; i++) {
+            let check_node = to_node.object.markdownTree.queue_read[i]
+            if (check_node.compare(add_node)) {
+                return false; //add_node is in subtree of to_node
             }
         }
-    })
+        return true; //add_node is not in subtree of to_node, it is over
+
+    }
 
     function save(){ 
         show = false;
@@ -165,9 +203,10 @@
     
                             {#if searchResult.length > 0}
                                 <div class = "dokumenter">
-                                    {#if $selectedDocumentList.length>0}
-                                        {#each $selectedDocumentList as item}
-                                            <ScrollItem htmlText = {marked(item.markdownCode+" "+item.overskrift)+ "\n" + marked(item.content)} date = {highlightWord(item.object.date.toDateString())} title = {highlightWord(marked(item.object.title))} author = {highlightWord(item.object.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                                    {#if $selectedTitlesList.length>0}
+                                        {#each selected_titles_nodes_List as item}
+                                            <!-- <ScrollItem htmlText = {marked(item.markdownCode+" "+item.overskrift)+ "\n" + marked(item.content)} date = {highlightWord(item.object.date.toDateString())} title = {highlightWord(marked(item.object.title))} author = {highlightWord(item.object.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/> -->
+                                                {@html marked(item.object.context)}
                                         {/each}
                                     {:else}
                                         {#each searchResult as item}

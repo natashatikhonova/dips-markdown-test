@@ -4,12 +4,15 @@ export class MarkdownNode{
     constructor(id, markdownCode, overskrift, content, object){
         this.id = id;
         this.markdownCode = markdownCode;
-        this.overskrift = overskrift;
+        this.overskrift = overskrift.trim().replace(/[&\/\\#^+()$~%.'":*?<>{}!@]/g, '') ;
         this.content = content;
         this.level = 0; //Hvilket nivå i treet/ settes når den blir satt inn i treet
         this.parent = null; 
         this.children = [];
         this.object = object;
+    }
+    compare(cmp_node){
+        return ( (cmp_node.id == this.id) && (cmp_node.object.id == this.object.id))
     }
 
     isLeaf(){
@@ -41,43 +44,6 @@ export class MarkdownNode{
     }
 
 }
-class Queue {
-    constructor() {
-        this.items = [];
-    }
-    
-    // add element to the queue
-    enqueue(element) {
-        return this.items.push(element);
-    }
-    
-    // remove element from the queue
-    dequeue() {
-        if(this.items.length > 0) {
-            return this.items.shift();
-        }
-    }
-    
-    // view the last element
-    peek() {
-        return this.items[this.items.length - 1];
-    }
-    
-    // check if the queue is empty
-    isEmpty(){
-    return this.items.length == 0;
-    }
-
-    // the size of the queue
-    size(){
-        return this.items.length;
-    }
-
-    // empty the queue
-    clear(){
-        this.items = [];
-    }
-}
 
 export class Tree {
     
@@ -86,45 +52,42 @@ export class Tree {
         this.queue_read = [] //The order of witch the nodes were inserted
         
     }
+
     insert(parent, newNode) { 
         newNode.level = parent.level+1;
         parent.children.push(newNode)
         newNode.parent = parent; 
         this.queue_read.push(newNode)
     }
-    get_nodes_in_order(){
-       
-        return this.queue_read
-    }
-    // program to implement queue data structure
 
-    // traverseBFS() {
-    //     //if there is no root, return false
-    //     if (!this.root) {
-    //       return [];
-    //     }
-    //     //start a new Queue
-    //     let queue = new Queue();
-    //     //keep a tally of all values in the tree
-    //     let treeValues = [];
-    //     //add root to queue
-    //     queue.enqueue(this.root);
-    //     //while queue is not empty
-    //     while (queue.size() !== 0) {
-    //       //get TreeNode Children
-    //       let nodeChildren = queue.items[0].children;
-    //       //if node has children, loop and add each to queue
-    //       if (nodeChildren.length !== 0) {
-    //         nodeChildren.forEach(child => queue.enqueue(child));
-    //       }
-    //       //push the first item in the queue to the tree values
-    //       treeValues.push(queue.items[0]);
-    //       //remove first node from queue
-    //       queue.dequeue();
-    //     }
-    //     //return values, should be all TreeNodes
-    //     return treeValues;
-    // }
+    get_nodes_in_order(startNode){
+        let indeks_in_queue = -1;
+
+        if (startNode == null) return this.queue_read
+
+       for (let i = 0; i < this.queue_read.length; i++){
+            if (this.queue_read[i].compare(startNode)) {
+                indeks_in_queue = i;
+                break;
+            }
+       }
+       if (indeks_in_queue == -1) {
+            return []
+       }
+       let queue_read_from_startNode = this.queue_read.splice(indeks_in_queue, this.queue_read.length)
+
+        return queue_read_from_startNode
+    }
+    get_text_under(startNode){
+        let nodes = this.get_nodes_in_order(startNode)
+        let string = ""
+        for (let i = 0; i < nodes.length; i++) {
+            string += (nodes[i].markdownCode + " " + nodes[i].overskrift + "\n" + nodes[i].content + "\n")
+        }
+        console.log(string)
+        return string;
+    }
+   
     
     indent = 1;
     print_tree(tree) {

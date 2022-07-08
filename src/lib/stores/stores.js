@@ -19,3 +19,11 @@ export let filterGroup =writable(["Epikrise", "Poliklinisk notat", "Lab", "Sykep
 export let noDocumentFilter = writable(true);
 
 export const selectedDocumentList=writable([]);
+
+export let myFilters =writable({
+    "Filter 1": ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"],
+    "Filter 2": ["Epikrise"],
+    "Filter 3": ["Epikrise", "Rutinekontroll"],
+    "Filter 4": ["Sykepleier notat", "Rutinekontroll"],
+    "Filter 5": ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat"]}
+    );

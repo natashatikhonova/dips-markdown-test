@@ -1,8 +1,16 @@
 <script>
-    import { noDocumentFilter, filterGroup} from '../stores/stores.js';
+    import { noDocumentFilter, filterGroup, myFilters} from '../stores/stores.js';
 
     const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
     let filterMenuOpen = false;
+
+    let newFilterMode = false;
+
+    let newFilterButtonName = "Nytt filter"
+
+    let newFilterName ="";
+
+    let searched_value = "";
 
     const filterMenuHandler = () => {
         filterMenuOpen = !filterMenuOpen
@@ -17,6 +25,7 @@
         }
     }
 
+
     $: if($filterGroup.length == documentTypes.length){
     $noDocumentFilter = true
     }
@@ -28,6 +37,16 @@
         $noDocumentFilter = true
         $filterGroup = documentTypes
     }
+
+    function newFilterClicked(){
+        newFilterMode = !newFilterMode
+        if(newFilterMode){
+            newFilterButtonName = "Dine filter"
+        }
+        else{
+            newFilterButtonName = "Nytt filter"
+        }
+    }
 </script>
 
 
@@ -35,18 +54,55 @@
         <button on:click={filterMenuHandler} class:active={filterMenuOpen} class="dropdown-button" >Filter</button>
 
         <div class:show={filterMenuOpen} class="filtermenu-dropdown" >
-          <label class="filterItem" >
+
+            <button on:click={newFilterClicked}>{newFilterButtonName}</button>
+            {#if newFilterMode}
+            <input bind:value={newFilterName} type="text" placeholder="Filternavn..." name="search">
+            <input bind:value={searched_value} type="text" placeholder="Søk.." name="search">
+                <label class="filterItem" >
+                    <input type="checkbox" on:click={clickedAll} bind:checked={$noDocumentFilter} value="alle" >
+                    Alle
+                    <span class="checkmark"></span>
+                </label>
+                {#each documentTypes as item}
+            
+                <label class="filterItem" >
+                <input type="checkbox"  bind:group={$filterGroup} value={item} >
+                {item}
+                <span class="checkmark"></span>
+                </label>
+            {/each}	
+
+
+            {:else}
+                <div>
+                    <p>Dine filter:</p>
+
+                    {#each Object.entries($myFilters) as item}
+                        <div class="filterItem-button" on:click={()=> $filterGroup = item[1]} value={item}>{item[0]}</div>
+                    {/each}
+                </div>
+
+            {/if}
+
+            
+
+
+          <!-- <label class="filterItem" >
             <input type="checkbox" on:click={clickedAll} bind:checked={$noDocumentFilter} value="alle" >
               Alle
             <span class="checkmark"></span>
-          </label>
-            {#each documentTypes as item}
+          </label> -->
+
+
+            <!-- {#each documentTypes as item}
+            
             <label class="filterItem" >
               <input type="checkbox"  bind:group={$filterGroup} value={item} >
               {item}
               <span class="checkmark"></span>
             </label>
-            {/each}	
+            {/each}	 -->
         </div>
         
         {#if !$noDocumentFilter}
@@ -120,5 +176,16 @@
     }
     .filteroff-button:hover {
         color:#666363;
+    }
+
+    .filterItem-button{
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .filterItem-button:hover {
+    background-color: #ddd
     }
 </style>

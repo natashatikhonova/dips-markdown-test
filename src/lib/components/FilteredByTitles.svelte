@@ -7,7 +7,7 @@
     let all_nodes = []
     let searched_titles_nodes = []
 
-    $: if($documentList) {
+    $: if($selectedTitlesList.length==0) {
             all_nodes = []
 
             $documentList.forEach((document) => {
@@ -74,24 +74,11 @@
                 <input type="checkbox" bind:group={$selectedTitlesList} value={elementObj}/>
 
                 <div class="title">
-
+                    
                     {elementObj.overskrift} 
 
                 </div>
              </div>
-            <!-- <div class="title" on:click={() => show_children(elementObj)}> 
-                {elementObj.node.format_string()} 
-
-                {#if elementObj.node.children.length>0}
-
-                    {#if elementObj.show_children}
-                        <i class="material-icons">expand_less</i>
-                    {:else }
-                        <i class="material-icons">expand_more</i>
-                    {/if}
-
-                {/if}
-            </div> -->
             
         {/each} 
 

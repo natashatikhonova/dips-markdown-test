@@ -6,8 +6,6 @@
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
-import { element } from 'svelte/internal';
-import { DocumentObject } from '../document.js';
 
     $: not_empty_search = (searchValue != "") && (searchResult.length>0);
     $: show_titles_button = not_empty_search? false: false; //sets to false when when searchbar is empty
@@ -27,7 +25,7 @@ import { DocumentObject } from '../document.js';
     let selected_titles_nodes_List = []
 
     $: $selectedTitlesList.forEach((item)=>{
-        
+        selected_titles_nodes_List = []
         // console.log(item)
 
         item.nodes.forEach((node)=> {
@@ -39,20 +37,25 @@ import { DocumentObject } from '../document.js';
                     break;
                 }
             }
-            if (indeks != -1){ //Add to this node's document
+            if (indeks != -1){ 
                 console.log("Endrer context")
-                if (add_node_to_document(selected_titles_nodes_List[indeks], node)){
-                    node.object.context = node.object.markdownTree.get_text_under(node)
+                if (add_node_to_document(selected_titles_nodes_List[indeks], node)){ //sets node in this place instead
+
+                    node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
+
+                    console.log("\nNoder under " + node.overskrift + ":")
+                    console.log(node.object.markdownTree.get_nodes_in_order(node))
 
                     selected_titles_nodes_List[indeks] = node;
                 } 
 
-            } else { //Make a new documentObj
-                console.log("Lager nytt documentObject")
-                let cpy_documentObj = node.object;
-                cpy_documentObj.context = node.object.markdownTree.get_text_under(node)
+            } else { //Set the variable temp_filtered_context i objectet til teksten som skal vises
+                console.log("Variabelen temp_filtered_context blir satt")
+                node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
 
-                node.object = cpy_documentObj;
+                console.log("\nNoder under " + node.overskrift + ":")
+                console.log(node.object.markdownTree.get_nodes_in_order(node))
+
                 selected_titles_nodes_List.push(node)
             }
         })
@@ -205,12 +208,12 @@ import { DocumentObject } from '../document.js';
                                 <div class = "dokumenter">
                                     {#if $selectedTitlesList.length>0}
                                         {#each selected_titles_nodes_List as item}
-                                            <!-- <ScrollItem htmlText = {marked(item.markdownCode+" "+item.overskrift)+ "\n" + marked(item.content)} date = {highlightWord(item.object.date.toDateString())} title = {highlightWord(marked(item.object.title))} author = {highlightWord(item.object.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/> -->
-                                                {@html marked(item.object.context)}
+                                            <ScrollItem date = {highlightWord(item.object.date.toDateString())} title = {highlightWord(marked(item.object.title))} author = {highlightWord(item.object.author)} on:editItem = {()=>show=!show} document = {item.object} deactivate ={show}/> 
+                                                <!-- {@html marked(item.object.context)} -->
                                         {/each}
                                     {:else}
                                         {#each searchResult as item}
-                                            <ScrollItem htmlText = {highlightWord(marked(item.context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                                            <ScrollItem date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                                         {/each}
                                     {/if}
                                 </div>

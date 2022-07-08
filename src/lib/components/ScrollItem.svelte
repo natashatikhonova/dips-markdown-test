@@ -1,13 +1,15 @@
 <script>
     import {currentDocumentObject, currentlyAddingNewNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
+    import { marked } from 'marked';
 
     export let document;
     export let date;
     export let title;
     export let author;
     export let deactivate = false; 
-    export let htmlText
+    let htmlText
+    htmlText = (document.temp_filtered_context == "") ? marked(document.context) : marked(document.temp_filtered_context)
 
     const dispatch = createEventDispatcher();
 

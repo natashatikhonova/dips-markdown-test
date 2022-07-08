@@ -60,7 +60,7 @@ export class Tree {
         this.queue_read.push(newNode)
     }
 
-    get_nodes_in_order(startNode){
+    get_nodes_in_order(startNode){ //Gets the nodes in order from wich they were read from file, starting from a startNode. Or if startNode is null, it is starting from the root
         let indeks_in_queue = -1;
 
         if (startNode == null) return this.queue_read
@@ -74,14 +74,22 @@ export class Tree {
        if (indeks_in_queue == -1) {
             return []
        }
-       let queue_read_from_startNode = this.queue_read.splice(indeks_in_queue, this.queue_read.length)
+       let queue_read_from_startNode = this.queue_read.slice(indeks_in_queue, this.queue_read.length)
+    //    console.log("New queue:")
+    //    console.log(queue_read_from_startNode)
+    //    console.log("Old queue")
+    //    console.log(this.queue_read)
 
         return queue_read_from_startNode
     }
-    get_text_under(startNode){
+    get_text_under(startNode){ //Gets the text from this node and the nodes under this headline
+
+        let markdown_headline_length = startNode.markdownCode.length
         let nodes = this.get_nodes_in_order(startNode)
-        let string = ""
-        for (let i = 0; i < nodes.length; i++) {
+
+        let string = (startNode.markdownCode + " " + startNode.overskrift + "\n" + startNode.content + "\n")
+        for (let i = 1; i < nodes.length; i++) {
+            if (nodes[i].markdownCode.length > markdown_headline_length)
             string += (nodes[i].markdownCode + " " + nodes[i].overskrift + "\n" + nodes[i].content + "\n")
         }
         console.log(string)

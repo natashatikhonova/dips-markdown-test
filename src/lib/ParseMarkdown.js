@@ -2,6 +2,7 @@ import { MarkdownNode, Tree } from './MarkdownTree';
 
 export class ParseMarkdown{
     idCounter = 1;
+    
 
     parseAndSetIntoTree(object){
         this.tree = new Tree(object);
@@ -23,7 +24,9 @@ export class ParseMarkdown{
                 if (started) {;
                     // console.log(markdownCode)
                     // console.log(overskrift)
+
                     newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring, object);
+     
                     // newNode.printNode(newNode)
                     this.tree.insert(possible_parent, newNode);
                     prevNode = newNode;
@@ -71,7 +74,9 @@ export class ParseMarkdown{
         }
 
         if (started) { //Legger til den siste noden
+         
             newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring, object)
+
             this.tree.insert(possible_parent, newNode)
             // newNode.printNode(newNode)
         }

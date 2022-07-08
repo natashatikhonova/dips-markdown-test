@@ -17,7 +17,7 @@ export class MarkdownNode{
     }
     is_parent_of(node){
         for (let i = 0; i < this.children.length; i++) {
-            if (this.children[i].id == node.id) return true;
+            if ((this.children[i].id == node.id) && (this.children[i].object.id == node.object.id)) return true;
         }
         return false;
     }

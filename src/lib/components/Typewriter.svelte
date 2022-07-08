@@ -8,7 +8,7 @@
     import toMarkdown from 'to-markdown';
     import {createEventDispatcher} from 'svelte';
     import { DocumentObject } from '../document.js';
-    import {parse} from '../stores/stores.js';
+    import { ParseMarkdown } from '../ParseMarkdown.js';
 
 
 
@@ -61,9 +61,10 @@
             if (element.id === $currentDocumentObject.id){
                 element.context= toMarkdown(editor.getHTML() + " \n");
                 //Lager et tre over markdown overskriftene i teksten
-                console.log("Før parse")
-                let tree = $parse.parseAndSetIntoTree(element) //Her henger programmet!!. FIKSET:)
-                console.log("Etter parse")
+                let parse = new ParseMarkdown()
+                // console.log("Før parse")
+                let tree = parse.parseAndSetIntoTree(element) //Her henger programmet!!. FIKSET:)
+                // console.log("Etter parse")
                 element.markdownTree = tree;
 
             }
@@ -75,10 +76,10 @@
             newElement.title = selectedDocType;
 
             //Lager et tre over markdown overskriftene i teksten
-     
-            console.log("Før parse")
-            let tree = $parse.parseAndSetIntoTree(newElement) //Her henger programmet!!. FIKSET:)
-            console.log("Etter parse")
+            let parse = new ParseMarkdown()
+            // console.log("Før parse")
+            let tree = parse.parseAndSetIntoTree(newElement) //Her henger programmet!!. FIKSET:)
+            // console.log("Etter parse")
             newElement.markdownTree = tree;
             console.log(newElement.markdownTree)
 

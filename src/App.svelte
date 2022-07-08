@@ -6,7 +6,9 @@
   import ScrollView from './lib/components/ScrollView.svelte';
   import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
-  import {parse} from './lib/stores/stores.js'
+  // import {parse} from './lib/stores/stores.js'
+  import {ParseMarkdown} from './lib/ParseMarkdown'
+
   import ToolMenu from './lib/components/ToolMenu.svelte';
 
 
@@ -14,18 +16,24 @@
   let showSideview = true;
 
   //get data from file
+
   documents.forEach(putInDocumentList);  
 
   function putInDocumentList(item){
     let document = new DocumentObject(item.id, item.date, item.content, item.title);
+    let parse = new ParseMarkdown
     //Lager et tre over markdown overskriftene i teksten
-
-    let tree = $parse.parseAndSetIntoTree(document) //Her henger programmet!!
+    let tree = parse.parseAndSetIntoTree(document) 
     document.markdownTree = tree;
+    let nodes_array = document.markdownTree.get_nodes_in_order() //Return the nodes in the same order as it was read from file
+
+    // console.log("\nnodes_array: ")
+    // console.log(nodes_array)
     $documentList.push(document);
     $documentList = $documentList;
   }
 
+  
 
 
   function changeView(){

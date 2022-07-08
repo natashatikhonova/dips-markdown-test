@@ -21,8 +21,10 @@
                     all_nodes.push(node)
                 })
             })
+            // console.log("\nALL_NODES:")
+            // console.log(all_nodes)
 
-            //All the nodes in containing the searched_value
+            //All the nodes containing the searched_value
             searched_titles_nodes = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0);
 
             //If a parent contains the searched string, then we remove the subtree of that parent. So that only the parent that contains the string is shown.
@@ -36,14 +38,18 @@
                     prev_added_node = node;
                 }
             }
-            searched_titles_nodes = new_searched_titles_nodes;
+            // console.log("\nsearched_titles_nodes:")
+            // console.log(searched_titles_nodes)
+            // searched_titles_nodes = new_searched_titles_nodes;
+            // console.log("\n NEW_searched_titles_nodes:")
+            // console.log(searched_titles_nodes)
     }
 
     function if_parent_allready_added(prev_added_node, parent){
         if (parent.id == 0) { //root-node
             return false
         } else if (prev_added_node != null){
-            if (prev_added_node.id = parent.id) {
+            if (prev_added_node.is_parent_of(parent) ) {
                 return true;
             }
         }
@@ -66,12 +72,12 @@
             } else if(previous_node.object != node.object){
                 element.show_title = true;
 
-            } else if ( (obj_list[obj_list.length-1].node.is_parent_of(node)) || (previous_node.id == node.parent.id)) { //If the last added element is parent of the current
+            } else if ( (obj_list[obj_list.length-1].node.is_parent_of(node)) || (previous_node.is_parent_of(node))) { //If the last added element is parent of the current
                     // console.log(previous_node.overskrift + " er parent til " + node.overskrift)
                     previous_node = node;
                     continue;
 
-            }else if (previous_node.id == node.parent.id){
+            }else if (previous_node.is_parent_of(node)){
                 // console.log(previous_node.overskrift + " er parent til " + node.overskrift)
                 previous_node = node;
                 continue;
@@ -88,22 +94,22 @@
     $: titles_list_obj = make_titles_obj_list([], searched_titles_nodes)
 
      function show_children(obj){
+
          if(obj.node.children.length > 0) {
 
             let new_titles_list_obj = []
 
             for(let i = 0; i < titles_list_obj.length; i++){
+            
                 new_titles_list_obj.push(titles_list_obj[i])
     
-                if(titles_list_obj[i].node.id == obj.node.id) {//Adds the node's children to the list
+                if((titles_list_obj[i].node.id == obj.node.id) && (titles_list_obj[i].node.object.id == obj.node.object.id)) {//Adds the node's children to the list
     
-                    if(obj.show_children == false) {
+                    if(obj.show_children == false) { //Adds the nodes children to the list
                             // console.log("Legger til barn")
                             obj.node.children.forEach((node) => {
                                 let newElement = {node: node, show_title: false, show_children: false}
                                 new_titles_list_obj.push(newElement)
-                                // console.log("\n new_titles_list_obj:")
-                                // console.log(new_titles_list_obj)
                             })
                             titles_list_obj[i].show_children = true;
     
@@ -141,7 +147,7 @@
             }
 
             titles_list_obj = new_titles_list_obj
-            // console.log("\n NEW titles_list_obj: ")
+            // console.log("\n NEW titles_list_obj AFTER CLICK: ")
             // console.log(titles_list_obj)
         }
     }

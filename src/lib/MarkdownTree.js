@@ -93,6 +93,7 @@ export class Tree {
         this.queue_read.push(newNode)
     }
     get_nodes_in_order(){
+       
         return this.queue_read
     }
     // program to implement queue data structure

@@ -23,6 +23,7 @@
 
     $: $selectedDocumentList.forEach((item)=>{
         if (!selectedList){
+            
             selectedList.push(item)
         }else{
             if (selectedList.some(node => (node.object.id == item.object.id))){

@@ -7,7 +7,8 @@
   import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {parse} from './lib/stores/stores.js'
- 
+  import ToolMenu from './lib/components/ToolMenu.svelte';
+
 
 
   let showSideview = true;
@@ -16,7 +17,7 @@
   documents.forEach(putInDocumentList);  
 
   function putInDocumentList(item){
-    let document = new DocumentObject(item.id, item.date, item.content);
+    let document = new DocumentObject(item.id, item.date, item.content, item.title);
     //Lager et tre over markdown overskriftene i teksten
 
     let tree = $parse.parseAndSetIntoTree(document) //Her henger programmet!!
@@ -39,9 +40,7 @@
   $: w = window.innerWidth;
   $: h = window.innerHeight;
 
-
 </script>
-
 
 <header>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -51,6 +50,10 @@
     <button disabled={showSideview} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
     <button disabled={!showSideview} title="Kontinuerlig visning" on:click={changeView}><i class="material-icons">horizontal_split</i></button>
   </div>
+</header>
+
+<header class="tool-menu">
+  <ToolMenu/>
 </header>
 
 <div class="main">
@@ -115,6 +118,11 @@
     
   }
 
+  .tool-menu{
+    background-color: #eeeeee;
+    align-items: center;
+  }
+
   img{
     margin: 0.5vh;
     height:4vh;
@@ -128,7 +136,7 @@
    .main {
     margin: 0;
     padding: 0;
-    height: 95vh;
+    height: 90vh;
     width:100vw;
   }
 

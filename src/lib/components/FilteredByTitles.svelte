@@ -21,19 +21,34 @@
                     all_nodes.push(node)
                 })
             })
-            // console.log("\n all_nodes: ")
-            // console.log(all_nodes)
-            //searched_titles_nodes = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0); //***************Denne må endres til å filtrere+ at bare parentNodene som inneholder teksten legges i listen, ikke alle childNodene også!*****************************************
-            // console.log("\n searched_titles_nodes: ")
-            // console.log(searched_titles_nodes)
 
-            //tester ny filtrering
-            searched_titles_nodes = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0 && !foundParent(all_nodes, item));
-            
+            //All the nodes in containing the searched_value
+            searched_titles_nodes = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0);
+
+            //If a parent contains the searched string, then we remove the subtree of that parent. So that only the parent that contains the string is shown.
+            let new_searched_titles_nodes = [] //Only parents containing the searched_value
+            let prev_added_node = null
+            for (let i = 0; i < searched_titles_nodes.length; i++){
+                let node = searched_titles_nodes[i]
+                
+                if (!if_parent_allready_added(prev_added_node, node.parent)) { //If parent is not allready to the tree.
+                    new_searched_titles_nodes.push(node);
+                    prev_added_node = node;
+                }
+            }
+            searched_titles_nodes = new_searched_titles_nodes;
     }
 
-    function foundParent(nodes, child){
-        return nodes.some(item => item.id === child.parent.id)
+    function if_parent_allready_added(prev_added_node, parent){
+        if (parent.id == 0) { //root-node
+            return false
+        } else if (prev_added_node != null){
+            if (prev_added_node.id = parent.id) {
+                return true;
+            }
+        }
+        if_parent_allready_added(prev_added_node, parent.parent)
+        return false;
     }
 
      function make_titles_obj_list(obj_list, node_list){

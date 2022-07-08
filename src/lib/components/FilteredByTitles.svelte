@@ -23,10 +23,17 @@
             })
             // console.log("\n all_nodes: ")
             // console.log(all_nodes)
-            searched_titles_nodes = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0); //***************Denne må endres til å filtrere at bare parentNodene som inneholder teksten legges i listen, ikke alle childNodene også!*****************************************
+            //searched_titles_nodes = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0); //***************Denne må endres til å filtrere+ at bare parentNodene som inneholder teksten legges i listen, ikke alle childNodene også!*****************************************
             // console.log("\n searched_titles_nodes: ")
             // console.log(searched_titles_nodes)
+
+            //tester ny filtrering
+            searched_titles_nodes = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0 && !foundParent(all_nodes, item));
             
+    }
+
+    function foundParent(nodes, child){
+        return nodes.some(item => item.id === child.parent.id)
     }
 
      function make_titles_obj_list(obj_list, node_list){

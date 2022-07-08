@@ -1,5 +1,5 @@
 <script>
-    import { documentList } from '../stores/stores';
+    import { documentList, selectedDocumentList } from '../stores/stores';
     import {createEventDispatcher} from 'svelte';
 
     let searched_value = "";
@@ -7,6 +7,7 @@
     const dispatch = createEventDispatcher();
     let all_nodes = []
     let searched_titles_nodes
+
     
     $: if($documentList) {
             all_nodes = []
@@ -164,8 +165,24 @@
             {#if elementObj.show_title}
                 <div style="font-weight: bold">{(elementObj.node.object.date.toDateString() + ": " + elementObj.node.object.title)} </div>
             {/if}
+            <div class="title">
+                <input type="checkbox" bind:group={$selectedDocumentList} value={elementObj.node}/>
+                <div class="title" on:click={() => show_children(elementObj)}>
 
-            <div class="title" on:click={() => show_children(elementObj)}> 
+                    {elementObj.node.format_string()} 
+    
+                    {#if elementObj.node.children.length>0}
+    
+                        {#if elementObj.show_children}
+                            <i class="material-icons">expand_less</i>
+                        {:else }
+                            <i class="material-icons">expand_more</i>
+                        {/if}
+    
+                    {/if}
+                </div>
+             </div>
+            <!-- <div class="title" on:click={() => show_children(elementObj)}> 
                 {elementObj.node.format_string()} 
 
                 {#if elementObj.node.children.length>0}
@@ -177,7 +194,7 @@
                     {/if}
 
                 {/if}
-            </div>
+            </div> -->
             
         {/each} 
 

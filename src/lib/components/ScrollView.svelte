@@ -1,5 +1,5 @@
 <script>
-    import {documentList} from '../stores/stores.js';
+    import {documentList, selectedDocumentList} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
     import {currentlyAddingNewNote, noDocumentFilter, filterGroup} from '../stores/stores.js';
@@ -15,11 +15,22 @@
     let lengde = $documentList.length;
     let searchValue = "";
     let searchResult = $documentList;
+    let selectedList = []
 
     $: filteredDocumentlist = $noDocumentFilter ? $documentList :($documentList.filter(item => ($filterGroup.includes(item.title))));
 
     $: searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes(searchValue.toLowerCase()))  || (item.author.toLowerCase().includes(searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes(searchValue.toLowerCase()))|| (item.title.toLowerCase().includes(searchValue.toLowerCase())));
-    
+
+    $: $selectedDocumentList.forEach((item)=>{
+        if (!selectedList){
+            selectedList.push(item)
+        }else{
+            if (selectedList.some(node => (node.object.id == item.object.id))){
+
+            }
+        }
+    })
+
     function save(){ 
         show = false;
         ascendingOrder= true;
@@ -153,9 +164,15 @@
     
                             {#if searchResult.length > 0}
                                 <div class = "dokumenter">
-                                    {#each searchResult as item}
-                                        <ScrollItem htmlText = {highlightWord(marked(item.context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
-                                    {/each}
+                                    {#if $selectedDocumentList.length>0}
+                                        {#each $selectedDocumentList as item}
+                                            <ScrollItem htmlText = {marked(item.markdownCode+" "+item.overskrift)+ "\n" + marked(item.content)} date = {highlightWord(item.object.date.toDateString())} title = {highlightWord(marked(item.object.title))} author = {highlightWord(item.object.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                                        {/each}
+                                    {:else}
+                                        {#each searchResult as item}
+                                            <ScrollItem htmlText = {highlightWord(marked(item.context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                                        {/each}
+                                    {/if}
                                 </div>
                             {:else}
                                 <div class = "no-result"> Ingen Søkeresultater</div>

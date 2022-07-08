@@ -17,3 +17,5 @@ export let parse = writable(parseMarkdown);
 export let filterGroup =writable(["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"]);
 
 export let noDocumentFilter = writable(true);
+
+export const selectedDocumentList=writable([]);

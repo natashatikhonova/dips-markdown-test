@@ -1,8 +1,12 @@
 <script>
-    import { noDocumentFilter, filterGroup} from '../stores/stores.js';
+    import { noDocumentFilter, filterGroup, searchValue, showTitles} from '../stores/stores.js';
+    import {createEventDispatcher} from 'svelte';
 
     const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
     let filterMenuOpen = false;
+
+    export let hideToolBar = true;
+    const dispatch = createEventDispatcher();
 
     const filterMenuHandler = () => {
         filterMenuOpen = !filterMenuOpen
@@ -28,6 +32,12 @@
         $noDocumentFilter = true
         $filterGroup = documentTypes
     }
+
+    function open(){
+        $showTitles = true
+    }
+
+ 
 </script>
 
 
@@ -52,7 +62,15 @@
         {#if !$noDocumentFilter}
           <button class="filteroff-button" on:click={turnOffFilter}>Skru av filter</button>
         {/if}	
+
+        <button class="dropdown-button" class:hidden={hideToolBar} on:click={open} >Overskrifter</button>
     </div>
+
+    <div class="search-bar" class:hidden={hideToolBar}>
+        <input bind:value = {$searchValue} type="text" placeholder="Søk.." name="search">
+    </div>
+
+    
 
 <style>
 
@@ -61,6 +79,22 @@
     display: inline-block;
     
     }
+
+    .hidden{
+        visibility: hidden;
+    }
+
+    .search-bar{
+        margin: 2vw;
+    }
+
+    input[type=text] {
+        background: none;
+        padding: 6px;
+        border: none;
+        border-bottom: solid;
+        font-size: 17px;
+     }
         
     .filtermenu-dropdown {
     display: none;

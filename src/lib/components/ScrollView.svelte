@@ -2,7 +2,7 @@
     import {documentList, searchValue, showTitles} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
-    import {currentlyAddingNewNote, noDocumentFilter, filterGroup} from '../stores/stores.js';
+    import {currentlyAddingNewNote, currentFilterGroup} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
@@ -14,10 +14,12 @@
     let ascendingOrder = true;
     let lengde = $documentList.length;
     let searchResult = $documentList;
-    
     let selected_titles_nodes_List = []
     
-    $: filteredDocumentlist = $noDocumentFilter ? $documentList :($documentList.filter(item => ($filterGroup.includes(item.title))));
+    $: filteredDocumentlist = ($documentList.filter(item => ($currentFilterGroup.includes(item.title))));
+    
+
+    
 
     $: if (selected_titles_nodes_List.length>0) { //Hvis filtrert på overskrifter
         searchResult = nodeList_to_documentObjList(selected_titles_nodes_List)

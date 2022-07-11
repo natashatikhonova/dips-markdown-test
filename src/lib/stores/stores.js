@@ -1,5 +1,4 @@
 import { writable } from "svelte/store";
-// import { ParseMarkdown } from "../ParseMarkdown";
 
 import { Editor } from 'typewriter-editor';
 
@@ -27,3 +26,10 @@ export let myFilters =writable([
     {id: 4, name: "Torkilds filter", filters: ["Epikrise", "Lab", "Rutinekontroll"]},
     {id: 5, name: "Thors filter", filters: ["Lab"]}
 ]);
+
+
+export let searchValue = writable("")
+
+export let showTitles = writable(false)
+
+

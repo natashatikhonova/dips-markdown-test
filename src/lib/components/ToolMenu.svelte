@@ -1,12 +1,18 @@
 <script>
-    import { noDocumentFilter, currentFilterGroup, myFilters} from '../stores/stores.js';
+
+    import { noDocumentFilter, filterGroup, searchValue, showTitles, currentFilterGroup, myFilters} from '../stores/stores.js';
+    import {createEventDispatcher} from 'svelte';
 
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
     const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10"];
-
+    
+    export let hideToolBar = true;
+    const dispatch = createEventDispatcher();
+    
     //If the compleate menu is open
     let filterMenuOpen = false;
+
 
     //editmode make new edits and make new filter groups
     let editMode = false;
@@ -33,6 +39,7 @@
     $: searchedFiltergroups = $myFilters.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
 
     $: $currentFilterGroup = currentFilterobj.filters
+
 
     const filterMenuHandler = () => {
         filterMenuOpen = !filterMenuOpen
@@ -84,6 +91,12 @@
         }
         return num;
     }
+
+    function open(){
+        $showTitles = true
+    }
+
+ 
 
     //If all button in editmode is clicked
     function clickedAll(){
@@ -166,9 +179,17 @@
         
         {#if currentFilterobj != nofilter}
           <button class="filteroff-button" on:click={turnOffFilter}>Skru av filter</button>
-        {/if}
+        {/if}	
+
+        <button class="dropdown-button" class:hidden={hideToolBar} on:click={open} >Overskrifter</button>
+    </div>
+
+    <div class="search-bar" class:hidden={hideToolBar}>
+        <input bind:value = {$searchValue} type="text" placeholder="Søk.." name="search">
 
     </div>
+
+    
 
 <style>
 
@@ -177,16 +198,33 @@
     display: inline-block;
 }
     
-.filtermenu-dropdown {
-    
-    display: none;
-    position: absolute;
-    background-color: #f6f6f6;
-    min-width: 230px;
-    border: 3px solid rgb(147, 147, 147);
-    z-index: 2;
-    max-height: 85vh;
-    height: fit-content;
+
+    .hidden{
+        visibility: hidden;
+    }
+
+    .search-bar{
+        margin: 2vw;
+    }
+
+    input[type=text] {
+        background: none;
+        padding: 6px;
+        border: none;
+        border-bottom: solid;
+        font-size: 17px;
+     }
+        
+    .filtermenu-dropdown {
+
+        display: none;
+        position: absolute;
+        background-color: #f6f6f6;
+        min-width: 230px;
+        border: 3px solid rgb(147, 147, 147);
+        z-index: 2;
+        max-height: 85vh;
+        height: fit-content;
 }
 
 /* for filtermenu */

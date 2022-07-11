@@ -1,5 +1,5 @@
 <script>
-    import {documentList, selectedDocumentList} from '../stores/stores.js';
+    import {documentList, searchValue, showTitles} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
     import {currentlyAddingNewNote, currentFilterGroup} from '../stores/stores.js';
@@ -7,29 +7,123 @@
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
 
-    $: not_empty_search = (searchValue != "") && (searchResult.length>0);
+    $: not_empty_search = ($searchValue != "") && (searchResult.length>0);
     $: show_titles_button = not_empty_search? false: false; //sets to false when when searchbar is empty
     let show = false;
     let sortedData = $documentList;
     let ascendingOrder = true;
     let lengde = $documentList.length;
-    let searchValue = "";
     let searchResult = $documentList;
-    let selectedList = []
-
+    let selected_titles_nodes_List = []
+    
     $: filteredDocumentlist = ($documentList.filter(item => ($currentFilterGroup.includes(item.title))));
+    
 
-    $: searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes(searchValue.toLowerCase()))  || (item.author.toLowerCase().includes(searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes(searchValue.toLowerCase()))|| (item.title.toLowerCase().includes(searchValue.toLowerCase())));
+    
 
-    $: $selectedDocumentList.forEach((item)=>{
-        if (!selectedList){
-            selectedList.push(item)
-        }else{
-            if (selectedList.some(node => (node.object.id == item.object.id))){
+    $: if (selected_titles_nodes_List.length>0) { //Hvis filtrert på overskrifter
+        searchResult = nodeList_to_documentObjList(selected_titles_nodes_List)
+        searchResult = searchResult.filter(item => (item.temp_filtered_context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
+    } else {
+        searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
 
+    }
+    
+    function nodeList_to_documentObjList(node_list) {
+        let documentObj_list = []
+        for (let i = 0; i <node_list.length; i++){
+            documentObj_list[i] = node_list[i].object
+        }
+        return documentObj_list
+    }
+    // $: console.log($selectedTitlesList)
+    
+    // $: console.log(selected_titles_nodes_List)
+
+    function make_nodes_list(obj_list){
+
+        selected_titles_nodes_List = []
+        reset_filtered_text(); //Loop through the whole documentList and sets the filtered text to empty string
+        // console.log("\nNY laging av dokumenter")
+        // console.log(obj_list)
+        obj_list.forEach((item)=>{
+            
+            // console.log(item)
+
+            item.nodes.forEach((node)=> {
+                // console.log("\nSjekker noden: " + node.overskrift)
+                let indeks = -1
+
+                for (let i = 0; i < selected_titles_nodes_List.length; i++) { //check if document have been created
+                    if (selected_titles_nodes_List[i].object.id == node.object.id) { //If they belong to the same object
+                        // console.log("found object " + selected_titles_nodes_List[i].overskrift + " med samme dokumentobject" )
+                        indeks = i;
+                        break;
+                    }
+                }
+                if (indeks != -1){ 
+                    // console.log("Endrer context ")
+    
+                    if (!is_in_subtree(selected_titles_nodes_List[indeks], node)){ //sets node in this place instead
+                        if (is_in_subtree(node, selected_titles_nodes_List[indeks])) { //if node is over in the tree
+                            // console.log("noden er over")
+    
+                            node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
+    
+                            selected_titles_nodes_List[indeks] = node;
+
+                        } else { //if they are in the same tree
+                            // console.log("Samme tre")
+                            if (node.object.temp_filtered_context == "" ){
+                                node.object.temp_filtered_context =  selected_titles_nodes_List[indeks].object.markdownTree.get_text_under(selected_titles_nodes_List[indeks]) + "\n" + node.object.markdownTree.get_text_under(node)
+                            } else {
+                                node.object.temp_filtered_context +=  "\n" +  node.object.markdownTree.get_text_under(node)
+                              
+                            }
+                            // console.log(node)
+    
+                            // console.log("\nNoder under " + node.overskrift + ":")
+                            // console.log(node.object.markdownTree.get_nodes_in_order(node))
+    
+                            selected_titles_nodes_List[indeks] = node;
+                            
+                            // console.log(selected_titles_nodes_List[indeks])
+                        }
+                    } 
+
+                } else { //Set the variable temp_filtered_context i objectet til teksten som skal vises
+                    // console.log("Variabelen temp_filtered_context blir satt")
+
+                    node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
+                    selected_titles_nodes_List.push(node)
+                }
+            })
+
+            // console.log(selected_titles_nodes_List)
+        })
+    }
+    function reset_filtered_text(){
+        for (let i = 0; i < $documentList.length; i++){
+            $documentList[i].temp_filtered_context = ""
+        }
+    }
+        
+    function is_in_subtree(to_node, add_node){
+
+        let subtree = to_node.object.markdownTree.get_subtree(to_node)
+        // console.log("Subtreet til " + to_node.overskrift)
+        // console.log(subtree)
+        for(let i = 0; i < subtree.length; i++) {
+            let check_node = subtree[i]
+            if (check_node.compare(add_node)) {
+                // console.log(add_node.overskrift + " er i subtreet til " + to_node.overskrift)
+                return true; //add_node is in subtree of to_node
             }
         }
-    })
+        // console.log(add_node.overskrift + " er ikke i subtreet til " + to_node.overskrift)
+        return false; //add_node is not in subtree of to_node
+
+    }
 
     function save(){ 
         show = false;
@@ -107,12 +201,12 @@
     }
 
     function highlightWord(htmlText) {
-        if (searchValue!== "") {
+
+        if ($searchValue!== "") {
             let container
             container = document.createElement("div")
             container.innerHTML = htmlText
-            wrapWord(container, searchValue)
-            let after = document.createTextNode(container.innerHTML)
+            wrapWord(container, $searchValue)
             return container.innerHTML
         } else{
             return htmlText
@@ -125,14 +219,25 @@
         //show_titles_button=!show_titles_button;
         current_size = "0";
         scrollview_size = "125";
-        show_titles_button = false;
+        $showTitles = false;
     }
 
     function open(){
-        show_titles_button = true;
         current_size = "25";
         scrollview_size = "100";
     }
+    function show_documents_checked_titles(event) {
+        // console.log(event.detail)
+        make_nodes_list(event.detail)
+       
+    }
+
+    $: if($showTitles==true){
+        console.log("test")
+        open()
+    }
+
+    $: $showTitles, console.log($showTitles)
     
 
 </script>
@@ -148,31 +253,26 @@
             
             <Pane minSize="15" size={current_size} maxSize="50">
                 <div class="searched-titles">
-                    <FilteredByTitles  on:close={close}/>
+                    <FilteredByTitles on:checked_titles={show_documents_checked_titles} on:close={close}/>
                 </div>
             </Pane>
             <Pane size={scrollview_size} >
                 <Splitpanes horizontal={true} >
                     <Pane size="100"> 
                         <div class:container={show} class:full-container={!show} >
-                            <input bind:value={searchValue} type="text" placeholder="Søk.." name="search">
-                            {#if !show_titles_button}
+                            <!-- <input bind:value={searchValue} type="text" placeholder="Søk.." name="search"> -->
+                            <!-- {#if !show_titles_button}
                                 <button class = "searched-titles-button" on:click={open}>
                                     <i class="material-icons">read_more</i>
                                 </button>
-                            {/if}
+                            {/if} -->
     
                             {#if searchResult.length > 0}
                                 <div class = "dokumenter">
-                                    {#if $selectedDocumentList.length>0}
-                                        {#each $selectedDocumentList as item}
-                                            <ScrollItem htmlText = {marked(item.markdownCode+" "+item.overskrift)+ "\n" + marked(item.content)} date = {highlightWord(item.object.date.toDateString())} title = {highlightWord(marked(item.object.title))} author = {highlightWord(item.object.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
-                                        {/each}
-                                    {:else}
-                                        {#each searchResult as item}
-                                            <ScrollItem htmlText = {highlightWord(marked(item.context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
-                                        {/each}
-                                    {/if}
+                                    {#each searchResult as item}
+                                        <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                                    {/each}
+                                    
                                 </div>
                             {:else}
                                 <div class = "no-result"> Ingen Søkeresultater</div>

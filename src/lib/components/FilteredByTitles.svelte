@@ -1,15 +1,34 @@
 <script>
-    import { documentList, selectedDocumentList } from '../stores/stores';
+    import { documentList} from '../stores/stores';
     import {createEventDispatcher} from 'svelte';
-
+    
     let searched_value = "";
-    let show = false;
     const dispatch = createEventDispatcher();
     let all_nodes = []
-    let searched_titles_nodes
-
+    let searched_titles_nodes = []
+    let original_titles_list_obj = []
+    let show_titles_list_obj =[]
     
-    $: if($documentList) {
+    const sortByString = () => {
+
+        let sortedData = original_titles_list_obj.sort((obj1, obj2) => {
+            if (obj1.overskrift < obj2.overskrift) {
+                    return -1;
+            } else if (obj1.overskrift > obj2.overskrift) {
+                return 1;
+            }
+            return 0; //string code values are equal		
+        });
+
+        
+        original_titles_list_obj = sortedData;
+    }
+    
+    $: original_titles_list_obj, dispatch("checked_titles", original_titles_list_obj.filter((item) => item.checked))
+
+    $: $documentList, load_documents_to_nodes()
+
+    function load_documents_to_nodes() {
             all_nodes = []
 
             $documentList.forEach((document) => {
@@ -21,137 +40,90 @@
                 nodes_array.forEach((node)=> {
                     all_nodes.push(node)
                 })
-            })
+                // console.log(document)
+            }) 
             // console.log("\nALL_NODES:")
             // console.log(all_nodes)
-
             //All the nodes containing the searched_value
-            searched_titles_nodes = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0);
+            searched_titles_nodes = all_nodes.filter(item => (item.id != 0));
+            original_titles_list_obj = make_titles_obj_list(all_nodes)
+            // $selectedTitlesList = original_titles_list_obj.filter((item) => (item.checked))
+            sortByString()
+            
 
-            //If a parent contains the searched string, then we remove the subtree of that parent. So that only the parent that contains the string is shown.
-            let new_searched_titles_nodes = [] //Only parents containing the searched_value
-            let prev_added_node = null
-            for (let i = 0; i < searched_titles_nodes.length; i++){
-                let node = searched_titles_nodes[i]
-                
-                if (!if_parent_allready_added(prev_added_node, node.parent)) { //If parent is not allready to the tree.
-                    new_searched_titles_nodes.push(node);
-                    prev_added_node = node;
+    }
+    $: if (searched_value.length >= 0){
+        
+        // console.log("\nshow_titles_list_obj")
+        // console.log(show_titles_list_obj)
+        if (searched_value != ""){
+            show_titles_list_obj = original_titles_list_obj.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())));
+
+        } else {
+            show_titles_list_obj = original_titles_list_obj
+        }
+        
+        // console.log("\norignal_titles_list_obj")
+        // console.log(original_titles_list_obj)
+    }
+    
+
+
+     function make_titles_obj_list(node_list){
+        let obj_list = []
+
+        for (let i = 0; i<node_list.length; i++){
+            let new_element = {}
+            let node = node_list[i]
+            let found = false;
+            for (let j= 0; j<obj_list.length; j++){
+                if(obj_list[j].overskrift == node.overskrift){
+                    obj_list[j].nodes.push(node)
+                    found = true
+                    break;
                 }
             }
-            // console.log("\nsearched_titles_nodes:")
-            // console.log(searched_titles_nodes)
-            // searched_titles_nodes = new_searched_titles_nodes;
-            // console.log("\n NEW_searched_titles_nodes:")
-            // console.log(searched_titles_nodes)
-    }
+            if (!found){
+                if (original_titles_list_obj.length == 0) { //First time
+                    new_element = {overskrift: node.overskrift, nodes: [node], checked: false }
 
-    function if_parent_allready_added(prev_added_node, parent){
-        if (parent.id == 0) { //root-node
-            return false
-        } else if (prev_added_node != null){
-            if (prev_added_node.is_parent_of(parent) ) {
-                return true;
-            }
-        }
-        if_parent_allready_added(prev_added_node, parent.parent)
-        return false;
-    }
+                } else { //Check if the node is checked in original_titles_obj_list
+                    let found_in_list = false
+                    for (let i = 0; i < original_titles_list_obj.length; i++) {
 
-     function make_titles_obj_list(obj_list, node_list){
-        let previous_node = null;
-        let element = {};
-
-        for (let i = 0; i < node_list.length; i++){
-            let node = node_list[i];
-            
-            element = {node: node, show_title: false, show_children: false};
-
-            if(previous_node == null){
-                element.show_title = true;
-
-            } else if(previous_node.object != node.object){
-                element.show_title = true;
-
-            } else if ( (obj_list[obj_list.length-1].node.is_parent_of(node)) || (previous_node.is_parent_of(node))) { //If the last added element is parent of the current
-                    // console.log(previous_node.overskrift + " er parent til " + node.overskrift)
-                    previous_node = node;
-                    continue;
-
-            }else if (previous_node.is_parent_of(node)){
-                // console.log(previous_node.overskrift + " er parent til " + node.overskrift)
-                previous_node = node;
-                continue;
+                        if (node.overskrift == original_titles_list_obj[i].overskrift) {
+                            if (original_titles_list_obj[i].checked) {
+                                new_element = {overskrift: node.overskrift, nodes: [node], checked: true }
+                                found_in_list = true
+                            } 
+                            break;
+                        }
+                    }
+                    if (!found_in_list){
+                        new_element = {overskrift: node.overskrift, nodes: [node], checked: false }
+                    }
+                }
+                obj_list.push(new_element)
+                // console.log(new_element)
             }
 
-            obj_list.push(element)
-            previous_node = node;
         }
-        // console.log("\n titles_list_obj: ")
-        // console.log(obj_list)
+
         return obj_list
     }
-    
-    $: titles_list_obj = make_titles_obj_list([], searched_titles_nodes)
 
-     function show_children(obj){
+    function closeTitles(){
+        removeChecked()
 
-         if(obj.node.children.length > 0) {
+        dispatch("close")
+    }
 
-            let new_titles_list_obj = []
-
-            for(let i = 0; i < titles_list_obj.length; i++){
-            
-                new_titles_list_obj.push(titles_list_obj[i])
-    
-                if((titles_list_obj[i].node.id == obj.node.id) && (titles_list_obj[i].node.object.id == obj.node.object.id)) {//Adds the node's children to the list
-    
-                    if(obj.show_children == false) { //Adds the nodes children to the list
-                            // console.log("Legger til barn")
-                            obj.node.children.forEach((node) => {
-                                let newElement = {node: node, show_title: false, show_children: false}
-                                new_titles_list_obj.push(newElement)
-                            })
-                            titles_list_obj[i].show_children = true;
-    
-                    } else { //Removes the node's children
-                        // console.log("Fjerner barna")
-                        
-                        titles_list_obj[i].show_children = false;
-                        let previous_obj = titles_list_obj[i];
-
-                        i++;
-                        while(i<titles_list_obj.length){ 
-
-                            if( (previous_obj.show_children == false) && (previous_obj.node.is_parent_of(titles_list_obj[i].node)) ) {
-                                // console.log("Hopper over " + titles_list_obj[i].node.overskrift)
-                                titles_list_obj[i].show_children = false;
-                                previous_obj = titles_list_obj[i]; 
-                                i++;
-                            } 
-                            else if (obj.node.is_parent_of(titles_list_obj[i].node)){
-                                // console.log("Hopper over " + titles_list_obj[i].node.overskrift)
-                                titles_list_obj[i].show_children = false;
-                                previous_obj = titles_list_obj[i]; 
-                                i++;
-                            
-                            } 
-                            else{
-                                break;
-                            }
-                        }
-                        i--; //It is i-- here because the for-loop does i++ at the end, therefor we must compensate by doing i--. If not, one element get surpassed. 
-                    }
-                            
-                }
-                    
-            }
-
-            titles_list_obj = new_titles_list_obj
-            // console.log("\n NEW titles_list_obj AFTER CLICK: ")
-            // console.log(titles_list_obj)
+    function removeChecked(){
+        for(let i=0; i<original_titles_list_obj.length; i++){
+            original_titles_list_obj[i].checked = false
         }
     }
+    
 
 </script>
 
@@ -160,47 +132,24 @@
 </head>
 <div class="main">
         <h2>Overskrifter</h2>
-        <button class="close" on:click={()=>dispatch("close")}><i class="material-icons">close</i></button>
+        <button class="close" on:click={closeTitles}><i class="material-icons">close</i></button>
         <input bind:value={searched_value} type="text" placeholder="Søk.." name="search">
+        <button class="remove-button" on:click={removeChecked}>Nullstill</button>
     {#if searched_titles_nodes.length == 0}
         <div>Ingen overskrifter</div>
     {:else}
 
-        {#each titles_list_obj as elementObj}
+        {#each show_titles_list_obj as elementObj}
 
-            {#if elementObj.show_title}
-                <div style="font-weight: bold">{(elementObj.node.object.date.toDateString() + ": " + elementObj.node.object.title)} </div>
-            {/if}
             <div class="title">
-                <input type="checkbox" bind:group={$selectedDocumentList} value={elementObj.node}/>
-                <div class="title" on:click={() => show_children(elementObj)}>
+                <input type="checkbox" bind:checked={elementObj.checked} />
 
-                    {elementObj.node.format_string()} 
-    
-                    {#if elementObj.node.children.length>0}
-    
-                        {#if elementObj.show_children}
-                            <i class="material-icons">expand_less</i>
-                        {:else }
-                            <i class="material-icons">expand_more</i>
-                        {/if}
-    
-                    {/if}
+                <div class="title">
+
+                    {elementObj.overskrift} 
+
                 </div>
              </div>
-            <!-- <div class="title" on:click={() => show_children(elementObj)}> 
-                {elementObj.node.format_string()} 
-
-                {#if elementObj.node.children.length>0}
-
-                    {#if elementObj.show_children}
-                        <i class="material-icons">expand_less</i>
-                    {:else }
-                        <i class="material-icons">expand_more</i>
-                    {/if}
-
-                {/if}
-            </div> -->
             
         {/each} 
 
@@ -215,6 +164,29 @@
         height: 100%;
         padding-left: 2vw;
         padding-right: 2vw;
+    }
+
+    .remove-button{
+        display: inline-flex;
+        align-items: center;
+        margin: 0.5vh;
+        margin-bottom: 1vh;
+        margin-right: 2vh;
+        height:2vh;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        background: #d43838;
+        color:#ffffff;
+        padding: 16px;
+        font-size: 16px;
+        cursor: pointer;
+        border: solid 0.1em rgb(255, 92, 81 ,0);
+        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81, 0);
+    }
+
+    .remove-button:hover {
+        color:#ffffff;
+        border: solid 0.1em;
+        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
     }
 
     input[type=text] {

@@ -92,7 +92,7 @@ export class Tree {
             if (nodes[i].markdownCode.length > markdown_headline_length)
             string += (nodes[i].markdownCode + " " + nodes[i].overskrift + "\n" + nodes[i].content + "\n")
         }
-        console.log(string)
+        // console.log(string)
         return string;
     }
    

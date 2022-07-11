@@ -1,5 +1,5 @@
 <script>
-    import {documentList, selectedTitlesList} from '../stores/stores.js';
+    import {documentList} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
     import {currentlyAddingNewNote, noDocumentFilter, filterGroup} from '../stores/stores.js';
@@ -20,55 +20,78 @@
     $: filteredDocumentlist = $noDocumentFilter ? $documentList :($documentList.filter(item => ($filterGroup.includes(item.title))));
     
     $: searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes(searchValue.toLowerCase()))  || (item.author.toLowerCase().includes(searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes(searchValue.toLowerCase()))|| (item.title.toLowerCase().includes(searchValue.toLowerCase())));
-    $: console.log($selectedTitlesList)
+    // $: console.log($selectedTitlesList)
     
     let selected_titles_nodes_List = []
+    $: console.log(selected_titles_nodes_List)
 
-    $: $selectedTitlesList.forEach((item)=>{
+    function make_nodes_list(obj_list){
+
         selected_titles_nodes_List = []
-        // console.log(item)
+        reset_filtered_text(); //Loop through the whole documentList and sets the filtered text to empty string
 
-        item.nodes.forEach((node)=> {
-            let indeks = -1
-            for (let i = 0; i < selected_titles_nodes_List.length; i++) { //check if document have been created
-                if (selected_titles_nodes_List[i].object.id == node.object.id) { //If they belong to the same object
-                    console.log("found object")
-                    indeks = i;
-                    break;
+        obj_list.forEach((item)=>{
+            // console.log(item)
+
+            item.nodes.forEach((node)=> {
+                console.log("Sjekker noden: " + node.overskrift)
+                let indeks = -1
+
+                for (let i = 0; i < selected_titles_nodes_List.length; i++) { //check if document have been created
+                    if (selected_titles_nodes_List[i].object.id == node.object.id) { //If they belong to the same object
+                        console.log("found object " + selected_titles_nodes_List[i].overskrift + " med samme dokumentobject" )
+                        indeks = i;
+                        break;
+                    }
                 }
-            }
-            if (indeks != -1){ 
-                console.log("Endrer context")
-                if (add_node_to_document(selected_titles_nodes_List[indeks], node)){ //sets node in this place instead
+                if (indeks != -1){ 
+                    console.log("Endrer context ")
+    
+                    if (add_node_to_document(selected_titles_nodes_List[indeks], node)){ //sets node in this place instead
+                        console.log("noden er over")
+
+                        node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
+                        console.log(node)
+
+                        // console.log("\nNoder under " + node.overskrift + ":")
+                        // console.log(node.object.markdownTree.get_nodes_in_order(node))
+
+                        selected_titles_nodes_List[indeks] = node;
+                        
+                        console.log(selected_titles_nodes_List[indeks])
+                    } 
+
+                } else { //Set the variable temp_filtered_context i objectet til teksten som skal vises
+                    console.log("Variabelen temp_filtered_context blir satt")
 
                     node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
+                
 
-                    console.log("\nNoder under " + node.overskrift + ":")
-                    console.log(node.object.markdownTree.get_nodes_in_order(node))
+                    // console.log("\nNoder under " + node.overskrift + ":")
+                    // console.log(node.object.markdownTree.get_nodes_in_order(node))
 
-                    selected_titles_nodes_List[indeks] = node;
-                } 
+                    selected_titles_nodes_List.push(node)
+                }
+            })
 
-            } else { //Set the variable temp_filtered_context i objectet til teksten som skal vises
-                console.log("Variabelen temp_filtered_context blir satt")
-                node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
-
-                console.log("\nNoder under " + node.overskrift + ":")
-                console.log(node.object.markdownTree.get_nodes_in_order(node))
-
-                selected_titles_nodes_List.push(node)
-            }
+            // console.log(selected_titles_nodes_List)
         })
-
-        // console.log(selected_titles_nodes_List)
-    })
+    }
+    function reset_filtered_text(){
+        for (let i = 0; i < $documentList.length; i++){
+            $documentList[i].temp_filtered_context = ""
+        }
+    }
+        
     function add_node_to_document(to_node, add_node){
-        for(let i = 0; i < to_node.object.markdownTree.queue_read.length; i++) {
-            let check_node = to_node.object.markdownTree.queue_read[i]
+        for(let i = 0; i < to_node.object.markdownTree.get_nodes_in_order(to_node).length; i++) {
+            let check_node = to_node.object.markdownTree.get_nodes_in_order(to_node)[i]
             if (check_node.compare(add_node)) {
+                console.log(add_node.overskrift + " er i subtreet til " + to_node.overskrift)
                 return false; //add_node is in subtree of to_node
             }
         }
+        console.log(add_node.overskrift + " er ikke i subtreet til " + to_node.overskrift)
         return true; //add_node is not in subtree of to_node, it is over
 
     }
@@ -175,6 +198,11 @@
         current_size = "25";
         scrollview_size = "100";
     }
+    function show_checked_titles(event) {
+        console.log(event.detail)
+        make_nodes_list(event.detail)
+       
+    }
     
 
 </script>
@@ -190,7 +218,7 @@
             
             <Pane minSize="15" size={current_size} maxSize="50">
                 <div class="searched-titles">
-                    <FilteredByTitles  on:close={close}/>
+                    <FilteredByTitles on:checked_titles={show_checked_titles} on:close={close}/>
                 </div>
             </Pane>
             <Pane size={scrollview_size} >
@@ -206,8 +234,9 @@
     
                             {#if searchResult.length > 0}
                                 <div class = "dokumenter">
-                                    {#if $selectedTitlesList.length>0}
+                                    {#if selected_titles_nodes_List.length>0}
                                         {#each selected_titles_nodes_List as item}
+                                        
                                             <ScrollItem date = {highlightWord(item.object.date.toDateString())} title = {highlightWord(marked(item.object.title))} author = {highlightWord(item.object.author)} on:editItem = {()=>show=!show} document = {item.object} deactivate ={show}/> 
                                                 <!-- {@html marked(item.object.context)} -->
                                         {/each}

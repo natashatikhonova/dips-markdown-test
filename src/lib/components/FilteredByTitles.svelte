@@ -1,13 +1,33 @@
 <script>
-    import { documentList, selectedTitlesList } from '../stores/stores';
+    import { documentList} from '../stores/stores';
     import {createEventDispatcher} from 'svelte';
-
+    
     let searched_value = "";
     const dispatch = createEventDispatcher();
     let all_nodes = []
     let searched_titles_nodes = []
+    let original_titles_list_obj = []
+    let show_titles_list_obj =[]
+    
+    const sortByString = () => {
 
-    $: if($selectedTitlesList.length==0) {
+        let sortedData = original_titles_list_obj.sort((obj1, obj2) => {
+            if (obj1.overskrift < obj2.overskrift) {
+                    return -1;
+            } else if (obj1.overskrift > obj2.overskrift) {
+                return 1;
+            }
+            return 0; //string code values are equal		
+        });
+
+        
+        original_titles_list_obj = sortedData;
+    }
+    $: if (original_titles_list_obj) {
+        dispatch("checked_titles", original_titles_list_obj.filter((item) => item.checked))
+    }
+    
+    $:if($documentList) {
             all_nodes = []
 
             $documentList.forEach((document) => {
@@ -19,14 +39,33 @@
                 nodes_array.forEach((node)=> {
                     all_nodes.push(node)
                 })
+                console.log(document)
             })
-            // console.log("\nALL_NODES:")
-            // console.log(all_nodes)
+            console.log("\nALL_NODES:")
+            console.log(all_nodes)
             //All the nodes containing the searched_value
-            searched_titles_nodes = all_nodes.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())) && item.id != 0);
+            searched_titles_nodes = all_nodes.filter(item => (item.id != 0));
+            original_titles_list_obj = make_titles_obj_list(all_nodes)
+            // $selectedTitlesList = original_titles_list_obj.filter((item) => (item.checked))
+            sortByString()
+            
 
     }
+    $: if (searched_value.length >= 0){
+        
+        console.log("\nshow_titles_list_obj")
+        console.log(show_titles_list_obj)
+        if (searched_value != ""){
+            show_titles_list_obj = original_titles_list_obj.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())));
 
+        } else {
+            show_titles_list_obj = original_titles_list_obj
+        }
+        
+        console.log("\norignal_titles_list_obj")
+        console.log(original_titles_list_obj)
+    }
+    
 
 
      function make_titles_obj_list(node_list){
@@ -44,16 +83,36 @@
                 }
             }
             if (!found){
-                new_element = {overskrift: node.overskrift, nodes: [node]}
+                if (original_titles_list_obj.length == 0) { //First time
+                    new_element = {overskrift: node.overskrift, nodes: [node], checked: false }
+
+                } else { //Check if the node is checked in original_titles_obj_list
+                    let found_in_list = false
+                    for (let i = 0; i < original_titles_list_obj.length; i++) {
+
+                        if (node.overskrift == original_titles_list_obj[i].overskrift) {
+                            if (original_titles_list_obj[i].checked) {
+                                new_element = {overskrift: node.overskrift, nodes: [node], checked: true }
+                                found_in_list = true
+                            } 
+                            break;
+                        }
+                    }
+                    if (!found_in_list){
+                        new_element = {overskrift: node.overskrift, nodes: [node], checked: false }
+                    }
+                }
                 obj_list.push(new_element)
                 // console.log(new_element)
             }
 
         }
+
         return obj_list
     }
     
-    $: titles_list_obj = make_titles_obj_list(searched_titles_nodes)
+
+ 
 
 </script>
 
@@ -68,13 +127,13 @@
         <div>Ingen overskrifter</div>
     {:else}
 
-        {#each titles_list_obj as elementObj}
+        {#each show_titles_list_obj as elementObj}
 
             <div class="title">
-                <input type="checkbox" bind:group={$selectedTitlesList} value={elementObj}/>
+                <input type="checkbox" bind:checked={elementObj.checked} />
 
                 <div class="title">
-                    
+
                     {elementObj.overskrift} 
 
                 </div>

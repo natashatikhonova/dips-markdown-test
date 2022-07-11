@@ -62,7 +62,7 @@ import { MarkdownNode } from './lib/MarkdownTree';
 </header>
 
 <header class="tool-menu">
-  <ToolMenu/>
+  <ToolMenu hideToolBar={showSideview}/>
 </header>
 
 <div class="main">

@@ -59,12 +59,12 @@
           dispatch("save");
           $documentList.forEach((element)=>{
             if (element.id === $currentDocumentObject.id){
-                element.context= toMarkdown(editor.getHTML() + " \n");
+                element.context= toMarkdown(editor.getHTML()) + " \n";
                 //Lager et tre over markdown overskriftene i teksten
                 let parse = new ParseMarkdown()
-                // console.log("Før parse")
+                console.log("Før parse")
                 let tree = parse.parseAndSetIntoTree(element) //Her henger programmet!!. FIKSET:)
-                // console.log("Etter parse")
+                console.log("Etter parse")
                 element.markdownTree = tree;
 
             }

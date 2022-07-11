@@ -59,6 +59,18 @@ export class Tree {
         newNode.parent = parent; 
         this.queue_read.push(newNode)
     }
+    get_subtree(startNode){
+        let all_nodes = this.get_nodes_in_order(startNode)
+        let subtree = []
+        for (let i = 1; i < all_nodes.length; i++) {
+            if (all_nodes[i].markdownCode.length <= startNode.markdownCode.length ) {
+                break;
+            }
+            subtree[i-1] = all_nodes[i]
+
+        }
+        return subtree
+    }
 
     get_nodes_in_order(startNode){ //Gets the nodes in order from wich they were read from file, starting from a startNode. Or if startNode is null, it is starting from the root
         let indeks_in_queue = -1;

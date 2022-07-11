@@ -23,11 +23,12 @@
         
         original_titles_list_obj = sortedData;
     }
-    $: if (original_titles_list_obj) {
-        dispatch("checked_titles", original_titles_list_obj.filter((item) => item.checked))
-    }
     
-    $:if($documentList) {
+    $: original_titles_list_obj, dispatch("checked_titles", original_titles_list_obj.filter((item) => item.checked))
+
+    $: $documentList, load_documents_to_nodes()
+
+    function load_documents_to_nodes() {
             all_nodes = []
 
             $documentList.forEach((document) => {
@@ -39,10 +40,10 @@
                 nodes_array.forEach((node)=> {
                     all_nodes.push(node)
                 })
-                console.log(document)
-            })
-            console.log("\nALL_NODES:")
-            console.log(all_nodes)
+                // console.log(document)
+            }) 
+            // console.log("\nALL_NODES:")
+            // console.log(all_nodes)
             //All the nodes containing the searched_value
             searched_titles_nodes = all_nodes.filter(item => (item.id != 0));
             original_titles_list_obj = make_titles_obj_list(all_nodes)
@@ -53,8 +54,8 @@
     }
     $: if (searched_value.length >= 0){
         
-        console.log("\nshow_titles_list_obj")
-        console.log(show_titles_list_obj)
+        // console.log("\nshow_titles_list_obj")
+        // console.log(show_titles_list_obj)
         if (searched_value != ""){
             show_titles_list_obj = original_titles_list_obj.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())));
 
@@ -62,8 +63,8 @@
             show_titles_list_obj = original_titles_list_obj
         }
         
-        console.log("\norignal_titles_list_obj")
-        console.log(original_titles_list_obj)
+        // console.log("\norignal_titles_list_obj")
+        // console.log(original_titles_list_obj)
     }
     
 
@@ -110,9 +111,19 @@
 
         return obj_list
     }
-    
 
- 
+    function closeTitles(){
+        removeChecked()
+
+        dispatch("close")
+    }
+
+    function removeChecked(){
+        for(let i=0; i<original_titles_list_obj.length; i++){
+            original_titles_list_obj[i].checked = false
+        }
+    }
+    
 
 </script>
 
@@ -121,8 +132,9 @@
 </head>
 <div class="main">
         <h2>Overskrifter</h2>
-        <button class="close" on:click={()=>dispatch("close")}><i class="material-icons">close</i></button>
+        <button class="close" on:click={closeTitles}><i class="material-icons">close</i></button>
         <input bind:value={searched_value} type="text" placeholder="Søk.." name="search">
+        <button class="remove-button" on:click={removeChecked}>Nullstill</button>
     {#if searched_titles_nodes.length == 0}
         <div>Ingen overskrifter</div>
     {:else}
@@ -152,6 +164,29 @@
         height: 100%;
         padding-left: 2vw;
         padding-right: 2vw;
+    }
+
+    .remove-button{
+        display: inline-flex;
+        align-items: center;
+        margin: 0.5vh;
+        margin-bottom: 1vh;
+        margin-right: 2vh;
+        height:2vh;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        background: #d43838;
+        color:#ffffff;
+        padding: 16px;
+        font-size: 16px;
+        cursor: pointer;
+        border: solid 0.1em rgb(255, 92, 81 ,0);
+        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81, 0);
+    }
+
+    .remove-button:hover {
+        color:#ffffff;
+        border: solid 0.1em;
+        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
     }
 
     input[type=text] {

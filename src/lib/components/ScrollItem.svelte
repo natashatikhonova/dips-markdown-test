@@ -8,7 +8,7 @@
     export let title;
     export let author;
     export let deactivate = false; 
-    $: htmlText = (document.temp_filtered_context == "") ? marked(document.context) : marked(document.temp_filtered_context)
+    export let htmlText;
 
 
     const dispatch = createEventDispatcher();

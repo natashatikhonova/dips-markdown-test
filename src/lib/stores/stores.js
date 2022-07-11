@@ -1,5 +1,4 @@
 import { writable } from "svelte/store";
-// import { ParseMarkdown } from "../ParseMarkdown";
 
 import { Editor } from 'typewriter-editor';
 
@@ -14,4 +13,8 @@ export let currentlyAddingNewNote = writable(false);
 export let filterGroup =writable(["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"]);
 
 export let noDocumentFilter = writable(true);
+
+export let searchValue = writable("")
+
+export let showTitles = writable(false)
 

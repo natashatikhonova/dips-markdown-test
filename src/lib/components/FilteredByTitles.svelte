@@ -135,8 +135,8 @@
         <button class="close" on:click={closeTitles}><i class="material-icons">close</i></button>
         <input bind:value={searched_value} type="text" placeholder="Søk.." name="search">
         <button class="remove-button" on:click={removeChecked}>Nullstill</button>
-    {#if searched_titles_nodes.length == 0}
-        <div>Ingen overskrifter</div>
+    {#if show_titles_list_obj.length == 0}
+        <div class = "no-titles">Ingen overskrifter</div>
     {:else}
 
         {#each show_titles_list_obj as elementObj}
@@ -164,6 +164,9 @@
         height: 100%;
         padding-left: 2vw;
         padding-right: 2vw;
+    }
+    .no-titles{
+        margin-top: 2vh;
     }
 
     .remove-button{

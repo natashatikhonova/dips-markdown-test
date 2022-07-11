@@ -1,6 +1,6 @@
 <script>
 
-    import { noDocumentFilter, filterGroup, searchValue, showTitles, currentFilterGroup, myFilters} from '../stores/stores.js';
+    import { noDocumentFilter, searchValue, showTitles, currentFilterGroup, myFilters} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
@@ -168,7 +168,7 @@
                     <div class="filterItem-button" class:active={currentFilterobj == filter} on:click={()=> currentFilterobj = filter} value={filter.filters}>
                         <t>{filter.name}</t>
                         <div class="filteritem-buttons-conteiner">
-                            <button class="edit-buttons" title ="Rediger" on:click={editItem(filter)}><i class="material-icons">edit</i></button>
+                            <button class="edit-buttons" title ="Rediger" on:click={() => editItem(filter)}><i class="material-icons">edit</i></button>
                             <button class="edit-buttons" on:click={()=> $myFilters = $myFilters.filter(item => (item.id != filter.id))} title="Slett"><i class="material-icons">delete</i></button>
                         </div>
                     </div>

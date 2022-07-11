@@ -28,6 +28,9 @@
 
     let currentFilterobj = nofilter;
     let newFilterObj = nofilter;
+
+    let editFiltergroup = documentTypes;
+    let editFilterGroupname = "";
     
 
 
@@ -49,6 +52,10 @@
     function turnOffFilter(){
         $noDocumentFilter = true
         currentFilterobj = nofilter
+            if(editMode){
+                filterMenuHandler()
+                modeChanger()
+            }
         }
 
     
@@ -66,8 +73,9 @@
     //User clicked on edit and program swich mode with current crop as start point
     function editItem(group){
         newFilterObj = group
-        newFilterObj.name = group.name
-        newFilterObj.filters = group.filters
+        editFilterGroupname = group.name
+        editFiltergroup = group.filters
+        currentFilterobj = newFilterObj
         modeChanger()
     }
 
@@ -78,7 +86,8 @@
 
     //shows current choosen filters in editmode
     function showFilter(){
-        currentFilterobj = newFilterObj
+
+        $currentFilterGroup = editFiltergroup
     }
 
     //Functions for adding new filtergroups
@@ -100,15 +109,17 @@
 
     //If all button in editmode is clicked
     function clickedAll(){
-        if(newFilterObj.filters.length < documentTypes.length){
-            newFilterObj.filters = documentTypes
+        if(editFiltergroup.length < documentTypes.length){
+            editFiltergroup = documentTypes
         }
         else{
-            newFilterObj.filters = []
+            editFiltergroup = []
         }
     }
 
     function saveFilter(){
+        newFilterObj.filters = editFiltergroup
+        newFilterObj.name = editFilterGroupname
         if(!$myFilters.includes(newFilterObj)){
             $myFilters.push(newFilterObj)
         }
@@ -117,10 +128,10 @@
         modeChanger()
     }
 
-    $: if(newFilterObj.filters.length == documentTypes.length){
+    $: if(editFiltergroup.length == documentTypes.length){
         allFilterMarked = true
     }
-    else if(newFilterObj.filters.length < documentTypes.length){
+    else if(editFiltergroup.length < documentTypes.length){
         allFilterMarked = false
     }
 
@@ -139,7 +150,7 @@
             <button on:click={saveFilter}>Lagre</button>
         </div>
 
-            <input bind:value={newFilterObj.name} type="text" placeholder="Filternavn..." name="search">
+            <input bind:value={editFilterGroupname} type="text" placeholder="Filternavn..." name="search">
             <input bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
 
         <label class="filterItem" style="border-bottom: 1px solid #666363">
@@ -151,7 +162,7 @@
         <div class= "filteroption-conteiner">
         {#each searchedDocumentTypes as item}    
             <label class="filterItem" >
-                <input type="checkbox"  bind:group={newFilterObj.filters} value={item} >
+                <input type="checkbox"  bind:group={editFiltergroup} value={item} >
                 {item}
                 <span class="checkmark"></span>
             </label>

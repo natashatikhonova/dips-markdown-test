@@ -1,6 +1,6 @@
 <script>
 
-    import { noDocumentFilter, searchValue, showTitles, currentFilterGroup, myFilters} from '../stores/stores.js';
+    import { noDocumentFilter, searchValue, showTitles, globalCurrentFilterGroup, myFilters} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
@@ -28,17 +28,20 @@
 
     let currentFilterobj = nofilter;
     let newFilterObj = nofilter;
+
+    let editFiltergroup = documentTypes;
+    let editFilterGroupname = "";
     
 
 
-    $currentFilterGroup = documentTypes
+    $globalCurrentFilterGroup = documentTypes
 
 
     $: searchedDocumentTypes = documentTypes.filter(item => (item.toLowerCase().includes(filter_searched_value.toLowerCase())));
 
     $: searchedFiltergroups = $myFilters.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
 
-    $: $currentFilterGroup = currentFilterobj.filters
+    $: $globalCurrentFilterGroup = currentFilterobj.filters
 
 
     const filterMenuHandler = () => {
@@ -49,6 +52,11 @@
     function turnOffFilter(){
         $noDocumentFilter = true
         currentFilterobj = nofilter
+        currentFilterobj.filters = nofilter.filters
+            if(editMode){
+                filterMenuHandler()
+                modeChanger()
+            }
         }
 
     
@@ -66,19 +74,35 @@
     //User clicked on edit and program swich mode with current crop as start point
     function editItem(group){
         newFilterObj = group
-        newFilterObj.name = group.name
-        newFilterObj.filters = group.filters
+        editFilterGroupname = group.name
+        editFiltergroup = group.filters
+        currentFilterobj = {id: -1, name: editFilterGroupname, filters: editFiltergroup}
         modeChanger()
     }
 
-    function addNewFilteMode(){
+    function addNewFilterMode(){
         newFilterObj = {id: findNewId(), name: "", filters: searchedDocumentTypes}
+        editFilterGroupname = newFilterObj.name
+        editFiltergroup = newFilterObj.filters
+        currentFilterobj = newFilterObj
+        modeChanger()
+    }
+
+    function goToMyfiltersMode(){
+        if($myFilters.includes(newFilterObj)){
+            currentFilterobj = newFilterObj
+        }
+
+        else if(currentFilterobj.filters.length == nofilter.filters.length){
+            currentFilterobj = nofilter
+        }
+
         modeChanger()
     }
 
     //shows current choosen filters in editmode
     function showFilter(){
-        currentFilterobj = newFilterObj
+        currentFilterobj.filters = editFiltergroup
     }
 
     //Functions for adding new filtergroups
@@ -100,15 +124,17 @@
 
     //If all button in editmode is clicked
     function clickedAll(){
-        if(newFilterObj.filters.length < documentTypes.length){
-            newFilterObj.filters = documentTypes
+        if(editFiltergroup.length < documentTypes.length){
+            editFiltergroup = documentTypes
         }
         else{
-            newFilterObj.filters = []
+            editFiltergroup = []
         }
     }
 
     function saveFilter(){
+        newFilterObj.filters = editFiltergroup
+        newFilterObj.name = editFilterGroupname
         if(!$myFilters.includes(newFilterObj)){
             $myFilters.push(newFilterObj)
         }
@@ -117,10 +143,10 @@
         modeChanger()
     }
 
-    $: if(newFilterObj.filters.length == documentTypes.length){
+    $: if(editFiltergroup.length == documentTypes.length){
         allFilterMarked = true
     }
-    else if(newFilterObj.filters.length < documentTypes.length){
+    else if(editFiltergroup.length < documentTypes.length){
         allFilterMarked = false
     }
 
@@ -134,12 +160,12 @@
             
         {#if editMode}
         <div class="button-conteiner">
-            <button on:click={addNewFilteMode}>{modeButtonName}</button>
+            <button on:click={goToMyfiltersMode}>{modeButtonName}</button>
             <button on:click={showFilter}>Vis</button>
             <button on:click={saveFilter}>Lagre</button>
         </div>
 
-            <input bind:value={newFilterObj.name} type="text" placeholder="Filternavn..." name="search">
+            <input bind:value={editFilterGroupname} type="text" placeholder="Filternavn..." name="search">
             <input bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
 
         <label class="filterItem" style="border-bottom: 1px solid #666363">
@@ -151,7 +177,7 @@
         <div class= "filteroption-conteiner">
         {#each searchedDocumentTypes as item}    
             <label class="filterItem" >
-                <input type="checkbox"  bind:group={newFilterObj.filters} value={item} >
+                <input type="checkbox"  bind:group={editFiltergroup} value={item} >
                 {item}
                 <span class="checkmark"></span>
             </label>
@@ -159,7 +185,7 @@
         </div>
         	
         {:else}
-            <button on:click={addNewFilteMode}>{modeButtonName}</button>
+            <button on:click={addNewFilterMode}>{modeButtonName}</button>
             <h4>Dine filter:</h4>
             <input bind:value={filtergroup_searched_value} type="text" placeholder="Søk.." name="search" style="margin-bottom: 1vh">
             <div class="filterItem-button" class:active={currentFilterobj == nofilter} on:click={() => currentFilterobj = nofilter} value="alle">Vis allt</div>
@@ -177,7 +203,7 @@
         {/if}
         </div>
         
-        {#if currentFilterobj != nofilter}
+        {#if $globalCurrentFilterGroup != documentTypes}
           <button class="filteroff-button" on:click={turnOffFilter}>Skru av filter</button>
         {/if}	
 

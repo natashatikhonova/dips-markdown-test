@@ -2,7 +2,7 @@
     import {documentList, searchValue, showTitles} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
-    import {currentlyAddingNewNote, currentFilterGroup} from '../stores/stores.js';
+    import {currentlyAddingNewNote, globalCurrentFilterGroup} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
@@ -14,7 +14,7 @@
     let searchResult = $documentList;
     let selected_titles_nodes_List = []
     
-    $: filteredDocumentlist = ($documentList.filter(item => ($currentFilterGroup.includes(item.title))));
+    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
     
 
     

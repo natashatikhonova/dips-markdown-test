@@ -8,7 +8,6 @@
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   // import {parse} from './lib/stores/stores.js'
   import {ParseMarkdown} from './lib/ParseMarkdown'
-
   import ToolMenu from './lib/components/ToolMenu.svelte';
 import { MarkdownNode } from './lib/MarkdownTree';
 
@@ -33,6 +32,8 @@ import { MarkdownNode } from './lib/MarkdownTree';
     $documentList.push(document);
     $documentList = $documentList;
   }
+
+  $: $currentDocumentObject, console.log($currentDocumentObject)
 
   
 
@@ -89,7 +90,7 @@ import { MarkdownNode } from './lib/MarkdownTree';
           {#if w < 600}
             <Pane size="100"><ContentView goBackButton={true} width={w}/></Pane>
           {:else}
-            <Pane minSize="30"><ContentView width={w}/></Pane>
+            <Pane size="50" minSize="30"><ContentView width={w}/></Pane>
           {/if}
         {/if}
         </Splitpanes>

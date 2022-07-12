@@ -7,8 +7,6 @@
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
 
-    $: not_empty_search = ($searchValue != "") && (searchResult.length>0);
-    $: show_titles_button = not_empty_search? false: false; //sets to false when when searchbar is empty
     let show = false;
     let sortedData = $documentList;
     let ascendingOrder = true;

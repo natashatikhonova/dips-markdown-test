@@ -1,5 +1,5 @@
 <script>
-    import { documentList} from '../stores/stores';
+    import { documentList, currentFilterGroup} from '../stores/stores';
     import {createEventDispatcher} from 'svelte';
     
     let searched_value = "";
@@ -8,6 +8,8 @@
     let searched_titles_nodes = []
     let original_titles_list_obj = []
     let show_titles_list_obj =[]
+
+    $: filteredDocumentlist = ($documentList.filter(item => ($currentFilterGroup.includes(item.title))));
     
     const sortByString = () => {
 
@@ -26,12 +28,12 @@
     
     $: original_titles_list_obj, dispatch("checked_titles", original_titles_list_obj.filter((item) => item.checked))
 
-    $: $documentList, load_documents_to_nodes()
+    $: filteredDocumentlist, load_documents_to_nodes()
 
     function load_documents_to_nodes() {
             all_nodes = []
 
-            $documentList.forEach((document) => {
+            filteredDocumentlist.forEach((document) => {
                 let nodes_array = document.markdownTree.get_nodes_in_order() //Return the nodes in the same order as it was read from file
 
                 // console.log("\nnodes_array: ")

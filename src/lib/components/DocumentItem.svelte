@@ -4,7 +4,7 @@
     export let chosen = false;
 
     function handleClick(){
-        currentDocumentObject.set(document);
+        $currentDocumentObject = document
     }
 
 </script>

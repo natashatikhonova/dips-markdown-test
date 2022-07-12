@@ -6,6 +6,7 @@
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
+import { MarkdownNode } from '../MarkdownTree.js';
 
     let show = false;
     let sortedData = $documentList;
@@ -42,13 +43,14 @@
 
         selected_titles_nodes_List = []
         reset_filtered_text(); //Loop through the whole documentList and sets the filtered text to empty string
-        // console.log("\nNY laging av dokumenter")
-        // console.log(obj_list)
+        console.log("\nNY laging av dokumenter")
+        console.log(obj_list)
         obj_list.forEach((item)=>{
             
             // console.log(item)
 
             item.nodes.forEach((node)=> {
+                
                 // console.log("\nSjekker noden: " + node.overskrift)
                 let indeks = -1
 
@@ -91,7 +93,7 @@
 
                 } else { //Set the variable temp_filtered_context i objectet til teksten som skal vises
                     // console.log("Variabelen temp_filtered_context blir satt")
-
+                    console.log(node)
                     node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
                     selected_titles_nodes_List.push(node)
                 }
@@ -235,7 +237,7 @@
         open()
     }
 
-    $: $showTitles, console.log($showTitles)
+    // $: $showTitles, console.log($showTitles)
     
 
 </script>

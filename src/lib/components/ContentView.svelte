@@ -50,13 +50,19 @@
             <button title = "tilbake" class="back" on:click={goBack}><i class="material-icons">arrow_back</i></button>
           {/if}
           <div class="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>
-          <button  title="Rediger" class="edit-button" on:click={changeEdit}><i class="material-icons">edit</i></button>
-          <button  title="Slett" class="edit-button" on:click={deleteNote}><i class="material-icons">delete</i></button>
+          {#if $currentDocumentObject.readable}
+            <button  title="Rediger" class="edit-button" on:click={changeEdit}><i class="material-icons">edit</i></button>
+            <button  title="Slett" class="edit-button" on:click={deleteNote}><i class="material-icons">delete</i></button>
+          {/if}
         </div>
         <div class="textfield">
           <br>
           <div class="doc-meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
-          <div class = "editor ">{@html marked($currentDocumentObject.context)}</div>
+          {#if $currentDocumentObject.readable}
+            <div class = "editor ">{@html marked($currentDocumentObject.context)}</div>
+          {:else}
+            <div class="link"><a href={$currentDocumentObject.context} target="_blank">Klikk her for å åpne dokumentet i egen visning</a></div>
+          {/if}
         </div>
     {/if}
   {/if}
@@ -82,6 +88,12 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
     border-bottom: solid 1px black;
   }
+
+  .link{
+    padding: 1vh;
+    margin-top: 3vh;
+  }
+
   .back {
     display: inline-flex;
     align-items: center;

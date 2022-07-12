@@ -30,16 +30,21 @@
         <div class="title">{@html title}</div>
         <div class="author">
             {@html author}
-            {#if deactivate}
-                <button title ="Rediger" disabled><i class="material-icons">edit</i></button>
-            {:else}
-                <button title ="Rediger" class:visible={$currentlyAddingNewNote} on:click={editItem}><i class="material-icons">edit</i></button>
+            {#if document.readable}
+                {#if deactivate}
+                    <button title ="Rediger" disabled><i class="material-icons">edit</i></button>
+                {:else}
+                    <button title ="Rediger" class:visible={$currentlyAddingNewNote} on:click={editItem}><i class="material-icons">edit</i></button>
+                {/if}
             {/if}
         </div>
     </div>
-    <div>
-        {@html htmlText}
-    </div>
+    {#if document.readable}
+        <div>{@html htmlText}</div>
+    {:else}
+        <div class="link"><a href={document.context} target="_blank">Klikk her for å åpne dokumentet i egen visning</a></div>
+    {/if}
+    
 </div>
 
 <style>
@@ -62,6 +67,17 @@
     .date, .meta{
         font-weight: bold; 
     }
+
+    .link{
+        margin-top: 2vh;
+    }
+
+    a{
+        color: #d43838;
+        font-weight: bold;
+        font-style: italic;
+    }
+    
     
     button{
         right:10vw;

@@ -20,7 +20,7 @@ import { MarkdownNode } from './lib/MarkdownTree';
   documents.forEach(putInDocumentList);  
 
   function putInDocumentList(item){
-    let document = new DocumentObject(item.id, item.date, item.content, item.title);
+    let document = new DocumentObject(item.id, item.date, item.content, item.title, item.readable);
     let parse = new ParseMarkdown
     //Lager et tre over markdown overskriftene i teksten
     let tree = parse.parseAndSetIntoTree(document) 

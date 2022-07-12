@@ -72,7 +72,7 @@
           $documentList = $documentList;
         } else{
           if (selectedDocType !==documentTypes[0]){
-            let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML())+" \n");
+            let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML())+" \n", true);
             newElement.title = selectedDocType;
 
             //Lager et tre over markdown overskriftene i teksten

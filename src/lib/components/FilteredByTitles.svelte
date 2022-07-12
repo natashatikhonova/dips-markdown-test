@@ -1,5 +1,5 @@
 <script>
-    import { documentList, currentFilterGroup} from '../stores/stores';
+    import { documentList, globalCurrentFilterGroup} from '../stores/stores';
     import {createEventDispatcher} from 'svelte';
     
     let searched_value = "";
@@ -9,7 +9,7 @@
     let original_titles_list_obj = []
     let show_titles_list_obj =[]
 
-    $: filteredDocumentlist = ($documentList.filter(item => ($currentFilterGroup.includes(item.title))));
+    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
     
     const sortByString = () => {
 

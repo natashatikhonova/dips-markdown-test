@@ -13,7 +13,7 @@ export let currentlyAddingNewNote = writable(false);
 // let parseMarkdown = new ParseMarkdown();
 // export let parse = writable(parseMarkdown);
 
-export let currentFilterGroup = writable([]);
+export let globalCurrentFilterGroup = writable([]);
 
 export let noDocumentFilter = writable(true);
 

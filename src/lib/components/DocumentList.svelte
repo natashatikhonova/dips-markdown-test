@@ -1,6 +1,6 @@
 <script>
     import DocumentItem from "./DocumentItem.svelte";
-    import {currentDocumentObject, documentList, currentlyAddingNewNote, currentFilterGroup} from '../stores/stores.js';
+    import {currentDocumentObject, documentList, currentlyAddingNewNote, globalCurrentFilterGroup} from '../stores/stores.js';
     let w
     $: w = window.innerWidth;
     let sortedData = $documentList;
@@ -9,7 +9,7 @@
     let ascendingOrder = false;
     let lengde;
 
-    $: filteredDocumentlist = ($documentList.filter(item => ($currentFilterGroup.includes(item.title))));
+    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
 
     function addNote(){
         $currentlyAddingNewNote = true;

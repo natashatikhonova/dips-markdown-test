@@ -1,12 +1,12 @@
 <script>
-    import {documentList, globalCurrentFilterGroup, saved_filter_group} from '../stores/stores';
+    import {documentList, globalCurrentFilterGroup, saved_filter_groups} from '../stores/stores';
     import {createEventDispatcher} from 'svelte';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
     import FilterGroupForm from './FilterGroupForm.svelte';
     const modal = writable(null);
 
-    let original_filtered_groups = [{name: "E", titles: [], checked: false}, {name: "D", titles: [], checked: false}]
+    // let original_filtered_groups = []
     let show_filtered_groups = []
     let selected_group = null
     let adding_new_group = false
@@ -25,17 +25,17 @@
         adding_new_group = true;
         load_documents($documentList) //shows all documents
 
-        modal.set(bind(FilterGroupForm, { original_titles_list_obj: original_titles_list_obj, all_groups: original_filtered_groups}))
+        modal.set(bind(FilterGroupForm, { original_titles_list_obj: original_titles_list_obj}))
     
     }
     
-    $: if ($saved_filter_group != null) {
-        console.log($saved_filter_group)
-        original_filtered_groups.push($saved_filter_group)
-        console.log($saved_filter_group)
-        $saved_filter_group = null;
-        console.log(original_filtered_groups)
-    }
+    // $: if ($saved_filter_groups != null) {
+    //     console.log($saved_filter_groups)
+    //     original_filtered_groups.push($saved_filter_groups)
+    //     console.log($saved_filter_groups)
+    //     $saved_filter_groups = null;
+    //     console.log(original_filtered_groups)
+    // }
     
     
     const sortByString = () => {
@@ -56,7 +56,7 @@
     $: original_titles_list_obj, dispatch("checked_titles", original_titles_list_obj.filter((item) => item.checked))
 
     $: if(selected_group != null){ 
-        console.log(selected_group.titles) 
+        // console.log(selected_group.titles) 
         dispatch("checked_titles", selected_group.titles) 
     } 
 
@@ -132,8 +132,8 @@
         adding_new_group = false
     }
 
-    $: $saved_filter_group, stopAddingGroup()
-    $: $saved_filter_group, console.log(adding_new_group)
+    $: $saved_filter_groups, stopAddingGroup()
+    // $: $saved_filter_groups, console.log(adding_new_group)
 
     $: if ((searched_value.length >= 0) && !showFilterGroups){ //Updates the shown titles with search on titles
     
@@ -146,11 +146,11 @@
     }
 
     $: if (((searched_value.length >= 0) || (adding_new_group == false))&& showFilterGroups){ //Updates the shown groups with search on groups
-        
+        // console.log($saved_filter_groups)
         if (searched_value != ""){
-            show_filtered_groups = original_filtered_groups.filter(item => (item.name.toLowerCase().includes(searched_value.toLowerCase())))
+            show_filtered_groups = $saved_filter_groups.filter(item => (item.name.toLowerCase().includes(searched_value.toLowerCase())))
         } else {
-            show_filtered_groups = original_filtered_groups
+            show_filtered_groups = $saved_filter_groups
         }
         
     }
@@ -168,8 +168,8 @@
         for(let i=0; i<original_titles_list_obj.length; i++){
             original_titles_list_obj[i].checked = false
         }
-        for(let i=0; i<original_filtered_groups.length; i++){
-            original_filtered_groups[i].checked = false
+        for(let i=0; i<$saved_filter_groups.length; i++){
+            $saved_filter_groups[i].checked = false
         }
         
     }

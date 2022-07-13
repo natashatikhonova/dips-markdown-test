@@ -43,8 +43,8 @@ import { MarkdownNode } from '../MarkdownTree.js';
 
         selected_titles_nodes_List = []
         reset_filtered_text(); //Loop through the whole documentList and sets the filtered text to empty string
-        console.log("\nNY laging av dokumenter")
-        console.log(obj_list)
+        // console.log("\nNY laging av dokumenter")
+        // console.log(obj_list)
         obj_list.forEach((item)=>{
             
             // console.log(item)
@@ -93,7 +93,7 @@ import { MarkdownNode } from '../MarkdownTree.js';
 
                 } else { //Set the variable temp_filtered_context i objectet til teksten som skal vises
                     // console.log("Variabelen temp_filtered_context blir satt")
-                    console.log(node)
+                    // console.log(node)
                     node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
                     selected_titles_nodes_List.push(node)
                 }
@@ -133,7 +133,7 @@ import { MarkdownNode } from '../MarkdownTree.js';
 
     function cancel(){
         show = false;
-        console.log("tester cancel")
+        // console.log("tester cancel")
     }
 
     function addNote(){

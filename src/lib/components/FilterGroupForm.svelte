@@ -1,8 +1,7 @@
 <script>
-    import {saved_filter_group} from '../stores/stores';
+    import {saved_filter_groups} from '../stores/stores';
     import { getContext, setContext } from 'svelte';
     export let original_titles_list_obj =[]
-    export let all_groups = []
 
     const { open, close } = getContext('simple-modal');
     setContext('modal', this)
@@ -25,11 +24,11 @@
         // console.log(original_titles_list_obj)
     }
 
-    $: original_titles_list_obj, console.log(original_titles_list_obj)
+    // $: original_titles_list_obj, console.log(original_titles_list_obj)
 
     function name_used(group_name){
-        for(let i = 0; i < all_groups.length; i++){
-            if (all_groups[i].name == group_name) return true;
+        for(let i = 0; i < $saved_filter_groups.length; i++){
+            if ($saved_filter_groups[i].name == group_name) return true;
         }
         return false
     }
@@ -49,7 +48,10 @@
                     checked_titles.push(original_titles_list_obj[i])
                 }
             }
-            $saved_filter_group = {name: group_name, titles: checked_titles, checked: false}
+            $saved_filter_groups.push({name: group_name, titles: checked_titles, checked: false})
+            $saved_filter_groups = $saved_filter_groups
+            // console.log("Lagt til ny gruppe i store")
+        
             close()
 
         }

@@ -26,7 +26,11 @@
     function showModal (){
         adding_new_group = true;
         load_documents($documentList) //shows all documents
-
+        
+        //Removes checked:
+        for(let i=0; i<original_titles_list_obj.length; i++){
+            original_titles_list_obj[i].checked = false
+        }
         modal.set(bind(FilterGroupForm, { original_titles_list_obj: original_titles_list_obj, edit_bool: edit_bool, edit_obj_indeks: edit_obj_indeks, group_name: (edit_bool) ? $saved_filter_groups[edit_obj_indeks].name : ""}))
         console.log(edit_bool)
     

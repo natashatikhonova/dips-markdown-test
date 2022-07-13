@@ -13,44 +13,39 @@
     setContext('modal', this)
     let show_titles_list_obj =[]
     let searched_value = ""
-
-    $: if (searched_value.length >= 0){
+    
+    $: if (searched_value != ""){
+        show_titles_list_obj = original_titles_list_obj.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())));
+    }
         
-        // console.log("\nshow_titles_list_obj")
-        // console.log(show_titles_list_obj)
-        if (searched_value != ""){
-            show_titles_list_obj = original_titles_list_obj.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())));
-            
-        } else {
-            
-            if (edit_bool == true) {
+  
+    if (original_titles_list_obj){
 
-                console.log("True")
+        if (edit_bool == true) {
 
-                for (let i = 0; i < $saved_filter_groups[edit_obj_indeks].titles.length; i++) {
-                    console.log ($saved_filter_groups[edit_obj_indeks].titles)
+            console.log("True")
 
-                    for (let j = 0; j < original_titles_list_obj.length; j++){
+            for (let i = 0; i < $saved_filter_groups[edit_obj_indeks].titles.length; i++) {
+                // console.log ($saved_filter_groups[edit_obj_indeks].titles)
 
-                        if (original_titles_list_obj[j].overskrift === $saved_filter_groups[edit_obj_indeks].titles[i].overskrift){
-                            console.log("\n\n")
-                            console.log(original_titles_list_obj[j])
-                            console.log($saved_filter_groups[edit_obj_indeks].titles[i])
-                            console.log("Setter checked til true")
-                            original_titles_list_obj[j].checked = true
-                        }
+                for (let j = 0; j < original_titles_list_obj.length; j++){
 
+                    if (original_titles_list_obj[j].overskrift === $saved_filter_groups[edit_obj_indeks].titles[i].overskrift){
+                        // console.log("\n\n")
+                        // console.log(original_titles_list_obj[j])
+                        // console.log("Setter checked til true")
+                        original_titles_list_obj[j].checked = true
+                        console.log($saved_filter_groups)
                     }
+
                 }
             }
-            show_titles_list_obj = original_titles_list_obj
         }
-        
-        // console.log("\norignal_titles_list_obj")
-        // console.log(original_titles_list_obj)
-    }
 
-    // $: original_titles_list_obj, console.log(original_titles_list_obj)
+        show_titles_list_obj = original_titles_list_obj
+    }
+        
+    
 
     function name_used(group_name){
         for(let i = 0; i < $saved_filter_groups.length; i++){
@@ -74,19 +69,24 @@
                     checked_titles.push(original_titles_list_obj[i])
                 }
             }
+            if (checked_titles.length == 0) {
+                alert("Du må velge minst 1 overskrift")
+            } else {
+                if (edit_bool) { //Edited group
+                    $saved_filter_groups[edit_obj_indeks] = {name: group_name, titles: checked_titles, checked: false}
+                    console.log($saved_filter_groups)
+                    edit_bool = false
+                   
+                    
+                } else { //New group 
+                    $saved_filter_groups.push({name: group_name, titles: checked_titles, checked: false})
+                    // console.log("Lagt til ny gruppe i store")
+                }
+                $saved_filter_groups = $saved_filter_groups
+                close()
 
-            if (edit_bool) { //Edited group
-                $saved_filter_groups[edit_obj_indeks] = {name: group_name, titles: checked_titles, checked: false}
-                console.log($saved_filter_groups)
-                edit_bool = false
-               
-                
-            } else { //New group 
-                $saved_filter_groups.push({name: group_name, titles: checked_titles, checked: false})
-                // console.log("Lagt til ny gruppe i store")
             }
-            $saved_filter_groups = $saved_filter_groups
-            close()
+
 
         }
     }

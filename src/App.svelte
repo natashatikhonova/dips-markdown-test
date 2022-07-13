@@ -1,3 +1,23 @@
+<svelte:head>
+  <!-- SMUI Styles -->
+  <link rel="stylesheet" href="src/build/smui.css" />
+
+
+  <!-- With darkmode -->
+  <!-- <link
+  rel="stylesheet"
+  href="src/build/smui.css"
+  media="(prefers-color-scheme: light)"
+  />
+  <link
+  rel="stylesheet"
+  href="src/build/smui-dark.css"
+  media="screen and (prefers-color-scheme: dark)"
+  /> -->
+
+</svelte:head>
+
+
 <script>
   import documents from './assets/documents.json'
   import { DocumentObject } from './lib/document';
@@ -9,7 +29,7 @@
   // import {parse} from './lib/stores/stores.js'
   import {ParseMarkdown} from './lib/ParseMarkdown'
   import ToolMenu from './lib/components/ToolMenu.svelte';
-import { MarkdownNode } from './lib/MarkdownTree';
+  import { MarkdownNode } from './lib/MarkdownTree';
 
 
 

@@ -32,4 +32,6 @@ export let searchValue = writable("")
 
 export let showTitles = writable(false)
 
+export let saved_filter_groups = writable([])
+
 

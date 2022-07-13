@@ -95,7 +95,7 @@ export class Tree {
         return queue_read_from_startNode
     }
     get_text_under(startNode){ //Gets the text from this node and the nodes under this headline
-
+      
         let markdown_headline_length = startNode.markdownCode.length
         let nodes = this.get_nodes_in_order(startNode)
 

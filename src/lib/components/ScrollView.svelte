@@ -7,6 +7,7 @@
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
 
+
     let show = false;
     let sortedData = $documentList;
     let ascendingOrder = true;
@@ -49,6 +50,7 @@
             // console.log(item)
 
             item.nodes.forEach((node)=> {
+                
                 // console.log("\nSjekker noden: " + node.overskrift)
                 let indeks = -1
 
@@ -91,7 +93,7 @@
 
                 } else { //Set the variable temp_filtered_context i objectet til teksten som skal vises
                     // console.log("Variabelen temp_filtered_context blir satt")
-
+                    // console.log(node)
                     node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
                     selected_titles_nodes_List.push(node)
                 }
@@ -131,7 +133,7 @@
 
     function cancel(){
         show = false;
-        console.log("tester cancel")
+        // console.log("tester cancel")
     }
 
     function addNote(){
@@ -235,7 +237,7 @@
         open()
     }
 
-    $: $showTitles, console.log($showTitles)
+    // $: $showTitles, console.log($showTitles)
     
 
 </script>
@@ -249,7 +251,7 @@
     <div class="scroll-container">
         <Splitpanes >
             
-            <Pane minSize="15" size={current_size} maxSize="50">
+            <Pane minSize="20px" size={current_size} maxSize="50">
                 <div class="searched-titles">
                     <FilteredByTitles on:checked_titles={show_documents_checked_titles} on:close={close}/>
                 </div>

@@ -1,13 +1,18 @@
 <script>
     import {saved_filter_groups} from '../stores/stores';
     import { getContext, setContext } from 'svelte';
+
+
     export let original_titles_list_obj =[]
+    export let edit_bool;
+    export let edit_obj_indeks;
+    export let group_name;
+   
 
     const { open, close } = getContext('simple-modal');
     setContext('modal', this)
     let show_titles_list_obj =[]
     let searched_value = ""
-    let group_name = ""
 
     $: if (searched_value.length >= 0){
         
@@ -15,8 +20,29 @@
         // console.log(show_titles_list_obj)
         if (searched_value != ""){
             show_titles_list_obj = original_titles_list_obj.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())));
-
+            
         } else {
+            
+            if (edit_bool == true) {
+
+                console.log("True")
+
+                for (let i = 0; i < $saved_filter_groups[edit_obj_indeks].titles.length; i++) {
+                    console.log ($saved_filter_groups[edit_obj_indeks].titles)
+
+                    for (let j = 0; j < original_titles_list_obj.length; j++){
+
+                        if (original_titles_list_obj[j].overskrift === $saved_filter_groups[edit_obj_indeks].titles[i].overskrift){
+                            console.log("\n\n")
+                            console.log(original_titles_list_obj[j])
+                            console.log($saved_filter_groups[edit_obj_indeks].titles[i])
+                            console.log("Setter checked til true")
+                            original_titles_list_obj[j].checked = true
+                        }
+
+                    }
+                }
+            }
             show_titles_list_obj = original_titles_list_obj
         }
         
@@ -28,7 +54,7 @@
 
     function name_used(group_name){
         for(let i = 0; i < $saved_filter_groups.length; i++){
-            if ($saved_filter_groups[i].name == group_name) return true;
+            if ( ($saved_filter_groups[i].name == group_name) && (i != edit_obj_indeks)) return true;
         }
         return false
     }
@@ -48,41 +74,91 @@
                     checked_titles.push(original_titles_list_obj[i])
                 }
             }
-            $saved_filter_groups.push({name: group_name, titles: checked_titles, checked: false})
+
+            if (edit_bool) { //Edited group
+                $saved_filter_groups[edit_obj_indeks] = {name: group_name, titles: checked_titles, checked: false}
+                console.log($saved_filter_groups)
+                edit_bool = false
+               
+                
+            } else { //New group 
+                $saved_filter_groups.push({name: group_name, titles: checked_titles, checked: false})
+                // console.log("Lagt til ny gruppe i store")
+            }
             $saved_filter_groups = $saved_filter_groups
-            // console.log("Lagt til ny gruppe i store")
-        
             close()
 
         }
     }
+
+  
 </script>
 <!-- <button on:click={onClose}>Custom Close Button</button> -->
-<h2>Opprett ny filtergruppe</h2>
-<input bind:value ={searched_value} type="text" placeholder="Søk.." name="search">
-<div class="main">
-
-    {#if show_titles_list_obj.length == 0}
-        <div class = "no-titles">Ingen overskrifter</div>
+<div class = "main">
+    {#if edit_bool == false}
+        <h2>Opprett ny filtergruppe</h2>
+        <input bind:value ={group_name} type="text" placeholder="Skriv inn gruppenavn.." name="search">
+        <h3>Velg overskrifter:</h3>
+        <input bind:value ={searched_value} type="text" placeholder="Søk.." name="search">
+        <div class="titles">
+    
+            {#if show_titles_list_obj.length == 0}
+                <div class = "no-titles">Ingen overskrifter</div>
+            {:else}
+            
+                {#each show_titles_list_obj as elementObj}
+            
+                    <div class="title">
+                        <input type="checkbox" bind:checked={elementObj.checked} />
+            
+                        <div class="title">
+            
+                            {elementObj.overskrift} 
+            
+                        </div>
+                    </div>
+                                
+                {/each} 
+            {/if}
+        </div>
+    
+        <button on:click={save}>Lagre</button>
+    
     {:else}
+        <h2>Rediger filtergruppe</h2>
+        <input bind:value ={group_name} type="text" placeholder="Skriv inn gruppenavn.." name="search">
+        <h3>Velg overskrifter:</h3>
+        <input bind:value ={searched_value} type="text" placeholder="Søk.." name="search">
     
-        {#each show_titles_list_obj as elementObj}
+        <div class="titles">
     
-            <div class="title">
-                <input type="checkbox" bind:checked={elementObj.checked} />
+            {#if show_titles_list_obj.length == 0}
+                <div class = "no-titles">Ingen overskrifter</div>
+            {:else}
     
-                <div class="title">
+                {#each show_titles_list_obj as elementObj}
+            
+                    <div class="title">
+                        <input type="checkbox" bind:checked={elementObj.checked} />
+            
+                        <div class="title">
+            
+                            {elementObj.overskrift} 
+            
+                        </div>
+                    </div>
+                                
+                {/each} 
+          
     
-                    {elementObj.overskrift} 
     
-                </div>
-            </div>
-                        
-        {/each} 
+            {/if}
+        </div>
+        <button on:click={save}>Lagre</button>
+    
     {/if}
+
 </div>
-<input bind:value ={group_name} type="text" placeholder="Skriv inn gruppenavn.." name="search">
-<button on:click={save}>Lagre</button>
 
 <style>
 
@@ -104,12 +180,18 @@ button:hover{
     border: solid 0.1em;
     box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
 }
-
-.main{
-        overflow-y: auto;
-        height: 100%;
-        padding-right: 2vw;
+.main {
+    height: 70vh;
+    overflow: hidden;
 }
+
+.titles{
+    padding-right: 2vw;
+    height: 50%;
+    overflow-y: auto;
+}
+
+
 input[type=text] {
 
     padding: 6px;

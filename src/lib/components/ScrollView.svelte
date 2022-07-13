@@ -6,7 +6,7 @@
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
-import { MarkdownNode } from '../MarkdownTree.js';
+
 
     let show = false;
     let sortedData = $documentList;
@@ -251,7 +251,7 @@ import { MarkdownNode } from '../MarkdownTree.js';
     <div class="scroll-container">
         <Splitpanes >
             
-            <Pane minSize="15" size={current_size} maxSize="50">
+            <Pane minSize="20px" size={current_size} maxSize="50">
                 <div class="searched-titles">
                     <FilteredByTitles on:checked_titles={show_documents_checked_titles} on:close={close}/>
                 </div>

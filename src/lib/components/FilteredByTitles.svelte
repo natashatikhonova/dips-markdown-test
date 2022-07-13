@@ -18,6 +18,8 @@
     let original_titles_list_obj = []
     let show_titles_list_obj =[]
     let showFilterGroups = false;
+    let edit_bool = false
+    let edit_obj_indeks = null
 
     $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
 
@@ -25,7 +27,8 @@
         adding_new_group = true;
         load_documents($documentList) //shows all documents
 
-        modal.set(bind(FilterGroupForm, { original_titles_list_obj: original_titles_list_obj}))
+        modal.set(bind(FilterGroupForm, { original_titles_list_obj: original_titles_list_obj, edit_bool: edit_bool, edit_obj_indeks: edit_obj_indeks, group_name: (edit_bool) ? $saved_filter_groups[edit_obj_indeks].name : ""}))
+        console.log(edit_bool)
     
     }
     
@@ -181,7 +184,7 @@
     
     function set_selected_group(groupObj){
         
-        if (selected_group != null) {
+        if (selected_group != null && groupObj!=null) {
             for ( let i = 0; i < show_filtered_groups.length; i++){
                 if (show_filtered_groups[i].checked && show_filtered_groups[i].name == selected_group.name) {
                     show_filtered_groups[i].checked = false
@@ -191,12 +194,46 @@
                 
             }
         } 
-        
-        groupObj.checked = true;
+        if (groupObj != null) {
+            groupObj.checked = true;
+        }
         selected_group = groupObj
     
         show_filtered_groups = show_filtered_groups
     }
+
+    function deleteGroup(group_name){
+        for(let i = 0; i<$saved_filter_groups.length; i++ ){
+            if ($saved_filter_groups[i].name === group_name){
+                if ($saved_filter_groups[i].checked) {
+                    $saved_filter_groups[i].checked = false
+                    set_selected_group(null)
+                    dispatch("checked_titles", []) //Sets the shown documents to all the documents in $documentList
+                }
+                console.log(group_name)
+                $saved_filter_groups.splice(i, 1)
+                $saved_filter_groups = $saved_filter_groups
+              
+                break
+            }
+        }
+    }
+    function editGroup(group_name){
+        for(let i = 0; i<$saved_filter_groups.length; i++ ){
+            if ($saved_filter_groups[i].name === group_name){
+                edit_bool = true;
+                edit_obj_indeks = i;
+                break
+            }
+        }
+        showModal()
+    }
+
+    function closed_modal(){
+        edit_bool = false
+        adding_new_group = false
+    }
+
     
 
 </script>
@@ -209,8 +246,8 @@
         <button class="close" on:click={closeTitles}><i class="material-icons">close</i></button>
         <input bind:value={searched_value} type="text" placeholder="Søk.." name="search">
         {#if !showFilterGroups}
-            <button class="remove-button" on:click={removeChecked}>Nullstill</button>
-            <button class="remove-button" on:click={show_filterGroups}>Filtreringsgrupper</button>
+            <button class="filter-groups-button" on:click={removeChecked}>Nullstill</button>
+            <button class="filter-groups-button" on:click={show_filterGroups}>Filtreringsgrupper</button>
 
             {#if show_titles_list_obj.length == 0}
                 <div class = "no-titles">Ingen overskrifter</div>
@@ -231,10 +268,13 @@
                 {/each} 
             {/if}
         {:else} 
-            <button class="remove-button" on:click={showModal}>Nytt filter</button>
-            <button class="remove-button" on:click={()=>showFilterGroups=false}>Alle filtere</button>
+            <div class="buttons-group">
+                <button class="filter-groups-button" on:click={showModal}>Nytt filter</button>
+                <button class="filter-groups-button" on:click={()=>showFilterGroups=false}>Alle filtere</button>
+            </div>
+
             {#if adding_new_group}
-                <Modal show={$modal}/>
+                <Modal on:closed={closed_modal} show={$modal}/>
             {/if}
 
             {#if show_filtered_groups.length == 0}
@@ -243,7 +283,7 @@
 
                 {#each show_filtered_groups as groupObj}
                  
-                    <div class="title">
+                    <div class="group">
                         <input type="radio" checked={groupObj.checked} on:change={() => set_selected_group(groupObj)} value={groupObj} />
 
                         <div class="title">
@@ -251,6 +291,11 @@
                             {groupObj.name} 
 
                         </div>
+                        <div class="group-buttons">
+                            <button class="edit-button" title ="Rediger" on:click={()=>editGroup(groupObj.name)} ><i class="material-icons">edit</i></button>
+                            <button class="edit-button" title="Slett" on:click={()=>deleteGroup(groupObj.name)}><i class="material-icons">delete</i></button>
+                        </div>
+
                     </div>
                 
                 {/each} 
@@ -273,6 +318,50 @@
     }
     .no-titles{
         margin-top: 2vh;
+    }
+
+    .group{
+        display: flex;
+        margin-top: 2%;
+        align-items: center;
+    }
+    .group-buttons{
+        position: absolute;
+        display: flex;
+        right: 10%;
+    }
+
+    .edit-button{
+        margin-left: 3%;
+        background: none;
+        border: none;
+    }
+    .buttons-group{
+        display: flex
+    }
+
+    .filter-groups-button{
+        background: lightgray;
+        display: inline-flex;
+        align-items: center;
+        margin: 0.5vh;
+        margin-bottom: 1vh;
+        margin-right: 1vh;
+        width: fit-content;
+        height:2vh;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        color:#000000;
+        padding: 12px;
+        font-size: 14px;
+        justify-content: center;
+        cursor: pointer;
+        border: solid 0.1em rgb(255, 92, 81 ,0);
+        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81, 0);
+    }
+
+    .edit-button:hover{
+        color:#d43838;
+        cursor: pointer;
     }
 
     .remove-button{
@@ -300,6 +389,10 @@
         box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
     }
 
+    .filter-groups-button:hover {
+        background: rgb(226, 226, 226);
+    }
+
     input[type=text] {
 
         padding: 6px;
@@ -317,6 +410,7 @@
     .title{
         cursor: pointer;
         display: flex;
+        margin-left: 1%;
     }
 
     .title:hover{

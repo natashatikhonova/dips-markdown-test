@@ -28,7 +28,7 @@
     // SORT BY STRINGs
 
     const sortByString = (colHeader) => {
-        console.log("click tittel");
+        // console.log("click tittel");
         sortedData = sortedData.sort((obj1, obj2) => {
             if (obj1[colHeader] < obj2[colHeader]) {
                     return -1;

@@ -6,17 +6,12 @@
   import ScrollView from './lib/components/ScrollView.svelte';
   import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
-  // import {parse} from './lib/stores/stores.js'
   import {ParseMarkdown} from './lib/ParseMarkdown'
   import ToolMenu from './lib/components/ToolMenu.svelte';
-import { MarkdownNode } from './lib/MarkdownTree';
-
-
 
   let showSideview = true;
 
   //get data from file
-
   documents.forEach(putInDocumentList);  
 
   function putInDocumentList(item){
@@ -25,8 +20,8 @@ import { MarkdownNode } from './lib/MarkdownTree';
     //Lager et tre over markdown overskriftene i teksten
     let tree = parse.parseAndSetIntoTree(document) 
     document.markdownTree = tree;
-    let nodes_array = document.markdownTree.get_nodes_in_order(null) //Return the nodes in the same order as it was read from file
-
+    
+    // let nodes_array = document.markdownTree.get_nodes_in_order(null) //Return the nodes in the same order as it was read from file
     // console.log("\nnodes_array ")
     // console.log(nodes_array)
     $documentList.push(document);

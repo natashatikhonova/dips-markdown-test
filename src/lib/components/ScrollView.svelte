@@ -13,19 +13,16 @@
     let ascendingOrder = true;
     let lengde = $documentList.length;
     let searchResult = $documentList;
+    $: console.log($documentList)
     let selected_titles_nodes_List = []
     
     $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
-    
-
-    
 
     $: if (selected_titles_nodes_List.length>0) { //Hvis filtrert på overskrifter
         searchResult = nodeList_to_documentObjList(selected_titles_nodes_List)
         searchResult = searchResult.filter(item => (item.temp_filtered_context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
     } else {
         searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
-
     }
     
     function nodeList_to_documentObjList(node_list) {
@@ -270,6 +267,7 @@
                             {#if searchResult.length > 0}
                                 <div class = "dokumenter">
                                     {#each searchResult as item}
+                            
                                         <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                                     {/each}
                                     

@@ -50,12 +50,12 @@
     //Saves the text if the text is not empty and stores the text
     function save(){
       changeEdit();
-      if( toMarkdown(editor.getHTML()) === ""){
+      if( toMarkdown(editor.getHTML()) === ""){ //Empty note
         alert("Tom notat!");
         $currentlyAddingNewNote=false;
         dispatch("save");
       }else{
-        if(!$currentlyAddingNewNote){
+        if(!$currentlyAddingNewNote){ //Edit note
           dispatch("save");
           $documentList.forEach((element)=>{
             if (element.id === $currentDocumentObject.id){
@@ -71,10 +71,13 @@
           })
           $documentList = $documentList;
         } else{
-          if (selectedDocType !==documentTypes[0]){
-            let newElement = new DocumentObject($documentList.length, new Date().toDateString(), toMarkdown(editor.getHTML())+" \n", true);
+          if (selectedDocType !== documentTypes[0]) { //new Note
+            console.log("New note")
+            const readable = true;
+            let newElement = new DocumentObject($documentList.length, new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
+            newElement.readable = readable
+            console.log(newElement)
             newElement.title = selectedDocType;
-
             //Lager et tre over markdown overskriftene i teksten
             let parse = new ParseMarkdown()
             // console.log("Før parse")
@@ -88,7 +91,8 @@
             $currentDocumentObject = newElement;
             $currentlyAddingNewNote = false;
             dispatch("save");
-          } else{ //must save the document
+
+          } else{ //must choose documenttype
             alert("Vennligst velg dokumenttype!");
             changeEdit();
           }  

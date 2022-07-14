@@ -10,6 +10,7 @@
     let show_filtered_groups = []
     let selected_group = null
     let adding_new_group = false
+    let all_checked = false
 
     let searched_value = "";
     const dispatch = createEventDispatcher();
@@ -20,6 +21,7 @@
     let showFilterGroups = false;
     let edit_bool = false
     let edit_obj_indeks = null
+    $: overskrift = showFilterGroups ? "Filtergrupper:" : "Alle overskrifter:"
 
     $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
 
@@ -237,6 +239,10 @@
         edit_bool = false
         adding_new_group = false
     }
+    // function check_all(){
+    //     all_checked = true;
+    //     for (let i = 0;)
+    // }
 
     
 
@@ -247,8 +253,10 @@
 </head>
 <div class="main">
         <h2>Overskrifter</h2>
+        <h3>{overskrift}</h3>
         <button class="close" on:click={closeTitles}><i class="material-icons">close</i></button>
         <input bind:value={searched_value} type="text" placeholder="Søk.." name="search">
+
         {#if !showFilterGroups}
             <button class="filter-groups-button" on:click={removeChecked}>Nullstill</button>
             <button class="filter-groups-button" on:click={show_filterGroups}>Filtreringsgrupper</button>
@@ -256,6 +264,7 @@
             {#if show_titles_list_obj.length == 0}
                 <div class = "no-titles">Ingen overskrifter</div>
             {:else}
+                <!-- <input class="checkbox-all"type="checkbox" on:click={check_all} bind:checked={all_checked} /> Alle -->
 
                 {#each show_titles_list_obj as elementObj}
 

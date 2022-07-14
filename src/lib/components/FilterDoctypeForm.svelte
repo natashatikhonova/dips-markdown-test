@@ -86,13 +86,12 @@
         }
     }
 
-
-
-
   
 </script>
 <div class = "main">
+
     <h2>{manageName}</h2>
+    
     <input bind:value ={editFilterName} type="text" placeholder="Skriv inn gruppenavn.." name="search">
     <h3>Velg typer:</h3>
     <input bind:value ={filter_searched_value} type="text" placeholder="Søk.." name="search">
@@ -102,6 +101,7 @@
             Alle
         </div>
     </div>
+
     <div class="titles">
         {#if searchedDocumentTypes.length == 0}
             <div class = "no-titles">Ingen documentyper</div>
@@ -116,6 +116,7 @@
             {/each}
         {/if}
     </div>
+
     <button on:click={save}>Lagre</button>
 </div>
 <style>

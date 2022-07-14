@@ -13,7 +13,6 @@
     let ascendingOrder = true;
     let lengde = $documentList.length;
     let searchResult = $documentList;
-    $: console.log($documentList)
     let selected_titles_nodes_List = []
     
     $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));

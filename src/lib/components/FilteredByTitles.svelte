@@ -10,7 +10,7 @@
     let show_filtered_groups = []
     let selected_group = null
     let adding_new_group = false
-    let all_checked = false
+    let all_checked = true
 
     let searched_value = "";
     const dispatch = createEventDispatcher();
@@ -38,13 +38,6 @@
     
     }
     
-    // $: if ($saved_filter_groups != null) {
-    //     console.log($saved_filter_groups)
-    //     original_filtered_groups.push($saved_filter_groups)
-    //     console.log($saved_filter_groups)
-    //     $saved_filter_groups = null;
-    //     console.log(original_filtered_groups)
-    // }
     
     
     const sortByString = () => {
@@ -239,10 +232,31 @@
         edit_bool = false
         adding_new_group = false
     }
-    // function check_all(){
-    //     all_checked = true;
-    //     for (let i = 0;)
-    // }
+    function check_all(){
+        all_checked = !all_checked
+        for (let i = 0; i < original_titles_list_obj.length; i++) {
+            original_titles_list_obj[i].checked = all_checked
+        }
+    
+    }
+
+    $: original_titles_list_obj, check_if_all_checked()
+
+    function check_if_all_checked(){
+        let all_bool = null
+        for (let i = 0; i < original_titles_list_obj.length; i++) {
+            if (all_bool == null) {
+                all_bool = original_titles_list_obj[i].checked
+
+            }else if (original_titles_list_obj[i].checked != all_bool ) {
+                all_bool = false
+                break;
+            } 
+        }
+        all_checked = all_bool
+        
+
+    }
 
     
 
@@ -264,12 +278,18 @@
             {#if show_titles_list_obj.length == 0}
                 <div class = "no-titles">Ingen overskrifter</div>
             {:else}
-                <!-- <input class="checkbox-all"type="checkbox" on:click={check_all} bind:checked={all_checked} /> Alle -->
+                <div class="checkbox-alle">
+                    <input type="checkbox" on:click={check_all} bind:checked={all_checked} /> 
+                    <div style = "margin-left: 1%">
+                        Velg alle
+                    </div>
+                        
+                </div>
 
                 {#each show_titles_list_obj as elementObj}
 
                     <div class="title">
-                        <input type="checkbox" bind:checked={elementObj.checked} />
+                        <input type="checkbox"  bind:checked={elementObj.checked} />
 
                         <div class="title">
 
@@ -376,32 +396,17 @@
         color:#d43838;
         cursor: pointer;
     }
-
-    .remove-button{
-        display: inline-flex;
-        align-items: center;
-        margin: 0.5vh;
-        margin-bottom: 1vh;
-        margin-right: 1vh;
-        width: 10vw;
-        height:2vh;
-        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        background: #d43838;
-        color:#ffffff;
-        padding: 12px;
-        font-size: 14px;
-        justify-content: center;
+    .checkbox-alle{
         cursor: pointer;
-        border: solid 0.1em rgb(255, 92, 81 ,0);
-        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81, 0);
+        display: flex;
+        margin-left: 1%;
+        margin-bottom: 2vh;
+    }
+    .checkbox-alle:hover{
+        color:#d43838;
     }
 
-    .remove-button:hover {
-        color:#ffffff;
-        border: solid 0.1em;
-        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
-    }
-
+  
     .filter-groups-button:hover {
         background: rgb(226, 226, 226);
     }
@@ -440,6 +445,7 @@
     .close:hover {
         color:#d43838; 
     }
+
 
     
 

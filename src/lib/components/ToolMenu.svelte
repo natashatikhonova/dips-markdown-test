@@ -1,6 +1,6 @@
 <script>
 
-    import { noDocumentFilter, searchValue, showTitles, globalCurrentFilterGroup, myFilters} from '../stores/stores.js';
+    import { searchValue, showTitles, globalCurrentFilterGroup, myFilters} from '../stores/stores.js';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
     import FilterDoctypeForm from './FilterDoctypeForm.svelte';
@@ -21,10 +21,9 @@
     let filtergroup_searched_value ="";
 
     let nofilter = {id: 0, name: "Alle", filters: documentTypes};
+    let myCurrentfilterGroup = nofilter;
 
     let customFilter = {id: -1, name: "", filters: nofilter.filters}
-
-    let myCurrentfilterGroup = nofilter;
     let currentFilterobj = customFilter;
 
     let showAllButtonName = "Nullstill"
@@ -34,6 +33,7 @@
     $: searchedFiltergroups = $myFilters.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
 
     $: $globalCurrentFilterGroup = currentFilterobj.filters
+
 
     $: if (customViewMode){
         currentFilterobj = customFilter
@@ -48,9 +48,20 @@
     else if (customFilter.filters.length < documentTypes.length){
         showAllButtonName = "Vis alle"
     }
+    
+    const filterMenuHandler = () => {
+        filterMenuOpen = !filterMenuOpen
+    }
+    
+    function changeMode(){
+        customViewMode = !customViewMode
+    }
 
+
+    //For the custom mode
+    
+    //Sorting the documentstitels alfabetic
     const sortByString = () => {
-
         let sortedData = documentTypes.sort((obj1, obj2) => {
             if (obj1 < obj2) {
                     return -1;
@@ -59,34 +70,15 @@
             }
             return 0; //string code values are equal		
         });
-
-
         documentTypes = sortedData;
     }
     sortByString()
 
-    const filterMenuHandler = () => {
-        filterMenuOpen = !filterMenuOpen
-    }
-
-    //User clicked on edit and program swich mode with current crop as start point
-    function editItem(group){
-        manageGroup = true
-        modal.set(bind(FilterDoctypeForm,{edit_bool: false, newFilterObj : group}))
-    }
-
-
-    function open(){
-        $showTitles = true
-    }
-
-    //If all button in editmode is clicked
     function clickedAll(){
         myCurrentfilterGroup = nofilter
         if(customFilter.filters.length < documentTypes.length){
             customFilter.filters = documentTypes
-            showAllButtonName = "Nullstill"
-            
+            showAllButtonName = "Nullstill"    
         }
         else{
             customFilter.filters = []
@@ -94,16 +86,19 @@
         }
     }
 
-    function showfilterGroups(){
-        customViewMode = !customViewMode
+    //For stored filtergroupsview
+
+    //User clicked on edit and program swich mode with current crop as start point
+    function editItem(group){
+        manageGroup = true
+        modal.set(bind(FilterDoctypeForm,{edit_bool: false, newFilterObj : group}))
     }
 
+    let manageGroup = false
     function openModel(){
         manageGroup = true
         modal.set(bind(FilterDoctypeForm,{edit_bool: false}))
     }
-    let manageGroup = false
-
 
 </script>
     <div class="filtermenu">
@@ -112,61 +107,62 @@
 
         <div class:show={filterMenuOpen} class="filtermenu-dropdown" >
             
-        {#if customViewMode}
-        <h3>Filter</h3>
-        <input bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
-        <div class="button-conteiner">
-            <button on:click={clickedAll}>{showAllButtonName}</button>
-            <button on:click={showfilterGroups}>Filteringsgrupper</button>
-        </div>
+            {#if customViewMode}
+                <h3>Filter</h3>
+                <input bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
+                <div class="button-conteiner">
+                    <button on:click={clickedAll}>{showAllButtonName}</button>
+                    <button on:click={changeMode}>Filteringsgrupper</button>
+                </div>
 
-        <div class= "filteroption-conteiner">
-        {#each searchedDocumentTypes as item}    
-            <label class="filterItem" >
-                <input type="checkbox"  bind:group={customFilter.filters} value={item} >
-                {item}
-                <span class="checkmark"></span>
-            </label>
-        {/each}
-        </div>
-        {:else}
-            
-            <h4>Dine filter:</h4>
-            <input bind:value={filtergroup_searched_value} type="text" placeholder="Søk.." name="search" style="margin-bottom: 1vh">
-            <div class="button-conteiner">
-                <button on:click={showfilterGroups}>Alle filtere</button>
-                <button on:click={openModel}>Nytt filter</button>
+                <div class= "filteroption-conteiner">
+            {#each searchedDocumentTypes as item}    
+                <label class="filterItem" >
+                    <input type="checkbox"  bind:group={customFilter.filters} value={item} >
+                    {item}
+                    <span class="checkmark"></span>
+                </label>
+            {/each}
             </div>
 
-            <div class="filterItem-button" class:active={currentFilterobj == nofilter} on:click={() => currentFilterobj = nofilter} value="alle">Vis allt</div>
-            <div class= "myFilters-conteiner">
-                {#each searchedFiltergroups as filter}
-                    <div class="filterItem-button" class:active={currentFilterobj == filter} on:click={()=> currentFilterobj = filter} value={filter.filters}>
-                        <t>{filter.name}</t>
-                        <div class="filteritem-buttons-conteiner">
-                            <button class="edit-buttons" title ="Rediger" on:click={() => editItem(filter)}><i class="material-icons">edit</i></button>
-                            <button class="edit-buttons" on:click={()=> $myFilters = $myFilters.filter(item => (item.id != filter.id))} title="Slett"><i class="material-icons">delete</i></button>
+            {:else}
+                
+                <h4>Dine filter:</h4>
+                <input bind:value={filtergroup_searched_value} type="text" placeholder="Søk.." name="search" style="margin-bottom: 1vh">
+                <div class="button-conteiner">
+                    <button on:click={changeMode}>Alle filtere</button>
+                    <button on:click={openModel}>Nytt filter</button>
+                </div>
+
+                <div class="filterItem-button" class:active={currentFilterobj == nofilter} on:click={() => currentFilterobj = nofilter} value="alle">Vis allt</div>
+                <div class= "myFilters-conteiner">
+                    {#each searchedFiltergroups as filter}
+                        <div class="filterItem-button" class:active={currentFilterobj == filter} on:click={()=> currentFilterobj = filter} value={filter.filters}>
+                            <t>{filter.name}</t>
+                            <div class="filteritem-buttons-conteiner">
+                                <button class="edit-buttons" title ="Rediger" on:click={() => editItem(filter)}><i class="material-icons">edit</i></button>
+                                <button class="edit-buttons" on:click={()=> $myFilters = $myFilters.filter(item => (item.id != filter.id))} title="Slett"><i class="material-icons">delete</i></button>
+                            </div>
                         </div>
-                    </div>
-                {/each}
-            </div>
-        {/if}
-    </div>
+                    {/each}
+                </div>
+            {/if}
+
+        </div>
         
         {#if $globalCurrentFilterGroup != documentTypes}
           <button class="filteroff-button" on:click={clickedAll}>Skru av filter</button>
         {/if}	
 
-        <button class="dropdown-button" class:hidden={hideToolBar} on:click={open} >Overskrifter</button>
+        <button class="dropdown-button" class:hidden={hideToolBar} on:click={() =>$showTitles = true}>Overskrifter</button>
+
     </div>
 
     <div class="search-bar" class:hidden={hideToolBar}>
         <input bind:value = {$searchValue} type="text" placeholder="Søk.." name="search">
-
     </div>
 
     {#if manageGroup}
-        {console.log("hei")}
         <Modal on:closed={() => manageGroup = false } show={$modal}/>
     {/if}
 

@@ -15,8 +15,6 @@ export let currentlyAddingNewNote = writable(false);
 
 export let globalCurrentFilterGroup = writable([]);
 
-export let noDocumentFilter = writable(true);
-
 export const selectedDocumentList=writable([]);
 
 export let myFilters = writable([

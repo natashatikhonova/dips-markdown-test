@@ -7,6 +7,7 @@
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
 
+
     let show = false;
     let sortedData = $documentList;
     let ascendingOrder = true;
@@ -15,16 +16,12 @@
     let selected_titles_nodes_List = []
     
     $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
-    
-
-    
 
     $: if (selected_titles_nodes_List.length>0) { //Hvis filtrert på overskrifter
         searchResult = nodeList_to_documentObjList(selected_titles_nodes_List)
         searchResult = searchResult.filter(item => (item.temp_filtered_context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
     } else {
         searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
-
     }
     
     function nodeList_to_documentObjList(node_list) {
@@ -49,6 +46,7 @@
             // console.log(item)
 
             item.nodes.forEach((node)=> {
+                
                 // console.log("\nSjekker noden: " + node.overskrift)
                 let indeks = -1
 
@@ -91,7 +89,7 @@
 
                 } else { //Set the variable temp_filtered_context i objectet til teksten som skal vises
                     // console.log("Variabelen temp_filtered_context blir satt")
-
+                    // console.log(node)
                     node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
                     selected_titles_nodes_List.push(node)
                 }
@@ -131,7 +129,7 @@
 
     function cancel(){
         show = false;
-        console.log("tester cancel")
+        // console.log("tester cancel")
     }
 
     function addNote(){
@@ -235,7 +233,7 @@
         open()
     }
 
-    $: $showTitles, console.log($showTitles)
+    // $: $showTitles, console.log($showTitles)
     
 
 </script>
@@ -249,7 +247,7 @@
     <div class="scroll-container">
         <Splitpanes >
             
-            <Pane minSize="15" size={current_size} maxSize="50">
+            <Pane minSize="20px" size={current_size} maxSize="50">
                 <div class="searched-titles">
                     <FilteredByTitles on:checked_titles={show_documents_checked_titles} on:close={close}/>
                 </div>
@@ -268,6 +266,7 @@
                             {#if searchResult.length > 0}
                                 <div class = "dokumenter">
                                     {#each searchResult as item}
+                            
                                         <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                                     {/each}
                                     

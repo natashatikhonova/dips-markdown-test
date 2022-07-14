@@ -15,11 +15,9 @@ export let currentlyAddingNewNote = writable(false);
 
 export let globalCurrentFilterGroup = writable([]);
 
-export let noDocumentFilter = writable(true);
-
 export const selectedDocumentList=writable([]);
 
-export let myFilters =writable([
+export let myFilters = writable([
     {id: 1, name: "Filter 1", filters: ["Epikrise"]},
     {id: 2, name: "Sindres filter", filters: ["Lab", "Sykepleier notat", "Rutinekontroll"]},
     {id: 3, name: "Natashas filter", filters: ["Epikrise", "Poliklinisk notat", "Lab", "Rutinekontroll"]},
@@ -31,5 +29,7 @@ export let myFilters =writable([
 export let searchValue = writable("")
 
 export let showTitles = writable(false)
+
+export let saved_filter_groups = writable([])
 
 

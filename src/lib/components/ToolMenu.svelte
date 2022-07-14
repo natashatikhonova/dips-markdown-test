@@ -74,6 +74,14 @@
     }
     sortByString()
 
+
+    function turnOffFilter(){
+        myCurrentfilterGroup = nofilter
+        customFilter.filters = documentTypes
+        filterMenuOpen = false;
+        customViewMode = true;
+    }
+
     function clickedAll(){
         myCurrentfilterGroup = nofilter
         if(customFilter.filters.length < documentTypes.length){
@@ -151,7 +159,7 @@
         </div>
         
         {#if $globalCurrentFilterGroup != documentTypes}
-          <button class="filteroff-button" on:click={clickedAll}>Skru av filter</button>
+          <button class="filteroff-button" on:click={turnOffFilter}>Skru av filter</button>
         {/if}	
 
         <button class="dropdown-button" class:hidden={hideToolBar} on:click={() =>$showTitles = true}>Overskrifter</button>

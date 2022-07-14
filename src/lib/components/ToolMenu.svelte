@@ -14,28 +14,20 @@
     
     //If the compleate menu is open
     let filterMenuOpen = false;
-
-
-    //editmode make new edits and make new filter groups
-    let editMode = false;
+    let customViewMode = true;
 
 
     let filter_searched_value = "";
     let filtergroup_searched_value ="";
 
-    let allFilterMarked = true;
-
     let nofilter = {id: 0, name: "Alle", filters: documentTypes};
 
-    let currentFilterobj = nofilter;
+    let customFilter = {id: -1, name: "", filters: nofilter.filters}
 
-    let editFiltergroup = documentTypes;
-    let editFilterGroupname = "";
-    
+    let myCurrentfilterGroup = nofilter;
+    let currentFilterobj = customFilter;
 
-
-    $globalCurrentFilterGroup = documentTypes
-
+    let showAllButtonName = "Nullstill"
 
     $: searchedDocumentTypes = documentTypes.filter(item => (item.toLowerCase().includes(filter_searched_value.toLowerCase())));
 
@@ -43,7 +35,19 @@
 
     $: $globalCurrentFilterGroup = currentFilterobj.filters
 
-    $: currentFilterobj.filters = editFiltergroup
+    $: if (customViewMode){
+        currentFilterobj = customFilter
+    }
+    else{
+        currentFilterobj = myCurrentfilterGroup
+    }
+
+    $: if(customFilter.filters.length == documentTypes.length){
+        showAllButtonName = "Nullstill"
+    }
+    else if (customFilter.filters.length < documentTypes.length){
+        showAllButtonName = "Vis alle"
+    }
 
     const sortByString = () => {
 
@@ -59,26 +63,10 @@
 
         documentTypes = sortedData;
     }
-sortByString()
+    sortByString()
+
     const filterMenuHandler = () => {
         filterMenuOpen = !filterMenuOpen
-    }
-
-    //Turns off all filters
-    function turnOffFilter(){
-        $noDocumentFilter = true
-        currentFilterobj = nofilter
-        currentFilterobj.filters = nofilter.filters
-            if(editMode){
-                filterMenuHandler()
-                modeChanger()
-            }
-        }
-
-    
-    function modeChanger(){
-        manageGroup = true
-        modal.set(bind(FilterDoctypeForm,{group_name: editFilterGroupname, searched_value: filter_searched_value, show_titles_list_obj: searchedDocumentTypes}))
     }
 
     //User clicked on edit and program swich mode with current crop as start point
@@ -92,28 +80,22 @@ sortByString()
         $showTitles = true
     }
 
- 
-
     //If all button in editmode is clicked
     function clickedAll(){
-        allFilterMarked = !allFilterMarked
-        if(editFiltergroup.length < documentTypes.length){
-            editFiltergroup = documentTypes
+        myCurrentfilterGroup = nofilter
+        if(customFilter.filters.length < documentTypes.length){
+            customFilter.filters = documentTypes
+            showAllButtonName = "Nullstill"
+            
         }
         else{
-            editFiltergroup = []
-        }
-
-        if(editFiltergroup.length == documentTypes.length){
-        allFilterMarked = true
-        }
-        else if(editFiltergroup.length < documentTypes.length){
-            allFilterMarked = false
+            customFilter.filters = []
+            showAllButtonName = "Vis alle"
         }
     }
 
     function showfilterGroups(){
-        editMode = !editMode
+        customViewMode = !customViewMode
     }
 
     function openModel(){
@@ -128,20 +110,20 @@ sortByString()
         
         <button on:click={filterMenuHandler} class:active={filterMenuOpen} class="dropdown-button" >Filter</button>
 
-            <div class:show={filterMenuOpen} class="filtermenu-dropdown" >
+        <div class:show={filterMenuOpen} class="filtermenu-dropdown" >
             
-        {#if !editMode}
+        {#if customViewMode}
         <h3>Filter</h3>
         <input bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
         <div class="button-conteiner">
-            <button on:click={clickedAll}>Nullstill</button>
+            <button on:click={clickedAll}>{showAllButtonName}</button>
             <button on:click={showfilterGroups}>Filteringsgrupper</button>
         </div>
 
         <div class= "filteroption-conteiner">
         {#each searchedDocumentTypes as item}    
             <label class="filterItem" >
-                <input type="checkbox"  bind:group={editFiltergroup} value={item} >
+                <input type="checkbox"  bind:group={customFilter.filters} value={item} >
                 {item}
                 <span class="checkmark"></span>
             </label>
@@ -172,7 +154,7 @@ sortByString()
     </div>
         
         {#if $globalCurrentFilterGroup != documentTypes}
-          <button class="filteroff-button" on:click={turnOffFilter}>Skru av filter</button>
+          <button class="filteroff-button" on:click={clickedAll}>Skru av filter</button>
         {/if}	
 
         <button class="dropdown-button" class:hidden={hideToolBar} on:click={open} >Overskrifter</button>

@@ -30,7 +30,6 @@
 
   $: $currentDocumentObject, console.log($currentDocumentObject)
 
-  
 
 
   function changeView(){
@@ -61,8 +60,9 @@
   <ToolMenu hideToolBar={showSideview}/>
 </div>
 
+
 <div class="main">
-  <!-- {#if showSideview}
+  {#if showSideview}
     <div class="side-container"  >
       {#if $currentlyAddingNewNote}
         {#if w > 900}
@@ -71,11 +71,11 @@
           <Pane minSize="30"><ContentView width={w} /></Pane>
         </Splitpanes>
         {:else} 
-        For smaaler platforms
+    
           <Splitpanes horizontal={true}>
             <Pane ><ScrollView/></Pane>
             <Pane ><ContentView width={w}/></Pane>
-             Uses the typewriter in this component
+  
           </Splitpanes>
           
         {/if}
@@ -95,8 +95,8 @@
     </div>
   {:else}
     <div class="scroll-container"><ScrollView /></div>
-  {/if} -->
-  </div>
+  {/if}
+</div>
 
 <style>
 
@@ -121,6 +121,10 @@
     border-bottom: 1px solid grey;
   }
 
+  .main{
+    overflow:auto;
+  }
+
 
 
   .tool-menu{
@@ -128,29 +132,22 @@
     align-items: center;
     justify-content:space-between;
     box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
+    margin-bottom: 3px;
   }
 
   img{
     margin-left: 10px;
-  }
-
-  h3{
-
-  }
-
-   .main {
+    height: 22px
   }
 
   .side-container{
-    height: calc(100%);
     width: 100%;
+    height: 100%;
     display: flex;
-    flex-direction: row;
-
-    
   }
 
   .scroll-container{
+    display: flex;
     height: 100%;
     width: 100%;
    

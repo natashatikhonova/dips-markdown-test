@@ -8,6 +8,11 @@
     import type { MenuSurfaceComponentDev } from '@smui/menu-surface';
     import MenuSurface from '@smui/menu-surface';
     import Textfield from '@smui/textfield';
+    import List, { Item, Text, Meta } from '@smui/list';
+    import Checkbox from '@smui/checkbox';
+    import Switch from '@smui/switch';
+    import FormField from '@smui/form-field';
+    import { SelectionGroup, SelectionGroupIcon } from '@smui/menu';
 
     const modal = writable(null);
 
@@ -25,10 +30,10 @@
     let filter_searched_value = "";
     let filtergroup_searched_value ="";
 
-    let nofilter = {id: 0, name: "Alle", filters: documentTypes};
+    let nofilter = {id: 0, name: "Alle", filters: documentTypes.slice(0,documentTypes.length)};
     let myCurrentfilterGroup = nofilter;
 
-    let customFilter = {id: -1, name: "", filters: nofilter.filters}
+    let customFilter = {id: -1, name: "", filters: nofilter.filters.slice(0,nofilter.filters.length)}
     let currentFilterobj = customFilter;
 
     let showAllButtonName = "Nullstill"
@@ -47,16 +52,15 @@
         currentFilterobj = myCurrentfilterGroup
     }
 
+    let checked_all
+
     $: if(customFilter.filters.length == documentTypes.length){
-        showAllButtonName = "Nullstill"
+        checked_all = true
     }
     else if (customFilter.filters.length < documentTypes.length){
-        showAllButtonName = "Vis alle"
+        checked_all = false
     }
     
-    const filterMenuHandler = () => {
-        filterMenuOpen = !filterMenuOpen
-    }
     
     function changeMode(){
         customViewMode = !customViewMode
@@ -99,93 +103,116 @@
         }
     }
 
-    //For stored filtergroupsview
+    
 
+    //For stored filtergroupsview
+    
+    let manageGroup = false
     //User clicked on edit and program swich mode with current crop as start point
     function editItem(group){
         manageGroup = true
         modal.set(bind(FilterDoctypeForm,{edit_bool: false, newFilterObj : group}))
     }
 
-    let manageGroup = false
-    function openModel(){
-        manageGroup = true
-        modal.set(bind(FilterDoctypeForm,{edit_bool: false}))
-    }
-
     let surface: MenuSurfaceComponentDev;
-  let name = '';
-  let email = '';
+
 
 </script>
 
     <div class="filtermenu">
-        <Button on:click={filterMenuHandler} variant="raised">
-            <Label>Filter</Label>
-        </Button>
-        <!-- <button on:click={filterMenuHandler} class:active={filterMenuOpen} class="dropdown-button" >Filter</button> -->
-
-        <div style="min-width: 100px;">
+        
+        <div  style="min-width: 100px;">
             <Button on:click={() => surface.setOpen(true)}  variant="raised">Filter</Button>
-
-            <MenuSurface bind:this={surface} anchorCorner="BOTTOM_LEFT">
-              <div
-                style="margin: 1em; display: flex; flex-direction: column; align-items: flex-end;"
-              >
-                <Textfield bind:value={name} label="Name" />
-                <Textfield bind:value={email} label="Email" type="email" />
-                <Button style="margin-top: 1em;" on:click={() => surface.setOpen(false)}>
-                  Submit
-                </Button>
-              </div>
-            </MenuSurface>
-          </div>
-
-        <div class:show={filterMenuOpen} class="filtermenu-dropdown" >
             
-            {#if customViewMode}
-                <h3>Filter</h3>
-                <input bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
-                <div class="button-conteiner">
-                    <button on:click={clickedAll}>{showAllButtonName}</button>
-                    <button on:click={changeMode}>Filteringsgrupper</button>
-                </div>
-
-                <div class= "filteroption-conteiner">
-            {#each searchedDocumentTypes as item}    
-                <label class="filterItem" >
-                    <input type="checkbox"  bind:group={customFilter.filters} value={item} >
-                    {item}
-                    <span class="checkmark"></span>
-                </label>
-            {/each}
-            </div>
-
-            {:else}
+            <MenuSurface class="filter-dropdown" bind:this={surface} anchorCorner="BOTTOM_LEFT">
                 
-                <h4>Dine filter:</h4>
-                <input bind:value={filtergroup_searched_value} type="text" placeholder="Søk.." name="search" style="margin-bottom: 1vh">
-                <div class="button-conteiner">
-                    <button on:click={changeMode}>Alle filtere</button>
-                    <button on:click={openModel}>Nytt filter</button>
+            {#if customViewMode}
+                <div style="margin: 1em;">
+                    <Textfield bind:value={filter_searched_value} label="Søk.."/>
+
+                    <div style="margin-top: 1em; ">
+
+                        <FormField align="end">
+                        
+                            {#if filter_searched_value == ""}
+                                <Switch bind:checked={checked_all} on:click={clickedAll}/>
+                            {/if}
+                            <Button on:click={changeMode} variant="raised" class="button-shaped-round"  style="border-radius: 50px;">
+                                <Label>Grupper</Label>
+                            </Button>
+
+                        </FormField>
+                    </div>
+
                 </div>
 
-                <div class="filterItem-button" class:active={currentFilterobj == nofilter} on:click={() => currentFilterobj = nofilter} value="alle">Vis allt</div>
-                <div class= "myFilters-conteiner">
-                    {#each searchedFiltergroups as filter}
-                        <div class="filterItem-button" class:active={currentFilterobj == filter} on:click={()=> currentFilterobj = filter} value={filter.filters}>
-                            <t>{filter.name}</t>
+                <div class="checkList-customfilter">
+
+                    {#if searchedDocumentTypes.length == 0} 
+                        <p> Ingen filtere </p>
+                    {:else}
+                        <List  checkList>
+                            {#each searchedDocumentTypes as item}
+                            <Item>
+                                <Label>{item}</Label>
+                                <Meta>
+                                <Checkbox bind:group={customFilter.filters} value={item} />
+                                </Meta>
+                            </Item>    
+                            {/each}
+                        </List>
+                    {/if}
+                  </div>
+                  {:else}
+
+                  
+                  <div style="margin: 1em;">
+                    <Textfield bind:value={filter_searched_value} label="Søk.."/>
+
+                    <div style="margin-top: 1em; ">
+
+
+                        <FormField align="end">
+                            <Button on:click={changeMode} variant="raised" class="button-shaped-round"  style="border-radius: 50px;">
+                                <Label>Filtere</Label>
+                            </Button>
+
+                        </FormField>
+                    </div>
+
+                </div>
+
+                <List>
+
+                <SelectionGroup> 
+            
+                {#each searchedFiltergroups as filter}
+
+                        <Item on:SMUI:action={()=> currentFilterobj = filter} selected={currentFilterobj === filter}>
+                            
+                            <SelectionGroupIcon>
+                                <i class="material-icons">check</i>
+                            </SelectionGroupIcon>
+    
+                            <Text>
+                                {filter.name}
+                                <!-- <SecondaryText> Eventuelt dato? </SecondaryText> -->
+                            </Text>
+    
                             <div class="filteritem-buttons-conteiner">
                                 <button class="edit-buttons" title ="Rediger" on:click={() => editItem(filter)}><i class="material-icons">edit</i></button>
                                 <button class="edit-buttons" on:click={()=> $myFilters = $myFilters.filter(item => (item.id != filter.id))} title="Slett"><i class="material-icons">delete</i></button>
-                            </div>
-                        </div>
-                    {/each}
-                </div>
-            {/if}
+                            </div> 
+            
+                        </Item>
 
-        </div>
-        
+                    {/each}
+                </SelectionGroup>
+                </List>
+              {/if}
+            </MenuSurface>
+          </div>
+          
         {#if $globalCurrentFilterGroup != documentTypes}
           <button class="filteroff-button" on:click={turnOffFilter}>Skru av filter</button>
         {/if}	
@@ -201,11 +228,20 @@
     {#if manageGroup}
         <Modal on:closed={() => manageGroup = false } show={$modal}/>
     {/if}
-
 <style>
+
+    .checkList-customfilter{
+        display: flex;
+        flex-direction: column;
+        max-height:60vh;
+        overflow-y: auto;
+        text-align: center;
+
+    }
 
     .filtermenu {
         display: flex;
+        align-items: center;
     }
     
 
@@ -225,23 +261,7 @@
         font-size: 17px;
      }
         
-    .filtermenu-dropdown {
 
-        display: none;
-        position: absolute;
-        background-color: #f6f6f6;
-        min-width: 230px;
-        border: 3px solid rgb(147, 147, 147);
-        z-index: 2;
-        max-height: 85vh;
-        height: fit-content;
-}
-
-/* for filtermenu */
-.show {
-    display:flex;
-    flex-direction: column;
-}
 
 .dropdown-button {
     display: inline-flex;
@@ -260,76 +280,21 @@
     box-shadow: 0 0 0 0.2rem rgb(255, 92, 81, 0);
 }
     
-.dropdown-button:hover, .dropdown-button.active {
+.dropdown-button:hover {
     color:#ffffff;
     border: solid 0.1em;
     box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
-}
-
-.button-conteiner{
-    display:flex;
-    flex-direction: row;
-    justify-content:space-between;
-    margin: 3px;
-}
-
-.button-conteiner button{
-    width: 100%;
-    margin: 1px;
 }
 
 input{
     margin: 3px;
 }
 
-.filterItem {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}	
-    
-.filterItem:hover {
-    background-color: #ddd
-}
 
-.filterItem-button{
-    display: flex;
-    flex-direction: row;
-    justify-content:space-between;
-    align-items: center;
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    border-bottom:  1px solid #666363;
-}
-
-.filterItem-button:hover {
-    background-color: #e6f2ff;
-}
-
-.filterItem-button.active{
-    background-color: #ccebff;
-}
-
-.filteritem-buttons-conteiner{
-    display: flex;
-    flex-direction: row;
-}
-
-.myFilters-conteiner{
-    display: flex;
-    flex-direction: column;
-    max-height:60vh;
-    overflow-y: auto;
-
-}
-.filteroption-conteiner{
-    max-height: 60vh;
-    overflow-y: auto;
-}
 
 .edit-buttons {
+    position: relative;
+    right: 0px;
     align-self: center;
     background: none;
     border:none;

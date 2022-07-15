@@ -1,9 +1,14 @@
-<script>
+<script lang="ts">
 
     import { searchValue, showTitles, globalCurrentFilterGroup, myFilters} from '../stores/stores.js';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
     import FilterDoctypeForm from './FilterDoctypeForm.svelte';
+    import Button, { Label } from '@smui/button';
+    import type { MenuSurfaceComponentDev } from '@smui/menu-surface';
+    import MenuSurface from '@smui/menu-surface';
+    import Textfield from '@smui/textfield';
+
     const modal = writable(null);
 
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
@@ -108,10 +113,33 @@
         modal.set(bind(FilterDoctypeForm,{edit_bool: false}))
     }
 
+    let surface: MenuSurfaceComponentDev;
+  let name = '';
+  let email = '';
+
 </script>
+
     <div class="filtermenu">
-        
-        <button on:click={filterMenuHandler} class:active={filterMenuOpen} class="dropdown-button" >Filter</button>
+        <Button on:click={filterMenuHandler} variant="raised">
+            <Label>Filter</Label>
+        </Button>
+        <!-- <button on:click={filterMenuHandler} class:active={filterMenuOpen} class="dropdown-button" >Filter</button> -->
+
+        <div style="min-width: 100px;">
+            <Button on:click={() => surface.setOpen(true)}  variant="raised">Filter</Button>
+
+            <MenuSurface bind:this={surface} anchorCorner="BOTTOM_LEFT">
+              <div
+                style="margin: 1em; display: flex; flex-direction: column; align-items: flex-end;"
+              >
+                <Textfield bind:value={name} label="Name" />
+                <Textfield bind:value={email} label="Email" type="email" />
+                <Button style="margin-top: 1em;" on:click={() => surface.setOpen(false)}>
+                  Submit
+                </Button>
+              </div>
+            </MenuSurface>
+          </div>
 
         <div class:show={filterMenuOpen} class="filtermenu-dropdown" >
             
@@ -176,9 +204,9 @@
 
 <style>
 
-.filtermenu {
-    
-}
+    .filtermenu {
+        display: flex;
+    }
     
 
     .hidden{

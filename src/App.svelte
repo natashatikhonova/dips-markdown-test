@@ -114,19 +114,20 @@
   }
 
   .top-header{
-    background-color: #dadada;
+  
     display: flex;
     align-items: center;
     justify-content:space-between;
+    border-bottom: 1px solid grey;
   }
 
 
 
   .tool-menu{
-    background-color: #eeeeee;
     display: flex;
     align-items: center;
     justify-content:space-between;
+    box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
   }
 
   img{

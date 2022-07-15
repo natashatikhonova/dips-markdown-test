@@ -47,7 +47,7 @@
 
 </script>
 
-<header>
+<div class="top-header">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <img src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test" />
   <h3>PASIENTJOURNAL</h3>
@@ -55,14 +55,14 @@
     <button disabled={showSideview} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
     <button disabled={!showSideview} title="Kontinuerlig visning" on:click={changeView}><i class="material-icons">horizontal_split</i></button>
   </div>
-</header>
+</div>
 
-<header class="tool-menu">
+<div class="tool-menu">
   <ToolMenu hideToolBar={showSideview}/>
-</header>
+</div>
 
 <div class="main">
-  {#if showSideview}
+  <!-- {#if showSideview}
     <div class="side-container"  >
       {#if $currentlyAddingNewNote}
         {#if w > 900}
@@ -70,10 +70,12 @@
           <Pane ><ScrollView/></Pane>
           <Pane minSize="30"><ContentView width={w} /></Pane>
         </Splitpanes>
-        {:else} <!-- For smaaler platforms -->
+        {:else} 
+        For smaaler platforms
           <Splitpanes horizontal={true}>
             <Pane ><ScrollView/></Pane>
-            <Pane ><ContentView width={w}/></Pane><!--  Uses the typewriter in this component -->
+            <Pane ><ContentView width={w}/></Pane>
+             Uses the typewriter in this component
           </Splitpanes>
           
         {/if}
@@ -93,7 +95,7 @@
     </div>
   {:else}
     <div class="scroll-container"><ScrollView /></div>
-  {/if}
+  {/if} -->
   </div>
 
 <style>
@@ -111,38 +113,31 @@
     position: relative;
   }
 
-  header{
-    width:100vw;
-    margin:0;
-    padding: 0;
-    height:5vh;
+  .top-header{
     background-color: #dadada;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content:space-between;
-    
   }
+
+
 
   .tool-menu{
     background-color: #eeeeee;
+    display: flex;
     align-items: center;
+    justify-content:space-between;
   }
 
   img{
-    margin: 0.5vh;
-    height:4vh;
+    margin-left: 10px;
   }
 
   h3{
-    margin-top:0.5%;
-    margin-bottom:0.5%;
+
   }
 
    .main {
-    margin: 0;
-    padding: 0;
-    height: 90vh;
-    width:100vw;
   }
 
   .side-container{
@@ -161,13 +156,8 @@
   }
 
   button{
-    display: inline-flex;
-    align-items: center;
     background: none;;
-    margin-top: 0.5vh;
-    margin-bottom: 0.5vh;
-    margin-right: 2vh;
-    height:4vh;
+    margin-right: 10px;
     border:none;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;

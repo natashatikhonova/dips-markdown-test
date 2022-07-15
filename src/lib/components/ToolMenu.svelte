@@ -177,8 +177,7 @@
 <style>
 
 .filtermenu {
-    position: relative;
-    display: inline-block;
+    
 }
     
 

@@ -107,66 +107,49 @@ import { Delta, TextChange } from 'typewriter-editor';
       
     }
 
-  let dot_char = true //when dot has been entered
-  let space_char = true //when space has been entered
-  let enter_char = true
-  let possible_large_char = -1;
+  let waitingForSpaceOrEnterOrDot = true
+  let dot_has_happend = false
 
 
   function check_text(event){
-    console.log(event)
-    console.log("space_char: " + space_char)
-    console.log("Dot_char: " + dot_char)
-    console.log(editor.getText())
 
-    if (event.key == "Enter") {
-      enter_char = true;
+    let key = event.key
+
+    if(key == "Backspace"){
+      waitingForSpaceOrEnterOrDot = false
+      dot_has_happend = false
     }
-    
 
-    if (event.key == " " || event.key == "Enter"){
-
-      if ((dot_char && space_char) || (enter_char && space_char)) {
-        // possible_large_char = editor.doc.selection[0]
-        // console.log(editor.doc.selection[0])
-
+    if(waitingForSpaceOrEnterOrDot && (key == " " || key == "Enter" || key == ".")){
         //find the previous word
         for(let i = editor.getText().length-1; i >= 0; i--){ //goes backwards throught the text
           let char = editor.getText()[i-1]
-          console.log("Char: " + char)
           if (char == " " || i == 0 || char == "\n") {
-            console.log("Endrer til stor bokstav på " + editor.getText()[i])
 
             let update_delta = new Delta().retain(i).insert(editor.getText()[i].toUpperCase()).delete(1)
 
             editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
-            console.log(editor.getDelta())
-            console.log(editor.getText())
-          
             break;
           }
-
         }
+        waitingForSpaceOrEnterOrDot = false
+        dot_has_happend = false
+    }
 
-        dot_char = false
-        space_char = false
-      } else if (dot_char || event.key == "Enter"){
-
-        
-        //denne skal ikke alltid kalles
-        space_char = true; //
+      if(key == "Enter"){
+        waitingForSpaceOrEnterOrDot = true
+        dot_has_happend = true
       }
-      
-    }
-    if (event.key == ".") {
 
-      dot_char = true
+      if (key == ".") {
+        dot_has_happend = true
+      }
 
-    }
+      if (key == " " && dot_has_happend) {
+        waitingForSpaceOrEnterOrDot = true
+      }
 
   }
-
-
 
     
 </script>

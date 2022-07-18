@@ -103,7 +103,7 @@
 <button title="Ny notat"class="add-button" class:mobile = {w<600} class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
 
 <style>
-    
+
     table {
 		width: 100%;
         border-collapse: collapse;

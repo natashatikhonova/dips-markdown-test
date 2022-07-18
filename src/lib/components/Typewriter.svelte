@@ -107,7 +107,11 @@ import { Delta, TextChange } from 'typewriter-editor';
       
     }
 
-  let waitingForSpaceOrEnterOrDot = true
+  let waitingForSpaceOrEnterOrDot = false
+  if (editor.getText().length <= 1){
+    waitingForSpaceOrEnterOrDot = true
+  }
+
   let dot_has_happend = false
 
 
@@ -115,14 +119,14 @@ import { Delta, TextChange } from 'typewriter-editor';
 
     let key = event.key
 
-    // if(key == "Backspace"){
-    //   waitingForSpaceOrEnterOrDot = false
-    //   dot_has_happend = false
-    // }
+    if(key == "Backspace"){
+      waitingForSpaceOrEnterOrDot = false
+      dot_has_happend = false
+    }
 
     if(waitingForSpaceOrEnterOrDot && (key == " " || key == "Enter" || key == ".")){
         //find the previous word
-        for(let i = editor.getText().length-1; i >= 0; i--){ //goes backwards throught the text
+        for(let i = editor.doc.selection[0]-1; i >= 0; i--){ //goes backwards throught the text
           let char = editor.getText()[i-1]
           if (char == " " || i == 0 || char == "\n") {
 
@@ -150,6 +154,7 @@ import { Delta, TextChange } from 'typewriter-editor';
       }
 
   }
+  console.log(marked("|  |  |  |  |  | \n |:---:|---|---|---|---| \n |  |  |  |  |  | \n |  |  |  |  |  | \n |  |  |  |  |  |"))
 
     
 </script>
@@ -238,6 +243,7 @@ import { Delta, TextChange } from 'typewriter-editor';
     <div class="editor" style="border:none" autofocus use:asRoot = {editor} on:keyup={check_text}></div>
 
 <style>
+
 
   .toolbar {
     display: flex;

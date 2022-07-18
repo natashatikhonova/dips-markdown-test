@@ -115,10 +115,10 @@ import { Delta, TextChange } from 'typewriter-editor';
 
     let key = event.key
 
-    if(key == "Backspace"){
-      waitingForSpaceOrEnterOrDot = false
-      dot_has_happend = false
-    }
+    // if(key == "Backspace"){
+    //   waitingForSpaceOrEnterOrDot = false
+    //   dot_has_happend = false
+    // }
 
     if(waitingForSpaceOrEnterOrDot && (key == " " || key == "Enter" || key == ".")){
         //find the previous word

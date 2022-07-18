@@ -9,7 +9,7 @@
     import {createEventDispatcher} from 'svelte';
     import { DocumentObject } from '../document.js';
     import { ParseMarkdown } from '../ParseMarkdown.js';
-
+import { Delta, TextChange } from 'typewriter-editor';
 
 
     let selectedDocType = "Velg dokumenttype";
@@ -49,6 +49,14 @@
     }
     //Saves the text if the text is not empty and stores the text
     function save(){
+      console.log(editor.change)
+      console.log(editor.doc.getText())
+      // editor.select([0, editor.doc.length-1]) 
+      // editor.delete()
+      // console.log(editor.doc.getText())
+
+ 
+
       changeEdit();
       if( toMarkdown(editor.getHTML()) === ""){ //Empty note
         alert("Tom notat!");
@@ -76,7 +84,6 @@
             const readable = true;
             let newElement = new DocumentObject($documentList.length, new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
             newElement.readable = readable
-            console.log(newElement)
             newElement.title = selectedDocType;
             //Lager et tre over markdown overskriftene i teksten
             let parse = new ParseMarkdown()
@@ -84,7 +91,6 @@
             let tree = parse.parseAndSetIntoTree(newElement) //Her henger programmet!!. FIKSET:)
             // console.log("Etter parse")
             newElement.markdownTree = tree;
-            console.log(newElement.markdownTree)
 
             $documentList.push(newElement);
             $documentList = $documentList;
@@ -100,6 +106,54 @@
       }
       
     }
+
+  let dot_char = true //when dot has been entered
+  let space_char = true //when space has been entered
+  let possible_large_char = -1;
+
+
+  function check_text(event){
+    console.log(event)
+
+    if (event.key == " "){
+
+      if ((dot_char && space_char)) {
+        possible_large_char = editor.doc.selection[0]
+        console.log(editor.doc.selection[0])
+
+        //find the previous word
+        for(let i = editor.getText().length-2; i >= 0; i--){ //goes backwards throught the text
+          let char = editor.getText()[i]
+          console.log("Char: " + char)
+          if (char == " " || i == 0) {
+            console.log("Endrer til stor bokstav på " + editor.getText()[i])
+            break;
+          }
+
+        }
+
+        dot_char = false
+        space_char = false
+      } else {
+
+        //denne skal ikke alltid kalles
+        space_char = true; //
+      }
+      
+    }
+    if (event.key == ".") {
+
+      dot_char = true
+    //   let update_delta = new Delta().retain(editor.getText().length-1).insert(".")
+  
+    //   editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+    //   console.log(editor.getDelta())
+    //   console.log(editor.getText())
+    }
+
+  }
+
+
 
     
 </script>
@@ -185,7 +239,7 @@
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
-    <div class="editor" style="border:none" autofocus use:asRoot = {editor} ></div>
+    <div class="editor" style="border:none" autofocus use:asRoot = {editor} on:keyup={check_text}></div>
 
 <style>
 

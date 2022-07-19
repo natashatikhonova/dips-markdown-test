@@ -109,8 +109,9 @@
     }
 
 </script>
+<div class="all">
+    <div class="leftmenu">
     <div class="filtermenu">
-        
         <button on:click={filterMenuHandler} class:active={filterMenuOpen} class="dropdown-button" >Filter</button>
 
         <div class:show={filterMenuOpen} class="filtermenu-dropdown" >
@@ -156,8 +157,8 @@
                 </div>
             {/if}
 
+            </div>
         </div>
-        
         {#if $globalCurrentFilterGroup != documentTypes}
           <button class="filteroff-button" on:click={turnOffFilter}>Skru av filter</button>
         {/if}	
@@ -169,16 +170,25 @@
     <div class="search-bar" class:hidden={hideToolBar}>
         <input bind:value = {$searchValue} type="text" placeholder="Søk.." name="search">
     </div>
-
+</div>
     {#if manageGroup}
         <Modal on:closed={() => manageGroup = false } show={$modal}/>
     {/if}
 
 <style>
 
+.all{
+    display: grid;
+    grid-template-rows: 50px, 50px, ;
+}
+
 .filtermenu {
-    position: relative;
-    display: inline-block;
+    display: block;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 50px;
+    background-color: #d43838;
 }
     
 
@@ -187,7 +197,7 @@
     }
 
     .search-bar{
-        margin: 2vw;
+        margin: 20px;
     }
 
     input[type=text] {
@@ -199,14 +209,13 @@
      }
         
     .filtermenu-dropdown {
-
         display: none;
         position: absolute;
         background-color: #f6f6f6;
         min-width: 230px;
         border: 3px solid rgb(147, 147, 147);
         z-index: 2;
-        max-height: 85vh;
+        max-height: 500px;
         height: fit-content;
 }
 
@@ -217,26 +226,21 @@
 }
 
 .dropdown-button {
-    display: inline-flex;
-    align-items: center;
-    margin: 0.5vh;
-    margin-bottom: 0vh;
-    margin-right: 2vh;
-    height:4vh;
+    height: 100%;
+    width: 80px;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     background: #d43838;
     color:#ffffff;
-    padding: 16px;
-    font-size: 16px;
     cursor: pointer;
-    border: solid 0.1em rgb(255, 92, 81 ,0);
-    box-shadow: 0 0 0 0.2rem rgb(255, 92, 81, 0);
+    border: none;
+    /* border: solid 1px rgb(255, 92, 81 ,1);
+    box-shadow: 0 0 0 2px rgb(255, 92, 81, 1); */
 }
     
 .dropdown-button:hover, .dropdown-button.active {
     color:#ffffff;
-    border: solid 0.1em;
-    box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
+    /* border: solid 1px;
+    box-shadow: 0 0 0 0.2rem rgb(255, 92, 81); */
 }
 
 .button-conteiner{
@@ -293,12 +297,12 @@ input{
 .myFilters-conteiner{
     display: flex;
     flex-direction: column;
-    max-height:60vh;
+    max-height:600px;
     overflow-y: auto;
 
 }
 .filteroption-conteiner{
-    max-height: 60vh;
+    max-height: 600px;
     overflow-y: auto;
 }
 

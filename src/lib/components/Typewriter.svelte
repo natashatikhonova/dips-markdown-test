@@ -118,11 +118,27 @@ import { Delta, TextChange } from 'typewriter-editor';
     waitingForSpaceOrEnterOrDot = false
     dot_has_happend = false
   }
-  function check_text(event){
 
-    autocomplete()
+  function check_text(event){
     
     let key = event.key
+    if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
+      console.log("add in suggested word")
+      if (prev_suggested_word.length > 0){
+
+        let current_indeks = editor.doc.selection[0]
+        let update_delta = new Delta().retain(current_indeks-1).insert(prev_suggested_word).delete(prev_suggested_word.length+1)
+        editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+        editor.select(current_indeks + prev_suggested_word.length)
+        prev_suggested_word = ""
+      }
+
+
+    } else if (((/[a-zA-Z]/).test(key) && key.length == 1) || key == "Backspace") {//new suggested word
+      console.log("suggests new word")
+      autocomplete()
+
+    }
     
     if(key == "Backspace"){
       waitingForSpaceOrEnterOrDot = false
@@ -175,13 +191,72 @@ import { Delta, TextChange } from 'typewriter-editor';
                  editor.setHTML(editor.getHTML()+"\n <img src=" + e.target.result + ">") 
             };
 }
+let suggestions_words = ["epikrise", "sykepleier", "lege", "sykdom", "sykehus", "legevakt", "fastlege"]
+let prev_suggested_word = ""
+let suggested_word_startindex = -1
+let complete_suggested_word = ""
+
 
 //Autocomplete:
 function autocomplete(){
-  let select_indeks = editor.doc.selection[0]
 
-  let update_delta = new Delta().retain(select_indeks).insert('Test', {code:true}) 
+  console.log("Auto")
+
+  let current_indeks = editor.doc.selection[0]
+  
+
+  let suggested_word = ""
+  let word = ""
+  for (let i = current_indeks-1; i >= 0; i--){
+    console.log(i)
+    if (editor.getText()[i] == " " || editor.getText()[i] == "\n" ){
+      break
+    }
+    word += editor.getText()[i]
+    
+  }
+  word = word.split("").reverse().join("");
+  console.log(word)
+  if (word.length != 0) {
+    for (let i = 0; i < suggestions_words.length; i++){
+      let check_word = suggestions_words[i]
+      let found_word = true
+      
+      for (let j = 0; j < word.length; j++){
+        if (word[j].toLowerCase() != check_word[j]){
+          found_word = false
+          break;
+        }
+      }
+      if (found_word) {
+        suggested_word = check_word.substring(word.length)
+        complete_suggested_word = check_word
+        break;
+      }
+    }
+
+  }
+
+  
+
+  console.log("Suggested word " + suggested_word)
+  console.log(word)
+  let update_delta = new Delta().retain(current_indeks).delete(prev_suggested_word.length).insert(suggested_word, {code:true})
   editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+  prev_suggested_word = suggested_word
+  suggested_word_startindex = current_indeks
+
+}
+function remove_suggestion(){
+  console.log("removes suggested word")
+  let update_delta = new Delta().retain(suggested_word_startindex).delete(prev_suggested_word.length)
+  editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+}
+$: console.log(editor.)
+$: if (editor.doc.selection == null){
+
+} else if (editor.doc.selection[0]){
+  editor.doc.selection[0], remove_suggestion() //Fjerner suggestion
 
 }
 

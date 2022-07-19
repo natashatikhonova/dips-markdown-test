@@ -156,7 +156,19 @@ import { Delta, TextChange } from 'typewriter-editor';
   }
   console.log(marked("|  |  |  |  |  | \n |:---:|---|---|---|---| \n |  |  |  |  |  | \n |  |  |  |  |  | \n |  |  |  |  |  |"))
 
-    
+  let  fileinput;
+	
+	const onFileSelected =(e)=>{
+  console.log("heihei")
+  let image = e.target.files[0];
+            let reader = new FileReader();
+            reader.readAsDataURL(image);
+            reader.onload = e => {
+
+                 editor.setHTML(editor.getHTML()+"\n <img src=" + e.target.result + ">") 
+            };
+}
+
 </script>
 
 <head>
@@ -220,12 +232,23 @@ import { Delta, TextChange } from 'typewriter-editor';
           class:mobile={w<600}
           on:click={commands.redo}><i class="material-icons">redo</i></button>
 
+          <button 
+          title="Legg til bilde"
+          class="toolbar-button"
+          
+          class:mobile={w<600}
+          on:click={()=>{fileinput.click()}}  ><i class="material-icons">image</i></button>
+
+          <input style="display:none" type="file" accept="*/image" on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
+
         <div class = "controls">
           <button title="Lagre"class="save " class:mobile={w<600} on:click={save}> <i class="material-icons">save</i></button>
           <button title="Avbryt" class = "save" class:mobile={w<600} on:click={cancel} > <i class="material-icons">close</i></button>
         </div>
     </Toolbar>
   </div>
+
+
   {#if $currentlyAddingNewNote}
     <div class="dropdown">
       <select class="dropdown-menu" bind:value={selectedDocType} >
@@ -233,7 +256,7 @@ import { Delta, TextChange } from 'typewriter-editor';
       </select>
     </div>
   {/if}
-
+  
   {#if !$currentlyAddingNewNote  && $currentDocumentObject} 
 
     <div class="title">{$currentDocumentObject.title}</div>
@@ -244,7 +267,10 @@ import { Delta, TextChange } from 'typewriter-editor';
 
 <style>
 
-
+  :global(.editor img){
+    max-height: 50%;
+    max-width: 50%
+  }
   .toolbar {
     display: flex;
     background: #eee;

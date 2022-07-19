@@ -101,14 +101,19 @@
 
 
   header{
+    max-height: 40px;
+    align-items: center;
     background-color: #dadada;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content:space-between;
+    
   }
 
   .tool-menu{
+    align-items: stretch;
     background-color: #eeeeee;
+    height: 100%;
   }
 
    .main {

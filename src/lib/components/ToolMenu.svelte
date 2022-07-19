@@ -156,20 +156,25 @@
                     {/each}
                 </div>
             {/if}
-
+        
             </div>
+
+            <!-- filtermenu -->
         </div>
         {#if $globalCurrentFilterGroup != documentTypes}
-          <button class="filteroff-button" on:click={turnOffFilter}>Skru av filter</button>
+          <button class="filteroff-button" class:hidden={hideToolBar} on:click={turnOffFilter}>Skru av filter</button>
         {/if}	
 
         <button class="dropdown-button" class:hidden={hideToolBar} on:click={() =>$showTitles = true}>Overskrifter</button>
-
+<!-- leftmenu -->
     </div>
 
     <div class="search-bar" class:hidden={hideToolBar}>
-        <input bind:value = {$searchValue} type="text" placeholder="Søk.." name="search">
+        <!-- <input bind:value = {$searchValue} type="text" placeholder="Søk.." name="search"> -->
+        <input bind:value = {$searchValue} placeholder="Søk.." name="search" class="search-input">
     </div>
+
+<!-- all -->
 </div>
     {#if manageGroup}
         <Modal on:closed={() => manageGroup = false } show={$modal}/>
@@ -178,17 +183,26 @@
 <style>
 
 .all{
-    display: grid;
-    grid-template-rows: 50px, 50px, ;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
 }
 
 .filtermenu {
     display: block;
     flex-direction: column;
-    align-items: center;
     height: 100%;
-    width: 50px;
-    background-color: #d43838;
+    width: fit-content;
+
+}
+
+.leftmenu{
+    height: 100%;
+    display: flex;
+    flex-direction: row;
 }
     
 
@@ -196,17 +210,25 @@
         visibility: hidden;
     }
 
-    .search-bar{
-        margin: 20px;
+    .search-input{
+        background: none;
+        border: none;
+        border-bottom: solid;
     }
+    /* input[type=text] {
 
-    input[type=text] {
         background: none;
         padding: 6px;
         border: none;
         border-bottom: solid;
         font-size: 17px;
-     }
+     } */
+
+    .search-bar{
+        display: flex;
+    }
+
+
         
     .filtermenu-dropdown {
         display: none;
@@ -217,7 +239,7 @@
         z-index: 2;
         max-height: 500px;
         height: fit-content;
-}
+    }   
 
 /* for filtermenu */
 .show {
@@ -233,14 +255,14 @@
     color:#ffffff;
     cursor: pointer;
     border: none;
-    /* border: solid 1px rgb(255, 92, 81 ,1);
-    box-shadow: 0 0 0 2px rgb(255, 92, 81, 1); */
+    /* border: solid 1px rgb(255, 92, 81 ,0);
+    box-shadow: 0 0 0 2px rgb(255, 92, 81, 0); */
 }
     
 .dropdown-button:hover, .dropdown-button.active {
     color:#ffffff;
-    /* border: solid 1px;
-    box-shadow: 0 0 0 0.2rem rgb(255, 92, 81); */
+    /* border: solid 1px; */
+    /* box-shadow: 0 0 0 0.2rem rgb(255, 92, 81); */
 }
 
 .button-conteiner{
@@ -319,11 +341,8 @@ input{
 }
 
 .filteroff-button{
-    display: inline-flex;
-    align-items: center;
     border: none;
     background: none;
-    height:4vh;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;
 

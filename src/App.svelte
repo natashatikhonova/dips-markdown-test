@@ -1,3 +1,4 @@
+
 <script>
   import documents from './assets/documents.json'
   import { DocumentObject } from './lib/document';
@@ -70,10 +71,10 @@
           <Pane ><ScrollView/></Pane>
           <Pane minSize="30"><ContentView width={w} /></Pane>
         </Splitpanes>
-        {:else} <!-- For smaaler platforms -->
+        {:else} 
           <Splitpanes horizontal={true}>
             <Pane ><ScrollView/></Pane>
-            <Pane ><ContentView width={w}/></Pane><!--  Uses the typewriter in this component -->
+            <Pane ><ContentView width={w}/></Pane> 
           </Splitpanes>
           
         {/if}
@@ -98,51 +99,20 @@
 
 <style>
 
-  :root {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-
-  :global(.splitpanes__pane) {
-    box-shadow: 0 0 3px rgba(0, 0, 0, .2) inset;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    position: relative;
-  }
 
   header{
-    width:100vw;
-    margin:0;
-    padding: 0;
-    height:5vh;
     background-color: #dadada;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content:space-between;
-    
   }
 
   .tool-menu{
     background-color: #eeeeee;
-    align-items: center;
-  }
-
-  img{
-    margin: 0.5vh;
-    height:4vh;
-  }
-
-  h3{
-    margin-top:0.5%;
-    margin-bottom:0.5%;
   }
 
    .main {
-    margin: 0;
-    padding: 0;
-    height: 90vh;
-    width:100vw;
+    overflow: auto;
   }
 
   .side-container{
@@ -150,8 +120,6 @@
     width: 100%;
     display: flex;
     flex-direction: row;
-
-    
   }
 
   .scroll-container{
@@ -164,10 +132,7 @@
     display: inline-flex;
     align-items: center;
     background: none;;
-    margin-top: 0.5vh;
-    margin-bottom: 0.5vh;
-    margin-right: 2vh;
-    height:4vh;
+    margin-right: 2px;
     border:none;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;

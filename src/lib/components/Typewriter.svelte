@@ -114,11 +114,16 @@ import { Delta, TextChange } from 'typewriter-editor';
 
   let dot_has_happend = false
 
-
+  function clear_check_text(){
+    waitingForSpaceOrEnterOrDot = false
+    dot_has_happend = false
+  }
   function check_text(event){
 
+    autocomplete()
+    
     let key = event.key
-
+    
     if(key == "Backspace"){
       waitingForSpaceOrEnterOrDot = false
       dot_has_happend = false
@@ -154,8 +159,10 @@ import { Delta, TextChange } from 'typewriter-editor';
       }
 
   }
-  console.log(marked("|  |  |  |  |  | \n |:---:|---|---|---|---| \n |  |  |  |  |  | \n |  |  |  |  |  | \n |  |  |  |  |  |"))
+  // console.log(marked("|  |  |  |  |  | \n |:---:|---|---|---|---| \n |  |  |  |  |  | \n |  |  |  |  |  | \n |  |  |  |  |  |"))
 
+
+  //Put in Image:
   let  fileinput;
 	
 	const onFileSelected =(e)=>{
@@ -167,6 +174,15 @@ import { Delta, TextChange } from 'typewriter-editor';
 
                  editor.setHTML(editor.getHTML()+"\n <img src=" + e.target.result + ">") 
             };
+}
+
+//Autocomplete:
+function autocomplete(){
+  let select_indeks = editor.doc.selection[0]
+
+  let update_delta = new Delta().retain(select_indeks).insert("Test", { bold:true}) 
+  editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+
 }
 
 </script>
@@ -263,7 +279,7 @@ import { Delta, TextChange } from 'typewriter-editor';
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
-    <div class="editor" style="border:none" autofocus use:asRoot = {editor} on:keyup={check_text}></div>
+    <div class="editor" style="border:none" autofocus use:asRoot = {editor} on:keyup={check_text} on:click={clear_check_text}></div>
 
 <style>
 
@@ -283,6 +299,7 @@ import { Delta, TextChange } from 'typewriter-editor';
   }
 
   .toolbar-button {
+    
     display: flex;
     align-items: center;
     justify-content: center;

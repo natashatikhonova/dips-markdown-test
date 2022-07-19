@@ -258,6 +258,7 @@ function remove_suggestion(){
     console.log("removes suggested word")
     let update_delta = new Delta().retain(suggested_word_startindex).delete(prev_suggested_word.length)
     editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+    prev_suggested_word = ""
   }
 }
 // $: editor.doc.selection[0], remove_suggestion() //Fjerner suggestion

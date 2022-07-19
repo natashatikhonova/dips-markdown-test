@@ -115,6 +115,7 @@ import { Delta, TextChange } from 'typewriter-editor';
   let dot_has_happend = false
 
   function clear_check_text(){
+    remove_suggestion()
     waitingForSpaceOrEnterOrDot = false
     dot_has_happend = false
   }
@@ -122,7 +123,11 @@ import { Delta, TextChange } from 'typewriter-editor';
   function check_text(event){
     
     let key = event.key
-    if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
+    console.log(event.keyCode)
+    if ((37 <= event.keyCode) && (event.keyCode <= 40)){
+      console.log("arrow key")
+      remove_suggestion()
+    }else if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
       console.log("add in suggested word")
       if (prev_suggested_word.length > 0){
 
@@ -133,8 +138,8 @@ import { Delta, TextChange } from 'typewriter-editor';
         prev_suggested_word = ""
       }
 
-
-    } else if (((/[a-zA-Z]/).test(key) && key.length == 1) || key == "Backspace") {//new suggested word
+     
+    } else if( (key.length == 1) || key == "Backspace") {//new suggested word
       console.log("suggests new word")
       autocomplete()
 
@@ -195,11 +200,12 @@ let suggestions_words = ["epikrise", "sykepleier", "lege", "sykdom", "sykehus", 
 let prev_suggested_word = ""
 let suggested_word_startindex = -1
 let complete_suggested_word = ""
+let prev_selection = 0
 
 
 //Autocomplete:
 function autocomplete(){
-
+  
   console.log("Auto")
 
   let current_indeks = editor.doc.selection[0]
@@ -245,20 +251,17 @@ function autocomplete(){
   editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
   prev_suggested_word = suggested_word
   suggested_word_startindex = current_indeks
-
+  prev_selection = current_indeks
 }
 function remove_suggestion(){
-  console.log("removes suggested word")
-  let update_delta = new Delta().retain(suggested_word_startindex).delete(prev_suggested_word.length)
-  editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+  if (prev_selection != editor.doc.selection[0]) {
+    console.log("removes suggested word")
+    let update_delta = new Delta().retain(suggested_word_startindex).delete(prev_suggested_word.length)
+    editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+  }
 }
-$: console.log(editor.)
-$: if (editor.doc.selection == null){
+// $: editor.doc.selection[0], remove_suggestion() //Fjerner suggestion
 
-} else if (editor.doc.selection[0]){
-  editor.doc.selection[0], remove_suggestion() //Fjerner suggestion
-
-}
 
 </script>
 

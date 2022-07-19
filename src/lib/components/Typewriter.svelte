@@ -180,7 +180,7 @@ import { Delta, TextChange } from 'typewriter-editor';
 function autocomplete(){
   let select_indeks = editor.doc.selection[0]
 
-  let update_delta = new Delta().retain(select_indeks).insert("Test", { bold:true}) 
+  let update_delta = new Delta().retain(select_indeks).insert('Test', {code:true}) 
   editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
 
 }
@@ -191,6 +191,7 @@ function autocomplete(){
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <!-- source: https://github.com/typewriter-editor/typewriter -->
+
 
   <div class="toolbar">
     <Toolbar {editor} let:active let:commands>
@@ -283,6 +284,14 @@ function autocomplete(){
 
 <style>
 
+  :global(.editor code){
+    color:lightgray;
+  
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
+
+
+  }
   :global(.editor img){
     max-height: 50%;
     max-width: 50%

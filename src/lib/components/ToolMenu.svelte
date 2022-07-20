@@ -238,7 +238,7 @@
 
     
     .filterItem {
-        color: black;
+    color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
@@ -297,11 +297,11 @@
 }
 
 .filteroff-button{
+    width: fit-content;
     border: none;
     background: none;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;
-    
 }
 .filteroff-button:hover {
     color:#666363;

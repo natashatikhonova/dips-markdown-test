@@ -143,6 +143,11 @@
     cursor: pointer;
   }
 
+  img{
+    max-height: 60%;
+    min-height: 60%;
+  }
+
   button i{
     font-size: xx-large;
   }

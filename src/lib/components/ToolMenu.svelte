@@ -109,66 +109,75 @@
     }
 
 </script>
-    <div class="filtermenu">
-        
-        <button on:click={filterMenuHandler} class:active={filterMenuOpen} class="dropdown-button" >Filter</button>
+<div class="all">
+    <div class="leftmenu">
+        <div class="filtermenu">
+            <button on:click={filterMenuHandler} class:active={filterMenuOpen} class="main-button" >Filter</button>
 
-        <div class:show={filterMenuOpen} class="filtermenu-dropdown" >
+            <div class:show={filterMenuOpen} class="filtermenu-dropdown" >
             
-            {#if customViewMode}
-                <h3>Filter</h3>
-                <input bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
-                <div class="button-conteiner">
-                    <button on:click={clickedAll}>{showAllButtonName}</button>
-                    <button on:click={changeMode}>Filteringsgrupper</button>
-                </div>
+                {#if customViewMode}
+                    <h3>Filter</h3>
+                    <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
+                    <div class="filtermenu-button-conteiner">
+                        <button class="secundary-button" on:click={clickedAll}>{showAllButtonName}</button>
+                        <button class="secundary-button" on:click={changeMode}>Filteringsgrupper</button>
+                    </div>
 
-                <div class= "filteroption-conteiner">
-            {#each searchedDocumentTypes as item}    
-                <label class="filterItem" >
-                    <input type="checkbox"  bind:group={customFilter.filters} value={item} >
-                    {item}
-                    <span class="checkmark"></span>
-                </label>
-            {/each}
-            </div>
+                    <div class= "filteroption-conteiner">
+                        {#each searchedDocumentTypes as item}    
+                            <label class="filterItem" >
+                                <input type="checkbox"  bind:group={customFilter.filters} value={item} >
+                                {item}
+                                <span class="checkmark"></span>
+                            </label>
+                        {/each}
+                    </div>
 
-            {:else}
-                
-                <h4>Dine filter:</h4>
-                <input bind:value={filtergroup_searched_value} type="text" placeholder="Søk.." name="search" style="margin-bottom: 1vh">
-                <div class="button-conteiner">
-                    <button on:click={changeMode}>Alle filtere</button>
-                    <button on:click={openModel}>Nytt filter</button>
-                </div>
+                {:else}
+                    
+                    <h4>Dine filter:</h4>
+                    <input bind:value={filtergroup_searched_value} type="text" placeholder="Søk.." name="search" style="margin-bottom: 1vh">
+                    <div class="filtermenu-button-conteiner">
+                        <button class="secundary-button" on:click={changeMode}>Alle filtere</button>
+                        <button class="secundary-button" on:click={openModel}>Nytt filter</button>
+                    </div>
 
-                <div class="filterItem-button" class:active={currentFilterobj == nofilter} on:click={() => currentFilterobj = nofilter} value="alle">Vis allt</div>
-                <div class= "myFilters-conteiner">
-                    {#each searchedFiltergroups as filter}
-                        <div class="filterItem-button" class:active={currentFilterobj == filter} on:click={()=> currentFilterobj = filter} value={filter.filters}>
-                            <t>{filter.name}</t>
-                            <div class="filteritem-buttons-conteiner">
-                                <button class="edit-buttons" title ="Rediger" on:click={() => editItem(filter)}><i class="material-icons">edit</i></button>
-                                <button class="edit-buttons" on:click={()=> $myFilters = $myFilters.filter(item => (item.id != filter.id))} title="Slett"><i class="material-icons">delete</i></button>
+                    <div class="filterItem-button" class:active={currentFilterobj == nofilter} on:click={() => currentFilterobj = nofilter} value="alle">
+                        Vis allt
+                    </div>
+
+                    <div class= "myFilters-conteiner">
+                        {#each searchedFiltergroups as filter}
+                            <div class="filterItem-button" class:active={currentFilterobj == filter} on:click={()=> currentFilterobj = filter} value={filter.filters}>
+                                <t>{filter.name}</t>
+                                <div class="filteritem-buttons-conteiner">
+                                    <button class="edit-buttons" title ="Rediger" on:click={() => editItem(filter)}><i class="material-icons">edit</i></button>
+                                    <button class="edit-buttons" on:click={()=> $myFilters = $myFilters.filter(item => (item.id != filter.id))} title="Slett"><i class="material-icons">delete</i></button>
+                                </div>
                             </div>
-                        </div>
-                    {/each}
-                </div>
-            {/if}
-
-        </div>
+                        {/each}
+                    </div>
+                {/if}
         
+            </div> <!-- filtermenu-dropdown -->
+        </div> <!-- filtermenu -->
+
         {#if $globalCurrentFilterGroup != documentTypes}
           <button class="filteroff-button" on:click={turnOffFilter}>Skru av filter</button>
         {/if}	
 
-        <button class="dropdown-button" class:hidden={hideToolBar} on:click={() =>$showTitles = true}>Overskrifter</button>
+        <button class="main-button" class:hidden={hideToolBar} on:click={() =>$showTitles = true}>Overskrifter</button>
 
-    </div>
+    </div><!-- leftmenu -->
 
-    <div class="search-bar" class:hidden={hideToolBar}>
+    <input bind:value = {$searchValue} class:hidden={hideToolBar} placeholder="Søk.." name="search" class="search-input">
+    <!-- <div class="search-bar" class:hidden={hideToolBar}>
         <input bind:value = {$searchValue} type="text" placeholder="Søk.." name="search">
-    </div>
+    </div> -->
+    
+
+</div><!-- all -->
 
     {#if manageGroup}
         <Modal on:closed={() => manageGroup = false } show={$modal}/>
@@ -176,92 +185,65 @@
 
 <style>
 
-.filtermenu {
-    position: relative;
-    display: inline-block;
-}
+    .all{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+    }
+
+    .leftmenu{
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .filtermenu {
+        display:block;
+        flex-direction: column;
+        height: 100%;
+    }
     
-
-    .hidden{
-        visibility: hidden;
-    }
-
-    .search-bar{
-        margin: 2vw;
-    }
-
-    input[type=text] {
-        background: none;
-        padding: 6px;
-        border: none;
-        border-bottom: solid;
-        font-size: 17px;
-     }
-        
     .filtermenu-dropdown {
-
         display: none;
         position: absolute;
         background-color: #f6f6f6;
         min-width: 230px;
         border: 3px solid rgb(147, 147, 147);
         z-index: 2;
-        max-height: 85vh;
+        max-height: 500px;
         height: fit-content;
-}
-
-/* for filtermenu */
-.show {
-    display:flex;
-    flex-direction: column;
-}
-
-.dropdown-button {
-    display: inline-flex;
-    align-items: center;
-    margin: 0.5vh;
-    margin-bottom: 0vh;
-    margin-right: 2vh;
-    height:4vh;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    background: #d43838;
-    color:#ffffff;
-    padding: 16px;
-    font-size: 16px;
-    cursor: pointer;
-    border: solid 0.1em rgb(255, 92, 81 ,0);
-    box-shadow: 0 0 0 0.2rem rgb(255, 92, 81, 0);
-}
+    }   
     
-.dropdown-button:hover, .dropdown-button.active {
-    color:#ffffff;
-    border: solid 0.1em;
-    box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
-}
+    
+    /* for filtermenu */
+    .show {
+        display:flex;
+        flex-direction: column;
+    }
+    
+    .filtermenu-button-conteiner{
+        display:flex;
+        flex-direction: row;
+        justify-content:space-between;
+    }
+    
+    .filtermenu-button-conteiner button{
+        width: 100%;
+        margin: 5px;
+    }
+    
 
-.button-conteiner{
-    display:flex;
-    flex-direction: row;
-    justify-content:space-between;
-    margin: 3px;
-}
-
-.button-conteiner button{
-    width: 100%;
-    margin: 1px;
-}
-
-input{
-    margin: 3px;
-}
-
-.filterItem {
+    
+    .filterItem {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }	
-    
+
 .filterItem:hover {
     background-color: #ddd
 }
@@ -293,12 +275,12 @@ input{
 .myFilters-conteiner{
     display: flex;
     flex-direction: column;
-    max-height:60vh;
+    max-height:600px;
     overflow-y: auto;
-
+    
 }
 .filteroption-conteiner{
-    max-height: 60vh;
+    max-height: 600px;
     overflow-y: auto;
 }
 
@@ -315,17 +297,18 @@ input{
 }
 
 .filteroff-button{
-    display: inline-flex;
-    align-items: center;
+    width: fit-content;
     border: none;
     background: none;
-    height:4vh;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;
-
 }
 .filteroff-button:hover {
     color:#666363;
+}
+
+.hidden{
+    visibility: hidden;
 }
 
 </style>

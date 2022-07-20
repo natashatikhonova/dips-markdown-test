@@ -109,7 +109,7 @@
         border-collapse: collapse;
         background-color: white;
 	}
-	
+    
 	th {
 		text-transform: uppercase;
         background: rgb(253, 253, 253);
@@ -138,36 +138,21 @@
         position:sticky;
         top:0;
     }
-
-    .add-button{
-        position: absolute;
-        bottom: 4vh;
-        font-size:xx-large;
-        color:#ffffff;
-        right:5vh;
-        width:8vh;
-        height: 8vh;
-        align-items: center;
-        justify-content: center;
-        background: #d43838;
-        border-radius: 50%;
-        border: 1px solid #ced4da;
-        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        cursor: pointer;
-    }
-
-    .add-button:hover{
-        border: solid 0.1em;
-        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
-    }
-
+    
     .mobile{
-        right: 2vh;
+        right: 3vw;
         bottom: 3vh;
         height: 6vh;
         width: 6vh;
         font-size:x-large;
     }
+    /* .mobile{
+        right: 2vh;
+        bottom: 3vh;
+        height: 6vh;
+        width: 6vh;
+        font-size:x-large;
+    } */
 
 </style>
 

@@ -1,3 +1,4 @@
+
 <script>
   import documents from './assets/documents.json'
   import { DocumentObject } from './lib/document';
@@ -49,7 +50,7 @@
 
 <header>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <img src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test" />
+  <img src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test"/>
   <h3>PASIENTJOURNAL</h3>
   <div>
     <button disabled={showSideview} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
@@ -70,10 +71,10 @@
           <Pane ><ScrollView/></Pane>
           <Pane minSize="30"><ContentView width={w} /></Pane>
         </Splitpanes>
-        {:else} <!-- For smaaler platforms -->
+        {:else} 
           <Splitpanes horizontal={true}>
             <Pane ><ScrollView/></Pane>
-            <Pane ><ContentView width={w}/></Pane><!--  Uses the typewriter in this component -->
+            <Pane ><ContentView width={w}/></Pane> 
           </Splitpanes>
           
         {/if}
@@ -98,51 +99,25 @@
 
 <style>
 
-  :root {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-
-  :global(.splitpanes__pane) {
-    box-shadow: 0 0 3px rgba(0, 0, 0, .2) inset;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    position: relative;
-  }
 
   header{
-    width:100vw;
-    margin:0;
-    padding: 0;
-    height:5vh;
+    max-height: 40px;
+    min-height: 40px;
+    align-items: center;
     background-color: #dadada;
     display: flex;
-    align-items: flex-start;
     justify-content:space-between;
     
   }
 
   .tool-menu{
+    align-items: stretch;
     background-color: #eeeeee;
-    align-items: center;
-  }
-
-  img{
-    margin: 0.5vh;
-    height:4vh;
-  }
-
-  h3{
-    margin-top:0.5%;
-    margin-bottom:0.5%;
+    height: 100%;
   }
 
    .main {
-    margin: 0;
-    padding: 0;
-    height: 90vh;
-    width:100vw;
+    overflow: auto;
   }
 
   .side-container{
@@ -150,8 +125,6 @@
     width: 100%;
     display: flex;
     flex-direction: row;
-
-    
   }
 
   .scroll-container{
@@ -164,13 +137,15 @@
     display: inline-flex;
     align-items: center;
     background: none;;
-    margin-top: 0.5vh;
-    margin-bottom: 0.5vh;
-    margin-right: 2vh;
-    height:4vh;
+    margin-right: 2px;
     border:none;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;
+  }
+
+  img{
+    max-height: 60%;
+    min-height: 60%;
   }
 
   button i{

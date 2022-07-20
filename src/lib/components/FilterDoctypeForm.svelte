@@ -117,11 +117,11 @@
         {/if}
     </div>
 
-    <button on:click={save}>Lagre</button>
+    <button class="main-button" on:click={save}>Lagre</button>
 </div>
 <style>
 
-button {
+/* button {
     position: absolute;
     right: 2vw;
     bottom: 2vh;
@@ -131,6 +131,16 @@ button {
     height: 4vh;
     border: none;
     justify-content: center;
+    border-radius: 4px;
+    cursor: pointer;
+} */
+
+button{
+    position: absolute;
+    right: 2vw;
+    bottom: 2vh;
+    width: 6vw;
+    height: 4vh;
     border-radius: 4px;
     cursor: pointer;
 }

@@ -192,6 +192,126 @@
   .toolbar {
     display: flex;
     background: #eee;
+    margin-left:5px;
+    margin-right:5px;
+    padding: 7px;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
+    min-width: min-content;
+  }
+  .toolbar-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    margin-top: 0.5vh;
+    width: 2.3rem;
+    height: 2.3rem;
+    margin-right: 0.4rem;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    cursor: pointer;
+  }
+
+  .toolbar-button:hover {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
+
+  .toolbar-button.active {
+    border: solid 2px;
+    border-color: #80bdff;
+  }
+
+  .header2{
+    font-size:large;
+  }
+
+  .arrow{
+    color:black;
+    font-weight: bolder;
+    font-size:x-large;
+  }
+
+  .controls{
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .dropdown{
+    margin: 2vh;
+  }
+
+  .dropdown-menu {
+    background: #fff;
+    width: 20vh;
+    height: 40px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    cursor: pointer;
+  }
+
+  .dropdown-menu:hover {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
+  .title{
+    font-weight: bold;
+    font-style: italic;
+    margin-left: 1vh;
+    margin-top:1vh;
+  }
+
+  .meta{
+    font-style: italic;
+    margin-left:1vh;
+    margin-top:1vh;
+  }
+
+  .editor{
+    margin-top: 1vh;
+    margin-right: 1vh;
+    margin-left: 1vh;
+    padding:0.5vh;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  .save{
+    background: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-right: auto;
+    border:none;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    cursor: pointer;
+  }
+
+  .save:hover{
+    color:#d43838;
+    border:none;
+    border-color: none;
+    box-shadow: none;
+  }  
+
+  .mobile{
+    margin: 2px;
+    height: 2rem;
+    width: 2rem;
+  }
+
+
+
+  
+  
+  /*
+    .toolbar {
+    display: flex;
+    background: #eee;
     margin-left:1%;
     margin-right:2%;
     padding: 0.6%;
@@ -199,7 +319,7 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
     min-width: 15vw;
   }
-
+  
   .toolbar-button {
     display: flex;
     align-items: center;
@@ -224,9 +344,9 @@
   .toolbar-button.active {
     border: solid 2px;
     border-color: #80bdff;
-  }
+  } */
 
-  .header2{
+  /* .header2{
     font-size:large;
   }
 
@@ -306,6 +426,6 @@
     margin: 1vw;
     height: calc(4vh);
     width: calc(7vw);
-  }
+  } */
 
 </style>

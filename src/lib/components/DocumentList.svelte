@@ -109,7 +109,7 @@
         border-collapse: collapse;
         background-color: white;
 	}
-	
+    
 	th {
 		text-transform: uppercase;
         background: rgb(253, 253, 253);
@@ -138,16 +138,21 @@
         position:sticky;
         top:0;
     }
-
-
-
+    
     .mobile{
-        right: 2vh;
+        right: 3vw;
         bottom: 3vh;
         height: 6vh;
         width: 6vh;
         font-size:x-large;
     }
+    /* .mobile{
+        right: 2vh;
+        bottom: 3vh;
+        height: 6vh;
+        width: 6vh;
+        font-size:x-large;
+    } */
 
 </style>
 

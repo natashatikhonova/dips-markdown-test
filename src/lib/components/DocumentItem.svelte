@@ -27,10 +27,10 @@
     }
     td {
 		text-align: left;
-		padding-top: 1%;
-		padding-bottom: 1%;
+		padding-top: 10px;
+		padding-bottom: 10px;
         padding-right: 16px;
-        padding-left: 1%;
+        padding-left: 10px;
         border-bottom:1px solid rgb(97, 96, 96);  
 	}
 

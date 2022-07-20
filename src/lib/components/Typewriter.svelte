@@ -187,11 +187,14 @@ let prev_selection = 0
 //Autocomplete:
 function autocomplete(event){
 
+  let key = event.key
+  if (key == "Tab") {
+    remove_suggestion()
+    editor.insert("        ");
+  }
   if (!autocompleteOn){
     return
   }
-  let key = event.key
-
   if ((37 <= event.keyCode) && (event.keyCode <= 40)){
       // console.log("arrow key")
       remove_suggestion()
@@ -272,7 +275,7 @@ function autocomplete(event){
 function remove_suggestion(){
   if (prev_selection != editor.doc.selection[0]) {
     // console.log("removes suggested word")
-    let update_delta = new Delta().retain(suggested_word_startindex).delete(prev_suggested_word.length)
+    let update_delta = new Delta().retain(suggested_word_startindex+1).delete(prev_suggested_word.length)
     editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
     prev_suggested_word = ""
   }
@@ -495,6 +498,11 @@ function remove_suggestion(){
     height: 100%;
     overflow-y: auto;
   }
+  .extra-functions{
+    display: flex;
+    border-left: solid rgb(74, 74, 74);
+    padding-left: 0.5vw;
+  }
 
   .save{
     background: none;
@@ -566,11 +574,7 @@ function remove_suggestion(){
     font-size:large;
   }
 
-  .extra-functions{
-    display: flex;
-    border-left: solid rgb(74, 74, 74);
-    padding-left: 0.5vw;
-  }
+
 
   .arrow{
     color:black;

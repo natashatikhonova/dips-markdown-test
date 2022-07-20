@@ -269,11 +269,11 @@
         <h2>Overskrifter</h2>
         <h3>{overskrift}</h3>
         <button class="close" on:click={closeTitles}><i class="material-icons">close</i></button>
-        <input bind:value={searched_value} type="text" placeholder="Søk.." name="search">
+        <input class="search-input" bind:value={searched_value} type="text" placeholder="Søk.." name="search">
 
         {#if !showFilterGroups}
-            <button class="filter-groups-button" on:click={removeChecked}>Nullstill</button>
-            <button class="filter-groups-button" on:click={show_filterGroups}>Filtreringsgrupper</button>
+            <button class="secundary-button" on:click={removeChecked}>Nullstill</button>
+            <button class="secundary-button" on:click={show_filterGroups}>Filtreringsgrupper</button>
 
             {#if show_titles_list_obj.length == 0}
                 <div class = "no-titles">Ingen overskrifter</div>
@@ -302,8 +302,8 @@
             {/if}
         {:else} 
             <div class="buttons-group">
-                <button class="filter-groups-button" on:click={showModal}>Nytt filter</button>
-                <button class="filter-groups-button" on:click={()=>showFilterGroups=false}>Alle filtere</button>
+                <button class="secundary-button" on:click={showModal}>Nytt filter</button>
+                <button class="secundary-button" on:click={()=>showFilterGroups=false}>Alle filtere</button>
             </div>
 
             {#if adding_new_group}
@@ -373,24 +373,6 @@
         display: flex
     }
 
-    .filter-groups-button{
-        background: lightgray;
-        display: inline-flex;
-        align-items: center;
-        margin: 0.5vh;
-        margin-bottom: 1vh;
-        margin-right: 1vh;
-        width: fit-content;
-        height:2vh;
-        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        color:#000000;
-        padding: 12px;
-        font-size: 14px;
-        justify-content: center;
-        cursor: pointer;
-        border: solid 0.1em rgb(255, 92, 81 ,0);
-        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81, 0);
-    }
 
     .edit-button:hover{
         color:#d43838;
@@ -404,11 +386,6 @@
     }
     .checkbox-alle:hover{
         color:#d43838;
-    }
-
-  
-    .filter-groups-button:hover {
-        background: rgb(226, 226, 226);
     }
 
     input[type=text] {

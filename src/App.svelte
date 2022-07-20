@@ -102,10 +102,10 @@
 
   header{
     max-height: 40px;
+    min-height: 40px;
     align-items: center;
     background-color: #dadada;
     display: flex;
-    align-items: stretch;
     justify-content:space-between;
     
   }

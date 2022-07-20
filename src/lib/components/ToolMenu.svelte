@@ -112,16 +112,16 @@
 <div class="all">
     <div class="leftmenu">
     <div class="filtermenu">
-        <button on:click={filterMenuHandler} class:active={filterMenuOpen} class="dropdown-button" >Filter</button>
+        <button on:click={filterMenuHandler} class:active={filterMenuOpen} class="main-button" >Filter</button>
 
         <div class:show={filterMenuOpen} class="filtermenu-dropdown" >
             
             {#if customViewMode}
                 <h3>Filter</h3>
-                <input bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
+                <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
                 <div class="button-conteiner">
-                    <button on:click={clickedAll}>{showAllButtonName}</button>
-                    <button on:click={changeMode}>Filteringsgrupper</button>
+                    <button class="secundary-button" on:click={clickedAll}>{showAllButtonName}</button>
+                    <button class="secundary-button" on:click={changeMode}>Filteringsgrupper</button>
                 </div>
 
                 <div class= "filteroption-conteiner">
@@ -139,8 +139,8 @@
                 <h4>Dine filter:</h4>
                 <input bind:value={filtergroup_searched_value} type="text" placeholder="Søk.." name="search" style="margin-bottom: 1vh">
                 <div class="button-conteiner">
-                    <button on:click={changeMode}>Alle filtere</button>
-                    <button on:click={openModel}>Nytt filter</button>
+                    <button class="secundary-button" on:click={changeMode}>Alle filtere</button>
+                    <button class="secundary-button" on:click={openModel}>Nytt filter</button>
                 </div>
 
                 <div class="filterItem-button" class:active={currentFilterobj == nofilter} on:click={() => currentFilterobj = nofilter} value="alle">Vis allt</div>
@@ -165,7 +165,7 @@
           <button class="filteroff-button" class:hidden={hideToolBar} on:click={turnOffFilter}>Skru av filter</button>
         {/if}	
 
-        <button class="dropdown-button" class:hidden={hideToolBar} on:click={() =>$showTitles = true}>Overskrifter</button>
+        <button class="main-button" class:hidden={hideToolBar} on:click={() =>$showTitles = true}>Overskrifter</button>
 <!-- leftmenu -->
     </div>
 
@@ -195,7 +195,7 @@
     display: block;
     flex-direction: column;
     height: 100%;
-    width: fit-content;
+    width: 80px;
 
 }
 
@@ -210,11 +210,7 @@
         visibility: hidden;
     }
 
-    .search-input{
-        background: none;
-        border: none;
-        border-bottom: solid;
-    }
+
     /* input[type=text] {
 
         background: none;
@@ -247,34 +243,15 @@
     flex-direction: column;
 }
 
-.dropdown-button {
-    height: 100%;
-    width: 80px;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    background: #d43838;
-    color:#ffffff;
-    cursor: pointer;
-    border: none;
-    /* border: solid 1px rgb(255, 92, 81 ,0);
-    box-shadow: 0 0 0 2px rgb(255, 92, 81, 0); */
-}
-    
-.dropdown-button:hover, .dropdown-button.active {
-    color:#ffffff;
-    /* border: solid 1px; */
-    /* box-shadow: 0 0 0 0.2rem rgb(255, 92, 81); */
-}
-
 .button-conteiner{
     display:flex;
     flex-direction: row;
     justify-content:space-between;
-    margin: 3px;
 }
 
 .button-conteiner button{
     width: 100%;
-    margin: 1px;
+    margin: 5px;
 }
 
 input{

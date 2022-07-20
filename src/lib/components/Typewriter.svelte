@@ -21,6 +21,8 @@ import { Delta, TextChange } from 'typewriter-editor';
     $: w = window.innerWidth;
     $: h = window.innerHeight;
 
+    let autocompleteOn = true
+
     //Sets text in editor
     $: if ($currentDocumentObject && !$currentlyAddingNewNote){
         editor.setHTML(marked($currentDocumentObject.context));
@@ -123,27 +125,6 @@ import { Delta, TextChange } from 'typewriter-editor';
   function check_text(event){
     
     let key = event.key
-    console.log(event.keyCode)
-    if ((37 <= event.keyCode) && (event.keyCode <= 40)){
-      console.log("arrow key")
-      remove_suggestion()
-    }else if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
-      console.log("add in suggested word")
-      if (prev_suggested_word.length > 0){
-
-        let current_indeks = editor.doc.selection[0]
-        let update_delta = new Delta().retain(current_indeks-1).insert(prev_suggested_word).delete(prev_suggested_word.length+1)
-        editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
-        editor.select(current_indeks + prev_suggested_word.length)
-        prev_suggested_word = ""
-      }
-
-     
-    } else if( (key.length == 1) || key == "Backspace") {//new suggested word
-      console.log("suggests new word")
-      autocomplete()
-
-    }
     
     if(key == "Backspace"){
       waitingForSpaceOrEnterOrDot = false
@@ -204,58 +185,93 @@ let prev_selection = 0
 
 
 //Autocomplete:
-function autocomplete(){
-  
-  console.log("Auto")
+function autocomplete(event){
 
-  let current_indeks = editor.doc.selection[0]
-  
-
-  let suggested_word = ""
-  let word = ""
-  for (let i = current_indeks-1; i >= 0; i--){
-    console.log(i)
-    if (editor.getText()[i] == " " || editor.getText()[i] == "\n" ){
-      break
-    }
-    word += editor.getText()[i]
-    
+  if (!autocompleteOn){
+    return
   }
-  word = word.split("").reverse().join("");
-  console.log(word)
-  if (word.length != 0) {
-    for (let i = 0; i < suggestions_words.length; i++){
-      let check_word = suggestions_words[i]
-      let found_word = true
-      
-      for (let j = 0; j < word.length; j++){
-        if (word[j].toLowerCase() != check_word[j]){
-          found_word = false
-          break;
+  let key = event.key
+
+  if ((37 <= event.keyCode) && (event.keyCode <= 40)){
+      // console.log("arrow key")
+      remove_suggestion()
+    }else if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
+
+      if (prev_suggested_word.length > 0){
+        
+        let current_indeks = key == "Enter" ? editor.doc.selection[0]-1: editor.doc.selection[0]; 
+        // console.log("legger til " + prev_suggested_word + " etter bokstav " + editor.getText()[current_indeks])
+        let update_delta = new Delta().retain(current_indeks).insert(prev_suggested_word).delete(prev_suggested_word.length+1)
+        editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+        editor.select(current_indeks + prev_suggested_word.length)
+        console.log(editor.getDelta())
+        prev_suggested_word = ""
+
+        if(key == "Enter"){
+          console.log("length: "+ current_indeks + prev_suggested_word.length)
+          editor.insert('\n');
+          console.log(editor.getDelta())
         }
+
+
       }
-      if (found_word) {
-        suggested_word = check_word.substring(word.length)
-        complete_suggested_word = check_word
-        break;
+      
+
+     
+    } else if( (key.length == 1) || key == "Backspace") {//new suggested word
+      console.log("suggests new word")
+    
+      let current_indeks = editor.doc.selection[0]
+    
+      let suggested_word = ""
+      let word = ""
+      let editor_text = editor.getText().substring(0, current_indeks) + key
+      // console.log("text i editor " + editor_text)
+      for (let i = current_indeks; i >= 0; i--){
+       
+        if (editor_text[i] == " " || editor_text[i] == "\n" ){
+          break
+        }
+        word += editor_text[i]
+        
       }
+      word = word.split("").reverse().join("");
+      // console.log("word: " + word)
+      if (word.length != 0) {
+        for (let i = 0; i < suggestions_words.length; i++){
+          let check_word = suggestions_words[i]
+          let found_word = true
+          
+          for (let j = 0; j < word.length; j++){
+            if (word[j].toLowerCase() != check_word[j]){
+              found_word = false
+              break;
+            }
+          }
+          if (found_word) {
+            suggested_word = check_word.substring(word.length)
+            complete_suggested_word = check_word
+            break;
+          }
+        }
+    
+      }
+    
+      // console.log("Suggested word " + suggested_word)
+      // console.log(word)
+      let update_delta = new Delta().retain(current_indeks).delete(prev_suggested_word.length).insert(suggested_word, {code:true})
+      editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+      prev_suggested_word = suggested_word
+      suggested_word_startindex = current_indeks
+      prev_selection = current_indeks
+
+      
+
     }
-
-  }
-
-  
-
-  console.log("Suggested word " + suggested_word)
-  console.log(word)
-  let update_delta = new Delta().retain(current_indeks).delete(prev_suggested_word.length).insert(suggested_word, {code:true})
-  editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
-  prev_suggested_word = suggested_word
-  suggested_word_startindex = current_indeks
-  prev_selection = current_indeks
 }
 function remove_suggestion(){
   if (prev_selection != editor.doc.selection[0]) {
-    console.log("removes suggested word")
+    // console.log("removes suggested word")
     let update_delta = new Delta().retain(suggested_word_startindex).delete(prev_suggested_word.length)
     editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
     prev_suggested_word = ""
@@ -328,14 +344,24 @@ function remove_suggestion(){
           class:mobile={w<600}
           on:click={commands.redo}><i class="material-icons">redo</i></button>
 
+        <div class="extra-functions">
+
           <button 
           title="Legg til bilde"
           class="toolbar-button"
-          
           class:mobile={w<600}
           on:click={()=>{fileinput.click()}}  ><i class="material-icons">image</i></button>
-
+  
           <input style="display:none" type="file" accept="*/image" on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
+  
+          <button
+          title="Autocomplete"
+          class="toolbar-button "
+          class:active={autocompleteOn}
+          class:mobile={w<600}
+          on:click={()=>{autocompleteOn = !autocompleteOn}}><i class="material-icons">auto_awesome</i></button>
+        </div>
+
 
         <div class = "controls">
           <button title="Lagre"class="save " class:mobile={w<600} on:click={save}> <i class="material-icons">save</i></button>
@@ -359,7 +385,7 @@ function remove_suggestion(){
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
-    <div class="editor" style="border:none" autofocus use:asRoot = {editor} on:keyup={check_text} on:click={clear_check_text}></div>
+    <div class="editor" style="border:none" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={autocomplete} on:click={clear_check_text}></div>
 
 <style>
 
@@ -371,6 +397,9 @@ function remove_suggestion(){
 
 
   }
+  /* :global(.editor p){
+    font-size: xx-large;
+  } */
   :global(.editor img){
     max-height: 50%;
     max-width: 50%
@@ -415,6 +444,12 @@ function remove_suggestion(){
 
   .header2{
     font-size:large;
+  }
+
+  .extra-functions{
+    display: flex;
+    border-left: solid rgb(74, 74, 74);
+    padding-left: 0.5vw;
   }
 
   .arrow{
@@ -494,5 +529,6 @@ function remove_suggestion(){
     height: calc(4vh);
     width: calc(7vw);
   }
+
 
 </style>

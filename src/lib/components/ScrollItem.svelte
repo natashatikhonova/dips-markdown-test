@@ -40,7 +40,8 @@
         </div>
     </div>
     {#if document.readable}
-        <div>{@html htmlText}</div>
+        <!-- <div class = "table-test"> {@html marked('| H1 | H2 |  H3 |  H4 | H5 | \n |:---:|---|---|---|---| \n |  U1 | U2 | U3 | U4 | U5 | \n | K1 | K2 |  K3 | K4  |  K5 | \n | J1 |  J2 | J3 |  J4 | J5 |' )}</div> -->
+        <div class = "text">{@html htmlText}</div>
     {:else}
         <div class="link"><a href={document.context} target="_blank">Klikk her for å åpne dokumentet i egen visning</a></div>
     {/if}
@@ -48,6 +49,38 @@
 </div>
 
 <style>
+:global(.text img){
+    height: 50%;
+    width: 50%
+  }
+    :global(.text tr) {
+     height: 5vh;
+    }
+    :global(.text td) {
+		text-align: center;
+
+        padding: 10px;
+    
+        border:1px solid rgb(97, 96, 96);  
+	}
+
+  :global(.text tr:hover){
+        background-color: #e6f5ff;
+    }
+  :global(.text table) {
+		width: 100%;
+        border-collapse: collapse;
+        background-color: white;
+	}
+	
+	:global(.text th) {
+		text-transform: uppercase;
+        background: rgb(253, 253, 253);
+		cursor: pointer;
+        text-align: center;
+		padding: 10px;
+        border:1.5px solid rgb(0, 0, 0);
+	}
 
     .item-container{
         padding: 2em;

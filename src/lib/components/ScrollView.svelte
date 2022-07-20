@@ -266,7 +266,7 @@
                             {#if searchResult.length > 0}
                                 <div class = "dokumenter">
                                     {#each searchResult as item}
-                            
+                                        
                                         <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                                     {/each}
                                     

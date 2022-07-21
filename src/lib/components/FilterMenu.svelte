@@ -1,9 +1,9 @@
 <script>
-    import {documentList, globalCurrentFilterGroup, saved_filter_groups, searchValue} from '../stores/stores';
+    import {documentList, globalCurrentFilterGroup, myFilters, searchValue, searchResult} from '../stores/stores';
     import {createEventDispatcher} from 'svelte';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
-    import FilterGroupForm from './FilterGroupForm.svelte';
+    import FilterByGroups from './FilterByGroups.svelte';
     import FilteredByTitles from './FilteredByTitles.svelte';
 
 
@@ -17,15 +17,17 @@
 
     let selected_titles_nodes_List = []
 
-    let searchResult = $documentList;
+    
+     
+    $searchResult = $documentList
 
     $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
 
     $: if (selected_titles_nodes_List.length>0) { //Hvis filtrert på overskrifter
-        searchResult = nodeList_to_documentObjList(selected_titles_nodes_List)
-        searchResult = searchResult.filter(item => (item.temp_filtered_context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
+        $searchResult = nodeList_to_documentObjList(selected_titles_nodes_List)
+        $searchResult = $searchResult.filter(item => (item.temp_filtered_context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
     } else {
-        searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
+        $searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
     }
 
     function nodeList_to_documentObjList(node_list) {
@@ -139,6 +141,8 @@
     function changeToTiltelsFilterview(){
         groupFilterView = false
     }
+
+
 </script>
 
 <head>
@@ -151,35 +155,10 @@
         <button class="close" on:click={closeTitles}><i class="material-icons">close</i></button>
     </header>
     {#if groupFilterView}
-    <div class="content">
-            <h2>Overskrifter</h2>
-            <h3>Underoverskrift</h3>
-            <input class="search-input" type="text" placeholder="Søk.." name="search">
-            <br>
-            <div>
-                <button class="secundary-button" on:click={null}>Nullstill</button>
-                <button class="secundary-button" on:click={null}>Filtreringsgrupper</button>
-            </div>
-            <!-- {#each doc as elementObj}
-
-            <div class="title">
-                <input type="checkbox"  bind:checked={elementObj.checked} />
-
-                <div class="title">
-
-                    {elementObj.overskrift} 
-
-                </div>
-            </div>
-            
-        {/each}  -->
-            
-        </div>
-
-
-        {:else}
-            <FilteredByTitles on:checked_titles={show_documents_checked_titles}/>  
-        {/if}
+        <FilterByGroups/>
+    {:else}
+        <FilteredByTitles on:checked_titles={show_documents_checked_titles}/>  
+    {/if}
 
 </div>
 
@@ -189,15 +168,6 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-    }
-
-    .content{
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto;
-        height: 100%;
-        width: 80%;
-        margin: auto;
     }
 
     header{
@@ -210,16 +180,5 @@
     justify-content:space-between;
     
   }
-  .checkbox-alle{
-        cursor: pointer;
-        display: flex;
-        margin-left: 1%;
-        margin-bottom: 2vh;
-    }
-    .checkbox-alle:hover{
-        color:#d43838;
-    }
-
-    
 
 </style>

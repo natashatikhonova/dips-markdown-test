@@ -1,5 +1,5 @@
 <script>
-    import {documentList, searchValue, showTitles, showFiltermenu} from '../stores/stores.js';
+    import {documentList, searchValue, searchResult, showFiltermenu} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
     import {currentlyAddingNewNote, globalCurrentFilterGroup} from '../stores/stores.js';
@@ -7,13 +7,13 @@
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
     import ToolMenu from './ToolMenu.svelte';
-import FilterMenu from './FilterMenu.svelte';
+    import FilterMenu from './FilterMenu.svelte';
 
     let show = false;
     let sortedData = $documentList;
     let ascendingOrder = true;
     let lengde = $documentList.length;
-    let searchResult = $documentList;
+    
     // let selected_titles_nodes_List = []
     
     // $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
@@ -266,9 +266,9 @@ import FilterMenu from './FilterMenu.svelte';
                                     </button>
                                 {/if} -->
         
-                                {#if searchResult.length > 0}
+                                {#if $searchResult.length > 0}
                                     <div class = "dokumenter">
-                                        {#each searchResult as item}
+                                        {#each $searchResult as item}
                                             
                                             <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                                         {/each}

@@ -36,4 +36,5 @@ export let showFiltermenu = writable(false)
 
 export let saved_filter_groups = writable([])
 
+export let searchResult = writable([])
 

@@ -1,6 +1,8 @@
 <script>
     import DocumentItem from "./DocumentItem.svelte";
     import {currentDocumentObject, documentList, currentlyAddingNewNote, globalCurrentFilterGroup} from '../stores/stores.js';
+    import ToolMenu from './ToolMenu.svelte';
+
     let w
     $: w = window.innerWidth;
     let sortedData = $documentList;
@@ -58,8 +60,12 @@
     }
 
 </script>
-
+<div class = "with-toolbar-conteiner">
+<header class="tool-menu">
+    <ToolMenu hideToolBar={true}/>
+</header>  
 <div class="table-container" >
+
     <table>
         <!--copied from https://svelte.dev/repl/f04266dcd39c4024b1e89084aa549844?version=3.31.2 -->
         <thead>
@@ -100,9 +106,25 @@
         
     </table>
 </div>
+</div>
 <button title="Ny notat"class="add-button" class:mobile = {w<600} class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
 
 <style>
+
+      header{
+    max-height: 40px;
+    min-height: 40px;
+    align-items: center;
+    background-color: #dadada;
+    display: flex;
+    justify-content:space-between;
+    
+  }
+    .tool-menu{
+        align-items: stretch;
+        background-color: #eeeeee;
+        height: 100%;
+    }
 
     table {
 		width: 100%;

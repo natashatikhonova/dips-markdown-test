@@ -6,7 +6,7 @@
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
-
+    import ToolMenu from './ToolMenu.svelte';
 
     let show = false;
     let sortedData = $documentList;
@@ -243,60 +243,79 @@
 
 
 
-
-    <div class="scroll-container">
-        <Splitpanes >
-            
-            <Pane minSize="20px" size={current_size} maxSize="50">
-                <div class="searched-titles">
-                    <FilteredByTitles on:checked_titles={show_documents_checked_titles} on:close={close}/>
-                </div>
-            </Pane>
-            <Pane size={scrollview_size} >
-                <Splitpanes horizontal={true} >
-                    <Pane size="100"> 
-                        <div class:container={show} class:full-container={!show} >
-                            <!-- <input bind:value={searchValue} type="text" placeholder="Søk.." name="search"> -->
-                            <!-- {#if !show_titles_button}
-                                <button class = "searched-titles-button" on:click={open}>
-                                    <i class="material-icons">read_more</i>
-                                </button>
-                            {/if} -->
-    
-                            {#if searchResult.length > 0}
-                                <div class = "dokumenter">
-                                    {#each searchResult as item}
+    <div class="with-toolbar-conteiner">
+        <header class="tool-menu">
+            <ToolMenu hideToolBar={false}/>
+        </header>  
+        <div class="scroll-container">
+            <Splitpanes >
+                
+                <Pane minSize="20px" size={current_size} maxSize="50">
+                    <div class="searched-titles">
+                        <FilteredByTitles on:checked_titles={show_documents_checked_titles} on:close={close}/>
+                    </div>
+                </Pane>
+                <Pane size={scrollview_size} >
+                    <Splitpanes horizontal={true} >
+                        <Pane size="100"> 
+                            <div class:container={show} class:full-container={!show} >
+                                <!-- <input bind:value={searchValue} type="text" placeholder="Søk.." name="search"> -->
+                                <!-- {#if !show_titles_button}
+                                    <button class = "searched-titles-button" on:click={open}>
+                                        <i class="material-icons">read_more</i>
+                                    </button>
+                                {/if} -->
+        
+                                {#if searchResult.length > 0}
+                                    <div class = "dokumenter">
+                                        {#each searchResult as item}
+                                            
+                                            <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
+                                        {/each}
                                         
-                                        <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
-                                    {/each}
-                                    
-                                </div>
-                            {:else}
-                                <div class = "no-result"> Ingen Søkeresultater</div>
-                            {/if}
-                  
-                            {#if !show}
-                                <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
-                            {/if}
-                        </div>
-                    </Pane>
-                    {#if show}
-                        <Pane >
-                            <div class="editor">
-                                <Typewriter on:save = {save} on:cancel = {cancel} />
-            
+                                    </div>
+                                {:else}
+                                    <div class = "no-result"> Ingen Søkeresultater</div>
+                                {/if}
+                    
+                                {#if !show}
+                                    <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
+                                {/if}
                             </div>
                         </Pane>
-    
-                    {/if}
-                </Splitpanes>
-            </Pane>
-
-        </Splitpanes>
-
+                        {#if show}
+                            <Pane >
+                                <div class="editor">
+                                    <Typewriter on:save = {save} on:cancel = {cancel} />
+                
+                                </div>
+                            </Pane>
+        
+                        {/if}
+                    </Splitpanes>
+                </Pane>
+            </Splitpanes>
+        </div>
     </div>
 
 <style>
+
+header{
+    max-height: 40px;
+    min-height: 40px;
+    align-items: center;
+    background-color: #dadada;
+    display: flex;
+    justify-content:space-between;
+    
+  }
+
+
+    .tool-menu{
+        align-items: stretch;
+        background-color: #eeeeee;
+        height: 100%;
+    }
 
     .searched-titles-button{
         background: none;
@@ -327,7 +346,6 @@
 
     
     .scroll-container{
-        position: relative;
         display: flex;
         flex-direction: column;
         width: 100%;

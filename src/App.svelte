@@ -66,12 +66,7 @@
         {#if w > 900}
         <Splitpanes>
           <Pane>
-            <div class="pane-with-tool-menu">
-              <header class="tool-menu">
-                <ToolMenu hideToolBar={showSideview}/>
-              </header>
               <ScrollView/>
-          </div>
           </Pane>
           <Pane minSize="30"><ContentView width={w} /></Pane>
         </Splitpanes>
@@ -89,12 +84,7 @@
         <Splitpanes>
 
           <Pane size=100>
-            <div class="pane-with-tool-menu">
-              <header class="tool-menu">
-                <ToolMenu hideToolBar={showSideview}/>
-              </header>   
               <DocumentList/>
-            </div>
           </Pane>
         {#if $currentDocumentObject}
           {#if w < 600}
@@ -107,12 +97,8 @@
       {/if}
     </div>
   {:else}
-    <div class="scroll-container">
-        <header class="tool-menu">
-          <ToolMenu hideToolBar={showSideview}/>
-        </header>
+
         <ScrollView/>
-    </div>
   {/if}
   </div>
 
@@ -136,11 +122,7 @@
     flex-direction: column;
   }
 
-  .tool-menu{
-    align-items: stretch;
-    background-color: #eeeeee;
-    height: 100%;
-  }
+
 
    .main {
     overflow: auto;

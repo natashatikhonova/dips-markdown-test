@@ -240,18 +240,36 @@
     // $: $showTitles, console.log($showTitles)
 
     const line_heights = ["Velg linjeavstand", "1.0", "1.15", "1.5", "2.0", "2.5", "3.0"]
-    const text_sizes = ["Velg skriftstørrelse", "9", "10", "11", "12", "14", "16", "18", "20"]
+    // const text_sizes = ["Velg skriftstørrelse", "9", "10", "11", "12", "14", "16", "18", "20"]
 
     let selected_line_height  = "Velg linjeavstand"
-    let selected_text_size = "Velg skriftstørrelse"
+    // let selected_text_size = "Velg skriftstørrelse"
 
     // $: if (selected_line_height != "Velg linjeavstand") {
     //     let doc = document.getElementById('documents')
     //     doc.style.line-height = selected_line_height
 
     // }
-
-    
+    let min_size = false;
+    let max_size = false;
+    let selected_text_size = 11
+    function set_text_size(direction){
+        if (direction == "bigger"){
+            selected_text_size++
+            if (selected_text_size == 20){
+                max_size=true
+            }else if (selected_text_size>7){
+            min_size =false
+            }
+        } else if (direction == "lower"){
+            selected_text_size--
+            if (selected_text_size == 7){
+                min_size=true
+            } else if (selected_text_size<20){
+            max_size =false
+            }
+        }
+}
 
 </script>
 <head>
@@ -281,20 +299,32 @@
                             {/if} -->
     
                             {#if searchResult.length > 0}
-                                <select  class="line-button" bind:value={selected_line_height}>
-                                    {#each line_heights as value}
-                                        <option {value}>
-                                            {value}
-                                        </option>
-                                    {/each}
-                                </select>
-                                <select  class="text-size-button" bind:value={selected_text_size}>
+                            <select  class="line-button" bind:value={selected_line_height}>
+                                {#each line_heights as value}
+                                    <option {value}>
+                                        {value}
+                                    </option>
+                                {/each}
+                            </select>
+                            <div class="extra-functions">
+                                <button
+                                title="Zoom out"
+                                class="toolbar-button"
+                                disabled={min_size}
+                                on:click={() => {set_text_size("lower")}}><i class="material-icons">text_decrease</i></button>
+                                <button
+                                title="Zoom in"
+                                class="toolbar-button"
+                                disabled={max_size}
+                                on:click={() => {set_text_size("bigger")}}><i class="material-icons">text_increase</i></button>
+                              </div>
+                                <!-- <select  class="text-size-button" bind:value={selected_text_size}>
                                     {#each text_sizes as value}
                                         <option {value}>
                                             {value}
                                         </option>
                                     {/each}
-                                </select>
+                                </select> -->
                                 <div class = "dokumenter" id="documents" style="line-height:{selected_line_height}; font-size: {selected_text_size}pt">
                                     <!-- <button class="secundary-button line-button"  on:click={change_line_height}>Linjeavstand</button> -->
                                     {#each searchResult as item}
@@ -331,15 +361,38 @@
 
 <style>
 
-    .text-size-button{
-        position: absolute;
-        right: 10vw;
-        top:2vh
-    }
-    .line-button{
+.toolbar-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    margin-top: 0.5vh;
+    width: 2.3rem;
+    height: 2.3rem;
+    margin-right: 0.4rem;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    cursor: pointer;
+  }
+
+  .toolbar-button:hover {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
+
+    .extra-functions{
+        display: flex;
         position: absolute;
         right: 2vw;
-        top: 2vh
+        top:2vh
+    }
+
+    .line-button{
+        position: absolute;
+        right:8.5vw;
+        top: 4vh
     }
 
     .searched-titles-button{

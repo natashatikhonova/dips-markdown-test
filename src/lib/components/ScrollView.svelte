@@ -1,6 +1,6 @@
 <script>
 
-    import {documentList, searchValue, amount_searched_words, showTitles, showFiltermenu} from '../stores/stores.js';
+    import {documentList, searchValue, amount_searched_words, searchResult, showFiltermenu} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
     import {currentlyAddingNewNote, globalCurrentFilterGroup} from '../stores/stores.js';
@@ -368,10 +368,7 @@ header{
   }
 
 
-    .tool-menu{
-        align-items: stretch;
-        background-color: #eeeeee;
-        height: 100%;
+
 
 .toolbar-button {
     display: flex;

@@ -167,6 +167,7 @@
 		padding: 16px;
         border-bottom:1.5px solid rgb(0, 0, 0);
 	}
+
 	
 	.order-icon {
 		color: hsl(15, 100%, 25%);

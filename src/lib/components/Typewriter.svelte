@@ -281,8 +281,27 @@ function remove_suggestion(){
   }
 }
 // $: editor.doc.selection[0], remove_suggestion() //Fjerner suggestion
+let min_size = false;
+let max_size = false;
+let selected_text_size = 11
 
-
+function set_text_size(direction){
+  if (direction == "bigger"){
+      selected_text_size++
+      if (selected_text_size == 20){
+        max_size=true
+      }else if (selected_text_size>7){
+      min_size =false
+    }
+  } else if (direction == "lower"){
+    selected_text_size--
+    if (selected_text_size == 7){
+        min_size=true
+    } else if (selected_text_size<20){
+      max_size =false
+    }
+  }
+}
 </script>
 
 <head>
@@ -363,6 +382,22 @@ function remove_suggestion(){
           class:active={autocompleteOn}
           class:mobile={w<600}
           on:click={()=>{autocompleteOn = !autocompleteOn}}><i class="material-icons">auto_awesome</i></button>
+
+        </div>
+
+        <div class="extra-functions">
+          <button
+          title="Zoom out"
+          class="toolbar-button"
+          disabled={min_size}
+          class:mobile={w<600}
+          on:click={() => {set_text_size("lower")}}><i class="material-icons">text_decrease</i></button>
+          <button
+          title="Zoom in"
+          class="toolbar-button"
+          disabled={max_size}
+          class:mobile={w<600}
+          on:click={() => {set_text_size("bigger")}}><i class="material-icons">text_increase</i></button>
         </div>
 
 
@@ -388,7 +423,7 @@ function remove_suggestion(){
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
-    <div class="editor" style="border:none" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={autocomplete} on:click={clear_check_text}></div>
+    <div class="editor" style="border:none; font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={autocomplete} on:click={clear_check_text}></div>
 
 <style>
 
@@ -497,6 +532,7 @@ function remove_suggestion(){
     padding:0.5vh;
     height: 100%;
     overflow-y: auto;
+    font-size: 11pt;
   }
   .extra-functions{
     display: flex;

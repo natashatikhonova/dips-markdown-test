@@ -444,7 +444,7 @@ function set_text_size(direction){
   }
   .toolbar {
     display: flex;
-    background: #eee;
+    background: whitesmoke;
     margin-left:5px;
     margin-right:5px;
     padding: 7px;

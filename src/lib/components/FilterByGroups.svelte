@@ -49,6 +49,15 @@
         showAllButtonName = "Vis alle"
     }
 
+    $: if (filter_searched_value!=""){
+        searchedDocumentTypes = relevantSort(searchedDocumentTypes, filter_searched_value)
+    }
+
+    $: if (filtergroup_searched_value !=""){
+        searchedFiltergroups = relevantSort(searchedFiltergroups, filtergroup_searched_value)
+
+    }
+
     
     const filterMenuHandler = () => {
         filterMenuOpen = !filterMenuOpen
@@ -56,6 +65,18 @@
     
     function changeMode(){
         customViewMode = !customViewMode
+    }
+
+    function relevantSort(list, value){
+        let startsWithSearch = []
+        for(let i = 0; i<list.length; i++){
+            if (list[i].toLowerCase().startsWith(value)){
+                startsWithSearch.push(list[i])
+                list.splice(i, 1)
+            }
+        }
+        list = startsWithSearch.concat(list)
+        return list
     }
 
 

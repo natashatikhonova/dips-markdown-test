@@ -141,6 +141,14 @@
     
         if (searched_value != ""){
             show_titles_list_obj = original_titles_list_obj.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())));
+            let startsWithSearch = []
+            for(let i = 0; i<show_titles_list_obj.length; i++){
+                if (show_titles_list_obj[i].overskrift.toLowerCase().startsWith(searched_value)){
+                    startsWithSearch.push(show_titles_list_obj[i])
+                    show_titles_list_obj.splice(i, 1)
+                }
+            }
+            show_titles_list_obj = startsWithSearch.concat(show_titles_list_obj)
         } else {
             show_titles_list_obj = original_titles_list_obj
         }

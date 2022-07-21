@@ -282,9 +282,7 @@
 
 
     <div class="with-toolbar-conteiner">
-        <header class="tool-menu">
             <ToolMenu hideToolBar={false}/>
-        </header>  
         <div class="scroll-container">
             <Splitpanes theme="modern-theme">
                 

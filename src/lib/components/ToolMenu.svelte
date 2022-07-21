@@ -3,10 +3,6 @@
 
     import { searchValue, amount_searched_words, showTitles, globalCurrentFilterGroup, myFilters, showFiltermenu} from '../stores/stores.js';
     import { writable } from 'svelte/store';
-    import Modal, { bind } from 'svelte-simple-modal';
-    import FilterDoctypeForm from './FilterDoctypeForm.svelte';
-
-    const modal = writable(null);
 
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
@@ -22,27 +18,19 @@
     //     customViewMode = true;
     // }
 
-    //User clicked on edit and program swich mode with current crop as start point
-    function editItem(group){
-        manageGroup = true
-        modal.set(bind(FilterDoctypeForm,{edit_bool: false, newFilterObj : group}))
-    }
-
-    let manageGroup = false
-    function openModel(){
-        manageGroup = true
-        modal.set(bind(FilterDoctypeForm,{edit_bool: false}))
-    }
 
 </script>
-<div class="all">
+
+<header class="tool-menu">
     <div class="leftmenu">
         <button class="main-button" on:click={() =>$showFiltermenu = true}>Filter</button>
 
-        {#if $globalCurrentFilterGroup != documentTypes}
+        <!-- {#if $globalCurrentFilterGroup != documentTypes}
           <button class="filteroff-button" on:click={null}>Skru av filter</button>
-        {/if}	
+        {/if}	 -->
+
     </div><!-- leftmenu -->
+
     <div class = "search_field" class:hidden={hideToolBar}>
         <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} placeholder="Søk.." name="search" class="search-input searchWord-input">
         <div class="searched_words"> 
@@ -50,13 +38,9 @@
                 {$amount_searched_words} ord
             {/if}
         </div>
-
-
-
     </div>
-</div><!-- all -->
 
-
+</header>
 
 <style>
     .searched_words{
@@ -78,14 +62,6 @@
         right: 5vw;
 
     }
-    .all{
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-
-    }
 
     .leftmenu{
         height: 100%;
@@ -93,8 +69,21 @@
         flex-direction: row;
     }
 
+    .tool-menu{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        background-color: whitesmoke;
+        box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
+        margin-bottom: 3px;
+}
 
-    .filteroff-button{
+
+
+
+    /* .filteroff-button{
         width: fit-content;
         border: none;
         background: none;
@@ -103,7 +92,7 @@
     }
     .filteroff-button:hover {
         color:#666363;
-    }
+    } */
 
     .hidden{
         visibility: hidden;

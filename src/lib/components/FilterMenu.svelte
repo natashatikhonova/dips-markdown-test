@@ -149,11 +149,13 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <div class="main">
-    <header>
-        <button on:click={changeToGroupFilterview} class="main-button" >Grupper</button>
-        <button on:click={changeToTiltelsFilterview} class="main-button" >Overskrifter</button>
-        <button class="close" on:click={closeTitles}><i class="material-icons">close</i></button>
-    </header>
+    <div class="top-bar">
+        <div class="filter-options">
+            <button class:current-filter = {groupFilterView} on:click={changeToGroupFilterview} >Grupper</button>
+            <button class:current-filter = {!groupFilterView} on:click={changeToTiltelsFilterview} >Overskrifter</button>
+        </div>
+        <button class="close" on:click={closeTitles}><i class="material-icons" >close</i></button>
+    </div>
     {#if groupFilterView}
         <FilterByGroups/>
     {:else}
@@ -168,17 +170,48 @@
         width: 100%;
         display: flex;
         flex-direction: column;
+        background: whitesmoke;
     }
 
-    header{
-    width: 100%;
-    max-height: 40px;
-    min-height: 40px;
-    align-items: center;
-    background-color: #dadada;
-    display: flex;
-    justify-content:space-between;
-    
-  }
+    .top-bar{
+        display: flex;
+        flex-direction:row;
+        background-color: #fff;
+    }
+
+    .filter-options{
+        display: flex;
+        flex-direction:row;
+        flex-grow: 1;
+    }
+
+    .filter-options button{
+        width: 50%;
+        height: 40px;
+        text-align: center;
+        background-color: #fff;
+        border: none;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+
+    }
+
+    .filter-options .current-filter{
+        background: whitesmoke;
+        text-decoration:underline;
+    }
+
+    .close{
+        background: none;
+        border: none;
+        width: 40px;
+        height: 40px;
+    }
+    .close:hover {
+        color:#d43838; 
+    }
+    .close{
+
+    }
 
 </style>

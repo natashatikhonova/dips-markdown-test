@@ -1,6 +1,6 @@
 <script>
 
-    import { searchValue, showTitles, globalCurrentFilterGroup, myFilters} from '../stores/stores.js';
+    import { searchValue, showTitles, globalCurrentFilterGroup, myFilters, showFiltermenu} from '../stores/stores.js';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
     import FilterDoctypeForm from './FilterDoctypeForm.svelte';
@@ -111,7 +111,9 @@
 </script>
 <div class="all">
     <div class="leftmenu">
-        <div class="filtermenu">
+        <button class="main-button" on:click={() =>$showFiltermenu = true}>Filter</button>
+        <!-- <button class="main-button" class:hidden={hideToolBar} on:click={() =>$showTitles = true}>Overskrifter</button> -->
+        <!-- <div class="filtermenu">
             <button on:click={filterMenuHandler} class:active={filterMenuOpen} class="main-button" >Filter</button>
 
             <div class:show={filterMenuOpen} class="filtermenu-dropdown" >
@@ -160,14 +162,14 @@
                     </div>
                 {/if}
         
-            </div> <!-- filtermenu-dropdown -->
-        </div> <!-- filtermenu -->
+            </div> filtermenu-dropdown
+        </div> filtermenu -->
 
         {#if $globalCurrentFilterGroup != documentTypes}
           <button class="filteroff-button" on:click={turnOffFilter}>Skru av filter</button>
         {/if}	
 
-        <button class="main-button" class:hidden={hideToolBar} on:click={() =>$showTitles = true}>Overskrifter</button>
+        <!-- <button class="main-button" class:hidden={hideToolBar} on:click={() =>$showTitles = true}>Overskrifter</button> -->
 
     </div><!-- leftmenu -->
 

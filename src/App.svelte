@@ -97,7 +97,6 @@
       {/if}
     </div>
   {:else}
-
         <ScrollView/>
   {/if}
   </div>

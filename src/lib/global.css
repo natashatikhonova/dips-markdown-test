@@ -16,7 +16,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    overflow: auto;
+
 }
 
   .search-input{
@@ -88,6 +88,14 @@
 color:#ffffff;
 /* border: solid 1px;
 box-shadow: 0 0 0 0.2rem rgb(255, 92, 81); */
+}
+
+.close{
+  background: none;
+  border: none;
+}
+.close:hover {
+  color:#d43838; 
 }
 
 /* .secundary-button{

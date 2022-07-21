@@ -1,5 +1,5 @@
 <script>
-    import {documentList, searchValue, showTitles} from '../stores/stores.js';
+    import {documentList, searchValue, showTitles, showFiltermenu} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
     import {currentlyAddingNewNote, globalCurrentFilterGroup} from '../stores/stores.js';
@@ -7,119 +7,120 @@
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
     import ToolMenu from './ToolMenu.svelte';
+import FilterMenu from './FilterMenu.svelte';
 
     let show = false;
     let sortedData = $documentList;
     let ascendingOrder = true;
     let lengde = $documentList.length;
     let searchResult = $documentList;
-    let selected_titles_nodes_List = []
+    // let selected_titles_nodes_List = []
     
-    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
+    // $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
 
-    $: if (selected_titles_nodes_List.length>0) { //Hvis filtrert på overskrifter
-        searchResult = nodeList_to_documentObjList(selected_titles_nodes_List)
-        searchResult = searchResult.filter(item => (item.temp_filtered_context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
-    } else {
-        searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
-    }
+    // $: if (selected_titles_nodes_List.length>0) { //Hvis filtrert på overskrifter
+    //     searchResult = nodeList_to_documentObjList(selected_titles_nodes_List)
+    //     searchResult = searchResult.filter(item => (item.temp_filtered_context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
+    // } else {
+    //     searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
+    // }
     
-    function nodeList_to_documentObjList(node_list) {
-        let documentObj_list = []
-        for (let i = 0; i <node_list.length; i++){
-            documentObj_list[i] = node_list[i].object
-        }
-        return documentObj_list
-    }
+    // function nodeList_to_documentObjList(node_list) {
+    //     let documentObj_list = []
+    //     for (let i = 0; i <node_list.length; i++){
+    //         documentObj_list[i] = node_list[i].object
+    //     }
+    //     return documentObj_list
+    // }
     // $: console.log($selectedTitlesList)
     
     // $: console.log(selected_titles_nodes_List)
 
-    function make_nodes_list(obj_list){
+    // function make_nodes_list(obj_list){
 
-        selected_titles_nodes_List = []
-        reset_filtered_text(); //Loop through the whole documentList and sets the filtered text to empty string
-        // console.log("\nNY laging av dokumenter")
-        // console.log(obj_list)
-        obj_list.forEach((item)=>{
+    //     selected_titles_nodes_List = []
+    //     reset_filtered_text(); //Loop through the whole documentList and sets the filtered text to empty string
+    //     // console.log("\nNY laging av dokumenter")
+    //     // console.log(obj_list)
+    //     obj_list.forEach((item)=>{
             
-            // console.log(item)
+    //         // console.log(item)
 
-            item.nodes.forEach((node)=> {
+    //         item.nodes.forEach((node)=> {
                 
-                // console.log("\nSjekker noden: " + node.overskrift)
-                let indeks = -1
+    //             // console.log("\nSjekker noden: " + node.overskrift)
+    //             let indeks = -1
 
-                for (let i = 0; i < selected_titles_nodes_List.length; i++) { //check if document have been created
-                    if (selected_titles_nodes_List[i].object.id == node.object.id) { //If they belong to the same object
-                        // console.log("found object " + selected_titles_nodes_List[i].overskrift + " med samme dokumentobject" )
-                        indeks = i;
-                        break;
-                    }
-                }
-                if (indeks != -1){ 
-                    // console.log("Endrer context ")
+    //             for (let i = 0; i < selected_titles_nodes_List.length; i++) { //check if document have been created
+    //                 if (selected_titles_nodes_List[i].object.id == node.object.id) { //If they belong to the same object
+    //                     // console.log("found object " + selected_titles_nodes_List[i].overskrift + " med samme dokumentobject" )
+    //                     indeks = i;
+    //                     break;
+    //                 }
+    //             }
+    //             if (indeks != -1){ 
+    //                 // console.log("Endrer context ")
     
-                    if (!is_in_subtree(selected_titles_nodes_List[indeks], node)){ //sets node in this place instead
-                        if (is_in_subtree(node, selected_titles_nodes_List[indeks])) { //if node is over in the tree
-                            // console.log("noden er over")
+    //                 if (!is_in_subtree(selected_titles_nodes_List[indeks], node)){ //sets node in this place instead
+    //                     if (is_in_subtree(node, selected_titles_nodes_List[indeks])) { //if node is over in the tree
+    //                         // console.log("noden er over")
     
-                            node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
+    //                         node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
     
-                            selected_titles_nodes_List[indeks] = node;
+    //                         selected_titles_nodes_List[indeks] = node;
 
-                        } else { //if they are in the same tree
-                            // console.log("Samme tre")
-                            if (node.object.temp_filtered_context == "" ){
-                                node.object.temp_filtered_context =  selected_titles_nodes_List[indeks].object.markdownTree.get_text_under(selected_titles_nodes_List[indeks]) + "\n" + node.object.markdownTree.get_text_under(node)
-                            } else {
-                                node.object.temp_filtered_context +=  "\n" +  node.object.markdownTree.get_text_under(node)
+    //                     } else { //if they are in the same tree
+    //                         // console.log("Samme tre")
+    //                         if (node.object.temp_filtered_context == "" ){
+    //                             node.object.temp_filtered_context =  selected_titles_nodes_List[indeks].object.markdownTree.get_text_under(selected_titles_nodes_List[indeks]) + "\n" + node.object.markdownTree.get_text_under(node)
+    //                         } else {
+    //                             node.object.temp_filtered_context +=  "\n" +  node.object.markdownTree.get_text_under(node)
                               
-                            }
-                            // console.log(node)
+    //                         }
+    //                         // console.log(node)
     
-                            // console.log("\nNoder under " + node.overskrift + ":")
-                            // console.log(node.object.markdownTree.get_nodes_in_order(node))
+    //                         // console.log("\nNoder under " + node.overskrift + ":")
+    //                         // console.log(node.object.markdownTree.get_nodes_in_order(node))
     
-                            selected_titles_nodes_List[indeks] = node;
+    //                         selected_titles_nodes_List[indeks] = node;
                             
-                            // console.log(selected_titles_nodes_List[indeks])
-                        }
-                    } 
+    //                         // console.log(selected_titles_nodes_List[indeks])
+    //                     }
+    //                 } 
 
-                } else { //Set the variable temp_filtered_context i objectet til teksten som skal vises
-                    // console.log("Variabelen temp_filtered_context blir satt")
-                    // console.log(node)
-                    node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
-                    selected_titles_nodes_List.push(node)
-                }
-            })
+    //             } else { //Set the variable temp_filtered_context i objectet til teksten som skal vises
+    //                 // console.log("Variabelen temp_filtered_context blir satt")
+    //                 // console.log(node)
+    //                 node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
+    //                 selected_titles_nodes_List.push(node)
+    //             }
+    //         })
 
-            // console.log(selected_titles_nodes_List)
-        })
-    }
-    function reset_filtered_text(){
-        for (let i = 0; i < $documentList.length; i++){
-            $documentList[i].temp_filtered_context = ""
-        }
-    }
+    //         // console.log(selected_titles_nodes_List)
+    //     })
+    // }
+    // function reset_filtered_text(){
+    //     for (let i = 0; i < $documentList.length; i++){
+    //         $documentList[i].temp_filtered_context = ""
+    //     }
+    // }
         
-    function is_in_subtree(to_node, add_node){
+    // function is_in_subtree(to_node, add_node){
 
-        let subtree = to_node.object.markdownTree.get_subtree(to_node)
-        // console.log("Subtreet til " + to_node.overskrift)
-        // console.log(subtree)
-        for(let i = 0; i < subtree.length; i++) {
-            let check_node = subtree[i]
-            if (check_node.compare(add_node)) {
-                // console.log(add_node.overskrift + " er i subtreet til " + to_node.overskrift)
-                return true; //add_node is in subtree of to_node
-            }
-        }
-        // console.log(add_node.overskrift + " er ikke i subtreet til " + to_node.overskrift)
-        return false; //add_node is not in subtree of to_node
+    //     let subtree = to_node.object.markdownTree.get_subtree(to_node)
+    //     // console.log("Subtreet til " + to_node.overskrift)
+    //     // console.log(subtree)
+    //     for(let i = 0; i < subtree.length; i++) {
+    //         let check_node = subtree[i]
+    //         if (check_node.compare(add_node)) {
+    //             // console.log(add_node.overskrift + " er i subtreet til " + to_node.overskrift)
+    //             return true; //add_node is in subtree of to_node
+    //         }
+    //     }
+    //     // console.log(add_node.overskrift + " er ikke i subtreet til " + to_node.overskrift)
+    //     return false; //add_node is not in subtree of to_node
 
-    }
+    // }
 
     function save(){ 
         show = false;
@@ -215,21 +216,19 @@
         //show_titles_button=!show_titles_button;
         current_size = "0";
         scrollview_size = "125";
-        $showTitles = false;
+        $showFiltermenu = false;
     }
 
     function open(){
         current_size = "25";
         scrollview_size = "100";
     }
-    function show_documents_checked_titles(event) {
-        // console.log(event.detail)
-        make_nodes_list(event.detail)
+    // function show_documents_checked_titles(event) {
+    //     make_nodes_list(event.detail)
        
-    }
+    // }
 
-    $: if($showTitles==true){
-        console.log("test")
+    $: if($showFiltermenu==true){
         open()
     }
 
@@ -251,9 +250,10 @@
             <Splitpanes >
                 
                 <Pane minSize="20px" size={current_size} maxSize="50">
-                    <div class="searched-titles">
+                    <FilterMenu on:close={close}/>
+                    <!-- <div class="searched-titles">
                         <FilteredByTitles on:checked_titles={show_documents_checked_titles} on:close={close}/>
-                    </div>
+                    </div> -->
                 </Pane>
                 <Pane size={scrollview_size} >
                     <Splitpanes horizontal={true} >

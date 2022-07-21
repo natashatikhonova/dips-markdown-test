@@ -82,9 +82,7 @@
 
 </script>
 <div class = "with-toolbar-conteiner">
-<header class="tool-menu">
     <ToolMenu hideToolBar={true}/>
-</header>  
 <Splitpanes >
     <Pane minSize="20px" size={current_size} maxSize="50">
         <FilterMenu on:close={close}/>
@@ -138,15 +136,6 @@
 
 <style>
 
-    header{
-        max-height: 40px;
-        min-height: 40px;
-        align-items: center;
-        display: flex;
-        justify-content:space-between;
-    
-    }
-
     table {
 		width: 100%;
         border-collapse: collapse;
@@ -182,16 +171,9 @@
         position:sticky;
         top:0;
     }
-    
+/*     
     .mobile{
         right: 3vw;
-        bottom: 3vh;
-        height: 6vh;
-        width: 6vh;
-        font-size:x-large;
-    }
-    /* .mobile{
-        right: 2vh;
         bottom: 3vh;
         height: 6vh;
         width: 6vh;

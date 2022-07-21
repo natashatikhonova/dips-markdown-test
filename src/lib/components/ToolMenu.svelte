@@ -1,9 +1,10 @@
 <script>
 
-    import { searchValue, showTitles, globalCurrentFilterGroup, myFilters} from '../stores/stores.js';
+    import { searchValue, amount_searched_words, showTitles, globalCurrentFilterGroup, myFilters} from '../stores/stores.js';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
     import FilterDoctypeForm from './FilterDoctypeForm.svelte';
+
     const modal = writable(null);
 
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
@@ -170,8 +171,13 @@
         <button class="main-button" class:hidden={hideToolBar} on:click={() =>$showTitles = true}>Overskrifter</button>
 
     </div><!-- leftmenu -->
+    <div class = "search_field">
+        <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} class:hidden={hideToolBar} placeholder="Søk.." name="search" class="search-input">
+        {#if $searchValue != "" && $amount_searched_words != 0}
+            <div class="searched_words"> {$amount_searched_words} ord</div>
+        {/if}
 
-    <input bind:value = {$searchValue} class:hidden={hideToolBar} placeholder="Søk.." name="search" class="search-input">
+    </div>
     <!-- <div class="search-bar" class:hidden={hideToolBar}>
         <input bind:value = {$searchValue} type="text" placeholder="Søk.." name="search">
     </div> -->
@@ -184,7 +190,25 @@
     {/if}
 
 <style>
+    .searched_words{
+        align-self: center;
+        width:60px;
+        /* color: #d43838; */
+        font-weight: bold;
+    }
+    .search_field{
+        display: flex;
+        margin-right: 2vw;
+        border-bottom: solid;
+        margin-bottom: 5px
+        
+    }
 
+    input{
+        position:absolute;
+        right: 5vw;
+
+    }
     .all{
         width: 100%;
         height: 100%;

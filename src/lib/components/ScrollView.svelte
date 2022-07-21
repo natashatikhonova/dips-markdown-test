@@ -1,5 +1,5 @@
 <script>
-    import {documentList, searchValue, showTitles} from '../stores/stores.js';
+    import {documentList, searchValue, amount_searched_words, showTitles} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
     import {currentlyAddingNewNote, globalCurrentFilterGroup} from '../stores/stores.js';
@@ -161,6 +161,8 @@
     //sorting by default
     sortByString("date");
 
+
+
     function wrapWord(el, word){
         var expr = new RegExp(word, "gi");
         var nodes = [].slice.call(el.childNodes, 0);
@@ -180,12 +182,14 @@
                             var span = el.insertBefore(document.createElement("span"), node);
                             span.appendChild(document.createTextNode(matches[n - 1]));
                             span.style = "color:#d43838; border-bottom: 3px solid #d43838"
+                            
                         }
                         if (parts[n])
                         {
                             el.insertBefore(document.createTextNode(parts[n]), node);
                         }
                     }
+                    $amount_searched_words++
                     el.removeChild(node);
                 }
             }
@@ -234,6 +238,19 @@
     }
 
     // $: $showTitles, console.log($showTitles)
+
+    const line_heights = ["Velg linjeavstand", "1.0", "1.15", "1.5", "2.0", "2.5", "3.0"]
+    const text_sizes = ["Velg skriftstørrelse", "9", "10", "11", "12", "14", "16", "18", "20"]
+
+    let selected_line_height  = "Velg linjeavstand"
+    let selected_text_size = "Velg skriftstørrelse"
+
+    // $: if (selected_line_height != "Velg linjeavstand") {
+    //     let doc = document.getElementById('documents')
+    //     doc.style.line-height = selected_line_height
+
+    // }
+
     
 
 </script>
@@ -264,7 +281,22 @@
                             {/if} -->
     
                             {#if searchResult.length > 0}
-                                <div class = "dokumenter">
+                                <select  class="line-button" bind:value={selected_line_height}>
+                                    {#each line_heights as value}
+                                        <option {value}>
+                                            {value}
+                                        </option>
+                                    {/each}
+                                </select>
+                                <select  class="text-size-button" bind:value={selected_text_size}>
+                                    {#each text_sizes as value}
+                                        <option {value}>
+                                            {value}
+                                        </option>
+                                    {/each}
+                                </select>
+                                <div class = "dokumenter" id="documents" style="line-height:{selected_line_height}; font-size: {selected_text_size}pt">
+                                    <!-- <button class="secundary-button line-button"  on:click={change_line_height}>Linjeavstand</button> -->
                                     {#each searchResult as item}
                                         
                                         <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
@@ -296,7 +328,19 @@
 
     </div>
 
+
 <style>
+
+    .text-size-button{
+        position: absolute;
+        right: 10vw;
+        top:2vh
+    }
+    .line-button{
+        position: absolute;
+        right: 2vw;
+        top: 2vh
+    }
 
     .searched-titles-button{
         background: none;
@@ -323,6 +367,8 @@
     }
     .dokumenter {
         margin-top: 4vh;
+        line-height: normal;
+        font-size:11pt
     }
 
     

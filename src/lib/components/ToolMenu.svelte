@@ -50,9 +50,8 @@
         {/if}
 
 
-    <input bind:value = {$searchValue} class:hidden={hideToolBar} placeholder="Søk.." name="search" class="search-input">
 
-
+    </div>
 </div><!-- all -->
 
 

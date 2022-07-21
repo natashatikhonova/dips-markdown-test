@@ -120,14 +120,9 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    
-  .tool-menu{
-    align-items: stretch;
-    background-color: whitesmoke;
-    height: 100%;
-    box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
-    margin-bottom: 3px;
   }
+    
+
 
 
 

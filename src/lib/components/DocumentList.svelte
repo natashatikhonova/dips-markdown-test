@@ -138,19 +138,13 @@
 
 <style>
 
-      header{
-    max-height: 40px;
-    min-height: 40px;
-    align-items: center;
-    background-color: #dadada;
-    display: flex;
-    justify-content:space-between;
+    header{
+        max-height: 40px;
+        min-height: 40px;
+        align-items: center;
+        display: flex;
+        justify-content:space-between;
     
-  }
-    .tool-menu{
-        align-items: stretch;
-        background-color: #eeeeee;
-        height: 100%;
     }
 
     table {

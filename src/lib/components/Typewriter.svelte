@@ -445,13 +445,15 @@ function set_text_size(direction){
   .toolbar {
     display: flex;
     background: whitesmoke;
-    margin-left:5px;
-    margin-right:5px;
-    padding: 7px;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
-    min-width: min-content;
+    /* margin-left:5px;
+    margin-right:5px; */
+    /* border-radius: 3px; */
+    padding: 10px;
+    box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
+    margin-bottom: 3px;
+    /* min-width: min-content; */
   }
+
   .toolbar-button {
     display: flex;
     justify-content: center;

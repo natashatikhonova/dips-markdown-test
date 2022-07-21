@@ -64,14 +64,14 @@
     <div class="side-container"  >
       {#if $currentlyAddingNewNote}
         {#if w > 900}
-        <Splitpanes>
+        <Splitpanes theme = "modern-theme">
           <Pane>
               <ScrollView/>
           </Pane>
           <Pane minSize="30"><ContentView width={w} /></Pane>
         </Splitpanes>
         {:else} 
-          <Splitpanes horizontal={true}>
+          <Splitpanes  theme = "modern-theme" horizontal={true}>
             <Pane >
               <ScrollView/>
             </Pane>
@@ -81,7 +81,7 @@
         {/if}
 
       {:else}
-        <Splitpanes>
+        <Splitpanes  theme = "modern-theme">
 
           <Pane size=100>
               <DocumentList/>
@@ -103,7 +103,7 @@
 
 <style>
 
-  
+
   header{
     max-height: 40px;
     min-height: 40px;

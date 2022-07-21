@@ -101,3 +101,34 @@
       border: solid 0.1em;
       box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
   }
+  .splitpanes.modern-theme .splitpanes__splitter {
+    background-color: #ccc;
+    position: relative;
+  }
+  .splitpanes.modern-theme .splitpanes__splitter:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: opacity 1s;
+    background-color: #d43838;
+    opacity: 0;
+    z-index: 0.1;
+  }
+  .splitpanes.modern-theme .splitpanes__splitter:hover:before {
+    opacity: 1;
+  }
+  
+  .modern-theme.splitpanes--vertical > .splitpanes__splitter:before {
+    left: -3px;
+    right: -3px;
+    height: 100%;
+    cursor: col-resize;
+  }
+  .modern-theme.splitpanes--horizontal > .splitpanes__splitter:before {
+    top: -3px;
+    bottom: -3px;
+    width: 100%;
+    cursor: row-resize;
+  }
+  

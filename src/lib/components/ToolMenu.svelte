@@ -30,11 +30,14 @@
         {/if}	 -->
 
     </div><!-- leftmenu -->
-    <div class = "search_field">
-        <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} class:hidden={hideToolBar} placeholder="Søk.." name="search" class="search-input searchWord-input">
-        {#if $searchValue != "" && $amount_searched_words != 0}
-            <div class="searched_words"> {$amount_searched_words} ord</div>
-        {/if}
+
+    <div class = "search_field" class:hidden={hideToolBar}>
+        <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} placeholder="Søk.." name="search" class="search-input searchWord-input">
+        <div class="searched_words"> 
+            {#if $searchValue != "" && $amount_searched_words != 0}
+                {$amount_searched_words} ord
+            {/if}
+        </div>
     </div>
 
 </header>

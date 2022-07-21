@@ -34,8 +34,9 @@
         border-bottom:1px solid rgb(97, 96, 96);  
 	}
 
-    tr:hover{
+    /* tr:hover{
         background-color: #e6f5ff;
-    }
+    } */
+
     
 </style>

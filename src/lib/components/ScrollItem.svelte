@@ -49,20 +49,20 @@
 </div>
 
 <style>
-:global(.text img){
-    height: 50%;
-    width: 50%
-  }
+    :global(.text img){
+        max-height: 50%;
+        max-width: 50%
+    }
     :global(.text tr) {
-     height: 5vh;
+        height: 5vh;
     }
     :global(.text td) {
-		text-align: center;
+        text-align: center;
 
         padding: 10px;
-    
+
         border:1px solid rgb(97, 96, 96);  
-	}
+    }
 
   :global(.text tr:hover){
         background-color: #e6f5ff;

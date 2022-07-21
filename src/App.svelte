@@ -99,12 +99,12 @@
 
 <style>
 
-
+  
   header{
     max-height: 40px;
     min-height: 40px;
     align-items: center;
-    background-color: #dadada;
+    background-color: whitesmoke;
     display: flex;
     justify-content:space-between;
     
@@ -112,8 +112,10 @@
 
   .tool-menu{
     align-items: stretch;
-    background-color: #eeeeee;
+    background-color: whitesmoke;
     height: 100%;
+    box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
+    margin-bottom: 3px;
   }
 
    .main {

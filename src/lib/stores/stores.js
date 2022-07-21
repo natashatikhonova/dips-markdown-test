@@ -27,6 +27,7 @@ export let myFilters = writable([
 
 
 export let searchValue = writable("")
+export let amount_searched_words = writable(0)
 
 export let showTitles = writable(false)
 

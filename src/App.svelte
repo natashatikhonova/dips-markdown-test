@@ -114,19 +114,8 @@
     
   }
 
-
-  .pane-with-tool-menu{
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-    
-
-
-
-
    .main {
+    height: 100%;
     overflow: auto;
   }
 
@@ -137,13 +126,6 @@
     flex-direction: row;
   }
 
-  .scroll-container{
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-  }
 
   button{
     display: inline-flex;

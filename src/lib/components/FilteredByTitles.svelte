@@ -160,12 +160,6 @@
 
 
 
-    function closeTitles(){
-        removeChecked()
-
-        dispatch("close")
-    }
-
     function removeChecked(){
         for(let i=0; i<original_titles_list_obj.length; i++){
             original_titles_list_obj[i].checked = false
@@ -268,7 +262,6 @@
 <div class="main">
         <h2>Overskrifter</h2>
         <h3>{overskrift}</h3>
-        <!-- <button class="close" on:click={closeTitles}><i class="material-icons">close</i></button> -->
         <input class="search-input" bind:value={searched_value} type="text" placeholder="Søk.." name="search">
 
         {#if !showFilterGroups}

@@ -11,9 +11,23 @@
     position: relative;
   }
 
+  
+  header{
+    max-height: 40px;
+    min-height: 40px;
+    align-items: center;
+    display: flex;
+    justify-content:space-between;
+
+  }
+
   .tool-menu{
-    background-color: whitesmoke;
+    width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: whitesmoke;
     box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
     margin-bottom: 3px;
 }
@@ -78,63 +92,6 @@
   background: rgb(226, 226, 226);
 }
 
-
-
-
-
-.main-button-before{
-  height: 100%;
-  width: 80px;
-  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-  background: #d43838;
-  color:#ffffff;
-  cursor: pointer;
-  border: none;
-  /* border: solid 1px rgb(255, 92, 81 ,0);
-  box-shadow: 0 0 0 2px rgb(255, 92, 81, 0); */
-}
-
-.main-button-before:hover, .main-button-before.active {
-color:#ffffff;
-/* border: solid 1px;
-box-shadow: 0 0 0 0.2rem rgb(255, 92, 81); */
-}
-
-.close{
-  background: none;
-  border: none;
-}
-.close:hover {
-  color:#d43838; 
-}
-
-/* .secundary-button{
-  background: lightgray;
-  display: inline-flex;
-  align-items: center;
-  margin: 0.5vh;
-  margin-bottom: 1vh;
-  margin-right: 1vh;
-  width: fit-content;
-  height:2vh;
-  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-  color:#000000;
-  padding: 12px;
-  font-size: 14px;
-  justify-content: center;
-  cursor: pointer;
-  border: solid 0.1em rgb(255, 92, 81 ,0);
-  box-shadow: 0 0 0 0.2rem rgb(255, 92, 81, 0);
-}
-
-.secundary-button {
-  background: rgb(226, 226, 226);
-} */
-
-
-
-
-
   .add-button{
     position: absolute;
     bottom: 4vh;
@@ -143,8 +100,6 @@ box-shadow: 0 0 0 0.2rem rgb(255, 92, 81); */
     right:5vh;
     width: 50px;
     height: 50px;
-    /* width:8vh;
-    height: 8vh; */
     background: #d43838;
     border-radius: 50%;
     border: 1px solid #ced4da;

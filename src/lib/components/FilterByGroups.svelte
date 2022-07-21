@@ -1,6 +1,6 @@
 <script>
 
-    import {documentList, globalCurrentFilterGroup, myFilters, searchValue} from '../stores/stores';
+    import {globalCurrentFilterGroup, myFilters} from '../stores/stores';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
 
@@ -47,11 +47,6 @@
     }
     else if (customFilter.filters.length < documentTypes.length){
         showAllButtonName = "Vis alle"
-    }
-
-    
-    const filterMenuHandler = () => {
-        filterMenuOpen = !filterMenuOpen
     }
     
     function changeMode(){
@@ -108,17 +103,15 @@
         manageGroup = true
         modal.set(bind(FilterDoctypeForm,{edit_bool: false}))
     }
-
-    //Lagt til ved refaktor
     
 
 </script>
 
 
 <div class="content">
+    <h2>Filter dokumenttyper</h2>
     {#if customViewMode}
-        <h2>Overskrifter</h2>
-        <h3>Underoverskrift</h3>
+        <h3>Alle filtere:</h3>
         <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
         <div>
             <button class="secundary-button" on:click={clickedAll}>{showAllButtonName}</button>
@@ -133,8 +126,7 @@
         </label>
         {/each}
     {:else}    
-        <h2>Overskrifter</h2>
-        <h3>Underoverskrift</h3>
+        <h3>Filtergrupper:</h3>
         <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
 
         <div>
@@ -148,9 +140,6 @@
         <!-- <div class="filterItem-button" class:active={currentFilterobj == nofilter} on:click={() => currentFilterobj = nofilter} value="alle">
             Vis allt
         </div> -->
-
-
-        <!-- <div class= "myFilters-conteiner"> -->
             {#each searchedFiltergroups as filter}
 
             <div class="group">
@@ -166,15 +155,7 @@
                 </div>
 
             </div>
-                <!-- <div class="filterItem-button" class:active={currentFilterobj == filter} on:click={()=> currentFilterobj = filter} value={filter.filters}>
-                    <t>{filter.name}</t>
-                    <div class="filteritem-buttons-conteiner">
-                        <button class="edit-buttons" title ="Rediger" on:click={() => editItem(filter)}><i class="material-icons">edit</i></button>
-                        <button class="edit-buttons" on:click={()=> $myFilters = $myFilters.filter(item => (item.id != filter.id))} title="Slett"><i class="material-icons">delete</i></button>
-                    </div>
-                </div> -->
             {/each}
-        <!-- </div> -->
     {/if}
 
     {#if manageGroup}
@@ -192,49 +173,9 @@
         padding-right: 2vw;
     }
 
-    .filterItem-button{
-    display: flex;
-    flex-direction: row;
-    justify-content:space-between;
-    align-items: center;
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    border-bottom:  1px solid #666363;
-}
-
-.filterItem-button:hover {
-    background-color: #e6f2ff;
-}
-
-.filterItem-button.active{
-    background-color: #ccebff;
-}
-
-.filteritem-buttons-conteiner{
-    display: flex;
-    flex-direction: row;
-}
-
-.myFilters-conteiner{
-    display: flex;
-    flex-direction: column;
-    max-height:600px;
-    overflow-y: auto;
-    
-}
-
-.edit-buttons {
-    align-self: center;
-    background: none;
-    border:none;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    cursor: pointer;
-}
-
-.group{
+    .group{
         display: flex;
-        margin-top: 2%;
+        margin-top: 10px;
         align-items: center;
     }
     .group-buttons{
@@ -247,6 +188,11 @@
         margin-left: 3%;
         background: none;
         border: none;
+    }
+    
+    .edit-button:hover{
+        color:#d43838;
+        cursor: pointer;
     }
 
 </style>

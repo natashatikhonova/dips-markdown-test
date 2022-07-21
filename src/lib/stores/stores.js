@@ -31,6 +31,11 @@ export let amount_searched_words = writable(0)
 
 export let showTitles = writable(false)
 
+export let showFiltermenu = writable(false)
+
+
+
 export let saved_filter_groups = writable([])
 
+export let searchResult = writable([])
 

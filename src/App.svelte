@@ -58,9 +58,6 @@
   </div>
 </header>
 
-<header class="tool-menu">
-  <ToolMenu hideToolBar={showSideview}/>
-</header>
 
 <div class="main">
   {#if showSideview}
@@ -68,12 +65,16 @@
       {#if $currentlyAddingNewNote}
         {#if w > 900}
         <Splitpanes>
-          <Pane ><ScrollView/></Pane>
+          <Pane>
+              <ScrollView/>
+          </Pane>
           <Pane minSize="30"><ContentView width={w} /></Pane>
         </Splitpanes>
         {:else} 
           <Splitpanes horizontal={true}>
-            <Pane ><ScrollView/></Pane>
+            <Pane >
+              <ScrollView/>
+            </Pane>
             <Pane ><ContentView width={w}/></Pane> 
           </Splitpanes>
           
@@ -81,7 +82,10 @@
 
       {:else}
         <Splitpanes>
-          <Pane size=100><DocumentList/></Pane>
+
+          <Pane size=100>
+              <DocumentList/>
+          </Pane>
         {#if $currentDocumentObject}
           {#if w < 600}
             <Pane size="100"><ContentView goBackButton={true} width={w}/></Pane>
@@ -93,7 +97,7 @@
       {/if}
     </div>
   {:else}
-    <div class="scroll-container"><ScrollView /></div>
+        <ScrollView/>
   {/if}
   </div>
 
@@ -110,6 +114,13 @@
     
   }
 
+
+  .pane-with-tool-menu{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    
   .tool-menu{
     align-items: stretch;
     background-color: whitesmoke;
@@ -117,6 +128,8 @@
     box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
     margin-bottom: 3px;
   }
+
+
 
    .main {
     overflow: auto;
@@ -132,7 +145,9 @@
   .scroll-container{
     height: 100%;
     width: 100%;
-   
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
   }
 
   button{

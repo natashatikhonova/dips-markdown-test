@@ -66,6 +66,17 @@
         flex-direction: row;
     }
 
+    .tool-menu{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        background-color: whitesmoke;
+        box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
+        margin-bottom: 3px;
+}
+
 
 
 

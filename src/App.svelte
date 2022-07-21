@@ -58,9 +58,6 @@
   </div>
 </header>
 
-<header class="tool-menu">
-  <ToolMenu hideToolBar={showSideview}/>
-</header>
 
 <div class="main">
   {#if showSideview}
@@ -68,12 +65,21 @@
       {#if $currentlyAddingNewNote}
         {#if w > 900}
         <Splitpanes>
-          <Pane ><ScrollView/></Pane>
+          <Pane>
+            <div class="pane-with-tool-menu">
+              <header class="tool-menu">
+                <ToolMenu hideToolBar={showSideview}/>
+              </header>
+              <ScrollView/>
+          </div>
+          </Pane>
           <Pane minSize="30"><ContentView width={w} /></Pane>
         </Splitpanes>
         {:else} 
           <Splitpanes horizontal={true}>
-            <Pane ><ScrollView/></Pane>
+            <Pane >
+              <ScrollView/>
+            </Pane>
             <Pane ><ContentView width={w}/></Pane> 
           </Splitpanes>
           
@@ -81,7 +87,15 @@
 
       {:else}
         <Splitpanes>
-          <Pane size=100><DocumentList/></Pane>
+
+          <Pane size=100>
+            <div class="pane-with-tool-menu">
+              <header class="tool-menu">
+                <ToolMenu hideToolBar={showSideview}/>
+              </header>   
+              <DocumentList/>
+            </div>
+          </Pane>
         {#if $currentDocumentObject}
           {#if w < 600}
             <Pane size="100"><ContentView goBackButton={true} width={w}/></Pane>
@@ -93,7 +107,12 @@
       {/if}
     </div>
   {:else}
-    <div class="scroll-container"><ScrollView /></div>
+    <div class="scroll-container">
+        <header class="tool-menu">
+          <ToolMenu hideToolBar={showSideview}/>
+        </header>
+        <ScrollView/>
+    </div>
   {/if}
   </div>
 
@@ -108,6 +127,13 @@
     display: flex;
     justify-content:space-between;
     
+  }
+
+  .pane-with-tool-menu{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .tool-menu{
@@ -130,7 +156,9 @@
   .scroll-container{
     height: 100%;
     width: 100%;
-   
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
   }
 
   button{

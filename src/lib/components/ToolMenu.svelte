@@ -172,7 +172,7 @@
 
     </div><!-- leftmenu -->
     <div class = "search_field">
-        <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} class:hidden={hideToolBar} placeholder="Søk.." name="search" class="search-input">
+        <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} class:hidden={hideToolBar} placeholder="Søk.." name="search" class="search-input searchWord-input">
         {#if $searchValue != "" && $amount_searched_words != 0}
             <div class="searched_words"> {$amount_searched_words} ord</div>
         {/if}
@@ -204,7 +204,7 @@
         
     }
 
-    input{
+    .searchWord-input{
         position:absolute;
         right: 5vw;
 

@@ -3,11 +3,13 @@
     import {marked } from 'marked';
     import Typewriter from './Typewriter.svelte';
     import {editor} from '../stores/stores.js';
+    import {createEventDispatcher} from 'svelte';
 
     export let goBackButton = false;
     export let width;
 
     let edit = $currentlyAddingNewNote;
+    const dispatch = createEventDispatcher()
 
     function changeEdit(){
           edit=!edit;
@@ -29,9 +31,21 @@
     } else if($currentlyAddingNewNote){
         editor.setHTML(marked(""));
     } 
+    let contentViewSize = 50
     function goBack(){
       editor.setHTML(marked(""));
-      $currentDocumentObject = null;
+      // $currentDocumentObject = null;
+      if (contentViewSize == 100){
+        dispatch("set_content_view_size", 50)
+        contentViewSize = 50
+
+      } else if (contentViewSize == 50){
+        $currentDocumentObject = null
+      }
+    }
+    function showContent(){
+      dispatch("set_content_view_size", 100)
+      contentViewSize = 100
     }
        
 </script>
@@ -48,6 +62,9 @@
         <header class="header-bar">
           {#if goBackButton } 
             <button title = "tilbake" class="back" on:click={goBack}><i class="material-icons">arrow_back</i></button>
+          {:else}
+            <button title = "Vis dokument" class="back" disabled = {contentViewSize==100} on:click={showContent}><i class="material-icons">arrow_back</i></button>
+            <button title = "Vis dokumentliste" class="back" on:click={goBack}><i class="material-icons">arrow_forward</i></button>
           {/if}
           <div class="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>
           {#if $currentDocumentObject.readable}

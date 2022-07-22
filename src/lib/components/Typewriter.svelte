@@ -12,6 +12,8 @@
 import { Delta, TextChange } from 'typewriter-editor';
 
 
+    export let showTitleBar = true;
+
     let selectedDocType = "Velg dokumenttype";
 
     const documentTypes = ["Velg dokumenttype", "Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
@@ -308,10 +310,17 @@ function set_text_size(direction){
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <!-- source: https://github.com/typewriter-editor/typewriter -->
-
-<header class="tool-menu">
-  <h3>Nytt dokument</h3>
-</header>
+  {#if showTitleBar}
+    <header class="tool-menu">
+      <h4>
+        {#if $currentlyAddingNewNote}
+          NYTT DOKUMENT
+        {:else}
+          REDIGER DOKUMENT
+        {/if}
+      </h4>
+    </header>
+  {/if}
 
   <div class="toolbar">
     <Toolbar {editor} let:active let:commands>

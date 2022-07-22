@@ -1,1 +1,0 @@
-//Lage en toolMenu over typewriter når legge til ny notat i sideview. Der det står "NY notat" eller "Editor". slik at den blir på linje med ToolMenu

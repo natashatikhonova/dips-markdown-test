@@ -68,7 +68,7 @@
           <Pane>
               <ScrollView/>
           </Pane>
-          <Pane minSize="30"><ContentView width={w} /></Pane>
+          <Pane minSize="30"><ContentView width={w}/></Pane>
         </Splitpanes>
         {:else} 
           <Splitpanes  theme = "modern-theme" horizontal={true}>

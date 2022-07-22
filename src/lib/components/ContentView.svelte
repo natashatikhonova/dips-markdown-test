@@ -45,7 +45,7 @@
     {#if edit} 
         <Typewriter on:editable={changeEdit} />
     {:else}
-        <div class="header-bar">
+        <header class="header-bar">
           {#if goBackButton } 
             <button title = "tilbake" class="back" on:click={goBack}><i class="material-icons">arrow_back</i></button>
           {/if}
@@ -54,7 +54,7 @@
             <button  title="Rediger" class="edit-button" on:click={changeEdit}><i class="material-icons">edit</i></button>
             <button  title="Slett" class="edit-button" on:click={deleteNote}><i class="material-icons">delete</i></button>
           {/if}
-        </div>
+        </header>
         <div class="textfield">
           <br>
           <div class="doc-meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
@@ -80,14 +80,24 @@
   }
 
   .header-bar {
+    background: whitesmoke;
+    box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
+    margin-bottom: 3px;
+
     display: flex;
+    /* margin-left:5px;
+    margin-right:5px; */
+    /* border-radius: 3px; */
+    /* padding: 10px;*/
+    
+    /* display: flex;
     background: #eee;
     margin-left:5px;
     margin-right:5px;
     padding: 7px;
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
-    min-width: min-content;
+    min-width: min-content; */
   }
   
   /* .header-bar{

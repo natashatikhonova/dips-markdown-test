@@ -351,7 +351,7 @@
                         {#if show}
                             <Pane >
                                 <div class="editor">
-                                    <Typewriter on:save = {save} on:cancel = {cancel} />
+                                    <Typewriter on:save = {save} on:cancel = {cancel} showTitleBar={false}/>
                 
                                 </div>
                             </Pane>

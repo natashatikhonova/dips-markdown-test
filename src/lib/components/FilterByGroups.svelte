@@ -1,6 +1,6 @@
 <script>
 
-    import {globalCurrentFilterGroup, myFilters, nofilter} from '../stores/stores';
+    import {globalCurrentFilterGroup, myFilters, nofilter, allfilterOff} from '../stores/stores';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
 
@@ -20,11 +20,12 @@
     let filter_searched_value = "";
     let filtergroup_searched_value ="";
 
-    // let nofilter = {id: 0, name: "Alle", filters: documentTypes};
     let myCurrentfilterGroup = $nofilter;
 
-    let customFilter = {id: -1, name: "", filters: $nofilter.filters}
-    // let currentFilterobj = customFilter;
+    // let customFilter = {id: -1, name: "", filters: $nofilter.filters}
+    let customFilter = $globalCurrentFilterGroup;
+
+    let currentFilterobj = $globalCurrentFilterGroup;
 
     let showAllButtonName = "Nullstill"
 
@@ -32,15 +33,18 @@
 
     $: searchedFiltergroups = $myFilters.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
 
-    // $: $globalCurrentFilterGroup = currentFilterobj.filters
-    // $: customFilter = $globalCurrentFilterGroup
+    $: $globalCurrentFilterGroup = currentFilterobj
 
-
-    $: if (customViewMode){
-        $globalCurrentFilterGroup  = customFilter
+    $: if($allfilterOff){
+        currentFilterobj = $nofilter
+        customFilter.filters = $nofilter.filters
+        $allfilterOff = false
+    }  
+    else if (customViewMode){
+        currentFilterobj  = customFilter
     }
     else{
-        $globalCurrentFilterGroup  = myCurrentfilterGroup
+        currentFilterobj  = myCurrentfilterGroup    
     }
 
     $: if(customFilter.filters.length == documentTypes.length){
@@ -49,7 +53,6 @@
     else if (customFilter.filters.length < documentTypes.length){
         showAllButtonName = "Vis alle"
     }
-
 
     $: if (filter_searched_value!=""){
         searchedDocumentTypes = relevantSort(searchedDocumentTypes, filter_searched_value)
@@ -170,7 +173,7 @@
             {#each searchedFiltergroups as filter}
 
             <div class="group">
-                <input type="radio" checked={$globalCurrentFilterGroup  == filter} on:change={() => $globalCurrentFilterGroup  = filter} value={filter.filters} />
+                <input type="radio" checked={currentFilterobj  == filter} on:change={() => currentFilterobj  = filter} value={filter.filters} />
 
                 <div class="title">
                     {filter.name} 

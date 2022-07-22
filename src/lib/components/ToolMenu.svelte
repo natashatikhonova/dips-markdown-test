@@ -1,7 +1,7 @@
 <script>
 
 
-    import { searchValue, amount_searched_words, showTitles, globalCurrentFilterGroup, myFilters, showFiltermenu, nofilter} from '../stores/stores.js';
+    import { searchValue, amount_searched_words, showTitles, globalCurrentFilterGroup, myFilters, showFiltermenu, nofilter, allfilterOff} from '../stores/stores.js';
     import { writable } from 'svelte/store';
 
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
@@ -9,9 +9,16 @@
     let documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10"];
     
     export let hideToolBar = true;
-    
+    $: console.log($globalCurrentFilterGroup)
+    $: console.log($allfilterOff)
 
+    function nullstill(){
+        $allfilterOff = true
+        $globalCurrentFilterGroup = $nofilter
+    }
 </script>
+
+
 
 <header class="tool-menu">
     <div class="leftmenu">
@@ -21,7 +28,7 @@
         {/if} -->
         
         {#if $globalCurrentFilterGroup.filters.length != $nofilter.filters.length}
-          <button class="filteroff-button" on:click={()=>$globalCurrentFilterGroup = $nofilter}>Skru av filter</button>
+          <button class="filteroff-button" on:click={nullstill}>Skru av filter</button>
         {/if}	
 
     </div><!-- leftmenu -->

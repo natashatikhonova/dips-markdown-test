@@ -39,3 +39,7 @@ export let saved_filter_groups = writable([])
 
 export let searchResult = writable([])
 
+export let selected_line_height = writable("1.5")
+
+export let selected_text_size = writable(11)
+

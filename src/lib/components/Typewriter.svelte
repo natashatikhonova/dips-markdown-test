@@ -309,6 +309,9 @@ function set_text_size(direction){
 </head>
 <!-- source: https://github.com/typewriter-editor/typewriter -->
 
+<header class="tool-menu">
+  <h3>Nytt dokument</h3>
+</header>
 
   <div class="toolbar">
     <Toolbar {editor} let:active let:commands>
@@ -426,6 +429,15 @@ function set_text_size(direction){
     <div class="editor" style="border:none; font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={autocomplete} on:click={clear_check_text}></div>
 
 <style>
+
+.tool-menu{
+        width: 100%;
+        height: 100%;
+        justify-content:space-around;
+        background-color: whitesmoke;
+        /* box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
+        margin-bottom: 3px; */
+}
 
   :global(.editor code){
     color:lightgray;

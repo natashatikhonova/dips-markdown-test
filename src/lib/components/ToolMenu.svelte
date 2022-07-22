@@ -35,7 +35,7 @@
         <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} placeholder="Søk.." name="search" class="search-input searchWord-input">
         <div class="searched_words"> 
             {#if $searchValue != "" && $amount_searched_words != 0}
-                {$amount_searched_words} ord
+            {$amount_searched_words} ord
             {/if}
         </div>
     </div>
@@ -44,23 +44,23 @@
 
 <style>
     .searched_words{
-        align-self: center;
         width:60px;
-        /* color: #d43838; */
-        font-weight: bold;
+        background: none;
+        border: none;
+        border-bottom: solid;
+        margin: 2px;
+        min-height: 30px;
+        margin-left: 0;
     }
     .search_field{
+        height: 100%;
         display: flex;
-        margin-right: 2vw;
-        border-bottom: solid;
-        margin-bottom: 5px
-        
+        flex-direction: row;
+        margin-right: 20px;
     }
 
     .searchWord-input{
-        position:absolute;
-        right: 5vw;
-
+        margin-right: 0;
     }
 
 

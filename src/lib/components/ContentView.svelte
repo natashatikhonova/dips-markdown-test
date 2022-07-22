@@ -76,6 +76,7 @@
     height: 100%;
     flex-grow:1;
     background-color: white;
+    border-left: 2px solid rgb(187, 187, 187);
   }
 
   .header-bar {

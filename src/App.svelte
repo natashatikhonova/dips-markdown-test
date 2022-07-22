@@ -103,16 +103,14 @@
 
 <style>
 
-
   header{
-    max-height: 40px;
-    min-height: 40px;
-    align-items: center;
-    background-color: whitesmoke;
-    display: flex;
-    justify-content:space-between;
-    
-  }
+      max-height: 40px;
+      min-height: 40px;
+      align-items: center;
+      display: flex;
+      justify-content:space-between;
+      background-color:rgb(236, 236, 236);
+    }
 
    .main {
     height: 100%;

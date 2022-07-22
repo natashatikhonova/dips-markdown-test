@@ -1,14 +1,12 @@
 <script>
-    import {documentList, globalCurrentFilterGroup, myFilters, searchValue, searchResult} from '../stores/stores';
+    import {documentList, globalCurrentFilterGroup, searchValue, searchResult} from '../stores/stores';
     import {createEventDispatcher} from 'svelte';
-    import { writable } from 'svelte/store';
-    import Modal, { bind } from 'svelte-simple-modal';
     import FilterByGroups from './FilterByGroups.svelte';
     import FilteredByTitles from './FilteredByTitles.svelte';
 
 
     let hideToolBar = true;
-
+    export let showFilterByTitles = true;
 
     const dispatch = createEventDispatcher();
     function closeTitles(){
@@ -152,13 +150,15 @@
     <div class="top-bar">
         <div class="filter-options">
             <button class:current-filter = {groupFilterView} on:click={changeToGroupFilterview} >Grupper</button>
+            {#if showFilterByTitles}
             <button class:current-filter = {!groupFilterView} on:click={changeToTiltelsFilterview} >Overskrifter</button>
+            {/if}
         </div>
         <button class="close" on:click={closeTitles}><i class="material-icons" >close</i></button>
     </div>
     {#if groupFilterView}
         <FilterByGroups/>
-    {:else}
+    {:else if showFilterByTitles}
         <FilteredByTitles on:checked_titles={show_documents_checked_titles}/>  
     {/if}
 
@@ -186,7 +186,7 @@
     }
 
     .filter-options button{
-        width: 50%;
+        width: 100%;
         height: 40px;
         text-align: center;
         background-color: #fff;

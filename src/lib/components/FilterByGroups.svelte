@@ -23,7 +23,7 @@
     let myCurrentfilterGroup = $nofilter;
 
     // let customFilter = {id: -1, name: "", filters: $nofilter.filters}
-    let customFilter = $globalCurrentFilterGroup;
+    let customFilter = {id: -1, name: "", filters: $globalCurrentFilterGroup.filters};
 
     let currentFilterobj = $globalCurrentFilterGroup;
 
@@ -64,10 +64,6 @@
     }
 
     
-    const filterMenuHandler = () => {
-        filterMenuOpen = !filterMenuOpen
-    }
-    
     function changeMode(){
         customViewMode = !customViewMode
     }
@@ -101,12 +97,6 @@
     }
     sortByString()
 
-    // function turnOffFilter(){
-    //     myCurrentfilterGroup = nofilter
-    //     customFilter.filters = documentTypes
-    //     filterMenuOpen = false;
-    //     customViewMode = true;
-    // }
 
     function clickedAll(){
         myCurrentfilterGroup = $nofilter

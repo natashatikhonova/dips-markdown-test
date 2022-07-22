@@ -1,5 +1,5 @@
 <script>
-    import {documentList, globalCurrentFilterGroup, saved_filter_groups} from '../stores/stores';
+    import {documentList, globalCurrentFilterGroup, saved_filter_groups, allfilterOff} from '../stores/stores';
     import {createEventDispatcher} from 'svelte';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
@@ -165,7 +165,9 @@
         
     }
     
-
+    $: if($allfilterOff){
+        show_filterGroups()
+    }
 
 
     function removeChecked(){

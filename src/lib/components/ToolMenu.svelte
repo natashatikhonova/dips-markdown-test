@@ -2,17 +2,10 @@
 
 
     import { searchValue, amount_searched_words, showTitles, globalCurrentFilterGroup, myFilters, showFiltermenu, nofilter, allfilterOff} from '../stores/stores.js';
-    import { writable } from 'svelte/store';
 
-    //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
-    //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
-    let documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10"];
-    
     export let hideToolBar = true;
-    $: console.log($globalCurrentFilterGroup)
-    $: console.log($allfilterOff)
 
-    function nullstill(){
+    function turnOffFilters(){
         $allfilterOff = true
         $globalCurrentFilterGroup = $nofilter
     }
@@ -22,13 +15,15 @@
 
 <header class="tool-menu">
     <div class="leftmenu">
-        <button class="main-button" on:click={() =>$showFiltermenu = true}  class:filterOn={$globalCurrentFilterGroup.filters.length != $nofilter.filters.length}>Filter</button>
+        <button class="main-button" on:click={() =>$showFiltermenu = true}>Filter</button>
+        <!-- alternative løsninger på filteroff -->
+        <!-- <button class="main-button" on:click={() =>$showFiltermenu = true}  class:filterOn={$globalCurrentFilterGroup.filters.length != $nofilter.filters.length}>Filter</button> -->
         <!-- {#if $globalCurrentFilterGroup.length != documentTypes.length}
             <button class="close" on:click={null}><i class="material-icons" >close</i></button>
         {/if} -->
         
         {#if $globalCurrentFilterGroup.filters.length != $nofilter.filters.length}
-          <button class="filteroff-button" on:click={nullstill}>Skru av filter</button>
+          <button class="filteroff-button" on:click={turnOffFilters}>Skru av filter</button>
         {/if}	
 
     </div><!-- leftmenu -->
@@ -82,8 +77,23 @@
         box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
         margin-bottom: 3px;
     }
+    
+    .filteroff-button{
+        width: fit-content;
+        border: none;
+        background: none;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        cursor: pointer;
+    }
+    .filteroff-button:hover {
+        color:#666363;
+    }
 
-    .main-button.filterOn{
+    .hidden{
+        visibility: hidden;
+    }
+    /* Alternative løsninger */
+    /* .main-button.filterOn{
         border: solid 1px;
         box-shadow: 0 0 0 0.2rem #6ac2fd;
     }
@@ -100,23 +110,6 @@
     }
     .close:hover {
         color:#d43838; 
-    }
-
-
-
-    .filteroff-button{
-        width: fit-content;
-        border: none;
-        background: none;
-        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        cursor: pointer;
-    }
-    .filteroff-button:hover {
-        color:#666363;
-    }
-
-    .hidden{
-        visibility: hidden;
-    }
-
+    } */
+    
 </style>

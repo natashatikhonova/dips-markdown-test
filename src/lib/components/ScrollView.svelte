@@ -1,6 +1,6 @@
 <script>
 
-    import {documentList, searchValue, amount_searched_words, searchResult, showFiltermenu} from '../stores/stores.js';
+    import {documentList, searchValue, amount_searched_words, searchResult, showFiltermenu, selected_line_height, selected_text_size} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
     import {currentlyAddingNewNote, globalCurrentFilterGroup} from '../stores/stores.js';
@@ -15,7 +15,6 @@
     let ascendingOrder = true;
     let lengde = $documentList.length;
 
-    let showLineHeights =false;
     
     // let selected_titles_nodes_List = []
     
@@ -241,37 +240,6 @@
 
     // $: $showTitles, console.log($showTitles)
 
-    const line_heights = ["1.0", "1.15", "1.5", "2.0", "2.5", "3.0"]
-    // const text_sizes = ["Velg skriftstørrelse", "9", "10", "11", "12", "14", "16", "18", "20"]
-
-    let selected_line_height  = "1.5"
-    // let selected_text_size = "Velg skriftstørrelse"
-
-    // $: if (selected_line_height != "Velg linjeavstand") {
-    //     let doc = document.getElementById('documents')
-    //     doc.style.line-height = selected_line_height
-
-    // }
-    let min_size = false;
-    let max_size = false;
-    let selected_text_size = 11
-    function set_text_size(direction){
-        if (direction == "bigger"){
-            selected_text_size++
-            if (selected_text_size == 20){
-                max_size=true
-            }else if (selected_text_size>7){
-            min_size =false
-            }
-        } else if (direction == "lower"){
-            selected_text_size--
-            if (selected_text_size == 7){
-                min_size=true
-            } else if (selected_text_size<20){
-            max_size =false
-            }
-        }
-}
 
 </script>
 <head>
@@ -304,35 +272,8 @@
                                 {/if} -->
         
                                 {#if $searchResult.length > 0}
-                                <div class="line-button">
-
-                                    <button title="Linjeavstand" class="toolbar-button" class:active={showLineHeights} on:click={() => {showLineHeights =!showLineHeights}}><i class="material-icons">format_line_spacing</i></button>
-                                    <div class:visible={!showLineHeights} class="dropdownContent">
-                                        {#each line_heights as value}
-                                            <button class="line-height-item" class:selected = {selected_line_height==value} on:click={()=>{selected_line_height=value}}>{value}</button>
-                                        {/each}
-                                    </div>
-                                </div>
-                                <!-- <select  class="line-button" bind:value={selected_line_height}>
-                                    {#each line_heights as value}
-                                    <option {value}>
-                                        {value}
-                                    </option>
-                                {/each}
-                            </select> -->
-                            <div class="extra-functions">
-                                <button
-                                title="Zoom out"
-                                class="toolbar-button"
-                                disabled={min_size}
-                                on:click={() => {set_text_size("lower")}}><i class="material-icons">text_decrease</i></button>
-                                <button
-                                title="Zoom in"
-                                class="toolbar-button"
-                                disabled={max_size}
-                                on:click={() => {set_text_size("bigger")}}><i class="material-icons">text_increase</i></button>
-                              </div>
-                                    <div class = "dokumenter" id="documents" style="line-height:{selected_line_height}; font-size: {selected_text_size}pt">
+                                
+                                    <div class = "dokumenter" id="documents" style="line-height:{$selected_line_height}; font-size: {$selected_text_size}pt">
                                         {#each $searchResult as item}
                                             
                                             <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
@@ -377,62 +318,6 @@ header{
   }
 
 
-  .selected{
-    background-color: white;
-  }
-
-.dropdownContent{
-    background-color: #f1f1f1;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    width: 2.3rem;
-    z-index: 1;
-    align-items: center;
-}
-
-.line-height-item{
-    border:none;
-    width: 100%;
-    text-align: center;
-    font-size: 11pt;
-}
-
-.line-height-item:hover{
-    background-color: white;
-}
-
-.toolbar-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #fff;
-    margin-top: 0.5vh;
-    width: 2.3rem;
-    height: 2.3rem;
-    margin-right: 0.4rem;
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    cursor: pointer;
-  }
-
-  .toolbar-button:hover {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-  }
-
-    .extra-functions{
-        display: flex;
-        position: absolute;
-        right: 2vw;
-        top:2vh
-    }
-
-    .line-button{
-        position: absolute;
-        right:8.5vw;
-        top: 2vh
-    }
 
     .searched-titles-button{
         background: none;
@@ -516,11 +401,6 @@ header{
         border: solid 1px black;
         background-color: white;
     }
-    
-  .toolbar-button.active {
-    border: solid 2px;
-    border-color: #80bdff;
-  }
 
 
 

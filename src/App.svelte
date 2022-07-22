@@ -31,7 +31,16 @@
 
   $: $currentDocumentObject, console.log($currentDocumentObject)
 
-  
+  function set_default(){
+    if($currentlyAddingNewNote){
+      alert("Vennligst lagre eller avbryt!");
+    } else {
+
+      $currentDocumentObject = null
+      showSideview = true;
+    }
+
+  }
 
 
   function changeView(){
@@ -46,11 +55,15 @@
   $: w = window.innerWidth;
   $: h = window.innerHeight;
 
+  let contentWiewSize = 50
+  function set_content_view_size(event){
+    contentWiewSize = event.detail
+  }
 </script>
 
 <header>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <img src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test"/>
+  <img on:click={set_default} src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test"/>
   <h3>PASIENTJOURNAL</h3>
   <div>
     <button disabled={showSideview} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
@@ -83,14 +96,14 @@
       {:else}
         <Splitpanes  theme = "modern-theme">
 
-          <Pane size=100>
+          <Pane size={(100-contentWiewSize).toString()}>
               <DocumentList/>
           </Pane>
         {#if $currentDocumentObject}
           {#if w < 600}
             <Pane size="100"><ContentView goBackButton={true} width={w}/></Pane>
           {:else}
-            <Pane size="50" minSize="30"><ContentView width={w}/></Pane>
+            <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size} width={w}/></Pane>
           {/if}
         {/if}
         </Splitpanes>

@@ -1,5 +1,5 @@
 <script>
-    import {documentList, globalCurrentFilterGroup, saved_filter_groups} from '../stores/stores';
+    import {documentList, globalCurrentFilterGroup, saved_filter_groups, allfilterOff} from '../stores/stores';
     import {createEventDispatcher} from 'svelte';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
@@ -23,7 +23,7 @@
     let edit_obj_indeks = null
     $: overskrift = showFilterGroups ? "Filtergrupper:" : "Alle overskrifter:"
 
-    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
+    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.filters.includes(item.title))));
 
     function showModal (){
         adding_new_group = true;
@@ -165,7 +165,9 @@
         
     }
     
-
+    $: if($allfilterOff){
+        show_filterGroups()
+    }
 
 
     function removeChecked(){

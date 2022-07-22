@@ -13,7 +13,10 @@ export let currentlyAddingNewNote = writable(false);
 // let parseMarkdown = new ParseMarkdown();
 // export let parse = writable(parseMarkdown);
 
-export let globalCurrentFilterGroup = writable([]);
+let documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10"];
+export let nofilter = writable({id: 0, name: "Alle", filters: documentTypes});
+export let globalCurrentFilterGroup = writable({id: -1, name: "", filters: documentTypes});
+export let allfilterOff = writable(false);
 
 export const selectedDocumentList=writable([]);
 
@@ -32,6 +35,7 @@ export let amount_searched_words = writable(0)
 export let showTitles = writable(false)
 
 export let showFiltermenu = writable(false)
+
 
 
 

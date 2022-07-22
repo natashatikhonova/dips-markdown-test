@@ -1,6 +1,6 @@
 <script>
 
-    import {globalCurrentFilterGroup, myFilters} from '../stores/stores';
+    import {globalCurrentFilterGroup, myFilters, nofilter, allfilterOff} from '../stores/stores';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
 
@@ -20,26 +20,31 @@
     let filter_searched_value = "";
     let filtergroup_searched_value ="";
 
-    let nofilter = {id: 0, name: "Alle", filters: documentTypes};
-    let myCurrentfilterGroup = nofilter;
+    let myCurrentfilterGroup = $nofilter;
 
-    let customFilter = {id: -1, name: "", filters: nofilter.filters}
-    let currentFilterobj = customFilter;
+    // let customFilter = {id: -1, name: "", filters: $nofilter.filters}
+    let customFilter = {id: -1, name: "", filters: $globalCurrentFilterGroup.filters};
+
+    let currentFilterobj = $globalCurrentFilterGroup;
 
     let showAllButtonName = "Nullstill"
 
-    $: searchedDocumentTypes = documentTypes.filter(item => (item.toLowerCase().includes(filter_searched_value.toLowerCase())));
+    $: searchedDocumentTypes = $nofilter.filters.filter(item => (item.toLowerCase().includes(filter_searched_value.toLowerCase())));
 
     $: searchedFiltergroups = $myFilters.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
 
-    $: $globalCurrentFilterGroup = currentFilterobj.filters
+    $: $globalCurrentFilterGroup = currentFilterobj
 
-
-    $: if (customViewMode){
-        currentFilterobj = customFilter
+    $: if($allfilterOff){
+        currentFilterobj = $nofilter
+        customFilter.filters = $nofilter.filters
+        $allfilterOff = false
+    }  
+    else if (customViewMode){
+        currentFilterobj  = customFilter
     }
     else{
-        currentFilterobj = myCurrentfilterGroup
+        currentFilterobj  = myCurrentfilterGroup    
     }
 
     $: if(customFilter.filters.length == documentTypes.length){
@@ -48,7 +53,6 @@
     else if (customFilter.filters.length < documentTypes.length){
         showAllButtonName = "Vis alle"
     }
-
 
     $: if (filter_searched_value!=""){
         searchedDocumentTypes = relevantSort(searchedDocumentTypes, filter_searched_value)
@@ -59,10 +63,6 @@
 
     }
 
-    
-    const filterMenuHandler = () => {
-        filterMenuOpen = !filterMenuOpen
-    }
     
     function changeMode(){
         customViewMode = !customViewMode
@@ -98,15 +98,8 @@
     sortByString()
 
 
-    function turnOffFilter(){
-        myCurrentfilterGroup = nofilter
-        customFilter.filters = documentTypes
-        filterMenuOpen = false;
-        customViewMode = true;
-    }
-
     function clickedAll(){
-        myCurrentfilterGroup = nofilter
+        myCurrentfilterGroup = $nofilter
         if(customFilter.filters.length < documentTypes.length){
             customFilter.filters = documentTypes
             showAllButtonName = "Nullstill"    
@@ -170,7 +163,7 @@
             {#each searchedFiltergroups as filter}
 
             <div class="group">
-                <input type="radio" checked={currentFilterobj == filter} on:change={() => currentFilterobj = filter} value={filter.filters} />
+                <input type="radio" checked={currentFilterobj  == filter} on:change={() => currentFilterobj  = filter} value={filter.filters} />
 
                 <div class="title">
                     {filter.name} 

@@ -13,7 +13,7 @@
     let ascendingOrder = false;
     let lengde;
 
-    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
+    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.filters.includes(item.title))));
 
     function addNote(){
         $currentlyAddingNewNote = true;
@@ -85,7 +85,7 @@
     <ToolMenu hideToolBar={true}/>
 <Splitpanes >
     <Pane minSize="20px" size={current_size} maxSize="50">
-        <FilterMenu on:close={close}/>
+        <FilterMenu on:close={close} showFilterByTitles={false}/>
     </Pane>
     <Pane size={documentview_size}>
         <div class="table-container" >

@@ -13,7 +13,7 @@
     let ascendingOrder = false;
     let lengde;
 
-    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
+    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.filters.includes(item.title))));
 
     function addNote(){
         $currentlyAddingNewNote = true;

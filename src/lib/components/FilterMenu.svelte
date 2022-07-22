@@ -21,7 +21,7 @@
      
     $searchResult = $documentList
 
-    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
+    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.filters.includes(item.title))));
 
     $: if (selected_titles_nodes_List.length>0) { //Hvis filtrert på overskrifter
         $searchResult = nodeList_to_documentObjList(selected_titles_nodes_List)
@@ -209,9 +209,6 @@
     }
     .close:hover {
         color:#d43838; 
-    }
-    .close{
-
     }
 
 </style>

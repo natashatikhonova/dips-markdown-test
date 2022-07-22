@@ -23,7 +23,7 @@
     let edit_obj_indeks = null
     $: overskrift = showFilterGroups ? "Filtergrupper:" : "Alle overskrifter:"
 
-    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
+    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.filters.includes(item.title))));
 
     function showModal (){
         adding_new_group = true;

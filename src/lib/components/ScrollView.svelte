@@ -15,6 +15,13 @@
     let ascendingOrder = true;
     let lengde = $documentList.length;
 
+    let typewritersize = "50"
+
+    let w
+    let h
+    $: w = window.innerWidth;
+    $: h = window.innerHeight;
+
     
     // let selected_titles_nodes_List = []
     
@@ -253,7 +260,11 @@
 
 
     <div class="with-toolbar-conteiner">
+        {#if $currentlyAddingNewNote && w<600}
+            <ToolMenu hideToolBar={true}/>
+        {:else}
             <ToolMenu hideToolBar={false}/>
+        {/if}
         <div class="scroll-container">
             <Splitpanes theme="modern-theme">
                 
@@ -293,15 +304,16 @@
                             </div>
                         </Pane>
                         {#if show}
-                            <Pane >
+                            <Pane size="100">
                                 <div class="editor">
                                     <Typewriter on:save = {save} on:cancel = {cancel} showTitleBar={false}/>
-                
                                 </div>
                             </Pane>
-        
                         {/if}
                     </Splitpanes>
+                    {#if w<600 && $currentlyAddingNewNote&&!show}
+                        <button class="arrow-up-button" on:click={()=>{show=true}}> <i class="material-icons">keyboard_arrow_up</i></button>
+                    {/if}
                 </Pane>
             </Splitpanes>
         </div>
@@ -320,7 +332,17 @@ header{
     
   }
 
+  .arrow-up-button{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: none;
+    border:none;
+}
 
+:global(body.dark-mode) .arrow-up-button{
+  color:#cccccc;
+}
 
     .searched-titles-button{
         background: none;

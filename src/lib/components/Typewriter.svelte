@@ -52,6 +52,10 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
       $currentlyAddingNewNote=false;
       
     }
+
+    function mobileDown(){
+      dispatch("cancel");
+    }
     //Saves the text if the text is not empty and stores the text
     function save(){
       console.log(editor.change)
@@ -327,17 +331,28 @@ function set_autocomplete(){
 </head>
 
 <!-- source: https://github.com/typewriter-editor/typewriter -->
-  {#if showTitleBar}
     <header class="tool-menu">
-      <h4>
-        {#if $currentlyAddingNewNote}
-          NYTT DOKUMENT
-        {:else}
-          REDIGER DOKUMENT
+      <div>
+        {#if w<600}
+          <button class="arrow-down-button" on:click={mobileDown}> <i class="material-icons">keyboard_arrow_down</i></button>
         {/if}
-      </h4>
+      </div>
+      <div class="toolmenu-title">
+
+        <h4>
+          {#if $currentlyAddingNewNote}
+            NYTT DOKUMENT
+          {:else}
+            REDIGER DOKUMENT
+          {/if}
+        </h4>
+      </div>
+      <div class = "controls">
+        <button title="Lagre"class="save " class:mobile={w<600} on:click={save}> <i class="material-icons">save</i></button>
+        <button title="Avbryt" class = "save" class:mobile={w<600} on:click={cancel} > <i class="material-icons">close</i></button>
+      </div>
     </header>
-  {/if}
+  
   <!-- Image menu for when images are selected
 <BubbleMenu {editor} let:active let:commands let:placement offset={8} for={'image'}>
   <div class="bubble-menu">
@@ -389,8 +404,11 @@ function set_autocomplete(){
 </BubbleMenu> -->
 
 
-  <div class="toolbar">
+  <div class="toolbar" class:mobile-toolbar = {w<600}>
     <Toolbar {editor} let:active let:commands>
+
+      <div class="main-functions">
+
         <button
           title="Overskrift"
           class="toolbar-button"
@@ -444,9 +462,12 @@ function set_autocomplete(){
           disabled={!active.redo}
           class:mobile={w<600}
           on:click={commands.redo}><i class="material-icons">redo</i></button>
+      </div>
 
-        <div class="extra-functions">
+      <div class="secondary-functions">
 
+        <div class="extra-functions" class:no-border={w<600}>
+  
           <button 
           title="Legg til bilde"
           class="toolbar-button"
@@ -461,10 +482,10 @@ function set_autocomplete(){
           class:active={autocompleteOn}
           class:mobile={w<600}
           on:click={set_autocomplete}><i class="material-icons">auto_awesome</i></button>
-
+  
         </div>
-
-        <div class="extra-functions">
+  
+        <div class="extra-functions" class:no-border={w<600}>
           <button
           title="Zoom out"
           class="toolbar-button"
@@ -478,22 +499,22 @@ function set_autocomplete(){
           class:mobile={w<600}
           on:click={() => {set_text_size("bigger")}}><i class="material-icons">zoom_in</i></button>
         </div>
-
-        <div class="extra-functions">
+  
+        <div class="extra-functions" class:no-border={w<600}>
           <button
           title="venstre"
           class="toolbar-button"
           class:active={alignment === 'left'}
           class:mobile={w<600}
           on:click={() => align("left")}><i class="material-icons">format_align_left</i></button>
-
+  
           <button
           title="midten"
           class="toolbar-button"
           class:active={alignment === 'center'}
           class:mobile={w<600}
           on:click={() => align("center")}><i class="material-icons">format_align_center</i></button>
-
+  
           <button
           title="høyre"
           class="toolbar-button"
@@ -501,12 +522,13 @@ function set_autocomplete(){
           class:mobile={w<600}
           on:click={() => align("right")}><i class="material-icons">format_align_right</i></button>
         </div>
+  
+  
+  
+      </div>
+      
 
 
-        <div class = "controls">
-          <button title="Lagre"class="save " class:mobile={w<600} on:click={save}> <i class="material-icons">save</i></button>
-          <button title="Avbryt" class = "save" class:mobile={w<600} on:click={cancel} > <i class="material-icons">close</i></button>
-        </div>
     </Toolbar>
   </div>
 
@@ -543,16 +565,43 @@ function set_autocomplete(){
 
 }
 
+.toolmenu-title{
+  align-self: center;
+}
 
+
+.main-functions{
+  display: inline-flex;
+  background: whitesmoke;
+}
+
+.secondary-functions{
+  display: inline-flex;
+  background: whitesmoke;
+
+}
+
+.arrow-down-button{
+  background: none;
+  border:none;
+}
+
+:global(body.dark-mode) .arrow-down-button{
+  color:#cccccc;
+}
 
 .tool-menu{
-        width: 100%;
-        height: 100%;
-        justify-content:space-around;
-        background-color: whitesmoke;
-        /* box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
-        margin-bottom: 3px; */
+    width: 100%;
+    height: 100%;
+    max-height: 40px;
+    min-height: 40px;
+    align-items: center;
+    display: flex;
+    justify-content:space-between;
+    background-color: whitesmoke;
 }
+
+
 
 :global(body.dark-mode) .tool-menu{
   background-color: rgb(49,49,49);
@@ -574,7 +623,7 @@ function set_autocomplete(){
     max-width: 50%
   }
   .toolbar {
-    display: flex;
+    display:flex;
     background: whitesmoke;
     /* margin-left:5px;
     margin-right:5px; */
@@ -585,8 +634,19 @@ function set_autocomplete(){
     /* min-width: min-content; */
   }
 
+  .mobile-toolbar{
+    display: contents;
+  }
+
   :global(body.dark-mode) .toolbar{
-    background-color: rgb(32, 32, 32);
+    background: rgb(32, 32, 32);
+  }
+
+  :global(body.dark-mode) .main-functions{
+    background: rgb(32, 32, 32);
+  }
+  :global(body.dark-mode) .secondary-functions{
+    background: rgb(32, 32, 32);
   }
 
   .toolbar-button {
@@ -642,7 +702,6 @@ function set_autocomplete(){
   }
 
   .controls{
-    margin-left: auto;
     display: inline-flex;
     align-items: center;
   }
@@ -653,8 +712,8 @@ function set_autocomplete(){
 
   .dropdown-menu {
     background: #fff;
-    width: 20vh;
-    height: 40px;
+    width: 21vh;
+    height: 35px;
     border-radius: 4px;
     border: 1px solid #ced4da;
     cursor: pointer;
@@ -720,6 +779,11 @@ function set_autocomplete(){
 
   :global(body.dark-mode) .save{
     color:#cccccc;
+  }
+
+  .no-border{
+    border:none;
+    padding-left:0;
   }
 
   .save:hover{

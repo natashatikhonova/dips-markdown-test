@@ -154,7 +154,7 @@
     
             {/if}
         </div>
-        <button on:click={save}>Lagre</button>
+        <button class="main-button" on:click={save}>Lagre</button>
     
     {/if}
 
@@ -180,6 +180,7 @@ button:hover{
     border: solid 0.1em;
     box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
 }
+
 .main {
     height: 70vh;
     overflow: hidden;
@@ -213,6 +214,44 @@ input[type=text] {
 
 .no-titles{
     margin-top: 2vh;
+}
+
+/* Darkmode */
+
+:global(body.dark-mode) button{
+    background: #701c1c;
+  border: 1px solid #cccccc;
+  color:#cccccc;
+}
+
+:global(body.dark-mode) button:hover{
+  box-shadow: 0 0 0 0.25rem rgb(126, 33, 26);
+}
+
+:global(body.dark-mode) input{
+    background-color: rgb(49, 49, 49);
+    border-bottom: 1px solid #cccccc;
+    color:#cccccc;
+}
+
+:global(body.dark-mode) ::placeholder {
+    color: #cccccc;   
+}
+
+:global(body.dark-mode) h2{
+    color:#cccccc;
+}
+
+:global(body.dark-mode) h3{
+    color:#cccccc;
+}
+
+:global(body.dark-mode) .title{
+    color:#cccccc;
+}
+
+:global(body.dark-mode) .title:hover{
+    color:#d43838;
 }
 
 </style>

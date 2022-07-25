@@ -29,9 +29,8 @@
 
   /* Darkmode */
   body.dark-mode header{
-    background-color: #000000;
+    background-color: rgb(43, 43, 43);
   }
-
 
 
   .splitpanes__pane {
@@ -58,6 +57,7 @@
     padding-bottom: 0;
     min-height: 30px;
 }
+
   .search-input:focus{
     outline:none
 }
@@ -83,6 +83,18 @@
   box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
 }
 
+/* Main button darkmode */
+
+body.dark-mode .main-button{
+  background: #701c1c;
+  border: 1px solid #cccccc;
+  color:#cccccc;
+}
+
+body.dark-mode .main-button:hover{
+  box-shadow: 0 0 0 0.2rem rgb(126, 33, 26);
+}
+
 .secundary-button{
   background: lightgray;
   display: inline-flex;
@@ -103,7 +115,8 @@
   background: rgb(226, 226, 226);
 }
 
-  .add-button{
+/* Add button */
+.add-button{
     position: absolute;
     bottom: 4vh;
     font-size:xx-large;
@@ -118,13 +131,30 @@
     cursor: pointer;
 }
 
-  .add-button:hover{
-      border: solid 0.1em;
-      box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
-  }
+.add-button:hover{
+    border: solid 0.1em;
+    box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
+}
+
+
+/* Add button darkmode */
+
+ body.dark-mode .add-button{
+  background: #701c1c;
+  border: 1px solid #cccccc;
+  color:#cccccc;
+}
+
+body.dark-mode .add-button:hover{
+  box-shadow: 0 0 0 0.25rem rgb(126, 33, 26);
+}
   .splitpanes.modern-theme .splitpanes__splitter {
     background-color: rgb(10, 10, 10); 
     position: relative;
+  }
+
+  .splitpanes.modern-theme .splitpanes__splitter.dark-mode{
+    background-color: rgb(49,49,49);
   }
   .splitpanes.modern-theme .splitpanes__splitter:before {
     content: "";
@@ -152,4 +182,9 @@
     width: 100%;
     cursor: row-resize;
   }
-  
+
+  body.dark-mode .s-_bRanQFElcIc .content{
+    background: rgb(49,49,49);
+    border-radius: 7px;
+  }
+

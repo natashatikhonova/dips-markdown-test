@@ -67,9 +67,9 @@
   <img on:click={set_default} src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test"/>
   <h3>PASIENTJOURNAL</h3>
   <div>
-    <ThemeButton>Dark mode</ThemeButton>
     <button class="switch-view-button" disabled={showSideview} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
     <button class="switch-view-button" disabled={!showSideview} title="Kontinuerlig visning" on:click={changeView}><i class="material-icons">horizontal_split</i></button>
+    <ThemeButton/>
   </div>
 </header>
 

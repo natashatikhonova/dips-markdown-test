@@ -21,8 +21,8 @@
     }
 
     :global(body.dark-mode) .selected{
-        background-color: rgb(211, 211, 211);
-        color: black;
+        background-color: rgb(61, 61, 61);
+        
     }
 
     .notSelected:hover{
@@ -30,8 +30,8 @@
     }
 
     :global(body.dark-mode) .notSelected:hover{
-        background-color: rgb(211, 211, 211);
-        color: black;
+        background-color: rgb(61, 61, 61);
+        
     }
     tr {
      height: 5vh;

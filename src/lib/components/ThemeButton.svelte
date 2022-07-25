@@ -1,25 +1,39 @@
 <script>
+
+	let darkmodeOff = true
     function toggle(){
         window.document.body.classList.toggle('dark-mode')
+		darkmodeOff = !darkmodeOff
     }
 </script>
 
-<button on:click={toggle}>
-	<slot/>
-</button>
+{#if darkmodeOff}
+	<button on:click={toggle}><i class="material-icons" id="icon">dark_mode</i></button>
+{:else}
+	<button on:click={toggle}><i class="material-icons" id="icon">light_mode</i></button>
+{/if}
 
 <style>
 	button {
-		background-color: #f76027;
-		color: white;
+		background:none;
+		color: black;
 		border: none;
-		border-radius: 4px;
-		padding: 0.5rem;
-		text-transform: uppercase;
 		
 	}
+
+	button:hover{
+		color:#d43838;
+	}
+
 	:global(body.dark-mode) button {
-		background-color: #0084f6;
-		color: white;
+		color: #cccccc;
+	}
+
+	:global(body.dark-mode) button:hover{
+		color:#d43838;
+	}
+
+	i{
+		font-size: xx-large;
 	}
 </style>

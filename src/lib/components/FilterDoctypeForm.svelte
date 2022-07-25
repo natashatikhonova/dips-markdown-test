@@ -121,20 +121,6 @@
 </div>
 <style>
 
-/* button {
-    position: absolute;
-    right: 2vw;
-    bottom: 2vh;
-    background-color: #d43838;
-    color: white;
-    width: 6vw;
-    height: 4vh;
-    border: none;
-    justify-content: center;
-    border-radius: 4px;
-    cursor: pointer;
-} */
-
 button{
     position: absolute;
     right: 2vw;
@@ -154,6 +140,7 @@ button:hover{
     overflow: hidden;
 }
 
+
 .titles{
     padding-right: 2vw;
     height: 50%;
@@ -162,7 +149,7 @@ button:hover{
 
 
 input[type=text] {
-
+    
     padding: 6px;
     border: none;
     border-bottom: solid;
@@ -170,6 +157,7 @@ input[type=text] {
     font-size: 17px;
     width:90%;
 }
+
 
 .title{
     cursor: pointer;
@@ -182,6 +170,36 @@ input[type=text] {
 
 .no-titles{
     margin-top: 2vh;
+}
+/* Darkmode */
+:global(body.dark-mode) .main{
+    background: rgb(49, 49, 49);
+}
+
+:global(body.dark-mode) input{
+    background-color: rgb(49, 49, 49);
+    border-bottom: 1px solid #cccccc;
+    color:#cccccc;
+}
+
+:global(body.dark-mode) ::placeholder {
+    color: #cccccc;   
+}
+
+:global(body.dark-mode) h2{
+    color:#cccccc;
+}
+
+:global(body.dark-mode) h3{
+    color:#cccccc;
+}
+
+:global(body.dark-mode) .title{
+    color:#cccccc;
+}
+
+:global(body.dark-mode) .title:hover{
+    color:#d43838;
 }
 
 </style>

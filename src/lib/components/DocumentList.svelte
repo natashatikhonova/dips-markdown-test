@@ -83,7 +83,7 @@
 </script>
 <div class = "with-toolbar-conteiner">
     <ToolMenu hideToolBar={true}/>
-<Splitpanes >
+<Splitpanes theme="modern-theme">
     <Pane minSize="20px" size={current_size} maxSize="50">
         <FilterMenu on:close={close} showFilterByTitles={false}/>
     </Pane>
@@ -157,7 +157,7 @@
 
     :global(body.dark-mode) th{
         background-color: rgb(49, 49, 49);
-        border-bottom:1.5px solid #cccccc;;
+        border-bottom:1.5px solid #cccccc;
         
     }
 
@@ -168,6 +168,10 @@
 	.highlighted {
 		color: #cf2417;
 	}
+
+    :global(body.dark-mode) .highlighted{
+        color: rgb(148, 17, 17);
+    }
 
     .table-container{
         min-width: none;

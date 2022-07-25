@@ -359,7 +359,14 @@ header{
         height: 100%;
         overflow: auto;
     }
-    
+
+    :global(body.dark-mode) .full-container{
+        background-color: rgb(49, 49, 49);
+    }
+
+    :global(body.dark-mode) .container{
+        background-color: rgb(49, 49, 49);
+    }
     
     
     .full-container{
@@ -403,6 +410,10 @@ header{
         background: #ffffff;
         border: solid 1px black;
         background-color: white;
+    }
+
+    :global(body.dark-mode) .editor{
+        background-color: rgb(49, 49, 49);
     }
 
 

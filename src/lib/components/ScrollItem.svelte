@@ -91,6 +91,10 @@
         
     }
 
+    :global(body.dark-mode) .item-container:hover {
+        background-color: rgb(61, 61, 61);
+    }
+
     .meta{
         display: flex;
         align-items: flex-start;
@@ -129,6 +133,17 @@
     button:hover{
         color: #d43838;
     }
+
+
+    :global(body.dark-mode) button{
+        color:#cccccc;
+    }
+
+    :global(body.dark-mode) button:hover{
+        color:#d43838;
+    }
+
+
     .visible{
         visibility: hidden;
     }

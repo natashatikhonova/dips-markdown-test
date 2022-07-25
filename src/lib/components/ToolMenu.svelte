@@ -113,6 +113,8 @@
 </header>
 
 <style>
+
+    /* Search field */
     .searched_words{
         line-height: 2.2rem;
         width:60px;
@@ -136,6 +138,21 @@
         margin-right: 0;
     }
 
+    /* Search field - darkmode */
+
+    :global(body.dark-mode) input{
+        border-bottom: 1px solid #cccccc;
+        color:#cccccc;
+        
+    }
+
+    :global(body.dark-mode) .searched_words{
+        border-bottom: 1px solid #cccccc;
+    }
+
+    :global(body.dark-mode) ::placeholder {
+        color: #cccccc;   
+    }
 
     .leftmenu{
         height: 100%;
@@ -159,6 +176,11 @@
         background-color: whitesmoke;
         box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
         margin-bottom: 3px;
+    }
+
+    :global(body.dark-mode) .tool-menu{
+        background-color: rgb(43, 43, 43);
+        color: white;
     }
     
     .filteroff-button{
@@ -215,6 +237,11 @@
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   }
 
+  :global(body.dark-mode) .text-settings{
+    background-color: rgb(49, 49, 49);
+    border: 0.5px #cccccc solid;
+  }
+
 .dropdownContent{
     position: absolute;
     top:2.8rem;
@@ -256,6 +283,19 @@
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
   }
 
+  :global(body.dark-mode) .toolbar-button{
+    background-color: #424242;
+    color: #cccccc;
+    border: none;
+  }
+
+  :global(body.dark-mode) .toolbar-button:hover{
+    border-color: #b7daff;
+    box-shadow: 0 0 0 0.2rem rgba(104, 177, 255, 0.5);
+  }
+
+
+
     .extra-functions{
         display: flex;
 
@@ -265,6 +305,8 @@
     border: solid 2px;
     border-color: #80bdff;
   }
+
+  /* Text settings button */
 
   .settings-button {
     display: flex;
@@ -276,6 +318,10 @@
     margin-right: 0.8rem;
     border: none;
     cursor: pointer;
+  }
+
+  :global(body.dark-mode) .settings-button{
+    color: #cccccc;
   }
 
   .settings-button :hover {

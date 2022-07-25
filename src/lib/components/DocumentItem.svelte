@@ -19,8 +19,19 @@
     .selected{
         background-color: #ccebff;
     }
+
+    :global(body.dark-mode) .selected{
+        background-color: rgb(211, 211, 211);
+        color: black;
+    }
+
     .notSelected:hover{
         background-color: #e6f2ff;
+    }
+
+    :global(body.dark-mode) .notSelected:hover{
+        background-color: rgb(211, 211, 211);
+        color: black;
     }
     tr {
      height: 5vh;
@@ -33,10 +44,6 @@
         padding-left: 10px;
         border-bottom:1px solid rgb(97, 96, 96);  
 	}
-
-    /* tr:hover{
-        background-color: #e6f5ff;
-    } */
 
     
 </style>

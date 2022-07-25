@@ -141,6 +141,10 @@
         border-collapse: collapse;
         background-color: white;
 	}
+
+    :global(body.dark-mode) table{
+        background-color: rgb(49, 49, 49);
+    }
     
 	th {
 		text-transform: uppercase;
@@ -151,7 +155,12 @@
         border-bottom:1.5px solid rgb(0, 0, 0);
 	}
 
-	
+    :global(body.dark-mode) th{
+        background-color: rgb(49, 49, 49);
+        border-bottom:1.5px solid #cccccc;;
+        
+    }
+
 	.order-icon {
 		color: hsl(15, 100%, 25%);
 	}

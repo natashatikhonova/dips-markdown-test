@@ -160,6 +160,11 @@
         box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
         margin-bottom: 3px;
     }
+
+    :global(body.dark-mode) .tool-menu{
+        background-color: rgb(49, 49, 49);
+        color: white;
+    }
     
     .filteroff-button{
         width: fit-content;

@@ -8,6 +8,7 @@
   import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {ParseMarkdown} from './lib/ParseMarkdown'
+  import ThemeButton from './lib/components/ThemeButton.svelte';
   import ToolMenu from './lib/components/ToolMenu.svelte';
 
   let showSideview = true;
@@ -66,8 +67,9 @@
   <img on:click={set_default} src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test"/>
   <h3>PASIENTJOURNAL</h3>
   <div>
-    <button disabled={showSideview} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
-    <button disabled={!showSideview} title="Kontinuerlig visning" on:click={changeView}><i class="material-icons">horizontal_split</i></button>
+    <ThemeButton>Dark mode</ThemeButton>
+    <button class="switch-view-button" disabled={showSideview} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
+    <button class="switch-view-button" disabled={!showSideview} title="Kontinuerlig visning" on:click={changeView}><i class="material-icons">horizontal_split</i></button>
   </div>
 </header>
 
@@ -116,15 +118,6 @@
 
 <style>
 
-  header{
-      max-height: 40px;
-      min-height: 40px;
-      align-items: center;
-      display: flex;
-      justify-content:space-between;
-      background-color:rgb(236, 236, 236);
-    }
-
    .main {
     height: 100%;
     overflow: auto;
@@ -137,8 +130,14 @@
     flex-direction: row;
   }
 
+  /* Dips Logo */
+  img{
+    max-height: 60%;
+    min-height: 60%;
+  }
 
-  button{
+  /* Buttons that switch between views */
+  .switch-view-button{
     display: inline-flex;
     align-items: center;
     background: none;;
@@ -148,21 +147,30 @@
     cursor: pointer;
   }
 
-  img{
-    max-height: 60%;
-    min-height: 60%;
-  }
-
-  button i{
+  .switch-view-button i{
     font-size: xx-large;
   }
 
-  button:hover {
+  .switch-view-button:hover {
     color:#666363;
   }
 
-  button:disabled,
-  button[disabled]{
+  .switch-view-button:disabled,
+  .switch-view-button[disabled]{
+    color:#d43838;
+  }
+
+  /* Darkmode */
+  :global(body.dark-mode) .switch-view-button{
+    color:white;
+  }
+
+  :global(body.dark-mode) .switch-view-button:hover {
+    color:#cccccc;
+  }
+
+  :global(body.dark-mode) .switch-view-button:disabled,
+  .switch-view-button[disabled]{
     color:#d43838;
   }
 

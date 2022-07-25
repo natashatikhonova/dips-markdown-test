@@ -216,17 +216,20 @@
         }
     }
     let current_size= "0";
+    let maxSize_filter = "0"
     let scrollview_size = "125";
 
     function close(){
         //show_titles_button=!show_titles_button;
         current_size = "0";
+        maxSize_filter = "0"
         scrollview_size = "125";
         $showFiltermenu = false;
     }
 
     function open(){
         current_size = "25";
+        maxSize_filter = "50"
         scrollview_size = "100";
     }
     // function show_documents_checked_titles(event) {
@@ -254,7 +257,7 @@
         <div class="scroll-container">
             <Splitpanes theme="modern-theme">
                 
-                <Pane minSize="20px" size={current_size} maxSize="50">
+                <Pane minSize="20" size={current_size} maxSize={maxSize_filter}>
                     <FilterMenu on:close={close}/>
                     <!-- <div class="searched-titles">
                         <FilteredByTitles on:checked_titles={show_documents_checked_titles} on:close={close}/>

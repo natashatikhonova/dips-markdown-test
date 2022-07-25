@@ -10,6 +10,7 @@
     import { DocumentObject } from '../document.js';
     import { ParseMarkdown } from '../ParseMarkdown.js';
 import { Delta, TextChange } from 'typewriter-editor';
+import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
 
 
     export let showTitleBar = true;
@@ -169,8 +170,7 @@ import { Delta, TextChange } from 'typewriter-editor';
   //Put in Image:
   let  fileinput;
 	
-	const onFileSelected =(e)=>{
-  console.log("heihei")
+	const onFileSelected =(e)=>{                      
   let image = e.target.files[0];
             let reader = new FileReader();
             reader.readAsDataURL(image);
@@ -178,6 +178,7 @@ import { Delta, TextChange } from 'typewriter-editor';
 
                  editor.setHTML(editor.getHTML()+"\n <img src=" + e.target.result + ">") 
             };
+            
 }
 let suggestions_words = ["epikrise", "sykepleier", "lege", "sykdom", "sykehus", "legevakt", "fastlege"]
 let prev_suggested_word = ""
@@ -185,6 +186,10 @@ let suggested_word_startindex = -1
 let complete_suggested_word = ""
 let prev_selection = 0
 
+function file_choser(){
+  fileinput.click()
+  editor.root.focus();
+}
 
 //Autocomplete:
 function autocomplete(event){
@@ -303,6 +308,17 @@ function set_text_size(direction){
       max_size =false
     }
   }
+  editor.root.focus();
+}
+let alignment = "left"
+function align(value) {
+    alignment = value;
+    editor.root.focus();
+  }
+
+function set_autocomplete(){
+  autocompleteOn = !autocompleteOn
+  editor.root.focus();
 }
 </script>
 
@@ -322,6 +338,56 @@ function set_text_size(direction){
       </h4>
     </header>
   {/if}
+  <!-- Image menu for when images are selected
+<BubbleMenu {editor} let:active let:commands let:placement offset={8} for={'image'}>
+  <div class="bubble-menu">
+    <div data-arrow class="arrow {placement}"></div>
+    <button
+      class="bubble-menu-button"
+      class:active={active.style === 'outset-left'}
+      on:click={() => editor.formatLine({ ...editor.doc.getLineFormat(), style: 'outset-left' })}
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <rect fill="none" width="24" height="24"/>
+        <path d="M22,19 L22,21 L7,21 L7,19 L22,19 Z M22,15 L22,17 L16,17 L16,15 L22,15 Z M14,7 L14,17 L2,17 L2,7 L14,7 Z M22,11 L22,13 L16,13 L16,11 L22,11 Z M22,7 L22,9 L16,9 L16,7 L22,7 Z M22,3 L22,5 L7,5 L7,3 L22,3 Z"></path>
+      </svg>
+    </button>
+
+    <button
+      class="bubble-menu-button header3"
+      class:active={!active.style}
+      on:click={() => editor.formatLine({ ...editor.doc.getLineFormat(), style: null })}
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <rect fill="none" width="24" height="24"/>
+        <path d="M19,19 L19,21 L5,21 L5,19 L19,19 Z M19,7 L19,17 L5,17 L5,7 L19,7 Z M19,3 L19,5 L5,5 L5,3 L19,3 Z"></path>
+      </svg>
+    </button>
+
+    <button
+      class="bubble-menu-button"
+      class:active={active.style === 'outset-center'}
+      on:click={() => editor.formatLine({ ...editor.doc.getLineFormat(), style: 'outset-center' })}
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <rect fill="none" width="24" height="24"/>
+        <path d="M19,19 L19,21 L5,21 L5,19 L19,19 Z M21,7 L21,17 L3,17 L3,7 L21,7 Z M19,3 L19,5 L5,5 L5,3 L19,3 Z"></path>
+      </svg>
+    </button>
+
+    <button
+      class="bubble-menu-button"
+      class:active={active.style === 'fill-width'}
+      on:click={() => editor.formatLine({ ...editor.doc.getLineFormat(), style: 'fill-width' })}
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <rect fill="none" width="24" height="24"/>
+        <path d="M18,19 L18,21 L6,21 L6,19 L18,19 Z M21,3 L21,17 L3,17 L3,3 L21,3 Z"></path>
+      </svg>
+    </button>
+ </div>
+</BubbleMenu> -->
+
 
   <div class="toolbar">
     <Toolbar {editor} let:active let:commands>
@@ -385,7 +451,7 @@ function set_text_size(direction){
           title="Legg til bilde"
           class="toolbar-button"
           class:mobile={w<600}
-          on:click={()=>{fileinput.click()}}  ><i class="material-icons">image</i></button>
+          on:click={file_choser}  ><i class="material-icons">image</i></button>
   
           <input style="display:none" type="file" accept="*/image" on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
   
@@ -394,7 +460,7 @@ function set_text_size(direction){
           class="toolbar-button "
           class:active={autocompleteOn}
           class:mobile={w<600}
-          on:click={()=>{autocompleteOn = !autocompleteOn}}><i class="material-icons">auto_awesome</i></button>
+          on:click={set_autocomplete}><i class="material-icons">auto_awesome</i></button>
 
         </div>
 
@@ -411,6 +477,29 @@ function set_text_size(direction){
           disabled={max_size}
           class:mobile={w<600}
           on:click={() => {set_text_size("bigger")}}><i class="material-icons">zoom_in</i></button>
+        </div>
+
+        <div class="extra-functions">
+          <button
+          title="venstre"
+          class="toolbar-button"
+          class:active={alignment === 'left'}
+          class:mobile={w<600}
+          on:click={() => align("left")}><i class="material-icons">format_align_left</i></button>
+
+          <button
+          title="midten"
+          class="toolbar-button"
+          class:active={alignment === 'center'}
+          class:mobile={w<600}
+          on:click={() => align("center")}><i class="material-icons">format_align_center</i></button>
+
+          <button
+          title="høyre"
+          class="toolbar-button"
+          class:active={alignment === 'right'}
+          class:mobile={w<600}
+          on:click={() => align("right")}><i class="material-icons">format_align_right</i></button>
         </div>
 
 
@@ -436,8 +525,23 @@ function set_text_size(direction){
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
-    <div class="editor" style="border:none; font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={autocomplete} on:click={clear_check_text}></div>
+
+    <div class="editor" class:center={alignment === 'center'} class:right={alignment === 'right'} class:left={alignment === 'left'} style="font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={autocomplete} on:click={clear_check_text}></div>
+
+
 <style>
+  .active {
+  border-color: #80bdff;
+  background: #eaf4ff;
+}
+
+.right {
+  text-align: right;
+}
+.center {
+  text-align: center;
+
+}
 
 
 
@@ -588,7 +692,8 @@ function set_text_size(direction){
     margin-top: 1vh;
     margin-right: 1vh;
     margin-left: 1vh;
-    padding:0.5vh;
+    padding-left:1vw;
+    padding-right:1vw;
     height: 100%;
     overflow-y: auto;
     font-size: 11pt;

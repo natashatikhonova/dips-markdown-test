@@ -62,76 +62,88 @@
     }
     let current_size= "0";
     let documentview_size = "125";
+    let maxSize_filter = "0"
+
 
     function close(){
         //show_titles_button=!show_titles_button;
         current_size = "0";
         documentview_size = "125";
         $showFiltermenu = false;
+        maxSize_filter = "0"
     }
 
     function open(){
         current_size = "25";
         documentview_size = "100";
+        maxSize_filter = "50"
     }
 
     $: if($showFiltermenu==true){
         open()
     }
+    
 
 
 </script>
 <div class = "with-toolbar-conteiner">
     <ToolMenu hideToolBar={true}/>
-<Splitpanes theme="modern-theme">
-    <Pane minSize="20px" size={current_size} maxSize="50">
-        <FilterMenu on:close={close} showFilterByTitles={false}/>
-    </Pane>
-    <Pane size={documentview_size}>
-        <div class="table-container" >
-            <table>
-                <!--copied from https://svelte.dev/repl/f04266dcd39c4024b1e89084aa549844?version=3.31.2 -->
-                <thead>
-                    <tr>
-                        {#each tableHeaders as header}
-                            <th class:highlighted={selectedHeader === header} on:click={() => sortByString(header)}>
-                                <!-- {header.replace("_", " ")} -->
-                                <!-- Swithes language to norwegian -->
-                                {#if header == "title"}
-                                    {"Tittel"}
-                                {:else if header == "date"}
-                                    {"Dato"}
-                                {:else if header == "author"}
-                                    {"Forfatter"}
-                                {/if}
-                                
-                    
-                                {#if header === selectedHeader}	
-                                    <span class="order-icon" on:click={() => ascendingOrder = !ascendingOrder}>
-                                        {@html ascendingOrder ? "&#9661;" : "&#9651;"}
-                                    </span>		
-                                {/if}	
-                            </th>	
-                        {/each}
-                </tr>
-                </thead>
-            
-                <tbody>
-                    <!-- {#each $documentList as item} -->
-                    {#each filteredDocumentlist as item}
-                        {#if $currentDocumentObject === item}
-                            <DocumentItem document = {item} chosen = {true} /> <!--add color if file is chosen -->
-                        {:else} 
-                            <DocumentItem document = {item} chosen = {false} />
-                        {/if}
-                    {/each} 
-                </tbody>
+
+
+    <Splitpanes theme="modern-theme">
+
+        <Pane minSize={"20"} size={current_size} maxSize={maxSize_filter}>
+            <FilterMenu on:close={close} showFilterByTitles={false}/>
+        </Pane>
+ 
+    
+        <Pane size={documentview_size}>
+            <div class="table-container" >
+                <table>
+                    <!--copied from https://svelte.dev/repl/f04266dcd39c4024b1e89084aa549844?version=3.31.2 -->
+                    <thead>
+                        <tr>
+                            {#each tableHeaders as header}
+                                <th class:highlighted={selectedHeader === header} on:click={() => sortByString(header)}>
+                                    <!-- {header.replace("_", " ")} -->
+                                    <!-- Swithes language to norwegian -->
+                                    {#if header == "title"}
+                                        {"Tittel"}
+                                    {:else if header == "date"}
+                                        {"Dato"}
+                                    {:else if header == "author"}
+                                        {"Forfatter"}
+                                    {/if}
+                                    
+                        
+                                    {#if header === selectedHeader}	
+                                        <span class="order-icon" on:click={() => ascendingOrder = !ascendingOrder}>
+                                            {@html ascendingOrder ? "&#9661;" : "&#9651;"}
+                                        </span>		
+                                    {/if}	
+                                </th>	
+                            {/each}
+                    </tr>
+                    </thead>
+
                 
-            </table>
-        </div>
-    </Pane>
-</Splitpanes>
+                    <tbody>
+                        <!-- {#each $documentList as item} -->
+                        {#each filteredDocumentlist as item}
+                            {#if $currentDocumentObject === item}
+                                <DocumentItem document = {item} chosen = {true} /> <!--add color if file is chosen -->
+                            {:else} 
+                                <DocumentItem document = {item} chosen = {false} />
+                            {/if}
+                        {/each} 
+                    </tbody>
+                    
+                </table>
+            </div>
+        </Pane>
+    </Splitpanes>
 </div>
+
 <button title="Ny notat"class="add-button" class:mobile = {w<600} class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
 
 <style>
@@ -145,7 +157,7 @@
     :global(body.dark-mode) table{
         background-color: rgb(49, 49, 49);
     }
-    
+
 	th {
 		text-transform: uppercase;
         background: rgb(253, 253, 253);

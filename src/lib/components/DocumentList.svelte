@@ -83,7 +83,7 @@
 </script>
 <div class = "with-toolbar-conteiner">
     <ToolMenu hideToolBar={true}/>
-<Splitpanes >
+<Splitpanes theme="modern-theme">
     <Pane minSize="20px" size={current_size} maxSize="50">
         <FilterMenu on:close={close} showFilterByTitles={false}/>
     </Pane>
@@ -141,6 +141,10 @@
         border-collapse: collapse;
         background-color: white;
 	}
+
+    :global(body.dark-mode) table{
+        background-color: rgb(49, 49, 49);
+    }
     
 	th {
 		text-transform: uppercase;
@@ -151,7 +155,12 @@
         border-bottom:1.5px solid rgb(0, 0, 0);
 	}
 
-	
+    :global(body.dark-mode) th{
+        background-color: rgb(49, 49, 49);
+        border-bottom:1.5px solid #cccccc;
+        
+    }
+
 	.order-icon {
 		color: hsl(15, 100%, 25%);
 	}
@@ -159,6 +168,10 @@
 	.highlighted {
 		color: #cf2417;
 	}
+
+    :global(body.dark-mode) .highlighted{
+        color: rgb(148, 17, 17);
+    }
 
     .table-container{
         min-width: none;

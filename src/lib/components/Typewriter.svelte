@@ -309,6 +309,7 @@ function set_text_size(direction){
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
+
 <!-- source: https://github.com/typewriter-editor/typewriter -->
   {#if showTitleBar}
     <header class="tool-menu">
@@ -359,7 +360,7 @@ function set_text_size(direction){
           class:mobile={w<600}
           on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
         <button
-          title="Nummeret liste"
+          title="Nummerert liste"
           class="toolbar-button"
           class:active={active.orderedList}
           class:mobile={w<600}
@@ -403,13 +404,13 @@ function set_text_size(direction){
           class="toolbar-button"
           disabled={min_size}
           class:mobile={w<600}
-          on:click={() => {set_text_size("lower")}}><i class="material-icons">text_decrease</i></button>
+          on:click={() => {set_text_size("lower")}}><i class="material-icons">zoom_out</i></button>
           <button
           title="Zoom in"
           class="toolbar-button"
           disabled={max_size}
           class:mobile={w<600}
-          on:click={() => {set_text_size("bigger")}}><i class="material-icons">text_increase</i></button>
+          on:click={() => {set_text_size("bigger")}}><i class="material-icons">zoom_in</i></button>
         </div>
 
 
@@ -436,8 +437,9 @@ function set_text_size(direction){
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
     <div class="editor" style="border:none; font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={autocomplete} on:click={clear_check_text}></div>
-
 <style>
+
+
 
 .tool-menu{
         width: 100%;
@@ -448,6 +450,10 @@ function set_text_size(direction){
         margin-bottom: 3px; */
 }
 
+:global(body.dark-mode) .tool-menu{
+  background-color: rgb(49,49,49);
+  color: #cccccc;
+}
   :global(.editor code){
     color:lightgray;
   
@@ -475,6 +481,10 @@ function set_text_size(direction){
     /* min-width: min-content; */
   }
 
+  :global(body.dark-mode) .toolbar{
+    background-color: rgb(32, 32, 32);
+  }
+
   .toolbar-button {
     display: flex;
     justify-content: center;
@@ -499,6 +509,22 @@ function set_text_size(direction){
   .toolbar-button.active {
     border: solid 2px;
     border-color: #80bdff;
+  }
+
+  :global(body.dark-mode) .toolbar-button{
+    background-color: #353535;
+    color: #cccccc;
+    border: none;
+  }
+
+  :global(body.dark-mode) .toolbar-button:hover{
+    border-color: #b7daff;
+    box-shadow: 0 0 0 0.2rem rgba(104, 177, 255, 0.5);
+  }
+
+  :global(body.dark-mode) .toolbar-button.active{
+    border-color: #b7daff;
+    box-shadow: 0 0 0 0.2rem rgba(104, 177, 255, 0.5);
   }
 
   .header2{
@@ -535,6 +561,16 @@ function set_text_size(direction){
     border-color: #80bdff;
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
   }
+
+  :global(body.dark-mode) .dropdown-menu:hover{
+    border-color: #b7daff;
+    box-shadow: 0 0 0 0.2rem rgba(104, 177, 255, 0.5);
+  }
+
+  :global(body.dark-mode) .dropdown-menu{
+    background-color: rgb(49,49,49);
+    color: #cccccc;
+  }
   .title{
     font-weight: bold;
     font-style: italic;
@@ -557,6 +593,10 @@ function set_text_size(direction){
     overflow-y: auto;
     font-size: 11pt;
   }
+
+  :global(body.dark-mode) .editor{
+    background-color: rgb(49,49,49);
+  }
   .extra-functions{
     display: flex;
     border-left: solid rgb(74, 74, 74);
@@ -573,12 +613,20 @@ function set_text_size(direction){
     cursor: pointer;
   }
 
+  :global(body.dark-mode) .save{
+    color:#cccccc;
+  }
+
   .save:hover{
     color:#d43838;
     border:none;
     border-color: none;
     box-shadow: none;
   }  
+
+  :global(body.dark-mode) .save:hover{
+    color: #d43838;
+  }
 
   .mobile{
     margin: 2px;

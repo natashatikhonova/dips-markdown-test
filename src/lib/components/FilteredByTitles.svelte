@@ -426,6 +426,30 @@
         color:#d43838; 
     }
 
+    /* Darkmode */
+
+    /* Edit button - darkmode */
+
+    :global(body.dark-mode) .edit-button{
+        color:#cccccc;
+    }
+
+    :global(body.dark-mode) .edit-button:hover{
+        color:#d43838;
+    }
+
+    /* Search field - darkmode */
+
+    :global(body.dark-mode) input{
+        border-bottom: 1px solid #cccccc;
+        color:#cccccc;
+        
+    }
+
+    :global(body.dark-mode) ::placeholder {
+        color: #cccccc;   
+    }
+
 
     
 

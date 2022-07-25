@@ -173,11 +173,21 @@
         background: whitesmoke;
     }
 
+    :global(body.dark-mode) .main{
+        background: rgb(49, 49, 49);
+    }
+
     .top-bar{
         display: flex;
         flex-direction:row;
         background-color: #fff;
     }
+
+    :global(body.dark-mode) .top-bar{
+        background: rgb(62, 62, 62);
+    }
+
+    /* Filter buttons */
 
     .filter-options{
         display: flex;
@@ -201,6 +211,18 @@
         text-decoration:underline;
     }
 
+    /* Filter buttons - darkmode */
+    :global(body.dark-mode) .filter-options button{
+        background: rgb(62, 62, 62);
+        color: #cccccc;
+    }
+
+
+    :global(body.dark-mode) .filter-options .current-filter{
+        background: rgb(49, 49, 49);
+    }
+
+    /* Close button */
     .close{
         background: none;
         border: none;
@@ -208,6 +230,17 @@
         height: 40px;
     }
     .close:hover {
+        color:#d43838; 
+    }
+
+
+    /* Close button - darkmode */
+
+    :global(body.dark-mode) .close{
+        color: #cccccc;
+    }
+
+    :global(body.dark-mode) .close:hover{
         color:#d43838; 
     }
 

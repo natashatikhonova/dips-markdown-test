@@ -304,6 +304,11 @@ function set_text_size(direction){
     }
   }
 }
+let alignment = "left"
+function align(value) {
+    alignment = value;
+    editor.root.focus();
+  }
 </script>
 
 <head>
@@ -412,6 +417,29 @@ function set_text_size(direction){
           on:click={() => {set_text_size("bigger")}}><i class="material-icons">text_increase</i></button>
         </div>
 
+        <div class="extra-functions">
+          <button
+          title="venstre"
+          class="toolbar-button"
+          class:active={alignment === 'left'}
+          class:mobile={w<600}
+          on:click={() => align("left")}><i class="material-icons">format_align_left</i></button>
+
+          <button
+          title="midten"
+          class="toolbar-button"
+          class:active={alignment === 'center'}
+          class:mobile={w<600}
+          on:click={() => align("center")}><i class="material-icons">format_align_center</i></button>
+
+          <button
+          title="høyre"
+          class="toolbar-button"
+          class:active={alignment === 'right'}
+          class:mobile={w<600}
+          on:click={() => align("right")}><i class="material-icons">format_align_right</i></button>
+        </div>
+
 
         <div class = "controls">
           <button title="Lagre"class="save " class:mobile={w<600} on:click={save}> <i class="material-icons">save</i></button>
@@ -435,9 +463,21 @@ function set_text_size(direction){
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
-    <div class="editor" style="border:none; font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={autocomplete} on:click={clear_check_text}></div>
+    <div class="editor" class:center={alignment === 'center'} class:right={alignment === 'right'} class:left={alignment === 'left'} style="border:none; font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={autocomplete} on:click={clear_check_text}></div>
 
 <style>
+  .active {
+  border-color: #80bdff;
+  background: #eaf4ff;
+}
+
+.right {
+  text-align: right;
+}
+.center {
+  text-align: center;
+
+}
 
 .tool-menu{
         width: 100%;
@@ -552,7 +592,8 @@ function set_text_size(direction){
     margin-top: 1vh;
     margin-right: 1vh;
     margin-left: 1vh;
-    padding:0.5vh;
+    padding-left:1vw;
+    padding-right:1vw;
     height: 100%;
     overflow-y: auto;
     font-size: 11pt;

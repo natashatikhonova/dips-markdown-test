@@ -144,6 +144,14 @@ body.dark-mode .main-button:hover{
 .secundary-button:hover {
   background: rgb(226, 226, 226);
 }
+/* Darkmode secondary button */
+body.dark-mode .secundary-button{
+  background-color: #cccccc;
+}
+
+body.dark-mode .secundary-button:hover{
+  background-color: #acacac;
+}
 
 /* Add button */
 .add-button{

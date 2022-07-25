@@ -149,7 +149,7 @@
 <div class="main">
     <div class="top-bar">
         <div class="filter-options">
-            <button class:current-filter = {groupFilterView} on:click={changeToGroupFilterview} >Grupper</button>
+            <button class:current-filter = {groupFilterView} on:click={changeToGroupFilterview} >Dokumenttyper</button>
             {#if showFilterByTitles}
             <button class:current-filter = {!groupFilterView} on:click={changeToTiltelsFilterview} >Overskrifter</button>
             {/if}

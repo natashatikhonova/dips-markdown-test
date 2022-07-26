@@ -10,7 +10,7 @@
 
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
-    let documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10"];
+    let documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10", "typ11", "typ12", "typ13", "typ14"];
     
     //If the compleate menu is open
     let filterMenuOpen = false;
@@ -128,23 +128,34 @@
 </script>
 
 
+<h2>Filter dokumenttyper</h2>
 <div class="content">
-    <h2>Filter dokumenttyper</h2>
     {#if customViewMode}
-        <h3>Alle filtere:</h3>
-        <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
-        <div>
-            <button class="secundary-button" on:click={clickedAll}>{showAllButtonName}</button>
-            <button class="secundary-button" on:click={changeMode}>Filtreringsgrupper</button>
-        </div>
+        <div style="height=40%">
+            <h3>Alle filtere:</h3>
+            <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
+            <div>
+                <button class="secundary-button" on:click={clickedAll}>{showAllButtonName}</button>
+                <button class="secundary-button" on:click={changeMode}>Filtreringsgrupper</button>
+            </div>
 
-        {#each searchedDocumentTypes as item}    
-        <label class="filterItem" >
-            <input type="checkbox"  bind:group={customFilter.filters} value={item} >
-            {item}
-            <span class="checkmark"></span>
-        </label>
-        {/each}
+        </div>
+        <div class="document-types">
+
+            {#each searchedDocumentTypes as item}    
+            <label class="filterItem" >
+                <input type="checkbox"  bind:group={customFilter.filters} value={item} >
+                {item}
+                <span class="checkmark"></span>
+            </label>
+            {/each}
+        </div>
+        <div class = "save-filter-button">
+            {#if customFilter.filters.length>0}
+                <button>Lagre som filreringsgruppe</button>
+            {/if}
+
+        </div>
     {:else}    
         <h3>Filtergrupper:</h3>
         <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
@@ -184,11 +195,18 @@
 </div>
 
 <style>
-
+    h2{
+        align-self: center;
+    }
+    .save-filter-button{
+           margin-top: 10px;
+    
+    }
     .content{
         display: flex;
         flex-direction: column;
-        overflow-y: auto;
+        height: 100%;
+        overflow:none;
         padding-left: 2vw;
         padding-right: 2vw;
     }
@@ -215,6 +233,14 @@
         cursor: pointer;
     }
 
+    .document-types{
+        display: flex;
+        flex-direction: column;
+        height: 60%;
+        overflow-y: auto;
+       
+    }
+
     
     /* Darkmode */
 
@@ -239,5 +265,7 @@
     :global(body.dark-mode) ::placeholder {
         color: #cccccc;   
     }
+
+
 
 </style>

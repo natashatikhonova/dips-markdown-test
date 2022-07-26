@@ -3,6 +3,8 @@
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
 
+
+
   /* Body */
 
   body {
@@ -61,6 +63,7 @@
   .search-input:focus{
     outline:none
 }
+
 
 
 .main-button{
@@ -225,4 +228,28 @@ body.dark-mode .add-button:hover{
     background: rgb(49,49,49);
     border-radius: 7px;
   }
+
+  /* Scrollbar */
+
+      /* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #a7a7a7; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #7e7e7e; 
+}
 

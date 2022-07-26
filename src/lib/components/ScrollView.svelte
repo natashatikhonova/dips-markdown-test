@@ -1,16 +1,16 @@
 <script>
 
-    import {documentList, showSideView, searchValue, amount_searched_words, searchResult, showFiltermenu, selected_line_height, selected_text_size} from '../stores/stores.js';
+    import {documentList, searchValue, amount_searched_words, searchResult, showFiltermenu, selected_line_height, selected_text_size} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
-    import {currentlyAddingNewNote, currentlyEditingNote, globalCurrentFilterGroup} from '../stores/stores.js';
+    import {currentlyAddingNewNote, showSideView, globalCurrentFilterGroup, currentlyEditingNote} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
     import ToolMenu from './ToolMenu.svelte';
     import FilterMenu from './FilterMenu.svelte';
 
-    let show = $currentlyAddingNewNote
+    let show = $currentlyAddingNewNote;
     let sortedData = $documentList;
     let ascendingOrder = true;
     let lengde = $documentList.length;
@@ -22,7 +22,6 @@
     $: w = window.innerWidth;
     $: h = window.innerHeight;
 
-    
     // let selected_titles_nodes_List = []
     
     // $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
@@ -283,7 +282,7 @@
                 </Pane>
                 <Pane size={scrollview_size} >
                     <Splitpanes theme="modern-theme" horizontal={true} >
-                        <Pane> 
+                        <Pane > 
                             <div class:container={show} class:full-container={!show} >
                                 <!-- <input bind:value={searchValue} type="text" placeholder="Søk.." name="search"> -->
                                 <!-- {#if !show_titles_button}
@@ -306,7 +305,7 @@
                                 {/if}
                     
                                 {#if !show}
-                                    <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote || $currentlyEditingNote} on:click = {addNote}>+</button>
+                                    <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote|| $currentlyEditingNote} on:click = {addNote}>+</button>
                                 {/if}
                             </div>
                         </Pane>
@@ -356,6 +355,9 @@ header{
 :global(body.dark-mode) .arrow-up-button{
   color:#cccccc;
 }
+
+
+
 
     .searched-titles-button{
         background: none;

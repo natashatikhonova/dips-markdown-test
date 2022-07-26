@@ -1,7 +1,7 @@
 <script>
 
 
-    import { searchValue, amount_searched_words, showTitles, globalCurrentFilterGroup, myFilters, showFiltermenu, selected_line_height, selected_text_size, nofilter, allfilterOff} from '../stores/stores.js';
+    import { searchValue, amount_searched_words, showTitles, globalCurrentFilterGroup, myFilters, showFiltermenu, selected_line_height, selected_text_size, nofilter, allfilterOff, currentDocumentObject} from '../stores/stores.js';
     import { writable } from 'svelte/store';
 
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
@@ -52,13 +52,17 @@
         $allfilterOff = true
         $globalCurrentFilterGroup = $nofilter
     }
+    function open_filtermenu(){
+        $showFiltermenu = true
+        
+    }
 </script>
 
 
 
 <header class="tool-menu">
     <div class="leftmenu">
-        <button class="main-button" on:click={() =>$showFiltermenu = true}>Filter</button>
+        <button class="main-button" on:click={open_filtermenu}>Filter</button>
         <!-- alternative løsninger på filteroff -->
         <!-- <button class="main-button" on:click={() =>$showFiltermenu = true}  class:filterOn={$globalCurrentFilterGroup.filters.length != $nofilter.filters.length}>Filter</button> -->
         <!-- {#if $globalCurrentFilterGroup.length != documentTypes.length}

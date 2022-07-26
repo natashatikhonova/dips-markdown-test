@@ -288,20 +288,22 @@
                     </div>
                         
                 </div>
-
-                {#each show_titles_list_obj as elementObj}
-
-                    <div class="title">
-                        <input type="checkbox"  bind:checked={elementObj.checked} />
-
-                        <div class="title">
-
-                            {elementObj.overskrift} 
-
-                        </div>
-                    </div>
+                <div class="titles-list">
                     
-                {/each} 
+                    {#each show_titles_list_obj as elementObj}
+    
+                        <label class="title">
+                            <input type="checkbox"  bind:checked={elementObj.checked} >
+    
+                            <div class="title">
+    
+                                {elementObj.overskrift} 
+    
+                            </div>
+                        </label>
+                        
+                    {/each} 
+                </div>
             {/if}
         {:else} 
             <div class="buttons-group">
@@ -347,7 +349,9 @@
 
 <style>
     .main{
-        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        overflow: none;
         height: 100%;
         padding-left: 2vw;
         padding-right: 2vw;
@@ -424,6 +428,14 @@
     }
     .close:hover {
         color:#d43838; 
+    }
+
+    .titles-list{
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        margin-bottom: 100px;
+        overflow-y: auto;
     }
 
     /* Darkmode */

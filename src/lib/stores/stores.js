@@ -10,6 +10,10 @@ export const editor = new Editor();
 
 export let currentlyAddingNewNote = writable(false);
 
+export let currentlyEditingNote = writable(false);
+
+export let showSideView = writable(true)
+
 // let parseMarkdown = new ParseMarkdown();
 // export let parse = writable(parseMarkdown);
 

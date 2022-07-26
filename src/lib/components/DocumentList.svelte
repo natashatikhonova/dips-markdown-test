@@ -1,6 +1,6 @@
 <script>
     import DocumentItem from "./DocumentItem.svelte";
-    import {currentDocumentObject, documentList, currentlyAddingNewNote, globalCurrentFilterGroup, showFiltermenu} from '../stores/stores.js';
+    import {currentDocumentObject, documentList, currentlyAddingNewNote, globalCurrentFilterGroup, showFiltermenu, showSideView} from '../stores/stores.js';
     import ToolMenu from './ToolMenu.svelte';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilterMenu from './FilterMenu.svelte';
@@ -74,9 +74,16 @@
     }
 
     function open(){
-        current_size = "25";
-        documentview_size = "100";
-        maxSize_filter = "50"
+        if(w<600){
+            current_size = "100"
+            maxSize_filter = "100"
+            documentview_size="0"
+        }else{
+
+            current_size = "25";
+            maxSize_filter = "50"
+            documentview_size = "100";
+        }
     }
 
     $: if($showFiltermenu==true){

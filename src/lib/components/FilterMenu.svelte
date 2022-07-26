@@ -208,7 +208,7 @@
 
     .filter-options .current-filter{
         background: whitesmoke;
-        text-decoration:underline;
+        font-weight: bold;
     }
 
     /* Filter buttons - darkmode */

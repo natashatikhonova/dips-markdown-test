@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, currentlyAddingNewNote, documentList } from '../stores/stores.js';
+    import { currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote, documentList } from '../stores/stores.js';
     import {marked } from 'marked';
     import Typewriter from './Typewriter.svelte';
     import {editor} from '../stores/stores.js';
@@ -13,6 +13,7 @@
 
     function changeEdit(){
           edit=!edit;
+          $currentlyEditingNote = true;
     }
 
     function deleteNote(){

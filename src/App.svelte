@@ -5,13 +5,12 @@
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import { documentList, currentlyAddingNewNote, currentDocumentObject} from './lib/stores/stores.js';
+  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {ParseMarkdown} from './lib/ParseMarkdown'
   import ThemeButton from './lib/components/ThemeButton.svelte';
   import ToolMenu from './lib/components/ToolMenu.svelte';
 
-  let showSideview = true;
 
   //get data from file
   documents.forEach(putInDocumentList);  
@@ -38,17 +37,17 @@
     } else {
 
       $currentDocumentObject = null
-      showSideview = true;
+      $showSideView = true;
     }
 
   }
 
 
   function changeView(){
-    if($currentlyAddingNewNote){
+    if($currentlyAddingNewNote || $currentlyEditingNote){
       alert("Vennligst lagre eller avbryt!");
     } else{
-      showSideview = !showSideview;
+      $showSideView = !$showSideView;
     }
   }
   let w
@@ -56,7 +55,7 @@
   $: w = window.innerWidth;
   $: h = window.innerHeight;
 
-  let contentWiewSize = 50
+  $: contentWiewSize = w<600 && $currentDocumentObject ? 100: 50
   function set_content_view_size(event){
     contentWiewSize = event.detail
   }
@@ -67,18 +66,18 @@
   <img on:click={set_default} src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test"/>
   <h3>PASIENTJOURNAL</h3>
   <div>
-    <button class="switch-view-button" disabled={showSideview} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
-    <button class="switch-view-button" disabled={!showSideview} title="Kontinuerlig visning" on:click={changeView}><i class="material-icons">horizontal_split</i></button>
+    <button class="switch-view-button" disabled={$showSideView} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
+    <button class="switch-view-button" disabled={!$showSideView} title="Kontinuerlig visning" on:click={changeView}><i class="material-icons">horizontal_split</i></button>
     <ThemeButton/>
   </div>
 </header>
 
 
 <div class="main">
-  {#if showSideview}
+  {#if $showSideView}
     <div class="side-container"  >
       {#if $currentlyAddingNewNote}
-        {#if w > 900}
+        {#if w > 600}
         <Splitpanes theme = "modern-theme">
           <Pane>
               <ScrollView/>
@@ -86,13 +85,8 @@
           <Pane minSize="30"><ContentView width={w}/></Pane>
         </Splitpanes>
         {:else} 
-          <Splitpanes  theme = "modern-theme" horizontal={true}>
-            <Pane >
-              <ScrollView/>
-            </Pane>
-            <Pane ><ContentView width={w}/></Pane> 
-          </Splitpanes>
-          
+
+            <ScrollView/>
         {/if}
 
       {:else}

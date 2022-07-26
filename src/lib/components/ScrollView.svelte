@@ -1,19 +1,26 @@
 <script>
 
-    import {documentList, searchValue, amount_searched_words, searchResult, showFiltermenu, selected_line_height, selected_text_size} from '../stores/stores.js';
+    import {documentList, showSideView, searchValue, amount_searched_words, searchResult, showFiltermenu, selected_line_height, selected_text_size} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
-    import {currentlyAddingNewNote, globalCurrentFilterGroup} from '../stores/stores.js';
+    import {currentlyAddingNewNote, currentlyEditingNote, globalCurrentFilterGroup} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
     import ToolMenu from './ToolMenu.svelte';
     import FilterMenu from './FilterMenu.svelte';
 
-    let show = false;
+    let show = $currentlyAddingNewNote
     let sortedData = $documentList;
     let ascendingOrder = true;
     let lengde = $documentList.length;
+
+    let typewritersize = "50"
+
+    let w
+    let h
+    $: w = window.innerWidth;
+    $: h = window.innerHeight;
 
     
     // let selected_titles_nodes_List = []
@@ -228,9 +235,16 @@
     }
 
     function open(){
-        current_size = "25";
-        maxSize_filter = "50"
-        scrollview_size = "100";
+        if(w<600){
+            current_size = "100"
+            maxSize_filter = "100"
+            scrollview_size="0"
+        }else{
+
+            current_size = "25";
+            maxSize_filter = "50"
+            scrollview_size = "100";
+        }
     }
     // function show_documents_checked_titles(event) {
     //     make_nodes_list(event.detail)
@@ -253,7 +267,11 @@
 
 
     <div class="with-toolbar-conteiner">
+        {#if ($currentlyAddingNewNote || $currentlyEditingNote) &&show && w<600}
+            <ToolMenu hideToolBar={true}/>
+        {:else}
             <ToolMenu hideToolBar={false}/>
+        {/if}
         <div class="scroll-container">
             <Splitpanes theme="modern-theme">
                 
@@ -265,7 +283,7 @@
                 </Pane>
                 <Pane size={scrollview_size} >
                     <Splitpanes theme="modern-theme" horizontal={true} >
-                        <Pane size="100"> 
+                        <Pane> 
                             <div class:container={show} class:full-container={!show} >
                                 <!-- <input bind:value={searchValue} type="text" placeholder="Søk.." name="search"> -->
                                 <!-- {#if !show_titles_button}
@@ -288,20 +306,21 @@
                                 {/if}
                     
                                 {#if !show}
-                                    <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
+                                    <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote || $currentlyEditingNote} on:click = {addNote}>+</button>
                                 {/if}
                             </div>
                         </Pane>
-                        {#if show}
-                            <Pane >
+                        {#if show && ((!$showSideView && w>600) || w<600)}
+                            <Pane size={w<600 ? "100" : "50"}>
                                 <div class="editor">
                                     <Typewriter on:save = {save} on:cancel = {cancel} showTitleBar={false}/>
-                
                                 </div>
                             </Pane>
-        
                         {/if}
                     </Splitpanes>
+                    {#if w<600 && ($currentlyAddingNewNote || $currentlyEditingNote)&&!show}
+                        <button class="arrow-up-button" on:click={()=>{show=true}}>Vis <i class="material-icons">keyboard_arrow_up</i></button>
+                    {/if}
                 </Pane>
             </Splitpanes>
         </div>
@@ -320,7 +339,23 @@ header{
     
   }
 
+  .arrow-up-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 1%;
+    background: rgb(49, 49, 49);
+    border:none;
+    font-weight: bold;
+    font-size: medium;
+}
 
+:global(body.dark-mode) .arrow-up-button{
+  color:#cccccc;
+}
 
     .searched-titles-button{
         background: none;

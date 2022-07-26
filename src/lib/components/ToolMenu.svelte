@@ -194,6 +194,14 @@
         color:#666363;
     }
 
+    :global(body.dark-mode) .filteroff-button{
+        color:#cccccc;
+    }
+
+    :global(body.dark-mode) .filteroff-button:hover{
+        color:#d43838;
+    }
+
     .hidden{
         visibility: hidden;
     }

@@ -6,6 +6,7 @@
     import FilterGroupForm from './FilterGroupForm.svelte';
     const modal = writable(null);
 
+    let checkedCounter = 0
     // let original_filtered_groups = []
     let show_filtered_groups = []
     let selected_group = null
@@ -262,6 +263,20 @@
 
     }
 
+   function updateCounter(){
+    console.log("is here")
+    checkedCounter = 0
+    for(let i =0; i<original_titles_list_obj.length; i++){
+        console.log("for")
+        if (original_titles_list_obj[i].checked){
+            console.log("if")
+            checkedCounter++
+        }
+    }
+   }
+
+   $: original_titles_list_obj, updateCounter()
+
     
 
 </script>
@@ -269,14 +284,17 @@
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
+<h2>Overskrifter</h2>
+<h3>{overskrift}</h3>
 <div class="main">
-        <h2>Overskrifter</h2>
-        <h3>{overskrift}</h3>
         <input class="search-input" bind:value={searched_value} type="text" placeholder="Søk.." name="search">
 
         {#if !showFilterGroups}
-            <button class="secundary-button" on:click={removeChecked}>Nullstill</button>
-            <button class="secundary-button" on:click={show_filterGroups}>Filtreringsgrupper</button>
+            <div class="filter-buttons">
+
+                <button class="secundary-button" on:click={removeChecked}>Nullstill</button>
+                <button class="secundary-button" on:click={show_filterGroups}>Filtreringsgrupper</button>
+            </div>
 
             {#if show_titles_list_obj.length == 0}
                 <div class = "no-titles">Ingen overskrifter</div>
@@ -303,6 +321,12 @@
                         </label>
                         
                     {/each} 
+                </div>
+                <div class = "save-filter-button">
+                    {#if checkedCounter>0}
+                        <button class="secundary-button">Lagre som filreringsgruppe</button>
+                    {/if}
+            
                 </div>
             {/if}
         {:else} 
@@ -351,11 +375,15 @@
     .main{
         display: flex;
         flex-direction: column;
-        overflow: none;
         height: 100%;
         padding-left: 2vw;
         padding-right: 2vw;
     }
+    h2, h3{
+        padding-left: 2vw;
+        padding-right: 2vw;
+    }
+
     .no-titles{
         margin-top: 2vh;
     }
@@ -390,9 +418,15 @@
         display: flex;
         margin-left: 1%;
         margin-bottom: 2vh;
+        height:5%;
     }
     .checkbox-alle:hover{
         color:#d43838;
+    }
+
+    .save-filter-button{
+           margin-top: 10px;
+    
     }
 
     input[type=text] {
@@ -403,6 +437,7 @@
         margin-bottom: 2vh;
         font-size: 17px;
         width:90%;
+        height:5%;
      }
      i{
         font-size: large;
@@ -433,8 +468,7 @@
     .titles-list{
         display: flex;
         flex-direction: column;
-        height: 100%;
-        margin-bottom: 100px;
+        height: 40%;
         overflow-y: auto;
     }
 

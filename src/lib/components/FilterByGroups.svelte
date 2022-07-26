@@ -131,17 +131,18 @@
 <h2>Filter dokumenttyper</h2>
 <div class="content">
     {#if customViewMode}
-        <div style="height=40%">
+    <div class="filter-panel">
+        <div class="meta">
             <h3>Alle filtere:</h3>
             <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
             <div>
                 <button class="secundary-button" on:click={clickedAll}>{showAllButtonName}</button>
                 <button class="secundary-button" on:click={changeMode}>Filtreringsgrupper</button>
             </div>
-
+    
         </div>
         <div class="document-types">
-
+    
             {#each searchedDocumentTypes as item}    
             <label class="filterItem" >
                 <input type="checkbox"  bind:group={customFilter.filters} value={item} >
@@ -152,10 +153,11 @@
         </div>
         <div class = "save-filter-button">
             {#if customFilter.filters.length>0}
-                <button>Lagre som filreringsgruppe</button>
+                <button class="secundary-button" on:click={()=>editItem(customFilter)}>Lagre som filreringsgruppe</button>
             {/if}
-
+    
         </div>
+    </div>
     {:else}    
         <h3>Filtergrupper:</h3>
         <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
@@ -206,11 +208,30 @@
         display: flex;
         flex-direction: column;
         height: 100%;
-        overflow:none;
         padding-left: 2vw;
         padding-right: 2vw;
     }
 
+    .filter-panel{
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .meta{
+        display: flex;
+        flex-direction: column;
+        height:25%;
+    }
+
+
+    .document-types{
+        display: flex;
+        flex-direction: column;
+        height: 45%;
+        overflow-y: auto;
+        
+    }
     .group{
         display: flex;
         margin-top: 10px;
@@ -231,14 +252,6 @@
     .edit-button:hover{
         color:#d43838;
         cursor: pointer;
-    }
-
-    .document-types{
-        display: flex;
-        flex-direction: column;
-        height: 60%;
-        overflow-y: auto;
-       
     }
 
     

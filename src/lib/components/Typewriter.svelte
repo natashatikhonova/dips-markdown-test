@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, currentlyAddingNewNote } from '../stores/stores.js';
+    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote } from '../stores/stores.js';
     import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
     import asRoot from 'typewriter-editor/lib/asRoot';
@@ -50,6 +50,7 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
         editor.setHTML("");
       }
       $currentlyAddingNewNote=false;
+      $currentlyEditingNote = false;
       
     }
 
@@ -72,8 +73,9 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
         $currentlyAddingNewNote=false;
         dispatch("save");
       }else{
-        if(!$currentlyAddingNewNote){ //Edit note
+        if($currentlyEditingNote){ //Edit note
           dispatch("save");
+          $currentlyEditingNote = false;
           $documentList.forEach((element)=>{
             if (element.id === $currentDocumentObject.id){
                 element.context= toMarkdown(editor.getHTML()) + " \n";
@@ -333,7 +335,7 @@ function set_autocomplete(){
 <!-- source: https://github.com/typewriter-editor/typewriter -->
     <header class="tool-menu">
       <div>
-        {#if w<600}
+        {#if w<600  &&(!$showSideView || $currentlyAddingNewNote)}
           <button class="arrow-down-button" on:click={mobileDown}> <i class="material-icons">keyboard_arrow_down</i></button>
         {/if}
       </div>

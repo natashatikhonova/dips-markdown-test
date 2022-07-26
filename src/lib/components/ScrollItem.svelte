@@ -1,5 +1,5 @@
 <script>
-    import {currentDocumentObject, currentlyAddingNewNote} from '../stores/stores.js';
+    import {currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
     import { marked } from 'marked';
 
@@ -16,6 +16,7 @@
     function editItem(){
         currentDocumentObject.set(document);
         dispatch('editItem');
+        $currentlyEditingNote = true;
     }
  
 </script>

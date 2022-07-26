@@ -346,18 +346,16 @@ header{
     bottom: 0;
     width: 100%;
     padding: 1%;
-    background: rgb(49, 49, 49);
+    background: rgb(255, 255, 255);
     border:none;
     font-weight: bold;
     font-size: medium;
 }
 
 :global(body.dark-mode) .arrow-up-button{
-  color:#cccccc;
+   background: rgb(49, 49, 49);
+   color:#cccccc;
 }
-
-
-
 
     .searched-titles-button{
         background: none;

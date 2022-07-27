@@ -1,9 +1,11 @@
 <script>
-    import {documentList, globalCurrentFilterGroup, saved_filter_groups, allfilterOff} from '../stores/stores';
+    import {documentList, current_doctype_filtergroup, titles_filter_groups, allfilterOff, all_markdown_titles} from '../stores/stores';
     import {createEventDispatcher} from 'svelte';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
-    import FilterGroupForm from './FilterGroupForm.svelte';
+    import FilterTitlesForm from './FilterTitlesForm.svelte';
+    import FilterForm from './FilterForm.svelte';
+
     const modal = writable(null);
 
     let checkedCounter = 0
@@ -24,7 +26,7 @@
     let edit_obj_indeks = null
     $: overskrift = showFilterGroups ? "Filtergrupper:" : "Alle overskrifter:"
 
-    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.filters.includes(item.title))));
+    $: filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
 
     function showModal (){
         adding_new_group = true;
@@ -34,11 +36,34 @@
         for(let i=0; i<original_titles_list_obj.length; i++){
             original_titles_list_obj[i].checked = false
         }
-        modal.set(bind(FilterGroupForm, { original_titles_list_obj: original_titles_list_obj, edit_bool: edit_bool, edit_obj_indeks: edit_obj_indeks, group_name: (edit_bool) ? $saved_filter_groups[edit_obj_indeks].name : ""}))
-        console.log(edit_bool)
-    
+
+        modal.set(bind(FilterForm, {edit_bool: edit_bool,  typeOfForm: "titles", edit_obj_indeks: edit_obj_indeks, original_list_obj: object_makeover(original_titles_list_obj)}))
+        // modal.set(bind(FilterGroupForm, { original_titles_list_obj: original_titles_list_obj, edit_bool: edit_bool, edit_obj_indeks: edit_obj_indeks, group_name: (edit_bool) ? $titles_filter_groups[edit_obj_indeks].name : ""}))
+        // console.log(edit_bool)
+        
     }
     
+    function editGroup(group){
+        for(let i = 0; i<$titles_filter_groups.length; i++ ){
+            if ($titles_filter_groups[i].name === group.name){
+                edit_bool = true;
+                edit_obj_indeks = i;
+                break
+            }
+        }
+        
+       showModal()
+    }
+    
+
+    function object_makeover(original_titles_list_obj){
+
+        let original_list_nodeStrings = []
+        for(let i =0; i<original_titles_list_obj.length; i++){
+            original_list_nodeStrings.push({name: original_titles_list_obj[i].overskrift, checked: original_titles_list_obj[i].checked}) 
+        }
+        return original_list_nodeStrings 
+    }
     
     
     const sortByString = () => {
@@ -60,7 +85,8 @@
 
     $: if(selected_group != null){ 
         // console.log(selected_group.titles) 
-        dispatch("checked_titles", selected_group.titles) 
+        console.log(selected_group)
+        dispatch("checked_titles", [{nodes: selected_group.filters}]) 
     } 
 
     $: filteredDocumentlist, load_documents(filteredDocumentlist)
@@ -82,8 +108,18 @@
             // console.log("\nALL_NODES:")
             // console.log(all_nodes)
             //All the nodes containing the searched_value
+            
             searched_titles_nodes = all_nodes.filter(item => (item.id != 0));
-            original_titles_list_obj = make_titles_obj_list(searched_titles_nodes)
+            original_titles_list_obj= make_titles_obj_list(searched_titles_nodes)
+            $all_markdown_titles = []
+            //copy som evalues to the store:
+            for (let i = 0 ; i<original_titles_list_obj.length; i++){
+                console.log(original_titles_list_obj[i])
+                $all_markdown_titles.push({overskrift: original_titles_list_obj[i].overskrift, nodes: original_titles_list_obj[i].nodes})
+            
+            }
+            
+
             // $selectedTitlesList = original_titles_list_obj.filter((item) => (item.checked))
             sortByString()
     }
@@ -113,6 +149,7 @@
                        if (node.overskrift == original_titles_list_obj[i].overskrift) {
                            if (original_titles_list_obj[i].checked) {
                                new_element = {overskrift: node.overskrift, nodes: [node], checked: true }
+                          
                                found_in_list = true
                            } 
                            break;
@@ -123,6 +160,7 @@
                    }
                }
                obj_list.push(new_element)
+             
                // console.log(new_element)
            }
 
@@ -135,8 +173,8 @@
         adding_new_group = false
     }
 
-    $: $saved_filter_groups, stopAddingGroup()
-    // $: $saved_filter_groups, console.log(adding_new_group)
+    $: $titles_filter_groups, stopAddingGroup()
+    // $: $titles_filter_groups, console.log(adding_new_group)
 
     $: if ((searched_value.length >= 0) && !showFilterGroups){ //Updates the shown titles with search on titles
     
@@ -157,11 +195,11 @@
     }
 
     $: if (((searched_value.length >= 0) || (adding_new_group == false))&& showFilterGroups){ //Updates the shown groups with search on groups
-        // console.log($saved_filter_groups)
+        // console.log($titles_filter_groups)
         if (searched_value != ""){
-            show_filtered_groups = $saved_filter_groups.filter(item => (item.name.toLowerCase().includes(searched_value.toLowerCase())))
+            show_filtered_groups = $titles_filter_groups.filter(item => (item.name.toLowerCase().includes(searched_value.toLowerCase())))
         } else {
-            show_filtered_groups = $saved_filter_groups
+            show_filtered_groups = $titles_filter_groups
         }
         
     }
@@ -175,8 +213,8 @@
         for(let i=0; i<original_titles_list_obj.length; i++){
             original_titles_list_obj[i].checked = false
         }
-        for(let i=0; i<$saved_filter_groups.length; i++){
-            $saved_filter_groups[i].checked = false
+        for(let i=0; i<$titles_filter_groups.length; i++){
+            $titles_filter_groups[i].checked = false
         }
         
     }
@@ -207,30 +245,20 @@
     }
 
     function deleteGroup(group_name){
-        for(let i = 0; i<$saved_filter_groups.length; i++ ){
-            if ($saved_filter_groups[i].name === group_name){
-                if ($saved_filter_groups[i].checked) {
-                    $saved_filter_groups[i].checked = false
+        for(let i = 0; i<$titles_filter_groups.length; i++ ){
+            if ($titles_filter_groups[i].name === group_name){
+                if ($titles_filter_groups[i].checked) {
+                    $titles_filter_groups[i].checked = false
                     set_selected_group(null)
                     dispatch("checked_titles", []) //Sets the shown documents to all the documents in $documentList
                 }
                 console.log(group_name)
-                $saved_filter_groups.splice(i, 1)
-                $saved_filter_groups = $saved_filter_groups
+                $titles_filter_groups.splice(i, 1)
+                $titles_filter_groups = $titles_filter_groups
               
                 break
             }
         }
-    }
-    function editGroup(group_name){
-        for(let i = 0; i<$saved_filter_groups.length; i++ ){
-            if ($saved_filter_groups[i].name === group_name){
-                edit_bool = true;
-                edit_obj_indeks = i;
-                break
-            }
-        }
-        showModal()
     }
 
     function closed_modal(){
@@ -354,7 +382,7 @@
 
                         </div>
                         <div class="group-buttons">
-                            <button class="edit-button" title ="Rediger" on:click={()=>editGroup(groupObj.name)} ><i class="material-icons">edit</i></button>
+                            <button class="edit-button" title ="Rediger" on:click={()=>editGroup(groupObj)} ><i class="material-icons">edit</i></button>
                             <button class="edit-button" title="Slett" on:click={()=>deleteGroup(groupObj.name)}><i class="material-icons">delete</i></button>
                         </div>
 

@@ -1,5 +1,5 @@
 <script>
-    import {saved_filter_groups} from '../stores/stores';
+    import {titles_filter_groups} from '../stores/stores';
     import { getContext, setContext } from 'svelte';
 
 
@@ -25,17 +25,17 @@
 
             console.log("True")
 
-            for (let i = 0; i < $saved_filter_groups[edit_obj_indeks].titles.length; i++) {
-                // console.log ($saved_filter_groups[edit_obj_indeks].titles)
+            for (let i = 0; i < $titles_filter_groups[edit_obj_indeks].titles.length; i++) {
+                // console.log ($titles_filter_groups[edit_obj_indeks].titles)
 
                 for (let j = 0; j < original_titles_list_obj.length; j++){
 
-                    if (original_titles_list_obj[j].overskrift === $saved_filter_groups[edit_obj_indeks].titles[i].overskrift){
+                    if (original_titles_list_obj[j].overskrift === $titles_filter_groups[edit_obj_indeks].titles[i].overskrift){
                         // console.log("\n\n")
                         // console.log(original_titles_list_obj[j])
                         // console.log("Setter checked til true")
                         original_titles_list_obj[j].checked = true
-                        console.log($saved_filter_groups)
+                        console.log($titles_filter_groups)
                     }
 
                 }
@@ -48,8 +48,8 @@
     
 
     function name_used(group_name){
-        for(let i = 0; i < $saved_filter_groups.length; i++){
-            if ( ($saved_filter_groups[i].name == group_name) && (i != edit_obj_indeks)) return true;
+        for(let i = 0; i < $titles_filter_groups.length; i++){
+            if ( ($titles_filter_groups[i].name == group_name) && (i != edit_obj_indeks)) return true;
         }
         return false
     }
@@ -73,16 +73,16 @@
                 alert("Du må velge minst 1 overskrift")
             } else {
                 if (edit_bool) { //Edited group
-                    $saved_filter_groups[edit_obj_indeks] = {name: group_name, titles: checked_titles, checked: false}
-                    console.log($saved_filter_groups)
+                    $titles_filter_groups[edit_obj_indeks] = {name: group_name, titles: checked_titles, checked: false}
+                    console.log($titles_filter_groups)
                     edit_bool = false
                    
                     
                 } else { //New group 
-                    $saved_filter_groups.push({name: group_name, titles: checked_titles, checked: false})
+                    $titles_filter_groups.push({name: group_name, titles: checked_titles, checked: false})
                     // console.log("Lagt til ny gruppe i store")
                 }
-                $saved_filter_groups = $saved_filter_groups
+                $titles_filter_groups = $titles_filter_groups
                 close()
 
             }

@@ -1,39 +1,44 @@
 <script>
 
-    import {globalCurrentFilterGroup, myFilters, nofilter, allfilterOff} from '../stores/stores';
+    import {current_doctype_filtergroup, doctype_filter_groups, nofilter, allfilterOff, documentTypes} from '../stores/stores';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
 
     //Alt fra filtergrupper 
-    import FilterDoctypeForm from './FilterDoctypeForm.svelte';
+    import FilterForm from './FilterForm.svelte';
     const modal = writable(null);
 
-    //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
-    //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
-    let documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10", "typ11", "typ12", "typ13", "typ14"];
-    
     //If the compleate menu is open
     let filterMenuOpen = false;
     let customViewMode = true;
 
-
+    let edit_obj_indeks = null //index in the array to the group in store we are editing
     let filter_searched_value = "";
     let filtergroup_searched_value ="";
 
     let myCurrentfilterGroup = $nofilter;
 
     // let customFilter = {id: -1, name: "", filters: $nofilter.filters}
-    let customFilter = {id: -1, name: "", filters: $globalCurrentFilterGroup.filters};
+    let customFilter = {id: -1, name: "", filters: $current_doctype_filtergroup.filters};
 
-    let currentFilterobj = $globalCurrentFilterGroup;
+    let currentFilterobj = $current_doctype_filtergroup;
 
     let showAllButtonName = "Nullstill"
+    let original_doctypes = make_obj_list()
 
-    $: searchedDocumentTypes = $nofilter.filters.filter(item => (item.toLowerCase().includes(filter_searched_value.toLowerCase())));
+    function make_obj_list(){
+        let obj_list =  []
+        for (let i = 0; i < documentTypes.length; i++) {
+            obj_list.push({name: documentTypes[i], checked: false})
+        }
+        return obj_list
+    }
 
-    $: searchedFiltergroups = $myFilters.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
+    $: searchedDocumentTypes = original_doctypes.filter(item => (item.name.toLowerCase().includes(filter_searched_value.toLowerCase())));
 
-    $: $globalCurrentFilterGroup = currentFilterobj
+    $: searchedFiltergroups = $doctype_filter_groups.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
+
+    $: $current_doctype_filtergroup = currentFilterobj
 
     $: if($allfilterOff){
         currentFilterobj = $nofilter
@@ -71,7 +76,7 @@
     function relevantSort(list, value){
         let startsWithSearch = []
         for(let i = 0; i<list.length; i++){
-            if (list[i].toLowerCase().startsWith(value)){
+            if (list[i].name.toLowerCase().startsWith(value)){
                 startsWithSearch.push(list[i])
                 list.splice(i, 1)
             }
@@ -84,18 +89,18 @@
     //For the custom mode
     
     //Sorting the documentstitels alfabetic
-    const sortByString = () => {
-        let sortedData = documentTypes.sort((obj1, obj2) => {
-            if (obj1 < obj2) {
-                    return -1;
-            } else if (obj1 > obj2) {
-                return 1;
-            }
-            return 0; //string code values are equal		
-        });
-        documentTypes = sortedData;
-    }
-    sortByString()
+    // const sortByString = () => {
+    //     let sortedData = documentTypes.sort((obj1, obj2) => {
+    //         if (obj1 < obj2) {
+    //                 return -1;
+    //         } else if (obj1 > obj2) {
+    //             return 1;
+    //         }
+    //         return 0; //string code values are equal		
+    //     });
+    //     documentTypes = sortedData;
+    // }
+    // sortByString()
 
 
     function clickedAll(){
@@ -111,18 +116,28 @@
     }
 
     //For stored filtergroupsview
+    function find_index(filterGroup){
+      
+        for(let i = 0; $doctype_filter_groups.length; i++){
+            if ($doctype_filter_groups[i].id == filterGroup.id) {
+                return i
+            }
 
+        }
+        return -1
+    }
     //User clicked on edit and program swich mode with current crop as start point
     function editItem(group){
         manageGroup = true
-        modal.set(bind(FilterDoctypeForm,{edit_bool: false, newFilterObj : group}))
+        modal.set(bind(FilterForm,{edit_bool: true, typeOfForm: "doc", edit_obj_indeks: find_index(group), original_list_obj: original_doctypes}))
     }
 
     let manageGroup = false
     function openModel(){
         manageGroup = true
-        modal.set(bind(FilterDoctypeForm,{edit_bool: false}))
+        modal.set(bind(FilterForm,{edit_bool: false, typeOfForm: "doc", edit_obj_indeks: edit_obj_indeks, original_list_obj: original_doctypes}))
     }
+
     
 
 </script>
@@ -145,8 +160,9 @@
     
             {#each searchedDocumentTypes as item}    
             <label class="filterItem" >
-                <input type="checkbox"  bind:group={customFilter.filters} value={item} >
-                {item}
+                <!-- <input type="checkbox"  bind:group={customFilter.filters} value={item} > -->
+                <input type="checkbox"  bind:checked={item.checked}>
+                {item.name}
                 <span class="checkmark"></span>
             </label>
             {/each}
@@ -168,27 +184,27 @@
         </div>
         <div class="filtermenu-button-conteiner">
 
-        </div>
-
-        <!-- <div class="filterItem-button" class:active={currentFilterobj == nofilter} on:click={() => currentFilterobj = nofilter} value="alle">
-            Vis allt
-        </div> -->
+            
+            <!-- <div class="filterItem-button" class:active={currentFilterobj == nofilter} on:click={() => currentFilterobj = nofilter} value="alle">
+                Vis allt
+            </div> -->
             {#each searchedFiltergroups as filter}
-
+            
             <div class="group">
                 <input type="radio" checked={currentFilterobj  == filter} on:change={() => currentFilterobj  = filter} value={filter.filters} />
-
+                
                 <div class="title">
                     {filter.name} 
                 </div>
-
+                
                 <div class="group-buttons">
                     <button class="edit-button" title ="Rediger" on:click={()=>editItem(filter)} ><i class="material-icons">edit</i></button>
-                    <button class="edit-button" title="Slett" on:click={()=> $myFilters = $myFilters.filter(item => (item.id != filter.id))}><i class="material-icons">delete</i></button>
+                    <button class="edit-button" title="Slett" on:click={()=> $doctype_filter_groups = $doctype_filter_groups.filter(item => (item.id != filter.id))}><i class="material-icons">delete</i></button>
                 </div>
-
+                
             </div>
             {/each}
+        </div>
     {/if}
 
     {#if manageGroup}
@@ -228,6 +244,7 @@
     .document-types{
         display: flex;
         flex-direction: column;
+        margin-top:20%;
         height: 45%;
         overflow-y: auto;
         

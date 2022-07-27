@@ -1,16 +1,17 @@
 <script>
-    import {doctype_filter_groups, documentTypes} from '../stores/stores';
+    import {doctype_filter_groups, titles_filter_groups} from '../stores/stores';
     import { getContext, setContext } from 'svelte';
-
+    
     export let edit_bool;
+    export let typeOfForm;
+    let saved_groups = typeOfForm == "doc" ? $doctype_filter_groups : $titles_filter_groups
+
     export let newFilterObj = {id: findNewId(), name: "", filters: []}
+    export let data;
 
     
     const { open, close } = getContext('simple-modal');
     setContext('modal', this) 
-
-    const documentTypes = ["Epikrise", "heheh", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10"];
-    documentTypes.sort()
 
     let filter_searched_value = "";
     let allFiltersChecked = false
@@ -20,21 +21,30 @@
 
     let manageName = edit_bool ? "Rediger filtergruppe" : "Opprett ny filtergruppe"
 
-    $: searchedDocumentTypes = documentTypes.filter(item => (item.toLowerCase().includes(filter_searched_value.toLowerCase())));
-
+    $: searchedFilters = data.filter(item => (item.toLowerCase().includes(filter_searched_value.toLowerCase())));
+    console.log(newFilterObj)
 
     
-    $: if(editFilterGroup.length == documentTypes.length){
+    $: if(editFilterGroup.length == data.length){
         allFiltersChecked = true
     }
-    else if (editFilterGroup.length < documentTypes.length){
+    else if (editFilterGroup.length < data.length){
         allFiltersChecked = false
     }
     
+    function add_to_groupStore(new_group){
+        if (typeOfForm == "doc"){
+            $doctype_filter_groups.push(new_group)
+            $doctype_filter_groups = $doctype_filter_groups
+        } else {
+            $titles_filter_groups.push(new_group)
+            $titles_filter_groups = $titles_filter_groups
+        }
+    }
     //Functions for adding new filtergroups
     function findNewId(){
         let ids = []
-        $doctype_filter_groups.forEach((filter)=>ids.push(filter.id))
+        saved_groups.forEach((filter)=>ids.push(filter.id))
         let num = 1;
         while(ids.includes(num)){
             num += 1;
@@ -44,8 +54,8 @@
     
     function name_used(group_name){
         if(group_name != newFilterObj.name){
-            for(let i = 0; i < $doctype_filter_groups.length; i++){
-                if ( ($doctype_filter_groups[i].name == group_name)) return true;
+            for(let i = 0; i < saved_groups.length; i++){
+                if ( (saved_groups[i].name == group_name)) return true;
             }
         }
 
@@ -68,18 +78,17 @@
                 newFilterObj.filters = editFilterGroup
                 newFilterObj.name = editFilterName
 
-                if(!$doctype_filter_groups.includes(newFilterObj)){
-                    $doctype_filter_groups.push(newFilterObj)
+                if(!saved_groups.includes(newFilterObj)){
+                    add_to_groupStore(newFilterObj)
                 }
-                $doctype_filter_groups = $doctype_filter_groups
                 close()
             }
         }
     }
 
     function checkAll(){
-        if(editFilterGroup.length <documentTypes.length){
-            editFilterGroup = documentTypes
+        if(editFilterGroup.length <data.length){
+            editFilterGroup = data
         }
         else{
             editFilterGroup =[]
@@ -103,10 +112,10 @@
     </div>
 
     <div class="titles">
-        {#if searchedDocumentTypes.length == 0}
+        {#if searchedFilters.length == 0}
             <div class = "no-titles">Ingen documentyper</div>
         {:else}
-            {#each searchedDocumentTypes as item}    
+            {#each searchedFilters as item}    
                 <div class="title">
                 <input type="checkbox"  bind:group={editFilterGroup} value={item} >
                 <div class="title">

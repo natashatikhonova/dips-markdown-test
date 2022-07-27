@@ -3,7 +3,7 @@
     import {documentList, searchValue, amount_searched_words, searchResult, showFiltermenu, selected_line_height, selected_text_size} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
-    import {currentlyAddingNewNote, showSideView, globalCurrentFilterGroup, currentlyEditingNote} from '../stores/stores.js';
+    import {currentlyAddingNewNote, showSideView, current_doctype_filtergroup, currentlyEditingNote} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilteredByTitles from './FilteredByTitles.svelte';
@@ -24,7 +24,7 @@
 
     // let selected_titles_nodes_List = []
     
-    // $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.includes(item.title))));
+    // $: filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.includes(item.title))));
 
     // $: if (selected_titles_nodes_List.length>0) { //Hvis filtrert på overskrifter
     //     searchResult = nodeList_to_documentObjList(selected_titles_nodes_List)

@@ -9,8 +9,8 @@
     import {createEventDispatcher} from 'svelte';
     import { DocumentObject } from '../document.js';
     import { ParseMarkdown } from '../ParseMarkdown.js';
-import { Delta, TextChange } from 'typewriter-editor';
-import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
+    import { Delta, TextChange } from 'typewriter-editor';
+    import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
 
 
     export let showTitleBar = true;
@@ -132,6 +132,7 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
   }
 
   function check_text(event){
+    let prev = editor.doc.selection
     
     let key = event.key
     
@@ -145,10 +146,13 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
         for(let i = editor.doc.selection[0]-1; i >= 0; i--){ //goes backwards throught the text
           let char = editor.getText()[i-1]
           if (char == " " || i == 0 || char == "\n") {
+            
 
-            let update_delta = new Delta().retain(i).insert(editor.getText()[i].toUpperCase()).delete(1)
+            editor.insert(editor.getText()[i].toLocaleUpperCase(), {}, [i,i]).delete(1)
+            editor.select(prev)
 
-            editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+            // let update_delta = new Delta().retain(i).insert(editor.getText()[i].toUpperCase()).delete(1)
+            // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
             break;
           }
         }
@@ -175,6 +179,12 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
 
   //Put in Image:
   let  fileinput;
+
+  editor.typeset.formats.add({
+      name: 'hei',
+      selector: 't',
+      render: (attributes, children) => h('t', null, children),
+    });
 	
 	const onFileSelected =(e)=>{                      
   let image = e.target.files[0];
@@ -200,33 +210,46 @@ function file_choser(){
 //Autocomplete:
 function autocomplete(event){
 
+  let stackbefore = Object.assign({}, editor.modules.history.getStack())
+  console.log("Før:",  stackbefore)
+
   let key = event.key
-  if (key == "Tab") {
+  if (key == "Tab" && !editor.getActive().list) {
     remove_suggestion()
     editor.insert("        ");
   }
   if (!autocompleteOn){
     return
   }
+
   if ((37 <= event.keyCode) && (event.keyCode <= 40)){
       // console.log("arrow key")
       remove_suggestion()
-    }else if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
+    }
+  else if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
+  
+    console.log(prev_suggested_word)
+  if (prev_suggested_word.length > 0){
 
-      if (prev_suggested_word.length > 0){
         
-        let current_indeks = key == "Enter" ? editor.doc.selection[0]-1: editor.doc.selection[0]; 
+        let current_indeks = key == "Enter" ? editor.doc.selection[0]-1: editor.doc.selection[0];
+
+        // let current_indeks = editor.doc.selection[0];
+        editor.select([current_indeks, editor.doc.selection[0] + prev_suggested_word.length])
+        let curSel = editor.doc.selection;
+        editor.delete()
+        editor.insert(prev_suggested_word, [current_indeks, current_indeks])
+        editor.select(editor.doc.selection[0])
+        // editor.select(current_indeks)
         // console.log("legger til " + prev_suggested_word + " etter bokstav " + editor.getText()[current_indeks])
-        let update_delta = new Delta().retain(current_indeks).insert(prev_suggested_word).delete(prev_suggested_word.length+1)
-        editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
-        editor.select(current_indeks + prev_suggested_word.length)
-        console.log(editor.getDelta())
+        // let update_delta = new Delta().retain(current_indeks).insert(prev_suggested_word).delete(prev_suggested_word.length+1)
+        // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+        // editor.select(current_indeks + prev_suggested_word.length)
+        // console.log(editor.getDelta())
         prev_suggested_word = ""
 
         if(key == "Enter"){
           console.log("length: "+ current_indeks + prev_suggested_word.length)
-          editor.insert('\n');
-          console.log(editor.getDelta())
         }
 
 
@@ -275,8 +298,12 @@ function autocomplete(event){
     
       // console.log("Suggested word " + suggested_word)
       // console.log(word)
-      let update_delta = new Delta().retain(current_indeks).delete(prev_suggested_word.length).insert(suggested_word, {code:true})
-      editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+      let curSel = editor.doc.selection;
+      editor.delete([curSel[0], curSel[0] + prev_suggested_word.length])
+      editor.insert(suggested_word, {code:true}, [current_indeks, current_indeks])
+      editor.select(curSel)
+      // let update_delta = new Delta().retain(current_indeks).delete(prev_suggested_word.length).insert(suggested_word, {code:true})
+      // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
       prev_suggested_word = suggested_word
       suggested_word_startindex = current_indeks
       prev_selection = current_indeks
@@ -284,12 +311,19 @@ function autocomplete(event){
       
 
     }
+    console.log("etter:", editor.modules.history.getStack())
+    editor.modules.history.setStack(stackbefore)
+    console.log("endret:", stackbefore)
 }
 function remove_suggestion(){
   if (prev_selection != editor.doc.selection[0]) {
+    
+    let curSel = editor.doc.selection;
+    editor.delete([suggested_word_startindex+1, suggested_word_startindex+1 + prev_suggested_word.length])
+    editor.select(curSel)
     // console.log("removes suggested word")
-    let update_delta = new Delta().retain(suggested_word_startindex+1).delete(prev_suggested_word.length)
-    editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+    // let update_delta = new Delta().retain(suggested_word_startindex+1).delete(prev_suggested_word.length)
+    // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
     prev_suggested_word = ""
   }
 }

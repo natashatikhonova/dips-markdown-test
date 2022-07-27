@@ -17,12 +17,11 @@ export let showSideView = writable(true)
 // let parseMarkdown = new ParseMarkdown();
 // export let parse = writable(parseMarkdown);
 
-export let documentTypes = ["Epikrise","hehehe", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10", "typ11", "typ12", "typ13", "typ14", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10", "typ11", "typ12", "typ13", "typ14"].sort();
-export let nofilter = writable({id: 0, name: "Alle", filters: documentTypes});
-export let allfilterOff = writable(false);
-
 export const selectedDocumentList=writable([]);
-
+export let documentTypes = ["Epikrise","hehehe", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10", "typ11", "typ12", "typ13", "typ14", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10", "typ11", "typ12", "typ13", "typ14"].sort();
+export let nofilter = writable({id: 0, name: "Alle", filters: documentTypes}); //default
+export let allfilterOff = writable(false);
+export let current_doctype_filtergroup = writable({id: -1, name: "", filters: documentTypes});
 export let doctype_filter_groups = writable([
     {id: 1, name: "Filter 1", filters: ["Epikrise"]},
     {id: 2, name: "Sindres filter", filters: ["Lab", "Sykepleier notat", "Rutinekontroll"]},
@@ -30,11 +29,9 @@ export let doctype_filter_groups = writable([
     {id: 4, name: "Torkilds filter", filters: ["Epikrise", "Lab", "Rutinekontroll"]},
     {id: 5, name: "Thors filter", filters: ["Lab"]}
 ]);
-export let current_doctype_filtergroup = writable({id: -1, name: "", filters: documentTypes});
 
 export let titles_filter_groups = writable([])
 export let current_titles_filtergroup = writable(null);
-
 export let all_markdown_titles = writable([]) //in diffrent object wich depends on name 
 
 

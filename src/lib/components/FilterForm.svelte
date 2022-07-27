@@ -19,10 +19,16 @@
     const { open, close } = getContext('simple-modal');
     setContext('modal', this)
     let show_list_obj =[]
+
+
     let searched_value = ""
     
     $: if (searched_value != ""){
+        console.log(original_list_obj)
         show_list_obj = original_list_obj.filter(item => (item.name.toLowerCase().includes(searched_value.toLowerCase())));
+        console.log(show_list_obj)
+    } else { 
+        show_list_obj = original_list_obj
     }
         
   
@@ -52,7 +58,7 @@
             }
         }
 
-        show_list_obj = original_list_obj
+        // show_list_obj = original_list_obj
     }
         
     
@@ -94,18 +100,18 @@
             }
         }
     }
-    function find_nodes(node_name){
-        console.log("findnodes")
-        console.log(node_name)
-        console.log($all_markdown_titles)
-        for (let i = 0; i<$all_markdown_titles.length; i++){
-            if($all_markdown_titles[i].overskrift == node_name){
-                return $all_markdown_titles[i].nodes
-            }
-        }
-        console.log("tom array")
-        return []
-    }
+    // function find_nodes(node_name){
+    //     console.log("findnodes")
+    //     console.log(node_name)
+    //     console.log($all_markdown_titles)
+    //     for (let i = 0; i<$all_markdown_titles.length; i++){
+    //         if($all_markdown_titles[i].overskrift == node_name){
+    //             return $all_markdown_titles[i].nodes
+    //         }
+    //     }
+    //     console.log("tom array")
+    //     return []
+    // }
 
     function save(){
         if (group_name == "") {

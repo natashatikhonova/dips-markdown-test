@@ -9,10 +9,10 @@
     const modal = writable(null);
 
     //If the compleate menu is open
-    let filterMenuOpen = false;
+    // let filterMenuOpen = false;
     let customViewMode = true;
 
-    let edit_obj_indeks = null //index in the array to the group in store we are editing
+    let edit_obj_indeks = -1 //index in the array to the group in store we are editing
     let filter_searched_value = "";
     let filtergroup_searched_value ="";
 
@@ -35,6 +35,18 @@
     }
 
     $: searchedDocumentTypes = original_doctypes.filter(item => (item.name.toLowerCase().includes(filter_searched_value.toLowerCase())));
+
+    $: if (searchedDocumentTypes){ //When searcheddocumentTypes have changed
+        console.log("fornadret")
+        let newFilters = []
+        for (let i = 0; i < searchedDocumentTypes.length;i++){
+            if (searchedDocumentTypes[i].checked){
+                newFilters.push(searchedDocumentTypes[i].name)
+            }
+        }
+        console.log(newFilters)
+        $current_doctype_filtergroup.filters = newFilters
+    }
 
     $: searchedFiltergroups = $doctype_filter_groups.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
 
@@ -86,9 +98,9 @@
     }
 
 
-    //For the custom mode
+    // // For the custom mode
     
-    //Sorting the documentstitels alfabetic
+    // // Sorting the documentstitels alfabetic
     // const sortByString = () => {
     //     let sortedData = documentTypes.sort((obj1, obj2) => {
     //         if (obj1 < obj2) {

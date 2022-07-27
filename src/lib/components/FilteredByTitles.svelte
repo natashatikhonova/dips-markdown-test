@@ -86,8 +86,24 @@
     $: if(selected_group != null){ 
         // console.log(selected_group.titles) 
         console.log(selected_group)
-        dispatch("checked_titles", [{nodes: selected_group.filters}]) 
+        
+        dispatch("checked_titles", find_titles_obj(selected_group.filters)) 
     } 
+    function find_titles_obj(titles_string_list){
+        console.log("findnodes")
+
+        let obj_list = []
+        for (let i = 0; i<$all_markdown_titles.length; i++){
+            for (let j = 0; j < titles_string_list.length; j++) {
+                if($all_markdown_titles[i].overskrift == titles_string_list[j]){
+                    obj_list.push($all_markdown_titles[i])
+                }
+
+            }
+        }
+        console.log(obj_list)
+        return obj_list
+    }
 
     $: filteredDocumentlist, load_documents(filteredDocumentlist)
 

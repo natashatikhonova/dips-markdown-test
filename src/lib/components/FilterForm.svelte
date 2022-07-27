@@ -40,7 +40,7 @@
                     console.log(original_list_obj[j].name )
                     console.log(saved_groups[edit_obj_indeks].filters[i])
 
-                    if (original_list_obj[j].name === saved_groups[edit_obj_indeks].filters[i].overskrift){
+                    if (original_list_obj[j].name === saved_groups[edit_obj_indeks].filters[i]){
                         // console.log("\n\n")
                         // console.log(original_list_obj[j])
                         // console.log("Setter checked til true")
@@ -120,17 +120,18 @@
 
                     original_list_obj[i].checked = false
                     console.log(original_list_obj)
-                    if(typeOfForm == "doc"){
-                        checked_filters.push(original_list_obj[i].name)
-                    }else{
-                        console.log(original_list_obj[i].name)
-                        let nodes = find_nodes(original_list_obj[i].name)
-                        console.log(nodes)
-                        for(let i = 0; i<nodes.length; i++){
-                            checked_filters.push(nodes[i])
-                        }
+                    checked_filters.push(original_list_obj[i].name)
+                    // if(typeOfForm == "doc"){
+                    //     checked_filters.push(original_list_obj[i].name)
+                    // }else{
+                    //     console.log(original_list_obj[i].name)
+                    //     let nodes = find_nodes(original_list_obj[i].name)
+                    //     console.log(nodes)
+                    //     for(let i = 0; i<nodes.length; i++){
+                    //         checked_filters.push(nodes[i])
+                    //     }
                         
-                    }
+                    // }
                 }
             }
             if (checked_filters.length == 0) {

@@ -20,7 +20,7 @@
     editor.typeset.formats.add({
       name: 'autocomplete',
       selector: 'autoSuggestion',
-      render: (attributes, children) =>{ return hFromTypewriter('autoSuggestion', null, children)},
+      render: (attributes, children) => hFromTypewriter('autoSuggestion', null, children),
     });
 	
 
@@ -68,13 +68,7 @@
     }
     //Saves the text if the text is not empty and stores the text
     function save(){
-      console.log(editor.change)
-      console.log(editor.doc.getText())
-      // editor.select([0, editor.doc.length-1]) 
-      // editor.delete()
-      // console.log(editor.doc.getText())
-
- 
+      remove_suggestion()
 
       changeEdit();
       if( toMarkdown(editor.getHTML()) === ""){ //Empty note
@@ -105,11 +99,11 @@
             let newElement = new DocumentObject($documentList.length, new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
             newElement.readable = readable
             newElement.title = selectedDocType;
+
             //Lager et tre over markdown overskriftene i teksten
             let parse = new ParseMarkdown()
-            // console.log("Før parse")
-            let tree = parse.parseAndSetIntoTree(newElement) //Her henger programmet!!. FIKSET:)
-            // console.log("Etter parse")
+            let tree = parse.parseAndSetIntoTree(newElement)
+
             newElement.markdownTree = tree;
 
             $documentList.push(newElement);
@@ -124,7 +118,6 @@
           }  
         } 
       }
-      
     }
 
   let waitingForSpaceOrEnterOrDot = false
@@ -141,7 +134,7 @@
   }
 
   function check_text(event){
-    let prev = editor.doc.selection
+    let previousEditorSelection = editor.doc.selection
     
     let key = event.key
     
@@ -157,10 +150,8 @@
           if (char == " " || i == 0 || char == "\n") {
 
             editor.insert(editor.getText()[i].toLocaleUpperCase(), {}, [i,i+1])
-            editor.select(prev)
+            editor.select(previousEditorSelection)
 
-            // let update_delta = new Delta().retain(i).insert(editor.getText()[i].toUpperCase()).delete(1)
-            // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
             break;
           }
         }
@@ -168,19 +159,18 @@
         dot_has_happend = false
     }
 
-      if(key == "Enter"){
-        waitingForSpaceOrEnterOrDot = true
-        dot_has_happend = true
-      }
+    if(key == "Enter"){
+      waitingForSpaceOrEnterOrDot = true
+      dot_has_happend = true
+    }
 
-      if (key == ".") {
-        dot_has_happend = true
-      }
+    if (key == ".") {
+      dot_has_happend = true
+    }
 
-      if (key == " " && dot_has_happend) {
-        waitingForSpaceOrEnterOrDot = true
-      }
-
+    if (key == " " && dot_has_happend) {
+      waitingForSpaceOrEnterOrDot = true
+    }
   }
   // console.log(marked("|  |  |  |  |  | \n |:---:|---|---|---|---| \n |  |  |  |  |  | \n |  |  |  |  |  | \n |  |  |  |  |  |"))
 
@@ -191,14 +181,12 @@
 
 	const onFileSelected =(e)=>{                      
   let image = e.target.files[0];
-            let reader = new FileReader();
-            reader.readAsDataURL(image);
-            reader.onload = e => {
-
-                 editor.setHTML(editor.getHTML()+"\n <img src=" + e.target.result + ">") 
-            };
-            
-}
+  let reader = new FileReader();
+  reader.readAsDataURL(image);
+  reader.onload = e => {
+    editor.setHTML(editor.getHTML()+"\n <img src=" + e.target.result + ">") 
+    };      
+  }
 let suggestions_words = ["epikrise", "sykepleier", "lege", "sykdom", "sykehus", "legevakt", "fastlege"]
 let prev_suggested_word = ""
 let suggested_word_startindex = -1
@@ -221,13 +209,13 @@ function whenKeyDown(event){
   if ((37 <= event.keyCode) && (event.keyCode <= 40)){
       //Arrow keys
       remove_suggestion()
+      waitingForSpaceOrEnterOrDot = false
+      dot_has_happend = false
   }
 
   else if (autocompleteOn){
     autocomplete(key)
   }
-
-
 } 
 
 //Autocomplete:
@@ -249,14 +237,6 @@ function autocomplete(key){
 
       editor.insert(prev_suggested_word, [current_indeks, current_indeks])
       editor.select(editor.doc.selection[0])
-
-      //Before
-      // editor.select(current_indeks)
-      // console.log("legger til " + prev_suggested_word + " etter bokstav " + editor.getText()[current_indeks])
-      // let update_delta = new Delta().retain(current_indeks).insert(prev_suggested_word).delete(prev_suggested_word.length+1)
-      // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
-      // editor.select(current_indeks + prev_suggested_word.length)
-      // console.log(editor.getDelta())
 
       prev_suggested_word = ""
 
@@ -314,10 +294,6 @@ function autocomplete(key){
 
     editor.modules.history.setStack(historyStackBefore)
 
-    //Before
-    // let update_delta = new Delta().retain(current_indeks).delete(prev_suggested_word.length).insert(suggested_word, {code:true})
-    // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
-
     prev_suggested_word = suggested_word
     suggested_word_startindex = current_indeks
     prev_selection = current_indeks
@@ -337,9 +313,6 @@ function remove_suggestion(){
 
     editor.modules.history.setStack(historyStackBefore)
     
-    //Before
-    // let update_delta = new Delta().retain(suggested_word_startindex+1).delete(prev_suggested_word.length)
-    // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
     prev_suggested_word = ""
   }
 }

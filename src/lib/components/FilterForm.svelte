@@ -1,69 +1,44 @@
 <script>
-    import {doctype_filter_groups, titles_filter_groups, all_markdown_titles, current_doctype_filtergroup } from '../stores/stores';
+    import {doctype_filter_groups, current_doctype_filtergroup } from '../stores/stores';
     import { getContext, setContext } from 'svelte';
-
 
     export let original_list_obj =[]
     export let edit_bool;
     export let edit_obj_indeks;
-    export let typeOfForm;
 
-    let saved_groups = typeOfForm == "doc" ? $doctype_filter_groups : $titles_filter_groups
-    let group_name = edit_bool ? saved_groups[edit_obj_indeks].name : ""
-   
+    let group_name = edit_bool ? $doctype_filter_groups [edit_obj_indeks].name : ""
     let manageName = edit_bool ? "Rediger filtergruppe" : "Opprett ny filtergruppe"
-    let filterType = typeOfForm == "doc" ? "dokumenttyper" : "overskrifter"
-    
-
-
-    const { open, close } = getContext('simple-modal');
-    setContext('modal', this)
     let show_list_obj =[]
-
-
     let searched_value = ""
     
-    $: if (searched_value != ""){
+    //modal
+    const { close } = getContext('simple-modal');
+    setContext('modal', this)
 
+    
+    //filter list by search
+    $: if (searched_value != ""){
         show_list_obj = original_list_obj.filter(item => (item.name.toLowerCase().includes(searched_value.toLowerCase())));
      
     } else { 
         show_list_obj = original_list_obj
     }
         
-  
-    if (original_list_obj){
- 
-
-        if (edit_bool == true) {
-
-
-            for (let i = 0; i < saved_groups[edit_obj_indeks].filters.length; i++) {
-                //  console.log (saved_groups[edit_obj_indeks].filters)
-
-                for (let j = 0; j < original_list_obj.length; j++){
-                    // console.log(original_list_obj[j].name )
-                    // console.log(saved_groups[edit_obj_indeks].filters[i])
-
-                    if (original_list_obj[j].name === saved_groups[edit_obj_indeks].filters[i]){
-                        // console.log("\n\n")
-                        // console.log(original_list_obj[j])
-                        // console.log("Setter checked til true")
-                        original_list_obj[j].checked = true
-                        // console.log(saved_groups)
-                    }
-
+    //checks the correct items in modal
+    if (original_list_obj && edit_bool){
+        for (let i = 0; i < $doctype_filter_groups [edit_obj_indeks].filters.length; i++) {
+            for (let j = 0; j < original_list_obj.length; j++){
+                if (original_list_obj[j].name === $doctype_filter_groups [edit_obj_indeks].filters[i]){
+                    original_list_obj[j].checked = true
                 }
             }
         }
-
-        // show_list_obj = original_list_obj
     }
-        
     
+    //finds a new id for the group
     function findNewId(){
         let ids = []
-        saved_groups.forEach((filter)=>ids.push(filter.id))
+        $doctype_filter_groups.forEach((filter)=>ids.push(filter.id))
         let num = 1;
         while(ids.includes(num)){
             num += 1;
@@ -71,119 +46,80 @@
         return num;
     }
 
+    //checks if the group name was used before
     function name_used(group_name){
-        for(let i = 0; i < saved_groups.length; i++){
-            if ( (saved_groups[i].name == group_name) && (i != edit_obj_indeks)) return true;
+        for(let i = 0; i < $doctype_filter_groups .length; i++){
+            if ( ($doctype_filter_groups [i].name == group_name) && (i != edit_obj_indeks)) return true;
         }
         return false
     }
+
+    //adds new/edits exisiting group to the array
     function add_to_groupStore(group_name, index, checked_filters){
         if (index != -1) {
-            if (typeOfForm == "doc"){
-                $doctype_filter_groups[index] = {id: $doctype_filter_groups[index].id, name: group_name, filters: checked_filters}
-                $doctype_filter_groups = $doctype_filter_groups
-                $current_doctype_filtergroup = $doctype_filter_groups[index]
-                $current_doctype_filtergroup = $current_doctype_filtergroup
-            } else {
-                $titles_filter_groups[index] = {id: $doctype_filter_groups[index].id, name: group_name, filters: checked_filters}
-                $titles_filter_groups = $titles_filter_groups
-            }  
+            //edit existing group
+            $doctype_filter_groups[index] = {id: $doctype_filter_groups[index].id, name: group_name, filters: checked_filters}
+            $doctype_filter_groups = $doctype_filter_groups
+            $current_doctype_filtergroup = $doctype_filter_groups[index]
+            $current_doctype_filtergroup = $current_doctype_filtergroup
             edit_bool = false
         } else{
-            //new group
-            if (typeOfForm == "doc"){
-    
-                $doctype_filter_groups.push({id: findNewId(), name: group_name, filters: checked_filters})
-                $doctype_filter_groups = $doctype_filter_groups
-                $current_doctype_filtergroup = $doctype_filter_groups[$doctype_filter_groups.length-1]
-                $current_doctype_filtergroup = $current_doctype_filtergroup
-            } else {
-                $titles_filter_groups.push({id: findNewId(), name: group_name, filters: checked_filters})
-                $titles_filter_groups = $titles_filter_groups
-                
-            }
+            //add a new group
+            $doctype_filter_groups.push({id: findNewId(), name: group_name, filters: checked_filters})
+            $doctype_filter_groups = $doctype_filter_groups
+            $current_doctype_filtergroup = $doctype_filter_groups[$doctype_filter_groups.length-1]
+            $current_doctype_filtergroup = $current_doctype_filtergroup    
         }
     }
-    // function find_nodes(node_name){
-    //     console.log("findnodes")
-    //     console.log(node_name)
-    //     console.log($all_markdown_titles)
-    //     for (let i = 0; i<$all_markdown_titles.length; i++){
-    //         if($all_markdown_titles[i].overskrift == node_name){
-    //             return $all_markdown_titles[i].nodes
-    //         }
-    //     }
-    //     console.log("tom array")
-    //     return []
-    // }
 
+    //saves changes/new group
     function save(){
         if (group_name == "") {
             alert("Vennligst skriv inn gruppenavn!")
         } else if (name_used(group_name)) {
             alert("Gruppenavnet finnes fra før!")
-            
         }else {
             let checked_filters = []
             for (let i = 0; i<original_list_obj.length; i++){
                 if(original_list_obj[i].checked){
-
-                    // original_list_obj[i].checked = false
-                  
                     checked_filters.push(original_list_obj[i].name)
-
                 }
             }
             if (checked_filters.length == 0) {
                 alert("Du må velge minst 1 overskrift")
             } else {
                 if (edit_bool) { //Edited group
-                    add_to_groupStore(group_name, edit_obj_indeks, checked_filters)
-                    
+                    add_to_groupStore(group_name, edit_obj_indeks, checked_filters)    
                 } else { //New group 
                     add_to_groupStore(group_name, -1, checked_filters)
                 }
-                console.log($titles_filter_groups)
                 close()
-
             }
         }
     }
-
-  
 </script>
+
 <!-- <button on:click={onClose}>Custom Close Button</button> -->
 <div class = "main">
 
     <h2>{manageName}</h2>
     <input bind:value ={group_name} type="text" placeholder="Skriv inn gruppenavn.." name="search">
-    <h3>Velg {filterType}</h3>
+    <h3>Velg dokumenttyper</h3>
     <input bind:value ={searched_value} type="text" placeholder="Søk.." name="search">
     <div class="filters">
-
         {#if show_list_obj.length == 0}
-            <div class = "no-filters">Ingen {filterType}</div>
+            <div class = "no-filters">Ingen dokumenttyper</div>
         {:else}
-        
             {#each show_list_obj as elementObj}
-        
                 <div class="title">
                     <input type="checkbox" bind:checked={elementObj.checked} />
-        
-                    <div class="title">
-        
-                        {elementObj.name} 
-        
-                    </div>
-                </div>
-                            
+                    <div class="title">{elementObj.name}</div>
+                </div>                
             {/each} 
         {/if}
     </div>
 
     <button class = "main-button" on:click={save}>Lagre</button>
-    
-
 
 </div>
 

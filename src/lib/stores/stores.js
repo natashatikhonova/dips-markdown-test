@@ -32,10 +32,7 @@ export let doctype_filter_groups = writable([
     {id: 5, name: "Thors filter", filters: ["Lab"]}
 ]);
 
-export let titles_filter_groups = writable([])
-export let current_titles_filtergroup = writable(null);
 export let all_markdown_titles = writable([]) //in diffrent object wich depends on name 
-
 
 export let searchValue = writable("")
 export let amount_searched_words = writable(0)
@@ -43,9 +40,6 @@ export let amount_searched_words = writable(0)
 export let showTitles = writable(false)
 
 export let showFiltermenu = writable(false)
-
-
-
 
 export let searchResult = writable([])
 

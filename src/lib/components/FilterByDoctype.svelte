@@ -1,5 +1,5 @@
 <script>
-    import {current_doctype_filtergroup, doctype_filter_groups, nofilter, allfilterOff, documentTypes} from '../stores/stores';
+    import {current_doctype_filtergroup, doctype_filter_groups, nofilter, allfilterOff, documentTypes, searchResult, searchValue, documentList} from '../stores/stores';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
     import FilterForm from './FilterForm.svelte';
@@ -23,8 +23,7 @@
                 obj_list.push({name: documentTypes[i], checked: false})
             }
         }
-        original_doctypes = obj_list
-        
+        original_doctypes = obj_list   
     }
     
     //updates list whenever the group is changed
@@ -53,15 +52,18 @@
         showAllButtonName = "Vis alle"
     }
 
-
     //sorts by first letter whenever search value is changed
     $: if (filter_searched_value!=""){
         searchedDocumentTypes = relevantSort(searchedDocumentTypes, filter_searched_value)
     }
     $: if (filtergroup_searched_value !=""){
         searchedFiltergroups = relevantSort(searchedFiltergroups, filtergroup_searched_value)
-
     }
+
+    //sets list depending on what doctypes are chosen
+    $: filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
+    //show documents depending on main search field
+    $: $searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
 
     //changes between doctype mode and group mode
     function changeMode(){
@@ -104,7 +106,7 @@
         }
     }
 
-    //sets an index for a group
+    //finds an index of the group
     function find_index(filterGroup){
         for(let i = 0; $doctype_filter_groups.length; i++){
             if ($doctype_filter_groups[i].id == filterGroup.id) {
@@ -126,9 +128,7 @@
         } else {
             //add new group
             modal.set(bind(FilterForm,{edit_bool: false, typeOfForm: "doc", edit_obj_indeks: -1, original_list_obj: original_doctypes}))
-
         }
-
     }
 
     //happens when an item is checked

@@ -11,9 +11,18 @@
     import { ParseMarkdown } from '../ParseMarkdown.js';
     import { Delta, TextChange } from 'typewriter-editor';
     import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
+    import { lineReplacements } from 'typewriter-editor/lib/modules/smartEntry.js';
+    import { h as hFromTypewriter} from 'typewriter-editor';
 
 
     export let showTitleBar = true;
+
+    editor.typeset.formats.add({
+      name: 'autocomplete',
+      selector: 'autoSuggestion',
+      render: (attributes, children) =>{ return hFromTypewriter('autoSuggestion', null, children)},
+    });
+	
 
     let selectedDocType = "Velg dokumenttype";
 
@@ -146,9 +155,8 @@
         for(let i = editor.doc.selection[0]-1; i >= 0; i--){ //goes backwards throught the text
           let char = editor.getText()[i-1]
           if (char == " " || i == 0 || char == "\n") {
-            
 
-            editor.insert(editor.getText()[i].toLocaleUpperCase(), {}, [i,i]).delete(1)
+            editor.insert(editor.getText()[i].toLocaleUpperCase(), {}, [i,i+1])
             editor.select(prev)
 
             // let update_delta = new Delta().retain(i).insert(editor.getText()[i].toUpperCase()).delete(1)
@@ -180,12 +188,7 @@
   //Put in Image:
   let  fileinput;
 
-  editor.typeset.formats.add({
-      name: 'hei',
-      selector: 't',
-      render: (attributes, children) => h('t', null, children),
-    });
-	
+
 	const onFileSelected =(e)=>{                      
   let image = e.target.files[0];
             let reader = new FileReader();
@@ -257,10 +260,9 @@ function autocomplete(key){
 
       prev_suggested_word = ""
 
-      // if(key == "Enter"){
-      //   console.log("length: "+ current_indeks + prev_suggested_word.length)
-      // }
-
+      if(key == "Enter" && !editor.getActive().list){
+          editor.insert('\n');
+        }
     }
   }
 
@@ -307,7 +309,7 @@ function autocomplete(key){
 
     let curSel = editor.doc.selection;
     editor.delete([curSel[0], curSel[0] + prev_suggested_word.length])
-    editor.insert(suggested_word, {code:true}, [current_indeks, current_indeks])
+    editor.insert(suggested_word, {autocomplete:true}, [current_indeks, current_indeks])
     editor.select(curSel)
 
     editor.modules.history.setStack(historyStackBefore)
@@ -659,11 +661,24 @@ function set_autocomplete(){
 }
   :global(.editor code){
     color:lightgray;
-  
+
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
+  }
 
+  :global(body.dark-mode .editor code) {
+    color: #666666;
+  }
 
+  :global(.editor autoSuggestion){
+    color:lightgray;
+
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
+  }
+
+  :global(body.dark-mode .editor autoSuggestion) {
+    color: #666666;
   }
   /* :global(.editor p){
     font-size: xx-large;

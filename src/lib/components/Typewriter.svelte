@@ -210,8 +210,10 @@ function file_choser(){
 //Autocomplete:
 function autocomplete(event){
 
-  let stackbefore = Object.assign({}, editor.modules.history.getStack())
-  console.log("Før:",  stackbefore)
+  // let stackbefore = Object.assign({}, editor.modules.history.getStack())
+  // let stackbefore = editor.modules.history.getStack()
+  // editor.modules.history.clearHistory()
+  // console.log("Før:",  stackbefore)
 
   let key = event.key
   if (key == "Tab" && !editor.getActive().list) {
@@ -237,7 +239,12 @@ function autocomplete(event){
         // let current_indeks = editor.doc.selection[0];
         editor.select([current_indeks, editor.doc.selection[0] + prev_suggested_word.length])
         let curSel = editor.doc.selection;
+
+
+        let historyStackBefore = editor.modules.history.getStack()
+        editor.modules.history.clearHistory()
         editor.delete()
+        editor.modules.history.setStack(historyStackBefore)
         editor.insert(prev_suggested_word, [current_indeks, current_indeks])
         editor.select(editor.doc.selection[0])
         // editor.select(current_indeks)
@@ -299,9 +306,12 @@ function autocomplete(event){
       // console.log("Suggested word " + suggested_word)
       // console.log(word)
       let curSel = editor.doc.selection;
+      let historyStackBefore = editor.modules.history.getStack()
+      editor.modules.history.clearHistory()
       editor.delete([curSel[0], curSel[0] + prev_suggested_word.length])
       editor.insert(suggested_word, {code:true}, [current_indeks, current_indeks])
       editor.select(curSel)
+      editor.modules.history.setStack(historyStackBefore)
       // let update_delta = new Delta().retain(current_indeks).delete(prev_suggested_word.length).insert(suggested_word, {code:true})
       // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
       prev_suggested_word = suggested_word
@@ -311,9 +321,11 @@ function autocomplete(event){
       
 
     }
-    console.log("etter:", editor.modules.history.getStack())
-    editor.modules.history.setStack(stackbefore)
-    console.log("endret:", stackbefore)
+    // console.log("etter:", editor.modules.history.getStack())
+    // editor.modules.history.cutoffHistory()
+    // editor.modules.history.clearHistory()
+    // editor.modules.history.setStack(stackbefore)
+    // console.log("endret:", stackbefore)
 }
 function remove_suggestion(){
   if (prev_selection != editor.doc.selection[0]) {

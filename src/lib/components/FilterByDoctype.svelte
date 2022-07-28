@@ -1,61 +1,42 @@
 <script>
-
     import {current_doctype_filtergroup, doctype_filter_groups, nofilter, allfilterOff, documentTypes} from '../stores/stores';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
-
-    //Alt fra filtergrupper 
     import FilterForm from './FilterForm.svelte';
+
     const modal = writable(null);
-
-    //If the compleate menu is open
-    // let filterMenuOpen = false;
     let customViewMode = true;
-
     let filter_searched_value = "";
     let filtergroup_searched_value ="";
-
-    
-
+    let manageGroup = false
     let showAllButtonName = "Nullstill"
     let original_doctypes = []
-    $: $current_doctype_filtergroup, make_obj_list()
 
-    // $:$current_doctype_filtergroup, console.log("Current: Name"+$current_doctype_filtergroup.name + " Filters"+ $current_doctype_filtergroup.filters)
-
+    //make a list with all doctypes with a correct checked value
     function make_obj_list(){
         let obj_list =  []
         for (let i = 0; i < documentTypes.length; i++) {
             if($current_doctype_filtergroup.filters.includes(documentTypes[i])){
-
+                
                 obj_list.push({name: documentTypes[i], checked: true})
             } else{
                 obj_list.push({name: documentTypes[i], checked: false})
             }
         }
         original_doctypes = obj_list
-    
+        
     }
+    
+    //updates list whenever the group is changed
+    $: $current_doctype_filtergroup, make_obj_list()
 
+    //filters doctypes and groups by search
     $: searchedDocumentTypes = original_doctypes.filter(item => (item.name.toLowerCase().includes(filter_searched_value.toLowerCase())));
-
-    // $: if (original_doctypes){ //When searcheddocumentTypes have changed
-    //     console.log("fornadret")
-    //     let newFilters = []
-    //     for (let i = 0; i < original_doctypes.length;i++){
-    //         if (original_doctypes[i].checked){
-    //             newFilters.push(original_doctypes[i].name)
-    //         }
-    //     }
-    //     console.log(newFilters)
-    //     customFilter.filters = newFilters
-    // }
 
     $: searchedFiltergroups = $doctype_filter_groups.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
 
-  
+    //checks all items whenever filter is turned off
     $: if($allfilterOff){
-        console.log("no filter")
         $current_doctype_filtergroup = $nofilter
    
         for (let i = 0; i<original_doctypes.length; i++){
@@ -63,9 +44,8 @@
         }
         $allfilterOff = false
     }  
-    $: console.log($current_doctype_filtergroup)
-    // $: console.log(documentTypes)
 
+    //switches button name depending on amount of chosen items
     $: if($current_doctype_filtergroup.filters.length == documentTypes.length){
         showAllButtonName = "Nullstill"
     }
@@ -73,20 +53,22 @@
         showAllButtonName = "Vis alle"
     }
 
+
+    //sorts by first letter whenever search value is changed
     $: if (filter_searched_value!=""){
         searchedDocumentTypes = relevantSort(searchedDocumentTypes, filter_searched_value)
     }
-
     $: if (filtergroup_searched_value !=""){
         searchedFiltergroups = relevantSort(searchedFiltergroups, filtergroup_searched_value)
 
     }
 
-    
+    //changes between doctype mode and group mode
     function changeMode(){
         customViewMode = !customViewMode
     }
 
+    //sorts by the first letter
     function relevantSort(list, value){
         let startsWithSearch = []
         for(let i = 0; i<list.length; i++){
@@ -99,29 +81,12 @@
         return list
     }
 
-
-    // // For the custom mode
-    
-    // // Sorting the documentstitels alfabetic
-    // const sortByString = () => {
-    //     let sortedData = documentTypes.sort((obj1, obj2) => {
-    //         if (obj1 < obj2) {
-    //                 return -1;
-    //         } else if (obj1 > obj2) {
-    //             return 1;
-    //         }
-    //         return 0; //string code values are equal		
-    //     });
-    //     documentTypes = sortedData;
-    // }
-    // sortByString()
-
-
+    //checks/unchecks all items and switches button
     function clickedAll(){
       
         if($current_doctype_filtergroup.filters.length < documentTypes.length){
+            //checks all items
             $current_doctype_filtergroup.filters = documentTypes.slice()
-            // console.log(documentTypes)
             $current_doctype_filtergroup = $current_doctype_filtergroup
             showAllButtonName = "Nullstill"   
             for (let i = 0; i< original_doctypes.length; i++){
@@ -129,6 +94,7 @@
             } 
         }
         else{
+            //unchecks all items
             $current_doctype_filtergroup.filters = []
             $current_doctype_filtergroup = $current_doctype_filtergroup
             showAllButtonName = "Vis alle"
@@ -138,35 +104,34 @@
         }
     }
 
-    //For stored filtergroupsview
+    //sets an index for a group
     function find_index(filterGroup){
-      
         for(let i = 0; $doctype_filter_groups.length; i++){
             if ($doctype_filter_groups[i].id == filterGroup.id) {
                 return i
             }
-
         }
         return -1
     }
-    //User clicked on edit and program swich mode with current crop as start point
-    function editItem(group){
-        manageGroup = true
+
+    //open popup window for a new/editable group
+    function openModal(group){
         for(let i=0; i<original_doctypes.length; i++){
             original_doctypes[i].checked = false
         }
-        modal.set(bind(FilterForm,{edit_bool: true, typeOfForm: "doc", edit_obj_indeks: find_index(group), original_list_obj: original_doctypes}))
-    }
-
-    let manageGroup = false
-    function openModel(){
         manageGroup = true
-        for(let i=0; i<original_doctypes.length; i++){
-            original_doctypes[i].checked = false
+        if (group){
+            //edit group
+            modal.set(bind(FilterForm,{edit_bool: true, typeOfForm: "doc", edit_obj_indeks: find_index(group), original_list_obj: original_doctypes}))
+        } else {
+            //add new group
+            modal.set(bind(FilterForm,{edit_bool: false, typeOfForm: "doc", edit_obj_indeks: -1, original_list_obj: original_doctypes}))
+
         }
-        modal.set(bind(FilterForm,{edit_bool: false, typeOfForm: "doc", edit_obj_indeks: -1, original_list_obj: original_doctypes}))
+
     }
 
+    //happens when an item is checked
     function updateCheckedList(item){
         //update current group to a new object so it wont be overwritten
         if ($current_doctype_filtergroup.name !=""){
@@ -180,15 +145,10 @@
         }else if(!item.checked){
             // add to  current group listlist
             $current_doctype_filtergroup.filters.push(item.name)
-
         }
 
         $current_doctype_filtergroup = $current_doctype_filtergroup
-        // console.log("update")
-        // console.log($current_doctype_filtergroup.filters)
     }
-
-    
 
 </script>
 
@@ -219,7 +179,7 @@
         </div>
         <div class = "save-filter-button">
             {#if $current_doctype_filtergroup.filters.length>0}
-                <button class="secundary-button" on:click={()=>editItem($current_doctype_filtergroup)}>Lagre som filreringsgruppe</button>
+                <button class="secundary-button" on:click={()=>openModal($current_doctype_filtergroup)}>Lagre som filreringsgruppe</button>
             {/if}
     
         </div>
@@ -230,14 +190,9 @@
 
         <div>
             <button class="secundary-button" on:click={changeMode}>Alle filtere</button>
-            <button class="secundary-button" on:click={openModel}>Nytt filter</button>
+            <button class="secundary-button" on:click={()=>{openModal(null)}}>Nytt filter</button>
         </div>
         <div class="filtermenu-button-conteiner">
-
-            
-            <!-- <div class="filterItem-button" class:active={currentFilterobj == nofilter} on:click={() => currentFilterobj = nofilter} value="alle">
-                Vis allt
-            </div> -->
             {#each searchedFiltergroups as filter}
             
             <div class="group">
@@ -248,7 +203,7 @@
                 </div>
                 
                 <div class="group-buttons">
-                    <button class="edit-button" title ="Rediger" on:click={()=>editItem(filter)} ><i class="material-icons">edit</i></button>
+                    <button class="edit-button" title ="Rediger" on:click={()=>openModal(filter)} ><i class="material-icons">edit</i></button>
                     <button class="edit-button" title="Slett" on:click={()=> $doctype_filter_groups = $doctype_filter_groups.filter(item => (item.id != filter.id))}><i class="material-icons">delete</i></button>
                 </div>
                 
@@ -290,14 +245,12 @@
         height:25%;
     }
 
-
     .document-types{
         display: flex;
         flex-direction: column;
         margin-top:20%;
         height: 45%;
         overflow-y: auto;
-        
     }
     .group{
         display: flex;
@@ -320,7 +273,6 @@
         color:#d43838;
         cursor: pointer;
     }
-
     
     /* Darkmode */
 
@@ -338,14 +290,11 @@
 
     :global(body.dark-mode) input{
         border-bottom: 1px solid #cccccc;
-        color:#cccccc;
-        
+        color:#cccccc;  
     }
 
     :global(body.dark-mode) ::placeholder {
         color: #cccccc;   
     }
-
-
 
 </style>

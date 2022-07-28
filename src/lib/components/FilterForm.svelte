@@ -80,12 +80,12 @@
     function add_to_groupStore(group_name, index, checked_filters){
         if (index != -1) {
             if (typeOfForm == "doc"){
-                $doctype_filter_groups[index] = {id: findNewId(),name: group_name, filters: checked_filters}
+                $doctype_filter_groups[index] = {id: $doctype_filter_groups[index].id, name: group_name, filters: checked_filters}
                 $doctype_filter_groups = $doctype_filter_groups
                 $current_doctype_filtergroup = $doctype_filter_groups[index]
                 $current_doctype_filtergroup = $current_doctype_filtergroup
             } else {
-                $titles_filter_groups[index] = {id: findNewId(), name: group_name, filters: checked_filters}
+                $titles_filter_groups[index] = {id: $doctype_filter_groups[index].id, name: group_name, filters: checked_filters}
                 $titles_filter_groups = $titles_filter_groups
             }  
             edit_bool = false
@@ -128,20 +128,10 @@
             for (let i = 0; i<original_list_obj.length; i++){
                 if(original_list_obj[i].checked){
 
-                    original_list_obj[i].checked = false
-                    // console.log(original_list_obj)
+                    // original_list_obj[i].checked = false
+                  
                     checked_filters.push(original_list_obj[i].name)
-                    // if(typeOfForm == "doc"){
-                    //     checked_filters.push(original_list_obj[i].name)
-                    // }else{
-                    //     console.log(original_list_obj[i].name)
-                    //     let nodes = find_nodes(original_list_obj[i].name)
-                    //     console.log(nodes)
-                    //     for(let i = 0; i<nodes.length; i++){
-                    //         checked_filters.push(nodes[i])
-                    //     }
-                        
-                    // }
+
                 }
             }
             if (checked_filters.length == 0) {

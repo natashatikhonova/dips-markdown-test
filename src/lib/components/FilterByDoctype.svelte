@@ -21,6 +21,8 @@
     let original_doctypes = []
     $: $current_doctype_filtergroup, make_obj_list()
 
+    // $:$current_doctype_filtergroup, console.log("Current: Name"+$current_doctype_filtergroup.name + " Filters"+ $current_doctype_filtergroup.filters)
+
     function make_obj_list(){
         let obj_list =  []
         for (let i = 0; i < documentTypes.length; i++) {
@@ -123,7 +125,7 @@
             $current_doctype_filtergroup = $current_doctype_filtergroup
             showAllButtonName = "Nullstill"   
             for (let i = 0; i< original_doctypes.length; i++){
-                original_doctypes[i].checked = true
+                original_doctypes[i].checked = true 
             } 
         }
         else{
@@ -166,20 +168,17 @@
     }
 
     function updateCheckedList(item){
+        //update current group to a new object so it wont be overwritten
+        if ($current_doctype_filtergroup.name !=""){
+            $current_doctype_filtergroup = {id: -1, name:"",filters: $current_doctype_filtergroup.filters.slice()}
+            $current_doctype_filtergroup = $current_doctype_filtergroup
+        }
         if (item.checked){
-            //remove from list
-            // for(let i =0; i<$current_doctype_filtergroup.filters.length; i++){
-            //     if($current_doctype_filtergroup.filters[i] == item.name){
-
-            //         $current_doctype_filtergroup.filters.splice(i, 1)
-            //         $current_doctype_filtergroup = $current_doctype_filtergroup
-            //     }
-            // }
-        
+            //remove from current group list
             $current_doctype_filtergroup.filters.splice($current_doctype_filtergroup.filters.indexOf(item.name), 1)
             
         }else if(!item.checked){
-            // add to list
+            // add to  current group listlist
             $current_doctype_filtergroup.filters.push(item.name)
 
         }

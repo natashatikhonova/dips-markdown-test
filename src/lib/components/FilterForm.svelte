@@ -1,5 +1,5 @@
 <script>
-    import {doctype_filter_groups, titles_filter_groups, all_markdown_titles} from '../stores/stores';
+    import {doctype_filter_groups, titles_filter_groups, all_markdown_titles } from '../stores/stores';
     import { getContext, setContext } from 'svelte';
 
 

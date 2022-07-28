@@ -29,7 +29,7 @@
     function make_obj_list(){
         let obj_list =  []
         for (let i = 0; i < documentTypes.length; i++) {
-            obj_list.push({name: documentTypes[i], checked: false})
+            obj_list.push({name: documentTypes[i], checked: true})
         }
         return obj_list
     }
@@ -80,6 +80,15 @@
 
     }
 
+    $: if (original_doctypes){
+        customFilter.filters = []
+        for (let i = 0; i<original_doctypes.length; i++){
+            if (original_doctypes[i].checked){
+                customFilter.filters.push(original_doctypes[i].name)
+            }
+        }
+    }
+
     
     function changeMode(){
         customViewMode = !customViewMode
@@ -119,11 +128,17 @@
         myCurrentfilterGroup = $nofilter
         if(customFilter.filters.length < documentTypes.length){
             customFilter.filters = documentTypes
-            showAllButtonName = "Nullstill"    
+            showAllButtonName = "Nullstill"   
+            for (let i = 0; i< original_doctypes.length; i++){
+                original_doctypes[i].checked = true
+            } 
         }
         else{
             customFilter.filters = []
             showAllButtonName = "Vis alle"
+            for (let i = 0; i< original_doctypes.length; i++){
+                original_doctypes[i].checked = false
+            } 
         }
     }
 

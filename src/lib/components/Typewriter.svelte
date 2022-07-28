@@ -207,133 +207,135 @@ function file_choser(){
   editor.root.focus();
 }
 
-//Autocomplete:
-function autocomplete(event){
-
-  // let stackbefore = Object.assign({}, editor.modules.history.getStack())
-  // let stackbefore = editor.modules.history.getStack()
-  // editor.modules.history.clearHistory()
-  // console.log("Før:",  stackbefore)
-
+function whenKeyDown(event){
   let key = event.key
+
   if (key == "Tab" && !editor.getActive().list) {
     remove_suggestion()
     editor.insert("        ");
   }
-  if (!autocompleteOn){
-    return
-  }
 
   if ((37 <= event.keyCode) && (event.keyCode <= 40)){
-      // console.log("arrow key")
+      //Arrow keys
       remove_suggestion()
-    }
-  else if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
+  }
+
+  else if (autocompleteOn){
+    autocomplete(key)
+  }
+
+
+} 
+
+//Autocomplete:
+function autocomplete(key){
   
-    console.log(prev_suggested_word)
-  if (prev_suggested_word.length > 0){
+  if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
+    if (prev_suggested_word.length > 0){
 
-        
-        let current_indeks = key == "Enter" ? editor.doc.selection[0]-1: editor.doc.selection[0];
+      let current_indeks = key == "Enter" ? editor.doc.selection[0]-1: editor.doc.selection[0];
 
-        // let current_indeks = editor.doc.selection[0];
-        editor.select([current_indeks, editor.doc.selection[0] + prev_suggested_word.length])
-        let curSel = editor.doc.selection;
+      //New
+      editor.select([current_indeks, editor.doc.selection[0] + prev_suggested_word.length])
 
+      //historyStackBefore is to store current history so the editorhistory can ignore the suggested word
+      let historyStackBefore = editor.modules.history.getStack()
+      editor.modules.history.clearHistory()
+      editor.delete()
+      editor.modules.history.setStack(historyStackBefore)
 
-        let historyStackBefore = editor.modules.history.getStack()
-        editor.modules.history.clearHistory()
-        editor.delete()
-        editor.modules.history.setStack(historyStackBefore)
-        editor.insert(prev_suggested_word, [current_indeks, current_indeks])
-        editor.select(editor.doc.selection[0])
-        // editor.select(current_indeks)
-        // console.log("legger til " + prev_suggested_word + " etter bokstav " + editor.getText()[current_indeks])
-        // let update_delta = new Delta().retain(current_indeks).insert(prev_suggested_word).delete(prev_suggested_word.length+1)
-        // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
-        // editor.select(current_indeks + prev_suggested_word.length)
-        // console.log(editor.getDelta())
-        prev_suggested_word = ""
+      editor.insert(prev_suggested_word, [current_indeks, current_indeks])
+      editor.select(editor.doc.selection[0])
 
-        if(key == "Enter"){
-          console.log("length: "+ current_indeks + prev_suggested_word.length)
-        }
+      //Before
+      // editor.select(current_indeks)
+      // console.log("legger til " + prev_suggested_word + " etter bokstav " + editor.getText()[current_indeks])
+      // let update_delta = new Delta().retain(current_indeks).insert(prev_suggested_word).delete(prev_suggested_word.length+1)
+      // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+      // editor.select(current_indeks + prev_suggested_word.length)
+      // console.log(editor.getDelta())
 
+      prev_suggested_word = ""
 
-      }
+      // if(key == "Enter"){
+      //   console.log("length: "+ current_indeks + prev_suggested_word.length)
+      // }
+
+    }
+  }
+
+  else if( (key.length == 1) || key == "Backspace") {
+    //new suggested word
+    let current_indeks = editor.doc.selection[0]
+
+    let suggested_word = ""
+    let word = ""
+    let editor_text = editor.getText().substring(0, current_indeks) + key
+
+    for (let i = current_indeks; i >= 0; i--){
       
-
-     
-    } else if( (key.length == 1) || key == "Backspace") {//new suggested word
-      console.log("suggests new word")
-    
-      let current_indeks = editor.doc.selection[0]
-    
-      let suggested_word = ""
-      let word = ""
-      let editor_text = editor.getText().substring(0, current_indeks) + key
-      // console.log("text i editor " + editor_text)
-      for (let i = current_indeks; i >= 0; i--){
-       
-        if (editor_text[i] == " " || editor_text[i] == "\n" ){
-          break
-        }
-        word += editor_text[i]
-        
+      if (editor_text[i] == " " || editor_text[i] == "\n" ){
+        break
       }
-      word = word.split("").reverse().join("");
-      // console.log("word: " + word)
-      if (word.length != 0) {
-        for (let i = 0; i < suggestions_words.length; i++){
-          let check_word = suggestions_words[i]
-          let found_word = true
-          
-          for (let j = 0; j < word.length; j++){
-            if (word[j].toLowerCase() != check_word[j]){
-              found_word = false
-              break;
-            }
-          }
-          if (found_word) {
-            suggested_word = check_word.substring(word.length)
-            complete_suggested_word = check_word
+      word += editor_text[i]
+      
+    }
+
+    word = word.split("").reverse().join("");
+
+    if (word.length != 0) {
+      for (let i = 0; i < suggestions_words.length; i++){
+        let check_word = suggestions_words[i]
+        let found_word = true
+        
+        for (let j = 0; j < word.length; j++){
+          if (word[j].toLowerCase() != check_word[j]){
+            found_word = false
             break;
           }
         }
-    
+        if (found_word) {
+          suggested_word = check_word.substring(word.length)
+          complete_suggested_word = check_word
+          break;
+        }
       }
-    
-      // console.log("Suggested word " + suggested_word)
-      // console.log(word)
-      let curSel = editor.doc.selection;
-      let historyStackBefore = editor.modules.history.getStack()
-      editor.modules.history.clearHistory()
-      editor.delete([curSel[0], curSel[0] + prev_suggested_word.length])
-      editor.insert(suggested_word, {code:true}, [current_indeks, current_indeks])
-      editor.select(curSel)
-      editor.modules.history.setStack(historyStackBefore)
-      // let update_delta = new Delta().retain(current_indeks).delete(prev_suggested_word.length).insert(suggested_word, {code:true})
-      // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
-      prev_suggested_word = suggested_word
-      suggested_word_startindex = current_indeks
-      prev_selection = current_indeks
-
-      
-
     }
-    // console.log("etter:", editor.modules.history.getStack())
-    // editor.modules.history.cutoffHistory()
-    // editor.modules.history.clearHistory()
-    // editor.modules.history.setStack(stackbefore)
-    // console.log("endret:", stackbefore)
+
+    let historyStackBefore = editor.modules.history.getStack()
+    editor.modules.history.clearHistory()
+
+    let curSel = editor.doc.selection;
+    editor.delete([curSel[0], curSel[0] + prev_suggested_word.length])
+    editor.insert(suggested_word, {code:true}, [current_indeks, current_indeks])
+    editor.select(curSel)
+
+    editor.modules.history.setStack(historyStackBefore)
+
+    //Before
+    // let update_delta = new Delta().retain(current_indeks).delete(prev_suggested_word.length).insert(suggested_word, {code:true})
+    // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+
+    prev_suggested_word = suggested_word
+    suggested_word_startindex = current_indeks
+    prev_selection = current_indeks
+
+  }
 }
+
 function remove_suggestion(){
   if (prev_selection != editor.doc.selection[0]) {
     
+    let historyStackBefore = editor.modules.history.getStack()
+    editor.modules.history.clearHistory()
+
     let curSel = editor.doc.selection;
     editor.delete([suggested_word_startindex+1, suggested_word_startindex+1 + prev_suggested_word.length])
     editor.select(curSel)
-    // console.log("removes suggested word")
+
+    editor.modules.history.setStack(historyStackBefore)
+    
+    //Before
     // let update_delta = new Delta().retain(suggested_word_startindex+1).delete(prev_suggested_word.length)
     // editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
     prev_suggested_word = ""
@@ -596,7 +598,7 @@ function set_autocomplete(){
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
 
-    <div class="editor" class:center={alignment === 'center'} class:right={alignment === 'right'} class:left={alignment === 'left'} style="font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={autocomplete} on:click={clear_check_text}></div>
+    <div class="editor" class:center={alignment === 'center'} class:right={alignment === 'right'} class:left={alignment === 'left'} style="font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={whenKeyDown} on:click={clear_check_text}></div>
 
 
 <style>

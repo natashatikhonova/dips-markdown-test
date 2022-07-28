@@ -12,62 +12,62 @@
     // let filterMenuOpen = false;
     let customViewMode = true;
 
-    let edit_obj_indeks = -1 //index in the array to the group in store we are editing
     let filter_searched_value = "";
     let filtergroup_searched_value ="";
 
-    let myCurrentfilterGroup = $nofilter;
-
-    // let customFilter = {id: -1, name: "", filters: $nofilter.filters}
-    let customFilter = {id: -1, name: "", filters: $current_doctype_filtergroup.filters};
-
-    let currentFilterobj = $current_doctype_filtergroup;
+    
 
     let showAllButtonName = "Nullstill"
-    let original_doctypes = make_obj_list()
+    let original_doctypes = []
+    $: $current_doctype_filtergroup, make_obj_list()
 
     function make_obj_list(){
         let obj_list =  []
         for (let i = 0; i < documentTypes.length; i++) {
-            obj_list.push({name: documentTypes[i], checked: true})
+            if($current_doctype_filtergroup.filters.includes(documentTypes[i])){
+
+                obj_list.push({name: documentTypes[i], checked: true})
+            } else{
+                obj_list.push({name: documentTypes[i], checked: false})
+            }
         }
-        return obj_list
+        original_doctypes = obj_list
+    
     }
 
     $: searchedDocumentTypes = original_doctypes.filter(item => (item.name.toLowerCase().includes(filter_searched_value.toLowerCase())));
 
-    $: if (searchedDocumentTypes){ //When searcheddocumentTypes have changed
-        console.log("fornadret")
-        let newFilters = []
-        for (let i = 0; i < searchedDocumentTypes.length;i++){
-            if (searchedDocumentTypes[i].checked){
-                newFilters.push(searchedDocumentTypes[i].name)
-            }
-        }
-        console.log(newFilters)
-        $current_doctype_filtergroup.filters = newFilters
-    }
+    // $: if (original_doctypes){ //When searcheddocumentTypes have changed
+    //     console.log("fornadret")
+    //     let newFilters = []
+    //     for (let i = 0; i < original_doctypes.length;i++){
+    //         if (original_doctypes[i].checked){
+    //             newFilters.push(original_doctypes[i].name)
+    //         }
+    //     }
+    //     console.log(newFilters)
+    //     customFilter.filters = newFilters
+    // }
 
     $: searchedFiltergroups = $doctype_filter_groups.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
 
-    $: $current_doctype_filtergroup = currentFilterobj
-
+  
     $: if($allfilterOff){
-        currentFilterobj = $nofilter
-        customFilter.filters = $nofilter.filters
+        console.log("no filter")
+        $current_doctype_filtergroup = $nofilter
+   
+        for (let i = 0; i<original_doctypes.length; i++){
+            original_doctypes[i].checked = true
+        }
         $allfilterOff = false
     }  
-    else if (customViewMode){
-        currentFilterobj  = customFilter
-    }
-    else{
-        currentFilterobj  = myCurrentfilterGroup    
-    }
+    $: console.log($current_doctype_filtergroup)
+    // $: console.log(documentTypes)
 
-    $: if(customFilter.filters.length == documentTypes.length){
+    $: if($current_doctype_filtergroup.filters.length == documentTypes.length){
         showAllButtonName = "Nullstill"
     }
-    else if (customFilter.filters.length < documentTypes.length){
+    else if ($current_doctype_filtergroup.filters.length < documentTypes.length){
         showAllButtonName = "Vis alle"
     }
 
@@ -78,15 +78,6 @@
     $: if (filtergroup_searched_value !=""){
         searchedFiltergroups = relevantSort(searchedFiltergroups, filtergroup_searched_value)
 
-    }
-
-    $: if (original_doctypes){
-        customFilter.filters = []
-        for (let i = 0; i<original_doctypes.length; i++){
-            if (original_doctypes[i].checked){
-                customFilter.filters.push(original_doctypes[i].name)
-            }
-        }
     }
 
     
@@ -125,16 +116,19 @@
 
 
     function clickedAll(){
-        myCurrentfilterGroup = $nofilter
-        if(customFilter.filters.length < documentTypes.length){
-            customFilter.filters = documentTypes
+      
+        if($current_doctype_filtergroup.filters.length < documentTypes.length){
+            $current_doctype_filtergroup.filters = documentTypes.slice()
+            // console.log(documentTypes)
+            $current_doctype_filtergroup = $current_doctype_filtergroup
             showAllButtonName = "Nullstill"   
             for (let i = 0; i< original_doctypes.length; i++){
                 original_doctypes[i].checked = true
             } 
         }
         else{
-            customFilter.filters = []
+            $current_doctype_filtergroup.filters = []
+            $current_doctype_filtergroup = $current_doctype_filtergroup
             showAllButtonName = "Vis alle"
             for (let i = 0; i< original_doctypes.length; i++){
                 original_doctypes[i].checked = false
@@ -156,13 +150,43 @@
     //User clicked on edit and program swich mode with current crop as start point
     function editItem(group){
         manageGroup = true
+        for(let i=0; i<original_doctypes.length; i++){
+            original_doctypes[i].checked = false
+        }
         modal.set(bind(FilterForm,{edit_bool: true, typeOfForm: "doc", edit_obj_indeks: find_index(group), original_list_obj: original_doctypes}))
     }
 
     let manageGroup = false
     function openModel(){
         manageGroup = true
-        modal.set(bind(FilterForm,{edit_bool: false, typeOfForm: "doc", edit_obj_indeks: edit_obj_indeks, original_list_obj: original_doctypes}))
+        for(let i=0; i<original_doctypes.length; i++){
+            original_doctypes[i].checked = false
+        }
+        modal.set(bind(FilterForm,{edit_bool: false, typeOfForm: "doc", edit_obj_indeks: -1, original_list_obj: original_doctypes}))
+    }
+
+    function updateCheckedList(item){
+        if (item.checked){
+            //remove from list
+            // for(let i =0; i<$current_doctype_filtergroup.filters.length; i++){
+            //     if($current_doctype_filtergroup.filters[i] == item.name){
+
+            //         $current_doctype_filtergroup.filters.splice(i, 1)
+            //         $current_doctype_filtergroup = $current_doctype_filtergroup
+            //     }
+            // }
+        
+            $current_doctype_filtergroup.filters.splice($current_doctype_filtergroup.filters.indexOf(item.name), 1)
+            
+        }else if(!item.checked){
+            // add to list
+            $current_doctype_filtergroup.filters.push(item.name)
+
+        }
+
+        $current_doctype_filtergroup = $current_doctype_filtergroup
+        // console.log("update")
+        // console.log($current_doctype_filtergroup.filters)
     }
 
     
@@ -186,17 +210,17 @@
         <div class="document-types">
     
             {#each searchedDocumentTypes as item}    
-            <label class="filterItem" >
-                <!-- <input type="checkbox"  bind:group={customFilter.filters} value={item} > -->
-                <input type="checkbox"  bind:checked={item.checked}>
+            <label class="filterItem" on:click={()=>updateCheckedList(item)}>
+                <!-- <input type="checkbox"  bind:group={$current_doctype_filtergroup.filters} value={item} > -->
+                <input type="checkbox"  bind:checked={item.checked} >
                 {item.name}
                 <span class="checkmark"></span>
             </label>
             {/each}
         </div>
         <div class = "save-filter-button">
-            {#if customFilter.filters.length>0}
-                <button class="secundary-button" on:click={()=>editItem(customFilter)}>Lagre som filreringsgruppe</button>
+            {#if $current_doctype_filtergroup.filters.length>0}
+                <button class="secundary-button" on:click={()=>editItem($current_doctype_filtergroup)}>Lagre som filreringsgruppe</button>
             {/if}
     
         </div>
@@ -218,7 +242,7 @@
             {#each searchedFiltergroups as filter}
             
             <div class="group">
-                <input type="radio" checked={currentFilterobj  == filter} on:change={() => currentFilterobj  = filter} value={filter.filters} />
+                <input type="radio"  checked={$current_doctype_filtergroup  == filter} on:change={() => $current_doctype_filtergroup = filter}  />
                 
                 <div class="title">
                     {filter.name} 

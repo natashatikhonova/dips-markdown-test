@@ -1,5 +1,5 @@
 <script>
-    import {doctype_filter_groups, titles_filter_groups, all_markdown_titles } from '../stores/stores';
+    import {doctype_filter_groups, titles_filter_groups, all_markdown_titles, current_doctype_filtergroup } from '../stores/stores';
     import { getContext, setContext } from 'svelte';
 
 
@@ -24,34 +24,33 @@
     let searched_value = ""
     
     $: if (searched_value != ""){
-        console.log(original_list_obj)
+
         show_list_obj = original_list_obj.filter(item => (item.name.toLowerCase().includes(searched_value.toLowerCase())));
-        console.log(show_list_obj)
+     
     } else { 
         show_list_obj = original_list_obj
     }
         
   
     if (original_list_obj){
-        console.log("her")
+ 
 
         if (edit_bool == true) {
 
-            console.log("True")
 
             for (let i = 0; i < saved_groups[edit_obj_indeks].filters.length; i++) {
-                 console.log (saved_groups[edit_obj_indeks].filters)
+                //  console.log (saved_groups[edit_obj_indeks].filters)
 
                 for (let j = 0; j < original_list_obj.length; j++){
-                    console.log(original_list_obj[j].name )
-                    console.log(saved_groups[edit_obj_indeks].filters[i])
+                    // console.log(original_list_obj[j].name )
+                    // console.log(saved_groups[edit_obj_indeks].filters[i])
 
                     if (original_list_obj[j].name === saved_groups[edit_obj_indeks].filters[i]){
                         // console.log("\n\n")
                         // console.log(original_list_obj[j])
                         // console.log("Setter checked til true")
                         original_list_obj[j].checked = true
-                        console.log(saved_groups)
+                        // console.log(saved_groups)
                     }
 
                 }
@@ -83,6 +82,8 @@
             if (typeOfForm == "doc"){
                 $doctype_filter_groups[index] = {id: findNewId(),name: group_name, filters: checked_filters}
                 $doctype_filter_groups = $doctype_filter_groups
+                $current_doctype_filtergroup = $doctype_filter_groups[index]
+                $current_doctype_filtergroup = $current_doctype_filtergroup
             } else {
                 $titles_filter_groups[index] = {id: findNewId(), name: group_name, filters: checked_filters}
                 $titles_filter_groups = $titles_filter_groups
@@ -94,9 +95,12 @@
     
                 $doctype_filter_groups.push({id: findNewId(), name: group_name, filters: checked_filters})
                 $doctype_filter_groups = $doctype_filter_groups
+                $current_doctype_filtergroup = $doctype_filter_groups[$doctype_filter_groups.length-1]
+                $current_doctype_filtergroup = $current_doctype_filtergroup
             } else {
                 $titles_filter_groups.push({id: findNewId(), name: group_name, filters: checked_filters})
                 $titles_filter_groups = $titles_filter_groups
+                
             }
         }
     }
@@ -125,7 +129,7 @@
                 if(original_list_obj[i].checked){
 
                     original_list_obj[i].checked = false
-                    console.log(original_list_obj)
+                    // console.log(original_list_obj)
                     checked_filters.push(original_list_obj[i].name)
                     // if(typeOfForm == "doc"){
                     //     checked_filters.push(original_list_obj[i].name)

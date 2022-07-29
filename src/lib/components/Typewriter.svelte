@@ -9,11 +9,20 @@
     import {createEventDispatcher} from 'svelte';
     import { DocumentObject } from '../document.js';
     import { ParseMarkdown } from '../ParseMarkdown.js';
-import { Delta, TextChange } from 'typewriter-editor';
-import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
+    import { Delta, TextChange } from 'typewriter-editor';
+    import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
+    import { lineReplacements } from 'typewriter-editor/lib/modules/smartEntry.js';
+    import { h as hFromTypewriter} from 'typewriter-editor';
 
 
     export let showTitleBar = true;
+
+    editor.typeset.formats.add({
+      name: 'autocomplete',
+      selector: 'autoSuggestion',
+      render: (attributes, children) => hFromTypewriter('autoSuggestion', null, children),
+    });
+	
 
     let selectedDocType = "Velg dokumenttype";
 
@@ -59,13 +68,7 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
     }
     //Saves the text if the text is not empty and stores the text
     function save(){
-      console.log(editor.change)
-      console.log(editor.doc.getText())
-      // editor.select([0, editor.doc.length-1]) 
-      // editor.delete()
-      // console.log(editor.doc.getText())
-
- 
+      remove_suggestion()
 
       changeEdit();
       if( toMarkdown(editor.getHTML()) === ""){ //Empty note
@@ -96,11 +99,11 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
             let newElement = new DocumentObject($documentList.length, new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
             newElement.readable = readable
             newElement.title = selectedDocType;
+
             //Lager et tre over markdown overskriftene i teksten
             let parse = new ParseMarkdown()
-            // console.log("Før parse")
-            let tree = parse.parseAndSetIntoTree(newElement) //Her henger programmet!!. FIKSET:)
-            // console.log("Etter parse")
+            let tree = parse.parseAndSetIntoTree(newElement)
+
             newElement.markdownTree = tree;
 
             $documentList.push(newElement);
@@ -115,7 +118,6 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
           }  
         } 
       }
-      
     }
 
   let waitingForSpaceOrEnterOrDot = false
@@ -132,6 +134,7 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
   }
 
   function check_text(event){
+    let previousEditorSelection = editor.doc.selection
     
     let key = event.key
     
@@ -146,9 +149,9 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
           let char = editor.getText()[i-1]
           if (char == " " || i == 0 || char == "\n") {
 
-            let update_delta = new Delta().retain(i).insert(editor.getText()[i].toUpperCase()).delete(1)
+            editor.insert(editor.getText()[i].toLocaleUpperCase(), {}, [i,i+1])
+            editor.select(previousEditorSelection)
 
-            editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
             break;
           }
         }
@@ -156,36 +159,34 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
         dot_has_happend = false
     }
 
-      if(key == "Enter"){
-        waitingForSpaceOrEnterOrDot = true
-        dot_has_happend = true
-      }
+    if(key == "Enter"){
+      waitingForSpaceOrEnterOrDot = true
+      dot_has_happend = true
+    }
 
-      if (key == ".") {
-        dot_has_happend = true
-      }
+    if (key == ".") {
+      dot_has_happend = true
+    }
 
-      if (key == " " && dot_has_happend) {
-        waitingForSpaceOrEnterOrDot = true
-      }
-
+    if (key == " " && dot_has_happend) {
+      waitingForSpaceOrEnterOrDot = true
+    }
   }
   // console.log(marked("|  |  |  |  |  | \n |:---:|---|---|---|---| \n |  |  |  |  |  | \n |  |  |  |  |  | \n |  |  |  |  |  |"))
 
 
   //Put in Image:
   let  fileinput;
-	
+
+
 	const onFileSelected =(e)=>{                      
   let image = e.target.files[0];
-            let reader = new FileReader();
-            reader.readAsDataURL(image);
-            reader.onload = e => {
-
-                 editor.setHTML(editor.getHTML()+"\n <img src=" + e.target.result + ">") 
-            };
-            
-}
+  let reader = new FileReader();
+  reader.readAsDataURL(image);
+  reader.onload = e => {
+    editor.setHTML(editor.getHTML()+"\n <img src=" + e.target.result + ">") 
+    };      
+  }
 let suggestions_words = ["epikrise", "sykepleier", "lege", "sykdom", "sykehus", "legevakt", "fastlege"]
 let prev_suggested_word = ""
 let suggested_word_startindex = -1
@@ -197,99 +198,121 @@ function file_choser(){
   editor.root.focus();
 }
 
-//Autocomplete:
-function autocomplete(event){
-
+function whenKeyDown(event){
   let key = event.key
-  if (key == "Tab") {
+
+  if (key == "Tab" && !editor.getActive().list) {
     remove_suggestion()
     editor.insert("        ");
   }
-  if (!autocompleteOn){
-    return
-  }
+
   if ((37 <= event.keyCode) && (event.keyCode <= 40)){
-      // console.log("arrow key")
+      //Arrow keys
       remove_suggestion()
-    }else if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
+      waitingForSpaceOrEnterOrDot = false
+      dot_has_happend = false
+  }
 
-      if (prev_suggested_word.length > 0){
-        
-        let current_indeks = key == "Enter" ? editor.doc.selection[0]-1: editor.doc.selection[0]; 
-        // console.log("legger til " + prev_suggested_word + " etter bokstav " + editor.getText()[current_indeks])
-        let update_delta = new Delta().retain(current_indeks).insert(prev_suggested_word).delete(prev_suggested_word.length+1)
-        editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
-        editor.select(current_indeks + prev_suggested_word.length)
-        console.log(editor.getDelta())
-        prev_suggested_word = ""
+  else if (autocompleteOn){
+    autocomplete(key)
+  }
+} 
 
-        if(key == "Enter"){
-          console.log("length: "+ current_indeks + prev_suggested_word.length)
+//Autocomplete:
+function autocomplete(key){
+  
+  if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
+    if (prev_suggested_word.length > 0){
+
+      let current_indeks = key == "Enter" ? editor.doc.selection[0]-1: editor.doc.selection[0];
+
+      //New
+      editor.select([current_indeks, editor.doc.selection[0] + prev_suggested_word.length])
+
+      //historyStackBefore is to store current history so the editorhistory can ignore the suggested word
+      let historyStackBefore = editor.modules.history.getStack()
+      editor.modules.history.clearHistory()
+      editor.delete()
+      editor.modules.history.setStack(historyStackBefore)
+
+      editor.insert(prev_suggested_word, [current_indeks, current_indeks])
+      editor.select(editor.doc.selection[0])
+
+      prev_suggested_word = ""
+
+      if(key == "Enter" && !editor.getActive().list){
           editor.insert('\n');
-          console.log(editor.getDelta())
         }
+    }
+  }
 
+  else if( (key.length == 1) || key == "Backspace") {
+    //new suggested word
+    let current_indeks = editor.doc.selection[0]
 
-      }
+    let suggested_word = ""
+    let word = ""
+    let editor_text = editor.getText().substring(0, current_indeks) + key
+
+    for (let i = current_indeks; i >= 0; i--){
       
-
-     
-    } else if( (key.length == 1) || key == "Backspace") {//new suggested word
-      console.log("suggests new word")
-    
-      let current_indeks = editor.doc.selection[0]
-    
-      let suggested_word = ""
-      let word = ""
-      let editor_text = editor.getText().substring(0, current_indeks) + key
-      // console.log("text i editor " + editor_text)
-      for (let i = current_indeks; i >= 0; i--){
-       
-        if (editor_text[i] == " " || editor_text[i] == "\n" ){
-          break
-        }
-        word += editor_text[i]
-        
+      if (editor_text[i] == " " || editor_text[i] == "\n" ){
+        break
       }
-      word = word.split("").reverse().join("");
-      // console.log("word: " + word)
-      if (word.length != 0) {
-        for (let i = 0; i < suggestions_words.length; i++){
-          let check_word = suggestions_words[i]
-          let found_word = true
-          
-          for (let j = 0; j < word.length; j++){
-            if (word[j].toLowerCase() != check_word[j]){
-              found_word = false
-              break;
-            }
-          }
-          if (found_word) {
-            suggested_word = check_word.substring(word.length)
-            complete_suggested_word = check_word
+      word += editor_text[i]
+      
+    }
+
+    word = word.split("").reverse().join("");
+
+    if (word.length != 0) {
+      for (let i = 0; i < suggestions_words.length; i++){
+        let check_word = suggestions_words[i]
+        let found_word = true
+        
+        for (let j = 0; j < word.length; j++){
+          if (word[j].toLowerCase() != check_word[j]){
+            found_word = false
             break;
           }
         }
-    
+        if (found_word) {
+          suggested_word = check_word.substring(word.length)
+          complete_suggested_word = check_word
+          break;
+        }
       }
-    
-      // console.log("Suggested word " + suggested_word)
-      // console.log(word)
-      let update_delta = new Delta().retain(current_indeks).delete(prev_suggested_word.length).insert(suggested_word, {code:true})
-      editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
-      prev_suggested_word = suggested_word
-      suggested_word_startindex = current_indeks
-      prev_selection = current_indeks
-
-      
-
     }
+
+    let historyStackBefore = editor.modules.history.getStack()
+    editor.modules.history.clearHistory()
+
+    let curSel = editor.doc.selection;
+    editor.delete([curSel[0], curSel[0] + prev_suggested_word.length])
+    editor.insert(suggested_word, {autocomplete:true}, [current_indeks, current_indeks])
+    editor.select(curSel)
+
+    editor.modules.history.setStack(historyStackBefore)
+
+    prev_suggested_word = suggested_word
+    suggested_word_startindex = current_indeks
+    prev_selection = current_indeks
+
+  }
 }
+
 function remove_suggestion(){
   if (prev_selection != editor.doc.selection[0]) {
-    // console.log("removes suggested word")
-    let update_delta = new Delta().retain(suggested_word_startindex+1).delete(prev_suggested_word.length)
-    editor.setDelta(editor.getDelta().compose(update_delta)) //Sets the updated delta to the current delta
+    
+    let historyStackBefore = editor.modules.history.getStack()
+    editor.modules.history.clearHistory()
+
+    let curSel = editor.doc.selection;
+    editor.delete([suggested_word_startindex+1, suggested_word_startindex+1 + prev_suggested_word.length])
+    editor.select(curSel)
+
+    editor.modules.history.setStack(historyStackBefore)
+    
     prev_suggested_word = ""
   }
 }
@@ -550,7 +573,7 @@ function set_autocomplete(){
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
 
-    <div class="editor" class:center={alignment === 'center'} class:right={alignment === 'right'} class:left={alignment === 'left'} style="font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={autocomplete} on:click={clear_check_text}></div>
+    <div class="editor" class:center={alignment === 'center'} class:right={alignment === 'right'} class:left={alignment === 'left'} style="font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={whenKeyDown} on:click={clear_check_text}></div>
 
 
 <style>
@@ -611,11 +634,24 @@ function set_autocomplete(){
 }
   :global(.editor code){
     color:lightgray;
-  
+
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
+  }
 
+  :global(body.dark-mode .editor code) {
+    color: #666666;
+  }
 
+  :global(.editor autoSuggestion){
+    color:lightgray;
+
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
+  }
+
+  :global(body.dark-mode .editor autoSuggestion) {
+    color: #666666;
   }
   /* :global(.editor p){
     font-size: xx-large;

@@ -1,3 +1,4 @@
+import { onDestroy } from "svelte";
 import { writable } from "svelte/store";
 
 import { Editor } from 'typewriter-editor';
@@ -73,11 +74,11 @@ function is_in_subtree(to_node, add_node){
 export function set_filtered_text(){
     console.log("Starten av set_filtered_text()")
     let obj_list = []
-    checked_titles_filters.subscribe(value => {
+    const unsubscribe = checked_titles_filters.subscribe(value => {
         obj_list = value
         console.log("subscribe checked_titles_filters")
     })
-    
+    onDestroy(unsubscribe)
     let selected_titles_nodes_List = []
     //Loop through the whole documentList and sets the filtered text to empty string
     
@@ -130,7 +131,8 @@ export function set_filtered_text(){
 }
 
     //load all title nodes to variables
-    export function load_markdownNodes(chosen_documents, oldObjList) {
+    export function load_markdownNodes(chosen_documents, oldObjList, checked_titles) {
+        console.log("Load markdown nodes")
         let all_nodes = [] 
         let searched_titles_nodes = []
         let titles_nodes = []
@@ -142,7 +144,7 @@ export function set_filtered_text(){
         
         //All the nodes containing the searched_value
         searched_titles_nodes = all_nodes.filter(item => (item.id != 0));
-        titles_nodes = make_titles_obj_list(searched_titles_nodes, oldObjList)
+        titles_nodes = make_titles_obj_list(searched_titles_nodes, oldObjList, checked_titles)
         
         // $all_markdown_titles = []
         // //copy some values to the store:
@@ -173,7 +175,7 @@ export function set_filtered_text(){
 
 
     //creates a list of objects from a list of nodes
-    function make_titles_obj_list(node_list, oldObjList){
+    function make_titles_obj_list(node_list, oldObjList, checked_titles){
        let obj_list = []
 
        for (let i = 0; i<node_list.length; i++){
@@ -190,7 +192,7 @@ export function set_filtered_text(){
            if (!found){
                if (oldObjList.length == 0) { 
                     //First time
-                    if (is_checked(node.overskrift)){
+                    if (is_checked(node.overskrift, checked_titles)){
                         new_element = {overskrift: node.overskrift, nodes: [node], checked: true }
                     } else {
                         new_element = {overskrift: node.overskrift, nodes: [node], checked: false }
@@ -220,18 +222,15 @@ export function set_filtered_text(){
    }
 
    
-   function is_checked(title){
+   function is_checked(title, checked_titles){
     let bool = false
-    let checked_titles = []
-    checked_titles_filters.subscribe(value => {
-        checked_titles= value
-        
-    })
+
     for (let i = 0; i < checked_titles.length; i++){
         if (checked_titles[i].overskrift == title) {
             bool = true
         }
     }
+
     return bool
    }
 

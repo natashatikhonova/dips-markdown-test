@@ -8,24 +8,63 @@
     let show_titles_list_obj =[]
     
     let selected_documentObj_titles = set_filtered_text()
+    // //Reactive tests
+    // $: if (original_titles_list_obj){
+    //     console.log("Original_titles_list_obj")
+    // }
+    // $: if (filteredDocumentlist){
+    //     console.log("filteredDocumentlist")
+    // }
+
+    // $: if ($checked_titles_filters){
+    //     console.log("Checked_titles_filters")
+    // }
     
     //sets list depending on what doctypes are chosen
     $: filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
     //sets filtered text in documentObject
-    $: if(original_titles_list_obj.length != 0){
+    $: if(original_titles_list_obj.length > 0){
         reset_filtered_text()
-        let checked_titles = original_titles_list_obj.filter((item) => item.checked).slice()
-        $checked_titles_filters = checked_titles
+        let cpy = copy_obj_array(original_titles_list_obj)
+        // $checked_titles_filters = cpy.filter((item) => (item.checked))
         console.log("FilteredByTitles if")
         selected_documentObj_titles = set_filtered_text()
+    }
+    //checks if all items are checked whenever the original list is updated
+    $: original_titles_list_obj, check_if_all_checked()
+    function copy_obj_array(list_obj){
+        let copy_list = []
+        for (let i= 0; i < list_obj.length; i++){
+            copy_list[i] = {overskrift: list_obj[i].overskrift, nodes: list_obj[i].nodes, checked: list_obj[i].checked} 
+        }
+        return copy_list
     }
 
     //load documents when new doctype filter is chosen
     $: if (filteredDocumentlist){
-        original_titles_list_obj = load_markdownNodes(filteredDocumentlist, original_titles_list_obj)
+        original_titles_list_obj = load_markdownNodes(filteredDocumentlist, original_titles_list_obj, $checked_titles_filters)
     }
-    //checks if all items are checked whenever the original list is updated
-    $: original_titles_list_obj, check_if_all_checked()
+
+    //happens when an item is checked
+    function updateCheckedList(item){
+        if (item.checked){
+            //remove 
+            for(let i = 0; i < $checked_titles_filters.length; i++){
+                if ($checked_titles_filters[i].overskrift == item.overskrift){
+                    mer her!!!
+                                $checked_titles_filters.splice($checked_titles_filters.indexOf(item.name), 1)
+                    
+                }
+            }
+            
+        }else if(!item.checked){
+            // add
+            $checked_titles_filters.push({overskrift: item.overskrift, nodes: item.nodes.slice(), checked: true})
+        }
+
+        $checked_titles_filters = $checked_titles_filters
+    }
+
     //Updates the shown titles with search on titles
     $: if (searched_value.length >= 0){ 
          if (searched_value != ""){
@@ -114,7 +153,7 @@
 
             <div class="titles-list">
                 {#each show_titles_list_obj as elementObj}
-                    <label class="title">
+                    <label class="title" on:click={()=>updateCheckedList(elementObj)}>
                         <input type="checkbox"  bind:checked={elementObj.checked} >
                         <div class="title"> {elementObj.overskrift} </div>
                     </label>   

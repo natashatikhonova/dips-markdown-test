@@ -91,7 +91,8 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
           })
           $documentList = $documentList;
           console.log("Setter inn dokumenter i typewriter Edit")
-          $all_markdown_titles = load_markdownNodes($documentList,[])
+          $all_markdown_titles = load_markdownNodes($documentList,[], $checked_titles_filters)
+          $all_markdown_titles =  $all_markdown_titles
 
         } else{
           if (selectedDocType !== documentTypes[0]) { //new Note
@@ -110,7 +111,8 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
             $documentList.push(newElement);
             $documentList = $documentList;
             console.log("Setter inn dokumenter i Typewriter. New note")
-            $all_markdown_titles = load_markdownNodes($documentList,[])
+            $all_markdown_titles = load_markdownNodes($documentList.slice(),[], $checked_titles_filters)
+            $all_markdown_titles =  $all_markdown_titles
             console.log($all_markdown_titles)
             $currentDocumentObject = newElement;
             $currentlyAddingNewNote = false;

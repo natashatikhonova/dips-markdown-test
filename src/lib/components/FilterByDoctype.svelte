@@ -1,8 +1,9 @@
 <script>
-    import {current_doctype_filtergroup, doctype_filter_groups, nofilter, allfilterOff, documentTypes, searchResult, searchValue, documentList} from '../stores/stores';
+    import {current_doctype_filtergroup, doctype_filter_groups, nofilter, allfilterOff, documentTypes, searchResult, searchValue, documentList, checked_titles_filters, all_markdown_titles, set_filtered_text} from '../stores/stores';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
     import FilterForm from './FilterForm.svelte';
+    
 
     const modal = writable(null);
     let customViewMode = true;
@@ -12,6 +13,7 @@
     let showAllButtonName = "Nullstill"
     let original_doctypes = []
 
+    let selected_documentObj_titles = []
     //make a list with all doctypes with a correct checked value
     function make_obj_list(){
         let obj_list =  []
@@ -27,7 +29,20 @@
     }
     
     //updates list whenever the group is changed
-    $: $current_doctype_filtergroup, make_obj_list()
+    $: if($current_doctype_filtergroup.filters){
+        make_obj_list()
+        console.log($all_markdown_titles)
+        for (let i = 0; i<$all_markdown_titles.length; i++){
+            for (let j =0; j<$checked_titles_filters.length; j++){
+                if ($checked_titles_filters[j].overskrift== $all_markdown_titles[i].overskrift){
+                    $checked_titles_filters[j].nodes = $all_markdown_titles[i].nodes
+                    console.log($all_markdown_titles[i].nodes)
+                    console.log($checked_titles_filters[j].nodes)
+                }
+            }
+        }
+    }
+        
 
     //filters doctypes and groups by search
     $: searchedDocumentTypes = original_doctypes.filter(item => (item.name.toLowerCase().includes(filter_searched_value.toLowerCase())));
@@ -59,11 +74,19 @@
     $: if (filtergroup_searched_value !=""){
         searchedFiltergroups = relevantSort(searchedFiltergroups, filtergroup_searched_value)
     }
+    
+    $: if ($checked_titles_filters.length == 0){
+        //sets list depending on what doctypes are chosen
+        let filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
+        //show documents depending on main search field
+        $searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
 
-    //sets list depending on what doctypes are chosen
-    $: filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
-    //show documents depending on main search field
-    $: $searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
+    } else {
+        selected_documentObj_titles = set_filtered_text()
+        let filteredDocumentlist = (selected_documentObj_titles.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
+        //show documents depending on main search field
+        $searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
+    }
 
     //changes between doctype mode and group mode
     function changeMode(){

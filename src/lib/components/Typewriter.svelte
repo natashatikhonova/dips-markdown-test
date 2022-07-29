@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote } from '../stores/stores.js';
+    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, all_markdown_titles, checked_titles_filters, load_markdownNodes} from '../stores/stores.js';
     import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
     import asRoot from 'typewriter-editor/lib/asRoot';
@@ -11,6 +11,7 @@
     import { ParseMarkdown } from '../ParseMarkdown.js';
 import { Delta, TextChange } from 'typewriter-editor';
 import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
+// import { load_markdownNodes } from './filterDocumentText.js';
 
 
     export let showTitleBar = true;
@@ -89,6 +90,9 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
             }
           })
           $documentList = $documentList;
+          console.log("Setter inn dokumenter i typewriter Edit")
+          $all_markdown_titles = load_markdownNodes($documentList,[])
+
         } else{
           if (selectedDocType !== documentTypes[0]) { //new Note
             console.log("New note")
@@ -105,6 +109,9 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
 
             $documentList.push(newElement);
             $documentList = $documentList;
+            console.log("Setter inn dokumenter i Typewriter. New note")
+            $all_markdown_titles = load_markdownNodes($documentList,[])
+            console.log($all_markdown_titles)
             $currentDocumentObject = newElement;
             $currentlyAddingNewNote = false;
             dispatch("save");

@@ -1,3 +1,5 @@
+
+
 export class DocumentObject{
     constructor(id, date, context, title, readable){
         this.id = id;

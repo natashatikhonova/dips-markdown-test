@@ -174,33 +174,39 @@
 </head>
 
 <h2>Overskrifter</h2>
-<h3>Alle overskrifter:</h3>
-
 <div class="main">
-        <input class="search-input" bind:value={searched_value} type="text" placeholder="Søk.." name="search">
 
-        <div class="filter-buttons">
-            <button class="secundary-button" on:click={removeChecked}>Nullstill</button>
+    <div class="filter-panel">
+        <div class="meta">
+            <h3>Alle overskrifter:</h3>
+            <input class="search-input" bind:value={searched_value} type="text" placeholder="Søk.." name="search">
+            <div>
+                {#if show_titles_list_obj.length > 0}
+                    {#if all_checked} 
+                        <button class="secundary-button" on:click={removeChecked}>Nullstill</button>
+    
+                    {:else}
+                        <button class="secundary-button" on:click={check_all}>Vis alle</button>
+                    {/if}
+                {/if}
+            </div>
         </div>
-
+    
         {#if show_titles_list_obj.length == 0}
             <div class = "no-titles">Ingen overskrifter</div>
         {:else}
-            <div class="checkbox-alle">
-                <input type="checkbox" on:click={check_all} bind:checked={all_checked} /> 
-                <div style = "margin-left: 1%">Velg alle</div>
-            </div>
-
-            <div class="titles-list">
+            <div class="filters">
                 {#each show_titles_list_obj as elementObj}
-                    <label class="title" >
+                    <label class = "filterItem">
                         <input type="checkbox" bind:checked={elementObj.checked} on:click={()=>updateCheckedList(elementObj)}>
-                        <div class="title"> {elementObj.overskrift} </div>
+                        {elementObj.overskrift}
                         
                     </label>   
                 {/each} 
             </div>
+            
         {/if}
+ </div>
 </div>
 
 <style>
@@ -211,50 +217,33 @@
         padding-left: 2vw;
         padding-right: 2vw;
     }
-    h2, h3{
-        padding-left: 2vw;
-        padding-right: 2vw;
+    .filter-panel{
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    h2{
+        align-self: center;
     }
 
     .no-titles{
         margin-top: 2vh;
     }
-    .checkbox-alle{
-        cursor: pointer;
-        display: flex;
-        margin-left: 1%;
-        margin-bottom: 2vh;
-        height:5%;
-    }
-    .checkbox-alle:hover{
-        color:#d43838;
-    }
-
-    input[type=text] {
-
-        padding: 6px;
-        border: none;
-        border-bottom: solid;
-        margin-bottom: 2vh;
-        font-size: 17px;
-        width:90%;
-        height:5%;
-     }
-
-    .title{
-        cursor: pointer;
-        display: flex;
-        margin-left: 1%;
-    }
-
-    .title:hover{
-        color:#d43838;
-    }
-
-    .titles-list{
+    .meta{
         display: flex;
         flex-direction: column;
-        height: 40%;
+        height:25%;
+    }
+
+    .filterItem:hover{
+        color:#d43838;
+    }
+
+    .filters{
+        display: flex;
+        margin-top: 10%;
+        flex-direction: column;
+        height: 50%;
         overflow-y: auto;
     }
 

@@ -1,7 +1,7 @@
 <script>
 
 
-    import { searchValue, amount_searched_words, showTitles, current_doctype_filtergroup, doctype_filter_groups, showFiltermenu, selected_line_height, selected_text_size, nofilter, allfilterOff, currentDocumentObject} from '../stores/stores.js';
+    import { checked_titles_filters, searchValue, amount_searched_words, showTitles, current_doctype_filtergroup, doctype_filter_groups, showFiltermenu, selected_line_height, selected_text_size, nofilter, allfilterOff, currentDocumentObject} from '../stores/stores.js';
     import { writable } from 'svelte/store';
 
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
@@ -51,6 +51,7 @@
     function turnOffFilters(){
         $allfilterOff = true
         $current_doctype_filtergroup = $nofilter
+        $checked_titles_filters = []
     }
     function open_filtermenu(){
         $showFiltermenu = true

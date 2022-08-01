@@ -51,18 +51,19 @@ export let selected_line_height = writable("1.5")
 export let selected_text_size = writable(11)
 
 export function findNewDocumentObjId(){
-    let ids = []
     let documentListCpy = []
-    const unsubscribe = documentList.subscribe(value => {
+    const unsubscribe4 = documentList.subscribe(value => {
         documentListCpy = value
-        // console.log("subscribe checked_titles_filters")
+        console.log(documentListCpy)
     })
-    onDestroy(unsubscribe)
-    documentListCpy.forEach((document)=>ids.push(document.id))
+    let ids = []
+    console.log(ids)
+    documentListCpy.forEach((document)=>console.log(document))
     let num = 1;
     while(ids.includes(num)){
         num += 1;
     }
+    unsubscribe4()
     return num;
 }
 function nodeList_to_documentObjList(node_list) {
@@ -93,7 +94,7 @@ export function set_filtered_text(){
         obj_list = value
         // console.log("subscribe checked_titles_filters")
     })
-    onDestroy(unsubscribe)
+    unsubscribe()
     
     // for (let i = 0; i < obj_list.length; i++){
     //     obj_list[i].nodes.forEach((node)=>{node.object.temp_filtered_context = ""})

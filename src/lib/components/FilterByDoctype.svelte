@@ -31,13 +31,10 @@
     //updates list whenever the group is changed
     $: if($current_doctype_filtergroup.filters){
         make_obj_list()
-        // console.log($all_markdown_titles)
         for (let i = 0; i<$all_markdown_titles.length; i++){
             for (let j =0; j<$checked_titles_filters.length; j++){
                 if ($checked_titles_filters[j].overskrift== $all_markdown_titles[i].overskrift){
-                    $checked_titles_filters[j].nodes = $all_markdown_titles[i].nodes //mer her, viser nå alle
-                    // console.log($all_markdown_titles[i].nodes)
-                    // console.log($checked_titles_filters[j].nodes)
+                    $checked_titles_filters[j].nodes = $all_markdown_titles[i].nodes //Chooses all, but it works because it get filtered again in filteredByTitles.svelte
                 }
             }
         }
@@ -131,7 +128,8 @@
 
     //finds an index of the group
     function find_index(filterGroup){
-        for(let i = 0; $doctype_filter_groups.length; i++){
+        for(let i = 0; i < $doctype_filter_groups.length; i++){
+            console.log(filterGroup)
             if ($doctype_filter_groups[i].id == filterGroup.id) {
                 return i
             }
@@ -142,14 +140,14 @@
     //open popup window for a new/editable group
     function openModal(group){
 
-        manageGroup = true
         if (group){
             //edit group
-            modal.set(bind(FilterForm,{edit_bool: true, typeOfForm: "doc", edit_obj_indeks: find_index(group), original_list_obj: original_doctypes}))
+            modal.set(bind(FilterForm,{edit_bool: true, edit_obj_indeks: find_index(group), original_list_obj: original_doctypes}))
         } else {
             //add new group
-            modal.set(bind(FilterForm,{edit_bool: false, typeOfForm: "doc", edit_obj_indeks: -1, original_list_obj: original_doctypes}))
+            modal.set(bind(FilterForm,{edit_bool: false, edit_obj_indeks: -1, original_list_obj: original_doctypes}))
         }
+        manageGroup = true
     }
 
     //happens when an item is checked
@@ -175,37 +173,41 @@
 
 
 <h2>Filter dokumenttyper</h2>
-<div class="content">
+<div class="main">
     {#if manageGroup}
-    <Modal/>
+        <Modal on:closed={() => manageGroup = false } show={$modal}/>
     {:else if customViewMode}
     <div class="filter-panel">
         <div class="meta">
             <h3>Alle filtere:</h3>
             <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
             <div>
-                <button class="secundary-button" on:click={clickedAll}>{showAllButtonName}</button>
+                {#if searchedDocumentTypes.length > 0}
+                    <button class="secundary-button" on:click={clickedAll}>{showAllButtonName}</button>
+                {/if}
                 <button class="secundary-button" on:click={changeMode}>Filtreringsgrupper</button>
             </div>
-    
         </div>
-        <div class="document-types">
-    
+        {#if searchedDocumentTypes.length == 0}
+            <div class = "no-titles">Ingen dokumenttyper</div>
+        {:else}
+        <div class="filters">
             {#each searchedDocumentTypes as item}    
-            <label class="filterItem" on:click={()=>updateCheckedList(item)}>
-                <!-- <input type="checkbox"  bind:group={$current_doctype_filtergroup.filters} value={item} > -->
-                <input type="checkbox"  bind:checked={item.checked} >
-                {item.name}
-                <span class="checkmark"></span>
-            </label>
+                <label class = "filterItem" on:click={()=>updateCheckedList(item)}>
+                    <!-- <input type="checkbox"  bind:group={$current_doctype_filtergroup.filters} value={item} > -->
+                    <input type="checkbox" bind:checked={item.checked} >
+                    {item.name}
+                   
+                </label>
             {/each}
         </div>
         <div class = "save-filter-button">
             {#if $current_doctype_filtergroup.filters.length>0}
                 <button class="secundary-button" on:click={()=>openModal($current_doctype_filtergroup)}>Lagre som filreringsgruppe</button>
             {/if}
-    
         </div>
+
+        {/if}
     </div>
     {:else}    
         <h3>Filtergrupper:</h3>
@@ -215,6 +217,7 @@
             <button class="secundary-button" on:click={changeMode}>Alle filtere</button>
             <button class="secundary-button" on:click={()=>{openModal(null)}}>Nytt filter</button>
         </div>
+
         <div class="filtermenu-button-conteiner">
             {#each searchedFiltergroups as filter}
             
@@ -248,12 +251,18 @@
         margin-top: 10px;
     
     }
-    .content{
+    .main{
         display: flex;
         flex-direction: column;
         height: 100%;
         padding-left: 2vw;
         padding-right: 2vw;
+    }
+    .no-titles{
+        margin-top: 2vh;
+    }
+    .filterItem:hover{
+        color:#d43838;
     }
 
     .filter-panel{
@@ -268,7 +277,7 @@
         height:25%;
     }
 
-    .document-types{
+    .filters{
         display: flex;
         flex-direction: column;
         height: 45%;

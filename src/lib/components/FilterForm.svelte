@@ -6,8 +6,8 @@
     export let edit_bool;
     export let edit_obj_indeks;
 
-    let group_name = edit_bool ? $doctype_filter_groups [edit_obj_indeks].name : ""
-    let manageName = edit_bool ? "Rediger filtergruppe" : "Opprett ny filtergruppe"
+    let group_name = edit_bool && edit_obj_indeks != -1 ? $doctype_filter_groups [edit_obj_indeks].name : ""
+    let manageName = edit_bool && edit_obj_indeks != -1? "Rediger filtergruppe" : "Opprett ny filtergruppe"
     let show_list_obj =[]
     let searched_value = ""
     
@@ -15,7 +15,7 @@
     const { close } = getContext('simple-modal');
     setContext('modal', this)
 
-    reset_list_obj()
+    // reset_list_obj()
     
     //filter list by search
     $: if (searched_value != ""){
@@ -24,17 +24,26 @@
     } else { 
         show_list_obj = original_list_obj
     }
-        
-    //checks the correct items in modal
-    if (original_list_obj && edit_bool){
-        for (let i = 0; i < $doctype_filter_groups [edit_obj_indeks].filters.length; i++) {
+
+    if (edit_bool && (edit_obj_indeks != -1)){
+        //checks the correct items in modal
+        console.log($doctype_filter_groups)
+        for (let i = 0; i < $doctype_filter_groups[edit_obj_indeks].filters.length; i++) {
             for (let j = 0; j < original_list_obj.length; j++){
-                if (original_list_obj[j].name === $doctype_filter_groups [edit_obj_indeks].filters[i]){
+                if (original_list_obj[j].name === $doctype_filter_groups[edit_obj_indeks].filters[i]){
                     original_list_obj[j].checked = true
                 }
             }
         }
+
+    } else if (edit_bool && (edit_obj_indeks == -1)){ //New filter group for the filters already checked
+        edit_bool = false
+
+    } else { //New filterGroup. unchecks all
+        reset_list_obj()
     }
+
+    
     function reset_list_obj(){
         for(let i=0; i<original_list_obj.length; i++){
             original_list_obj[i].checked = false

@@ -6,6 +6,7 @@
     let searched_value = "";
     let original_titles_list_obj = []
     let show_titles_list_obj =[]
+    let filteredDocumentlist = []
     
     let selected_documentObj_titles = set_filtered_text()
     // //Reactive tests
@@ -21,29 +22,37 @@
     // }
     
     //sets list depending on what doctypes are chosen
-    $: filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
-    //sets filtered text in documentObject
-    $: if(original_titles_list_obj.length > 0){
-        reset_filtered_text()
-        let cpy = copy_obj_array(original_titles_list_obj)
-        // $checked_titles_filters = cpy.filter((item) => (item.checked))
-        console.log("FilteredByTitles if")
-        selected_documentObj_titles = set_filtered_text()
-    }
-    //checks if all items are checked whenever the original list is updated
-    $: original_titles_list_obj, check_if_all_checked()
-    function copy_obj_array(list_obj){
-        let copy_list = []
-        for (let i= 0; i < list_obj.length; i++){
-            copy_list[i] = {overskrift: list_obj[i].overskrift, nodes: list_obj[i].nodes, checked: list_obj[i].checked} 
-        }
-        return copy_list
-    }
-
-    //load documents when new doctype filter is chosen
     $: if (filteredDocumentlist){
+        console.log("filteredDocumentlist")
+        filteredDocumentlist = $documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title)));
+        //load documents when new doctype filter is chosen
         original_titles_list_obj = load_markdownNodes(filteredDocumentlist, original_titles_list_obj, $checked_titles_filters)
     }
+    //sets filtered text in documentObject
+    $: if(original_titles_list_obj.length > 0){
+        console.log("original_titles_list_obj")
+        //checks if all items are checked whenever the original list is updated
+        check_if_all_checked()
+
+        reset_filtered_text()
+        // let cpy = copy_obj_array(original_titles_list_obj)
+        // $checked_titles_filters = cpy.filter((item) => (item.checked))
+
+        selected_documentObj_titles = set_filtered_text()
+    }
+    // $: original_titles_list_obj, check_if_all_checked()
+
+    // function copy_obj_array(list_obj){
+    //     let copy_list = []
+    //     for (let i= 0; i < list_obj.length; i++){
+    //         copy_list[i] = {overskrift: list_obj[i].overskrift, nodes: list_obj[i].nodes, checked: list_obj[i].checked} 
+    //     }
+    //     return copy_list
+    // }
+
+    // $: if (filteredDocumentlist){
+    //     original_titles_list_obj = load_markdownNodes(filteredDocumentlist, original_titles_list_obj, $checked_titles_filters)
+    // }
 
     //happens when an item is checked
     function updateCheckedList(item){

@@ -47,7 +47,7 @@
 
     //happens when an item is checked
     function updateCheckedList(item){
-        console.log(item)
+        console.log(item.checked)
         if (item.checked){
             console.log("Fjerner fra checked $checked_titles_filters")
             //remove 
@@ -60,8 +60,12 @@
         }else if(!item.checked){
             // add
             console.log("Legger til i checked $checked_titles_filters")
-            $checked_titles_filters.push({overskrift: item.overskrift, nodes: item.nodes.slice(), checked: true})
+            $checked_titles_filters.push(item)
+            // $checked_titles_filters.push({overskrift: item.overskrift, nodes: item.nodes.slice(), checked: true})
         }
+        item.checked = !item.checked
+
+
        
 
         console.log("$checked_titles_filters:")
@@ -157,8 +161,8 @@
 
             <div class="titles-list">
                 {#each show_titles_list_obj as elementObj}
-                    <label class="title" on:click={()=>updateCheckedList(elementObj)}>
-                        <input type="checkbox" bind:checked={elementObj.checked}>
+                    <label class="title" >
+                        <input type="checkbox" bind:checked={elementObj.checked} on:click={()=>updateCheckedList(elementObj)}>
                         <div class="title"> {elementObj.overskrift} </div>
                         
                     </label>   

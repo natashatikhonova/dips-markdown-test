@@ -72,11 +72,11 @@ function is_in_subtree(to_node, add_node){
 }
 
 export function set_filtered_text(){
-    console.log("Starten av set_filtered_text()")
+    // console.log("Starten av set_filtered_text()")
     let obj_list = []
     const unsubscribe = checked_titles_filters.subscribe(value => {
         obj_list = value
-        console.log("subscribe checked_titles_filters")
+        // console.log("subscribe checked_titles_filters")
     })
     onDestroy(unsubscribe)
     let selected_titles_nodes_List = []
@@ -100,17 +100,17 @@ export function set_filtered_text(){
                 if (!is_in_subtree(selected_titles_nodes_List[indeks], node)){ //sets node in this place instead
                     if (is_in_subtree(node, selected_titles_nodes_List[indeks])) { //if node is over in the tree
                         node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
-                        console.log("Satt temp_filtered_text: " + node.object.temp_filtered_context)
+                        // console.log("Satt temp_filtered_text: " + node.object.temp_filtered_context)
                         selected_titles_nodes_List[indeks] = node;
                     } else { 
                         //if they are in the same tree
                         if (node.object.temp_filtered_context == "" ){
 
                             node.object.temp_filtered_context =  selected_titles_nodes_List[indeks].object.markdownTree.get_text_under(selected_titles_nodes_List[indeks]) + "\n" + node.object.markdownTree.get_text_under(node)
-                            console.log("Satt temp_filtered_text: " + node.object.temp_filtered_context)
+                            // console.log("Satt temp_filtered_text: " + node.object.temp_filtered_context)
                         } else {
                             node.object.temp_filtered_context +=  "\n" +  node.object.markdownTree.get_text_under(node)
-                            console.log("Satt temp_filtered_text: " + node.object.temp_filtered_context)
+                            // console.log("Satt temp_filtered_text: " + node.object.temp_filtered_context)
                             
                         }
                         selected_titles_nodes_List[indeks] = node;
@@ -120,19 +120,19 @@ export function set_filtered_text(){
             } else { 
                 //Set the variable temp_filtered_context i objectet til teksten som skal vises
                 node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
-                console.log("Satt temp_filtered_text: " + node.object.temp_filtered_context)
+                // console.log("Satt temp_filtered_text: " + node.object.temp_filtered_context)
                 selected_titles_nodes_List.push(node)
-                console.log(node)
+                // console.log(node)
             }
         })
     })
-    console.log(selected_titles_nodes_List)
+    // console.log(selected_titles_nodes_List)
     return nodeList_to_documentObjList(selected_titles_nodes_List)
 }
 
     //load all title nodes to variables
     export function load_markdownNodes(chosen_documents, oldObjList, checked_titles) {
-        console.log("Load markdown nodes")
+        // console.log("Load markdown nodes")
         let all_nodes = [] 
         let searched_titles_nodes = []
         let titles_nodes = []

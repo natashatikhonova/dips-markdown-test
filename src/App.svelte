@@ -28,12 +28,11 @@
     // console.log(nodes_array)
     $documentList.push(document);
     $documentList = $documentList;
-    console.log("Setter inn dokumenter i app")
+    // console.log("Setter inn dokumenter i app")
     $all_markdown_titles = load_markdownNodes($documentList,[], $checked_titles_filters)
-    console.log($all_markdown_titles)
+    // console.log($all_markdown_titles)
   }
 
-  $: $currentDocumentObject, console.log($currentDocumentObject)
 
   function set_default(){
     if($currentlyAddingNewNote){

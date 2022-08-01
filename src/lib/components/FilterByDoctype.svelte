@@ -31,13 +31,13 @@
     //updates list whenever the group is changed
     $: if($current_doctype_filtergroup.filters){
         make_obj_list()
-        console.log($all_markdown_titles)
+        // console.log($all_markdown_titles)
         for (let i = 0; i<$all_markdown_titles.length; i++){
             for (let j =0; j<$checked_titles_filters.length; j++){
                 if ($checked_titles_filters[j].overskrift== $all_markdown_titles[i].overskrift){
                     $checked_titles_filters[j].nodes = $all_markdown_titles[i].nodes //mer her, viser nå alle
-                    console.log($all_markdown_titles[i].nodes)
-                    console.log($checked_titles_filters[j].nodes)
+                    // console.log($all_markdown_titles[i].nodes)
+                    // console.log($checked_titles_filters[j].nodes)
                 }
             }
         }

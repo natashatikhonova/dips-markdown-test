@@ -47,22 +47,26 @@
 
     //happens when an item is checked
     function updateCheckedList(item){
+        console.log(item)
         if (item.checked){
+            console.log("Fjerner fra checked $checked_titles_filters")
             //remove 
             for(let i = 0; i < $checked_titles_filters.length; i++){
                 if ($checked_titles_filters[i].overskrift == item.overskrift){
-                    mer her!!!
-                                $checked_titles_filters.splice($checked_titles_filters.indexOf(item.name), 1)
-                    
+                    $checked_titles_filters.splice(i, 1)
                 }
             }
             
         }else if(!item.checked){
             // add
+            console.log("Legger til i checked $checked_titles_filters")
             $checked_titles_filters.push({overskrift: item.overskrift, nodes: item.nodes.slice(), checked: true})
         }
+       
 
+        console.log("$checked_titles_filters:")
         $checked_titles_filters = $checked_titles_filters
+        console.log($checked_titles_filters)
     }
 
     //Updates the shown titles with search on titles
@@ -154,8 +158,9 @@
             <div class="titles-list">
                 {#each show_titles_list_obj as elementObj}
                     <label class="title" on:click={()=>updateCheckedList(elementObj)}>
-                        <input type="checkbox"  bind:checked={elementObj.checked} >
+                        <input type="checkbox" bind:checked={elementObj.checked}>
                         <div class="title"> {elementObj.overskrift} </div>
+                        
                     </label>   
                 {/each} 
             </div>

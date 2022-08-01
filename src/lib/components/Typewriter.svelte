@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, all_markdown_titles, checked_titles_filters, load_markdownNodes} from '../stores/stores.js';
+    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, all_markdown_titles, checked_titles_filters, load_markdownNodes, findNewDocumentObjId} from '../stores/stores.js';
     import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
     import asRoot from 'typewriter-editor/lib/asRoot';
@@ -98,7 +98,7 @@ import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
           if (selectedDocType !== documentTypes[0]) { //new Note
             console.log("New note")
             const readable = true;
-            let newElement = new DocumentObject($documentList.length, new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
+            let newElement = new DocumentObject(findNewDocumentObjId(), new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
             newElement.readable = readable
             newElement.title = selectedDocType;
             //Lager et tre over markdown overskriftene i teksten

@@ -141,9 +141,7 @@
 
     //open popup window for a new/editable group
     function openModal(group){
-        for(let i=0; i<original_doctypes.length; i++){
-            original_doctypes[i].checked = false
-        }
+
         manageGroup = true
         if (group){
             //edit group
@@ -178,7 +176,9 @@
 
 <h2>Filter dokumenttyper</h2>
 <div class="content">
-    {#if customViewMode}
+    {#if manageGroup}
+    <Modal/>
+    {:else if customViewMode}
     <div class="filter-panel">
         <div class="meta">
             <h3>Alle filtere:</h3>
@@ -245,7 +245,7 @@
         align-self: center;
     }
     .save-filter-button{
-           margin-top: 10px;
+        margin-top: 10px;
     
     }
     .content{
@@ -271,7 +271,6 @@
     .document-types{
         display: flex;
         flex-direction: column;
-        margin-top:20%;
         height: 45%;
         overflow-y: auto;
     }

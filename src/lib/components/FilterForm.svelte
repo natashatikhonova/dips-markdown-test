@@ -15,6 +15,7 @@
     const { close } = getContext('simple-modal');
     setContext('modal', this)
 
+    reset_list_obj()
     
     //filter list by search
     $: if (searched_value != ""){
@@ -34,7 +35,11 @@
             }
         }
     }
-    
+    function reset_list_obj(){
+        for(let i=0; i<original_list_obj.length; i++){
+            original_list_obj[i].checked = false
+        }
+    }
     //finds a new id for the group
     function findNewId(){
         let ids = []

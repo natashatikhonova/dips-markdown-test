@@ -20,25 +20,39 @@
     // $: if ($checked_titles_filters){
     //     console.log("Checked_titles_filters")
     // }
-    
+    $: filteredDocumentlist = $documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title)));
+    let prev_length = -1
+    $: console.log($documentList)
     //sets list depending on what doctypes are chosen
-    $: if (filteredDocumentlist){
+    $: if (filteredDocumentlist.length != prev_length){
         console.log("filteredDocumentlist")
-        filteredDocumentlist = $documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title)));
         //load documents when new doctype filter is chosen
         original_titles_list_obj = load_markdownNodes(filteredDocumentlist, original_titles_list_obj, $checked_titles_filters)
+        show_titles_list_obj = original_titles_list_obj
+
+        //updates $checked_titles_filter with the same values as in original_titles_list_obj:
+        for (let i = 0; i < $checked_titles_filters.length; i++){
+            let obj = original_titles_list_obj.find(item => item.overskrift == $checked_titles_filters[i].overskrift)
+            $checked_titles_filters[i].nodes = obj.nodes
+            $checked_titles_filters = $checked_titles_filters
+        } //setter $checked_titles sine noder til de samme nodene i original...
+        console.log("$checked_titles_filters")
+        console.log($checked_titles_filters)
+        prev_length = filteredDocumentlist.length
     }
+
     //sets filtered text in documentObject
-    $: if(original_titles_list_obj.length > 0){
+    $: if(original_titles_list_obj){
         console.log("original_titles_list_obj")
+        console.log(original_titles_list_obj)
+
         //checks if all items are checked whenever the original list is updated
         check_if_all_checked()
 
         reset_filtered_text()
-        // let cpy = copy_obj_array(original_titles_list_obj)
-        // $checked_titles_filters = cpy.filter((item) => (item.checked))
-
         selected_documentObj_titles = set_filtered_text()
+        console.log(selected_documentObj_titles)
+        
     }
     // $: original_titles_list_obj, check_if_all_checked()
 
@@ -117,16 +131,25 @@
 
     //unchecks all items
     function removeChecked(){
+        $checked_titles_filters = []
         for(let i=0; i<original_titles_list_obj.length; i++){
             original_titles_list_obj[i].checked = false
         } 
+        console.log($checked_titles_filters)
     }
 
     //checks all items
     function check_all(){
         all_checked = !all_checked
+        $checked_titles_filters = []
         for (let i = 0; i < original_titles_list_obj.length; i++) {
+
             original_titles_list_obj[i].checked = all_checked
+            if (all_checked){
+                // add
+                console.log("Legger til i checked $checked_titles_filters")
+                $checked_titles_filters.push(original_titles_list_obj[i])
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 <script>
 
 	let darkmodeOff = true
+	toggle()
     function toggle(){
         window.document.body.classList.toggle('dark-mode')
 		darkmodeOff = !darkmodeOff

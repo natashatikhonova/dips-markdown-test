@@ -1,6 +1,6 @@
 <script>
     import DocumentItem from "./DocumentItem.svelte";
-    import {currentDocumentObject, documentList, currentlyAddingNewNote, globalCurrentFilterGroup, showFiltermenu, showSideView} from '../stores/stores.js';
+    import {currentDocumentObject, documentList, currentlyAddingNewNote, current_doctype_filtergroup, showFiltermenu, showSideView} from '../stores/stores.js';
     import ToolMenu from './ToolMenu.svelte';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilterMenu from './FilterMenu.svelte';
@@ -13,7 +13,7 @@
     let ascendingOrder = false;
     let lengde;
 
-    $: filteredDocumentlist = ($documentList.filter(item => ($globalCurrentFilterGroup.filters.includes(item.title))));
+    $: filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
 
     function addNote(){
         $currentlyAddingNewNote = true;

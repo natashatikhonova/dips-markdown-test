@@ -1,7 +1,7 @@
 <script>
 
 
-    import { searchValue, amount_searched_words, showTitles, globalCurrentFilterGroup, myFilters, showFiltermenu, selected_line_height, selected_text_size, nofilter, allfilterOff, currentDocumentObject} from '../stores/stores.js';
+    import { checked_titles_filters, searchValue, amount_searched_words, showTitles, current_doctype_filtergroup, doctype_filter_groups, showFiltermenu, selected_line_height, selected_text_size, nofilter, allfilterOff, currentDocumentObject} from '../stores/stores.js';
     import { writable } from 'svelte/store';
 
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
@@ -50,7 +50,8 @@
 
     function turnOffFilters(){
         $allfilterOff = true
-        $globalCurrentFilterGroup = $nofilter
+        $current_doctype_filtergroup = $nofilter
+        $checked_titles_filters = []
     }
     function open_filtermenu(){
         $showFiltermenu = true
@@ -64,12 +65,12 @@
     <div class="leftmenu">
         <button class="main-button" on:click={open_filtermenu}>Filter</button>
         <!-- alternative løsninger på filteroff -->
-        <!-- <button class="main-button" on:click={() =>$showFiltermenu = true}  class:filterOn={$globalCurrentFilterGroup.filters.length != $nofilter.filters.length}>Filter</button> -->
-        <!-- {#if $globalCurrentFilterGroup.length != documentTypes.length}
+        <!-- <button class="main-button" on:click={() =>$showFiltermenu = true}  class:filterOn={$current_doctype_filtergroup.filters.length != $nofilter.filters.length}>Filter</button> -->
+        <!-- {#if $current_doctype_filtergroup.length != documentTypes.length}
             <button class="close" on:click={null}><i class="material-icons" >close</i></button>
         {/if} -->
         
-        {#if $globalCurrentFilterGroup.filters.length != $nofilter.filters.length}
+        {#if $current_doctype_filtergroup.filters.length != $nofilter.filters.length}
           <button class="filteroff-button" on:click={turnOffFilters}>Skru av filter</button>
         {/if}	
 

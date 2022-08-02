@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote } from '../stores/stores.js';
+    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, all_markdown_titles, checked_titles_filters, load_markdownNodes, findNewDocumentObjId} from '../stores/stores.js';
     import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
     import asRoot from 'typewriter-editor/lib/asRoot';
@@ -9,10 +9,10 @@
     import {createEventDispatcher} from 'svelte';
     import { DocumentObject } from '../document.js';
     import { ParseMarkdown } from '../ParseMarkdown.js';
-    import { Delta, TextChange } from 'typewriter-editor';
-    import BubbleMenu from 'typewriter-editor/lib/BubbleMenu.svelte';
+
     import { lineReplacements } from 'typewriter-editor/lib/modules/smartEntry.js';
     import { h as hFromTypewriter} from 'typewriter-editor';
+
 
 
     export let showTitleBar = true;
@@ -92,11 +92,15 @@
             }
           })
           $documentList = $documentList;
+          console.log("Setter inn dokumenter i typewriter Edit")
+          $all_markdown_titles = load_markdownNodes($documentList,[], $checked_titles_filters)
+          $all_markdown_titles =  $all_markdown_titles
+
         } else{
           if (selectedDocType !== documentTypes[0]) { //new Note
             console.log("New note")
             const readable = true;
-            let newElement = new DocumentObject($documentList.length, new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
+            let newElement = new DocumentObject(findNewDocumentObjId(), new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
             newElement.readable = readable
             newElement.title = selectedDocType;
 
@@ -108,6 +112,10 @@
 
             $documentList.push(newElement);
             $documentList = $documentList;
+            console.log("Setter inn dokumenter i Typewriter. New note")
+            $all_markdown_titles = load_markdownNodes($documentList.slice(),[], $checked_titles_filters)
+            $all_markdown_titles =  $all_markdown_titles
+            console.log($all_markdown_titles)
             $currentDocumentObject = newElement;
             $currentlyAddingNewNote = false;
             dispatch("save");

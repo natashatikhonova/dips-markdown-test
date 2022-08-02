@@ -13,7 +13,7 @@
 
     function changeEdit(){
           edit=!edit;
-          $currentlyEditingNote = true;
+          edit ? $currentlyEditingNote = true: $currentlyEditingNote = false
     }
 
     function deleteNote(){

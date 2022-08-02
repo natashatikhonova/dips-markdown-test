@@ -5,11 +5,12 @@
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView} from './lib/stores/stores.js';
+  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, all_markdown_titles, checked_titles_filters, load_markdownNodes} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {ParseMarkdown} from './lib/ParseMarkdown'
   import ThemeButton from './lib/components/ThemeButton.svelte';
   import ToolMenu from './lib/components/ToolMenu.svelte';
+  // import {load_markdownNodes} from "./lib/components/filterDocumentText"
 
 
   //get data from file
@@ -27,9 +28,11 @@
     // console.log(nodes_array)
     $documentList.push(document);
     $documentList = $documentList;
+    // console.log("Setter inn dokumenter i app")
+    $all_markdown_titles = load_markdownNodes($documentList,[], $checked_titles_filters)
+    // console.log($all_markdown_titles)
   }
 
-  $: $currentDocumentObject, console.log($currentDocumentObject)
 
   function set_default(){
     if($currentlyAddingNewNote){

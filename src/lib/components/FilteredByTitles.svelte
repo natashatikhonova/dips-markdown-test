@@ -7,7 +7,7 @@
     let original_titles_list_obj = []
     let show_titles_list_obj =[]
     let filteredDocumentlist = []
-    
+
     let selected_documentObj_titles = set_filtered_text()
     // //Reactive tests
     // $: if (original_titles_list_obj){
@@ -22,10 +22,9 @@
     // }
     $: filteredDocumentlist = $documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title)));
     let prev_length = -1
-    $: console.log($documentList)
+
     //sets list depending on what doctypes are chosen
     $: if (filteredDocumentlist.length != prev_length){
-        console.log("filteredDocumentlist")
         //load documents when new doctype filter is chosen
         original_titles_list_obj = load_markdownNodes(filteredDocumentlist, original_titles_list_obj, $checked_titles_filters)
         show_titles_list_obj = original_titles_list_obj
@@ -36,22 +35,16 @@
             $checked_titles_filters[i].nodes = obj.nodes
             $checked_titles_filters = $checked_titles_filters
         } //setter $checked_titles sine noder til de samme nodene i original...
-        console.log("$checked_titles_filters")
-        console.log($checked_titles_filters)
+
         prev_length = filteredDocumentlist.length
     }
 
     //sets filtered text in documentObject
     $: if(original_titles_list_obj){
-        console.log("original_titles_list_obj")
-        console.log(original_titles_list_obj)
 
         //checks if all items are checked whenever the original list is updated
         check_if_all_checked()
-
-        reset_filtered_text()
         selected_documentObj_titles = set_filtered_text()
-        console.log(selected_documentObj_titles)
         
     }
     // $: original_titles_list_obj, check_if_all_checked()
@@ -70,9 +63,7 @@
 
     //happens when an item is checked
     function updateCheckedList(item){
-        console.log(item.checked)
         if (item.checked){
-            console.log("Fjerner fra checked $checked_titles_filters")
             //remove 
             for(let i = 0; i < $checked_titles_filters.length; i++){
                 if ($checked_titles_filters[i].overskrift == item.overskrift){
@@ -82,18 +73,12 @@
             
         }else if(!item.checked){
             // add
-            console.log("Legger til i checked $checked_titles_filters")
             $checked_titles_filters.push(item)
             // $checked_titles_filters.push({overskrift: item.overskrift, nodes: item.nodes.slice(), checked: true})
         }
         item.checked = !item.checked
 
-
-       
-
-        console.log("$checked_titles_filters:")
         $checked_titles_filters = $checked_titles_filters
-        console.log($checked_titles_filters)
     }
 
     //Updates the shown titles with search on titles
@@ -122,11 +107,7 @@
     }
  
     
-    function reset_filtered_text(){
-        for (let i = 0; i < $documentList.length; i++){
-            $documentList[i].temp_filtered_context = ""
-        }
-    }
+
     
 
     //unchecks all items
@@ -135,7 +116,6 @@
         for(let i=0; i<original_titles_list_obj.length; i++){
             original_titles_list_obj[i].checked = false
         } 
-        console.log($checked_titles_filters)
     }
 
     //checks all items
@@ -147,7 +127,7 @@
             original_titles_list_obj[i].checked = all_checked
             if (all_checked){
                 // add
-                console.log("Legger til i checked $checked_titles_filters")
+
                 $checked_titles_filters.push(original_titles_list_obj[i])
             }
         }

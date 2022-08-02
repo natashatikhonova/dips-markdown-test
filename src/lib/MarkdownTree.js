@@ -59,7 +59,7 @@ export class Tree {
         newNode.parent = parent; 
         this.queue_read.push(newNode)
     }
-    get_subtree(startNode){
+    get_subtree(startNode){ //get subtree from a node
         let all_nodes = this.get_nodes_in_order(startNode)
         let subtree = []
         for (let i = 1; i < all_nodes.length; i++) {

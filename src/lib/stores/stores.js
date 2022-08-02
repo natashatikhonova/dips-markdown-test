@@ -66,14 +66,14 @@ export function findNewDocumentObjId(){
     unsubscribe4()
     return num;
 }
-function nodeList_to_documentObjList(node_list) {
+// function nodeList_to_documentObjList(node_list) {
 
-    let documentObj_list = []
-    for (let i = 0; i <node_list.length; i++){
-        documentObj_list[i] = node_list[i].object
-    }
-    return documentObj_list
-}
+//     let documentObj_list = []
+//     for (let i = 0; i <node_list.length; i++){
+//         documentObj_list[i] = node_list[i].object
+//     }
+//     return documentObj_list
+// }
 
 function is_in_subtree(to_node, add_node){
 
@@ -86,69 +86,114 @@ function is_in_subtree(to_node, add_node){
     }
     return false; //add_node is not in subtree of to_node
 }
+function find_placement_among_nodes(nodes_list, node){
+    for(let i = 0; i < nodes_list.length; i++){
+        if (is_in_subtree(nodes_list[i], node)){
+            //old node is over the new node
+            return -1 //not adding to list because the parent node will show this node
+        } else if (is_in_subtree(node, nodes_list[i])) {
+            //new node is over the old node
+            return i; //replace the allready added node with this new node, beause the new node wil show the old node's context
+        }
+    }
+    return -2 //...
+}
 
 export function set_filtered_text(){
-    // console.log("Starten av set_filtered_text()")
+    console.log("Starten av set_filtered_text()")
     let obj_list = []
     const unsubscribe = checked_titles_filters.subscribe(value => {
         obj_list = value
         // console.log("subscribe checked_titles_filters")
     })
     unsubscribe()
+
+    // const unsubscribe2 = documentList.subscribe(value => {
+    //     for (let i = 0; i < value.length; i++){
+    //         value[i].temp_filtered_context = ""
+    //     }
+    // })
+    // unsubscribe2()
     
     // for (let i = 0; i < obj_list.length; i++){
     //     obj_list[i].nodes.forEach((node)=>{node.object.temp_filtered_context = ""})
     // }
 
-    let selected_titles_nodes_List = []
+    let selected_titles_objects = []
     //Loop through the whole documentList and sets the filtered text to empty string
-    
+    console.log("\nLooper gjennom objekter i $checked_titles_filters:")
     obj_list.forEach((item)=>{
-
+        console.log("\nSer på objekt i listen:")
+        console.log(item)
+        console.log("Looper gjennom nodene under denne overskriften")
         item.nodes.forEach((node)=> {
-            
-            let indeks = -1
+            console.log("Ser på node:")
+            console.log(node)
+            let index = -1
 
-            for (let i = 0; i < selected_titles_nodes_List.length; i++) { 
+            for (let i = 0; i < selected_titles_objects.length; i++) { 
                 //check if document have been created
-                if (selected_titles_nodes_List[i].object.id == node.object.id) { 
+                if (selected_titles_objects[i].docObject.id == node.object.id) { 
                     //If they belong to the same object
-                    indeks = i;
+                    index = i;
                     break;
                 }
             }
-            if (indeks != -1){ 
-                if (!is_in_subtree(selected_titles_nodes_List[indeks], node)){ //sets node in this place instead
-                    if (is_in_subtree(node, selected_titles_nodes_List[indeks])) { //if node is over in the tree
-                        node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
-                        // console.log("Satt temp_filtered_text: " + node.object.temp_filtered_context)
-                        selected_titles_nodes_List[indeks] = node;
-                    } else { 
-                        //if they are in the same tree
-                        if (node.object.temp_filtered_context == "" ){
+            
+            if (index != -1){ 
+                //found an object with the same documentObject as node on index <index> in selected_titles_object[index]
+                console.log("fant objektet: " + selected_titles_objects[index].docObject.title + " med samme dokumentObjekt")
+                console.log("plasserer på rikitg plass blant nodes inn i rikitg i objektet som er på formen {docObject: .., nodes: [..]}")
+                let nodes_index = find_placement_among_nodes(selected_titles_objects[index].nodes, node)
+                if (nodes_index > -1){ 
+                    //Found a node in the subtree of node in the list selected_titles_objects[index].nodes on index <nodes_index>
+                    //Therefore, Replaces selected_titles_objects[index].nodes[nodes_index] with node b
+                    console.log("erstatter gammel node med ny node på indeks " + nodes_index)
+                    selected_titles_objects[index].nodes[nodes_index] = node
 
-                            node.object.temp_filtered_context =  selected_titles_nodes_List[indeks].object.markdownTree.get_text_under(selected_titles_nodes_List[indeks]) + "\n" + node.object.markdownTree.get_text_under(node)
-                            // console.log("Satt temp_filtered_text: " + node.object.temp_filtered_context)
-                        } else {
-                            node.object.temp_filtered_context +=  "\n" +  node.object.markdownTree.get_text_under(node)
-                            // console.log("Satt temp_filtered_text: " + node.object.temp_filtered_context)
-                            
+
+                } else if ( nodes_index == -2) {
+                    //The node is a sibling to the ther nodes
+                    //Finds the rigth placement among the nodes in comparison to the original document
+                    let nodes_document_order = selected_titles_objects[index].docObject.markdownTree.get_nodes_in_order()
+                    let node_index = nodes_document_order.map(function(e) { return e.id; }).indexOf(node); //Index among all title nodes in the document
+                        
+                    let inserted_bool = false
+                    for (let i = 0; i < selected_titles_objects[index].nodes.length; i++){
+                        let cmpNode = selected_titles_objects[index].nodes[i]
+                        let tempIndex = nodes_document_order.map(function(e) { return e.id; }).indexOf(cmpNode);
+                        if (tempIndex > node_index) {
+                            //place in selected_titles_objects[index].nodes list before cmpNode
+                            selected_titles_objects[index].nodes.splice(i, 1, node)
+                            inserted_bool = true
                         }
-                        selected_titles_nodes_List[indeks] = node;
                     }
-                } 
+                    if (inserted_bool == false) {
+                        selected_titles_objects[index].nodes.push(node)
+                    }
+                }
 
             } else { 
-                //Set the variable temp_filtered_context i objectet til teksten som skal vises
-                node.object.temp_filtered_context = node.object.markdownTree.get_text_under(node)
-                // console.log("Satt temp_filtered_text: " + node.object.temp_filtered_context)
-                selected_titles_nodes_List.push(node)
-                // console.log(node)
+                console.log("fant ingen tidligere objekter i selected_titles_objects med samme dokument objekt")
+                selected_titles_objects.push({docObject: node.object, nodes: [node]})
             }
         })
     })
-    // console.log(selected_titles_nodes_List)
-    return nodeList_to_documentObjList(selected_titles_nodes_List)
+    console.log("Setter sammen teksten i noder til å bli temp_filtered_context")
+    let documentObj_list = []
+    for (let i = 0; i < selected_titles_objects.length; i++){
+        documentObj_list.push(selected_titles_objects[i].docObject)
+        selected_titles_objects[i].docObject.temp_filtered_context = ""
+        for (let j = 0; j < selected_titles_objects[i].nodes.length; j++){
+            let node = selected_titles_objects[i].nodes[j]
+            selected_titles_objects[i].docObject.temp_filtered_context += selected_titles_objects[i].docObject.markdownTree.get_text_under(node)
+
+        }
+        console.log("Temp_filtered_context:")
+        console.log(selected_titles_objects[i].docObject.temp_filtered_context)
+    }
+    // console.log(selected_title_objected)
+    return documentObj_list
 }
 
     //load all title nodes to variables

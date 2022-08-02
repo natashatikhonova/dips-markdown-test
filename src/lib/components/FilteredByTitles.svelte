@@ -32,10 +32,15 @@
         //updates $checked_titles_filter with the same values as in original_titles_list_obj:
         for (let i = 0; i < $checked_titles_filters.length; i++){
             let obj = original_titles_list_obj.find(item => item.overskrift == $checked_titles_filters[i].overskrift)
-            $checked_titles_filters[i].nodes = obj.nodes
+            if (obj == null){
+                //Only checked titles wich belonged the old doctype filter, therefor the list is now empty
+                $checked_titles_filters[i].nodes = []
+            } else {
+                //transfered the checked titles to the new doctype filter
+                $checked_titles_filters[i].nodes = obj.nodes
+            }
             $checked_titles_filters = $checked_titles_filters
-        } //setter $checked_titles sine noder til de samme nodene i original...
-
+        } 
         prev_length = filteredDocumentlist.length
     }
 
@@ -164,11 +169,13 @@
                 {#if show_titles_list_obj.length > 0}
                     {#if all_checked} 
                         <button class="secundary-button" on:click={removeChecked}>Nullstill</button>
-    
+                        
                     {:else}
                         <button class="secundary-button" on:click={check_all}>Vis alle</button>
                     {/if}
+
                 {/if}
+
             </div>
         </div>
     
@@ -186,6 +193,11 @@
             </div>
             
         {/if}
+        {#if $checked_titles_filters.length == 0}
+            <div class = "shows-all-documents"> *Viser alle dokumenter*</div>
+        {/if}
+
+
  </div>
 </div>
 
@@ -201,6 +213,10 @@
         display: flex;
         flex-direction: column;
         height: 100%;
+    }
+    .shows-all-documents{
+        margin-top: 5%;
+        color: red;
     }
     h2{
         align-self: center;

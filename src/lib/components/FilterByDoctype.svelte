@@ -193,9 +193,9 @@
         {:else}
         <div class="filters">
             {#each searchedDocumentTypes as item}    
-                <label class = "filterItem" on:click={()=>updateCheckedList(item)}>
+                <label class = "filterItem" >
                     <!-- <input type="checkbox"  bind:group={$current_doctype_filtergroup.filters} value={item} > -->
-                    <input type="checkbox" bind:checked={item.checked} >
+                    <input type="checkbox" on:click={()=>updateCheckedList(item)} bind:checked={item.checked} >
                     {item.name}
                    
                 </label>

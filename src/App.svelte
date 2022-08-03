@@ -5,32 +5,24 @@
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, all_markdown_titles, checked_titles_filters, load_markdownNodes} from './lib/stores/stores.js';
+  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, checked_titles_filters, load_markdownNodes} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {ParseMarkdown} from './lib/ParseMarkdown'
   import ThemeButton from './lib/components/ThemeButton.svelte';
-  import ToolMenu from './lib/components/ToolMenu.svelte';
-  // import {load_markdownNodes} from "./lib/components/filterDocumentText"
 
-
-  //get data from file
+  //get data from JSON file
   documents.forEach(putInDocumentList);  
 
+  //Makes a new DocumentObject for each file and adds it to the store array $documentList
   function putInDocumentList(item){
     let document = new DocumentObject(item.id, item.date, item.content, item.title, item.readable);
+    //Makes a tree structur for all markdown formated titles:
     let parse = new ParseMarkdown
-    //Lager et tre over markdown overskriftene i teksten
     let tree = parse.parseAndSetIntoTree(document) 
     document.markdownTree = tree;
-    
-    // let nodes_array = document.markdownTree.get_nodes_in_order(null) //Return the nodes in the same order as it was read from file
-    // console.log("\nnodes_array ")
-    // console.log(nodes_array)
+
     $documentList.push(document);
     $documentList = $documentList;
-    // console.log("Setter inn dokumenter i app")
-    $all_markdown_titles = load_markdownNodes($documentList,[], $checked_titles_filters)
-    // console.log($all_markdown_titles)
   }
 
 

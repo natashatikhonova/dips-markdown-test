@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, all_markdown_titles, checked_titles_filters, load_markdownNodes, findNewDocumentObjId} from '../stores/stores.js';
+    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, findNewDocumentObjId} from '../stores/stores.js';
     import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
     import asRoot from 'typewriter-editor/lib/asRoot';
@@ -12,7 +12,7 @@
     import { h as hFromTypewriter} from 'typewriter-editor';
 
 
-
+  
     editor.typeset.formats.add({
       name: 'autocomplete',
       selector: 'autoSuggestion',
@@ -89,8 +89,7 @@
           })
           $documentList = $documentList;
           console.log("Setter inn dokumenter i typewriter Edit")
-          $all_markdown_titles = load_markdownNodes($documentList,[], $checked_titles_filters)
-          $all_markdown_titles =  $all_markdown_titles
+
 
         } else{
           if (selectedDocType !== documentTypes[0]) { //new Note
@@ -109,9 +108,7 @@
             $documentList.push(newElement);
             $documentList = $documentList;
             console.log("Setter inn dokumenter i Typewriter. New note")
-            $all_markdown_titles = load_markdownNodes($documentList.slice(),[], $checked_titles_filters)
-            $all_markdown_titles =  $all_markdown_titles
-            console.log($all_markdown_titles)
+
             $currentDocumentObject = newElement;
             $currentlyAddingNewNote = false;
             dispatch("save");

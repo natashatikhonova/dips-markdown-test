@@ -1,4 +1,4 @@
-import { onDestroy } from "svelte";
+
 import { writable } from "svelte/store";
 
 import { Editor } from 'typewriter-editor';
@@ -33,8 +33,8 @@ export let doctype_filter_groups = writable([
     {id: 5, name: "Thors filter", filters: ["Lab"]}
 ]);
 
-export let all_markdown_titles = writable([]) //in diffrent object wich depends on name 
-export let checked_titles_filters = writable([]) //checked filters on title on form: {overskrift: overskrift, nodes: [..], checked: true }
+// export let all_markdown_titles = writable([]) //in diffrent object wich depends on name 
+export let checked_titles_filters = writable([]) //checked filters on title on form: {title: title, nodes: [..], checked: true }
 
 export let searchValue = writable("")
 export let amount_searched_words = writable(0)
@@ -66,14 +66,6 @@ export function findNewDocumentObjId(){
     unsubscribe4()
     return num;
 }
-// function nodeList_to_documentObjList(node_list) {
-
-//     let documentObj_list = []
-//     for (let i = 0; i <node_list.length; i++){
-//         documentObj_list[i] = node_list[i].object
-//     }
-//     return documentObj_list
-// }
 
 function is_in_subtree(to_node, add_node){
 
@@ -126,7 +118,7 @@ export function set_filtered_text(){
         console.log("\n\n")
         console.log("\n\mSer på objekt i listen:")
         console.log(item)
-        console.log("Looper gjennom nodene under denne overskriften")
+        console.log("Looper gjennom nodene under denne titleen")
         item.nodes.forEach((node)=> {
             
             console.log("\nSer på node:")
@@ -169,11 +161,11 @@ export function set_filtered_text(){
                     let new_nodes_list = [] //new node list that only contain one node from each subtree, wich is the highest node in each subtree. Does only need this for showing the context later
                     for (let i = nodes_index; i < selected_titles_objects[index].nodes.length; i++){
                         if (!is_in_subtree(node, selected_titles_objects[index].nodes[i])){
-                            console.log("Legger til noden " + selected_titles_objects[index].nodes[i].overskrift + " i nodes listen")
+                            console.log("Legger til noden " + selected_titles_objects[index].nodes[i].title + " i nodes listen")
                             console.log(selected_titles_objects[index].nodes[i])
                             new_nodes_list.push(selected_titles_objects[index].nodes[i])
                         } else {
-                            console.log("Fjerner noden " + selected_titles_objects[index].nodes[i].overskrift + " i nodes listen")
+                            console.log("Fjerner noden " + selected_titles_objects[index].nodes[i].title + " i nodes listen")
                         }
                     }
                     selected_titles_objects[index].nodes = new_nodes_list
@@ -196,13 +188,13 @@ export function set_filtered_text(){
                             //place in selected_titles_objects[index].nodes list before cmpNode
                            
                             selected_titles_objects[index].nodes.splice(i, 0, node)
-                            console.log("Satt " + node.overskrift + " inn på index " + i )
+                            console.log("Satt " + node.title + " inn på index " + i )
                             inserted_bool = true
                             break
                         }
                     }
                     if (inserted_bool == false) {
-                        console.log("Satt " + node.overskrift + " inn på slutten" )
+                        console.log("Satt " + node.title + " inn på slutten" )
                         selected_titles_objects[index].nodes.push(node)
                     }
 
@@ -269,7 +261,7 @@ export function set_filtered_text(){
         // $all_markdown_titles = []
         // //copy some values to the store:
         // for (let i = 0 ; i<original_titles_list_obj.length; i++){
-        //     $all_markdown_titles.push({overskrift: original_titles_list_obj[i].overskrift, nodes: original_titles_list_obj[i].nodes})
+        //     $all_markdown_titles.push({title: original_titles_list_obj[i].title, nodes: original_titles_list_obj[i].nodes})
         
         // }
        titles_nodes = sortByString(titles_nodes)
@@ -280,9 +272,9 @@ export function set_filtered_text(){
     const sortByString = (list) => {
 
         let sortedData = list.sort((obj1, obj2) => {
-            if (obj1.overskrift < obj2.overskrift) {
+            if (obj1.title < obj2.title) {
                     return -1;
-            } else if (obj1.overskrift > obj2.overskrift) {
+            } else if (obj1.title > obj2.title) {
                 return 1;
             }
             return 0; //string code values are equal		
@@ -294,7 +286,8 @@ export function set_filtered_text(){
 
 
 
-    //creates a list of objects from a list of nodes
+    //creates a list of objects on the form [{title: .., nodes: [..], checked: true/false},..] from a list of nodes [..node]
+    //The checked value in each object is based on the checked_titles parameter
     function make_titles_obj_list(node_list, oldObjList, checked_titles){
        let obj_list = []
 
@@ -303,7 +296,7 @@ export function set_filtered_text(){
            let node = node_list[i]
            let found = false;
            for (let j= 0; j<obj_list.length; j++){
-               if(obj_list[j].overskrift == node.overskrift){
+               if(obj_list[j].title == node.title){
                    obj_list[j].nodes.push(node)
                    found = true
                    break;
@@ -312,10 +305,10 @@ export function set_filtered_text(){
            if (!found){
                if (oldObjList.length == 0) { 
                     //First time
-                    if (is_checked(node.overskrift, checked_titles)){
-                        new_element = {overskrift: node.overskrift, nodes: [node], checked: true }
+                    if (is_checked(node.title, checked_titles)){
+                        new_element = {title: node.title, nodes: [node], checked: true }
                     } else {
-                        new_element = {overskrift: node.overskrift, nodes: [node], checked: false }
+                        new_element = {title: node.title, nodes: [node], checked: false }
 
                     }
 
@@ -323,16 +316,16 @@ export function set_filtered_text(){
                     //Check if the node is checked in original_titles_obj_list
                    let found_in_list = false
                    for (let i = 0; i < oldObjList.length; i++) {
-                       if (node.overskrift == oldObjList[i].overskrift) {
+                       if (node.title == oldObjList[i].title) {
                            if (oldObjList[i].checked) {
-                               new_element = {overskrift: node.overskrift, nodes: [node], checked: true }
+                               new_element = {title: node.title, nodes: [node], checked: true }
                                found_in_list = true
                            } 
                            break;
                        }
                    }
                    if (!found_in_list){
-                       new_element = {overskrift: node.overskrift, nodes: [node], checked: false }
+                       new_element = {title: node.title, nodes: [node], checked: false }
                    }
                }
                obj_list.push(new_element)
@@ -346,8 +339,9 @@ export function set_filtered_text(){
     let bool = false
 
     for (let i = 0; i < checked_titles.length; i++){
-        if (checked_titles[i].overskrift == title) {
+        if (checked_titles[i].title == title) {
             bool = true
+            break
         }
     }
 

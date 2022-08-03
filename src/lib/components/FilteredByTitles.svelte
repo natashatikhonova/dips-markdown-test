@@ -31,7 +31,7 @@
 
         //updates $checked_titles_filter with the same values as in original_titles_list_obj:
         for (let i = 0; i < $checked_titles_filters.length; i++){
-            let obj = original_titles_list_obj.find(item => item.overskrift == $checked_titles_filters[i].overskrift)
+            let obj = original_titles_list_obj.find(item => item.title == $checked_titles_filters[i].title)
             if (obj == null){
                 //Only checked titles wich belonged the old doctype filter, therefor the list is now empty
                 $checked_titles_filters[i].nodes = []
@@ -57,7 +57,7 @@
     // function copy_obj_array(list_obj){
     //     let copy_list = []
     //     for (let i= 0; i < list_obj.length; i++){
-    //         copy_list[i] = {overskrift: list_obj[i].overskrift, nodes: list_obj[i].nodes, checked: list_obj[i].checked} 
+    //         copy_list[i] = {title: list_obj[i].title, nodes: list_obj[i].nodes, checked: list_obj[i].checked} 
     //     }
     //     return copy_list
     // }
@@ -71,7 +71,7 @@
         if (item.checked){
             //remove 
             for(let i = 0; i < $checked_titles_filters.length; i++){
-                if ($checked_titles_filters[i].overskrift == item.overskrift){
+                if ($checked_titles_filters[i].title == item.title){
                     $checked_titles_filters.splice(i, 1)
                 }
             }
@@ -79,7 +79,7 @@
         }else if(!item.checked){
             // add
             $checked_titles_filters.push(item)
-            // $checked_titles_filters.push({overskrift: item.overskrift, nodes: item.nodes.slice(), checked: true})
+            // $checked_titles_filters.push({title: item.title, nodes: item.nodes.slice(), checked: true})
         }
         item.checked = !item.checked
 
@@ -89,10 +89,10 @@
     //Updates the shown titles with search on titles
     $: if (searched_value.length >= 0){ 
          if (searched_value != ""){
-             show_titles_list_obj = original_titles_list_obj.filter(item => (item.overskrift.toLowerCase().includes(searched_value.toLowerCase())));
+             show_titles_list_obj = original_titles_list_obj.filter(item => (item.title.toLowerCase().includes(searched_value.toLowerCase())));
              let startsWithSearch = []
              for(let i = 0; i<show_titles_list_obj.length; i++){
-                 if (show_titles_list_obj[i].overskrift.toLowerCase().startsWith(searched_value)){
+                 if (show_titles_list_obj[i].title.toLowerCase().startsWith(searched_value)){
                      startsWithSearch.push(show_titles_list_obj[i])
                      show_titles_list_obj.splice(i, 1)
                  }
@@ -158,7 +158,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<h2>Overskrifter</h2>
+<h2>titleer</h2>
 <div class="main">
 
     <div class="filter-panel">
@@ -186,7 +186,7 @@
                 {#each show_titles_list_obj as elementObj}
                     <label class = "filterItem">
                         <input type="checkbox" bind:checked={elementObj.checked} on:click={()=>updateCheckedList(elementObj)}>
-                        {elementObj.overskrift}
+                        {elementObj.title}
                         
                     </label>   
                 {/each} 

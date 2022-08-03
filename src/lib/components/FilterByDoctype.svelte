@@ -1,5 +1,5 @@
 <script>
-    import {current_doctype_filtergroup, doctype_filter_groups, nofilter, allfilterOff, documentTypes, searchResult, searchValue, documentList, checked_titles_filters, all_markdown_titles, set_filtered_text} from '../stores/stores';
+    import {current_doctype_filtergroup, doctype_filter_groups, nofilter, allfilterOff, documentTypes, searchResult, searchValue, documentList, checked_titles_filters, set_filtered_text, load_markdownNodes} from '../stores/stores';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
     import FilterForm from './FilterForm.svelte';
@@ -30,11 +30,21 @@
     
     //updates list whenever the group is changed
     $: if($current_doctype_filtergroup.filters){
+        let filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
+
+        //Adds all the markdown titles in the current filtered documentList to an array of objects
+        //Object structure: {title: .. , nodes: [..], checked:true/false}
+        //*checked variable in object is irrelevant here*/
+        let all_markdown_titles = load_markdownNodes(filteredDocumentlist,[], $checked_titles_filters)
+
+        //makes a list of object with all doctypes with a correct checked value
+        //object structure: {name: <doctype String>, checked: true/false}
         make_obj_list()
-        for (let i = 0; i<$all_markdown_titles.length; i++){
+
+        for (let i = 0; i<all_markdown_titles.length; i++){
             for (let j =0; j<$checked_titles_filters.length; j++){
-                if ($checked_titles_filters[j].overskrift== $all_markdown_titles[i].overskrift){
-                    $checked_titles_filters[j].nodes = $all_markdown_titles[i].nodes //Chooses all, but it works because it get filtered again in filteredByTitles.svelte
+                if ($checked_titles_filters[j].title== all_markdown_titles[i].title){
+                    $checked_titles_filters[j].nodes = all_markdown_titles[i].nodes //Chooses all, but it works because it get filtered again in filteredByTitles.svelte
                 }
             }
         }

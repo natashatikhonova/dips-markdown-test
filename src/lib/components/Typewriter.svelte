@@ -9,13 +9,9 @@
     import {createEventDispatcher} from 'svelte';
     import { DocumentObject } from '../document.js';
     import { ParseMarkdown } from '../ParseMarkdown.js';
-
-    import { lineReplacements } from 'typewriter-editor/lib/modules/smartEntry.js';
     import { h as hFromTypewriter} from 'typewriter-editor';
 
 
-
-    export let showTitleBar = true;
 
     editor.typeset.formats.add({
       name: 'autocomplete',
@@ -347,11 +343,7 @@ function set_text_size(direction){
   }
   editor.root.focus();
 }
-let alignment = "left"
-function align(value) {
-    alignment = value;
-    editor.root.focus();
-  }
+
 
 function set_autocomplete(){
   autocompleteOn = !autocompleteOn
@@ -532,36 +524,7 @@ function set_autocomplete(){
           class:mobile={w<600}
           on:click={() => {set_text_size("bigger")}}><i class="material-icons">zoom_in</i></button>
         </div>
-  
-        <div class="extra-functions" class:no-border={w<600}>
-          <button
-          title="venstre"
-          class="toolbar-button"
-          class:active={alignment === 'left'}
-          class:mobile={w<600}
-          on:click={() => align("left")}><i class="material-icons">format_align_left</i></button>
-  
-          <button
-          title="midten"
-          class="toolbar-button"
-          class:active={alignment === 'center'}
-          class:mobile={w<600}
-          on:click={() => align("center")}><i class="material-icons">format_align_center</i></button>
-  
-          <button
-          title="høyre"
-          class="toolbar-button"
-          class:active={alignment === 'right'}
-          class:mobile={w<600}
-          on:click={() => align("right")}><i class="material-icons">format_align_right</i></button>
-        </div>
-  
-  
-  
       </div>
-      
-
-
     </Toolbar>
   </div>
 
@@ -581,7 +544,7 @@ function set_autocomplete(){
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
 
-    <div class="editor" class:center={alignment === 'center'} class:right={alignment === 'right'} class:left={alignment === 'left'} style="font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={whenKeyDown} on:click={clear_check_text}></div>
+    <div class="editor" style="font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={whenKeyDown} on:click={clear_check_text}></div>
 
 
 <style>
@@ -590,13 +553,6 @@ function set_autocomplete(){
   background: #eaf4ff;
 }
 
-.right {
-  text-align: right;
-}
-.center {
-  text-align: center;
-
-}
 
 .toolmenu-title{
   align-self: center;

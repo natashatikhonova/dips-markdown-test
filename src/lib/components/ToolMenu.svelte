@@ -85,12 +85,12 @@
                 title="Zoom out"
                 class="toolbar-button"
                 disabled={min_size}
-                on:click={() => {set_text_size("lower")}}><i class="material-icons">text_decrease</i></button>
+                on:click={() => {set_text_size("lower")}}><i class="material-icons">zoom_out</i></button>
                 <button
                 title="Zoom in"
                 class="toolbar-button"
                 disabled={max_size}
-                on:click={() => {set_text_size("bigger")}}><i class="material-icons">text_increase</i></button>
+                on:click={() => {set_text_size("bigger")}}><i class="material-icons">zoom_in</i></button>
             </div>
             
             <div class="line-button">

@@ -5,7 +5,6 @@
     import {editor} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
-    export let goBackButton = false;
     export let width;
 
     let edit = $currentlyAddingNewNote;
@@ -32,21 +31,8 @@
     } else if($currentlyAddingNewNote){
         editor.setHTML(marked(""));
     } 
-    let contentViewSize = 50
-    function goBack(){
-      editor.setHTML(marked(""));
-      // $currentDocumentObject = null;
-      if (contentViewSize == 100){
-        dispatch("set_content_view_size", 50)
-        contentViewSize = 50
-
-      } else if (contentViewSize == 50){
-        $currentDocumentObject = null
-      }
-    }
-    function showContent(){
-      dispatch("set_content_view_size", 100)
-      contentViewSize = 100
+    function showDocumentlist(){
+      dispatch("set_content_view_size", 0)
     }
        
 </script>
@@ -61,12 +47,7 @@
         <Typewriter on:editable={changeEdit} />
     {:else}
         <header class="header-bar">
-          {#if goBackButton } 
-            <button title = "tilbake" class="back" on:click={goBack}><i class="material-icons">arrow_back</i></button>
-          {:else}
-            <button title = "Vis dokument" class="back" disabled = {contentViewSize==100} on:click={showContent}><i class="material-icons">arrow_back</i></button>
-            <button title = "Vis dokumentliste" class="back" on:click={goBack}><i class="material-icons">arrow_forward</i></button>
-          {/if}
+          <button title = "Vis dokumentliste" class="arrow-keys" on:click={showDocumentlist}><i class="material-icons">arrow_forward</i></button>
           <div class="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>
           {#if $currentDocumentObject.readable}
             <button  title="Rediger" class="edit-button" on:click={changeEdit}><i class="material-icons">edit</i></button>
@@ -105,76 +86,34 @@
     background: whitesmoke;
     box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
     margin-bottom: 3px;
-
     display: flex;
-    /* margin-left:5px;
-    margin-right:5px; */
-    /* border-radius: 3px; */
-    /* padding: 10px;*/
-    
-    /* display: flex;
-    background: #eee;
-    margin-left:5px;
-    margin-right:5px;
-    padding: 7px;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
-    min-width: min-content; */
   }
   
   :global(body.dark-mode) .header-bar{
     background-color: rgb(49, 49, 49);
   }
 
-  :global(body.dark-mode) .back {
+  :global(body.dark-mode) .arrow-keys {
     color: #cccccc;
+  }
+  :global(body.dark-mode) .arrow-keys:hover{
+    color: #d43838;
+  }
+
+  :global(body.dark-mode) .arrow-keys:disabled{
+    color:#585858;
   }
 
   :global(body.dark-mode) .edit-button{
     color: #cccccc;
   }
 
-
-  
-
-  
-  /* .header-bar{
-    display: flex;
-    background: #eee;
-    margin-left:1%;
-    margin-right:1%;
-    padding: 0.6%;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
-    border-bottom: solid 1px black;
-  } */
-
   .link{
     padding: 1vh;
     margin-top: 3vh;
   }
 
-  .back {
-    display: inline-flex;
-    align-items: center;
-    background: none;
-    height: 40px;
-    border:none;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    cursor: pointer;
-  }
 
-  .back:hover {
-    color: #d43838;
-  }
-
-  :global(body.dark-mode) .back:hover{
-    color: #d43838;
-  }
-
-  :global(body.dark-mode) .back:disabled{
-    color:#585858;
-  }
 
   :global(body.dark-mode) a{
     color:#d43838;

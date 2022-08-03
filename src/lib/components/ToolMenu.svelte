@@ -3,6 +3,7 @@
 
     import { checked_titles_filters, searchValue, amount_searched_words, showTitles, current_doctype_filtergroup, doctype_filter_groups, showFiltermenu, selected_line_height, selected_text_size, nofilter, allfilterOff, currentDocumentObject} from '../stores/stores.js';
     import { writable } from 'svelte/store';
+    import {createEventDispatcher} from 'svelte';
 
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
     //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
@@ -21,6 +22,8 @@
     // }
     let min_size = false;
     let max_size = false;
+
+    const dispatch = createEventDispatcher()
 
     window.addEventListener("click", function(event) {
         if(event.target.id != "line-height" && event.target.id !="icon"){
@@ -57,62 +60,64 @@
         $showFiltermenu = true
         
     }
+
+    function showContent(){
+      dispatch("set_content_view_size", 100)
+    //   contentViewSize = 100
+    }
 </script>
 
 
 
 <header class="tool-menu">
     <div class="leftmenu">
-        <button class="main-button" on:click={open_filtermenu}>Filter</button>
-        <!-- alternative løsninger på filteroff -->
-        <!-- <button class="main-button" on:click={() =>$showFiltermenu = true}  class:filterOn={$current_doctype_filtergroup.filters.length != $nofilter.filters.length}>Filter</button> -->
-        <!-- {#if $current_doctype_filtergroup.length != documentTypes.length}
-            <button class="close" on:click={null}><i class="material-icons" >close</i></button>
-        {/if} -->
-        
+        <button class="main-button" on:click={open_filtermenu}>Filter</button> 
         {#if $current_doctype_filtergroup.filters.length != $nofilter.filters.length}
           <button class="filteroff-button" on:click={turnOffFilters}>Skru av filter</button>
         {/if}	
-
     </div><!-- leftmenu -->
-    <div class="right-menu" class:hidden={hideToolBar}>
-        <button class="settings-button" class:active={showTextSettings} on:click={()=>{showTextSettings=!showTextSettings}}><i class="material-icons">settings</i></button>
-        {#if showTextSettings}
-        <div class="text-settings">
 
-            <div class="extra-functions">
-                <button
-                title="Zoom out"
-                class="toolbar-button"
-                disabled={min_size}
-                on:click={() => {set_text_size("lower")}}><i class="material-icons">zoom_out</i></button>
-                <button
-                title="Zoom in"
-                class="toolbar-button"
-                disabled={max_size}
-                on:click={() => {set_text_size("bigger")}}><i class="material-icons">zoom_in</i></button>
-            </div>
+    <div class="right-menu">
+        {#if !hideToolBar}
+            <button class="settings-button" class:active={showTextSettings} on:click={()=>{showTextSettings=!showTextSettings}}><i class="material-icons">settings</i></button>
+            {#if showTextSettings}
+            <div class="text-settings">
+
+                <div class="extra-functions">
+                    <button
+                    title="Zoom out"
+                    class="toolbar-button"
+                    disabled={min_size}
+                    on:click={() => {set_text_size("lower")}}><i class="material-icons">zoom_out</i></button>
+                    <button
+                    title="Zoom in"
+                    class="toolbar-button"
+                    disabled={max_size}
+                    on:click={() => {set_text_size("bigger")}}><i class="material-icons">zoom_in</i></button>
+                </div>
+                
+                <div class="line-button">
             
-            <div class="line-button">
-        
-                <button title="Linjeavstand" class="toolbar-button" id="line-height"  class:active={showLineHeights} ><i class="material-icons" id="icon">format_line_spacing</i></button>
-                <div class:hidden={!showLineHeights} on:blur={()=>{showLineHeights=false}} class="dropdownContent">
-                    {#each line_heights as value}
-                        <button class="line-height-item" class:selected = {$selected_line_height==value} on:click={()=>{$selected_line_height=value}}>{value}</button>
-                    {/each}
+                    <button title="Linjeavstand" class="toolbar-button" id="line-height"  class:active={showLineHeights} ><i class="material-icons" id="icon">format_line_spacing</i></button>
+                    <div class:hidden={!showLineHeights} on:blur={()=>{showLineHeights=false}} class="dropdownContent">
+                        {#each line_heights as value}
+                            <button class="line-height-item" class:selected = {$selected_line_height==value} on:click={()=>{$selected_line_height=value}}>{value}</button>
+                        {/each}
+                    </div>
                 </div>
             </div>
-        </div>
-        {/if}
-        <div class = "search_field" class:hidden={hideToolBar}>
-            <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} placeholder="Søk.." name="search" class="search-input searchWord-input">
-            <div class="searched_words"> 
-                {#if $searchValue != "" && $amount_searched_words != 0}
-                {$amount_searched_words} ord
-                {/if}
+            {/if}
+            <div class = "search_field" class:hidden={hideToolBar}>
+                <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} placeholder="Søk.." name="search" class="search-input searchWord-input">
+                <div class="searched_words"> 
+                    {#if $searchValue != "" && $amount_searched_words != 0}
+                    {$amount_searched_words} ord
+                    {/if}
+                </div>
             </div>
-        </div>
-
+        {:else if $currentDocumentObject}
+            <button title = "tilbake" class="arrow-keys" on:click={showContent}><i class="material-icons">arrow_back</i></button>
+        {/if}
     </div>
 
 </header>
@@ -158,6 +163,8 @@
     :global(body.dark-mode) ::placeholder {
         color: #cccccc;   
     }
+
+    
 
     .leftmenu{
         height: 100%;
@@ -210,25 +217,6 @@
     .hidden{
         visibility: hidden;
     }
-    /* Alternative løsninger */
-    /* .main-button.filterOn{
-        border: solid 1px;
-        box-shadow: 0 0 0 0.2rem #6ac2fd;
-    }
-
-    .main-button:hover {
-        border: solid 1px;
-        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
-    }
-    .close{
-        background: none;
-        border: none;
-        width: 40px;
-        height: 40px;
-    }
-    .close:hover {
-        color:#d43838; 
-    } */
 
     .selected{
     background-color: white;
@@ -343,6 +331,17 @@
 
   .settings-button.active{
     color:#d43838;
+  }
+
+  :global(body.dark-mode) .arrow-keys {
+    color: #cccccc;
+  }
+  :global(body.dark-mode) .arrow-keys:hover{
+    color: #d43838;
+  }
+
+  :global(body.dark-mode) .arrow-keys:disabled{
+    color:#585858;
   }
 
 </style>

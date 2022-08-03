@@ -71,17 +71,10 @@
 
 <header class="tool-menu">
     <div class="leftmenu">
-        <button class="main-button" on:click={open_filtermenu}>Filter</button>
-        <!-- alternative løsninger på filteroff -->
-        <!-- <button class="main-button" on:click={() =>$showFiltermenu = true}  class:filterOn={$current_doctype_filtergroup.filters.length != $nofilter.filters.length}>Filter</button> -->
-        <!-- {#if $current_doctype_filtergroup.length != documentTypes.length}
-            <button class="close" on:click={null}><i class="material-icons" >close</i></button>
-        {/if} -->
-        
+        <button class="main-button" on:click={open_filtermenu}>Filter</button> 
         {#if $current_doctype_filtergroup.filters.length != $nofilter.filters.length}
           <button class="filteroff-button" on:click={turnOffFilters}>Skru av filter</button>
         {/if}	
-
     </div><!-- leftmenu -->
 
     <div class="right-menu">
@@ -224,25 +217,6 @@
     .hidden{
         visibility: hidden;
     }
-    /* Alternative løsninger */
-    /* .main-button.filterOn{
-        border: solid 1px;
-        box-shadow: 0 0 0 0.2rem #6ac2fd;
-    }
-
-    .main-button:hover {
-        border: solid 1px;
-        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
-    }
-    .close{
-        background: none;
-        border: none;
-        width: 40px;
-        height: 40px;
-    }
-    .close:hover {
-        color:#d43838; 
-    } */
 
     .selected{
     background-color: white;

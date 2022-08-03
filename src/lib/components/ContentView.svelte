@@ -5,7 +5,6 @@
     import {editor} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
-    export let goBackButton = false;
     export let width;
 
     let edit = $currentlyAddingNewNote;
@@ -32,7 +31,7 @@
     } else if($currentlyAddingNewNote){
         editor.setHTML(marked(""));
     } 
-    function goBack(){
+    function showDocumentlist(){
       dispatch("set_content_view_size", 0)
     }
        
@@ -48,7 +47,7 @@
         <Typewriter on:editable={changeEdit} />
     {:else}
         <header class="header-bar">
-          <button title = "Vis dokumentliste" class="arrow-keys" on:click={goBack}><i class="material-icons">arrow_forward</i></button>
+          <button title = "Vis dokumentliste" class="arrow-keys" on:click={showDocumentlist}><i class="material-icons">arrow_forward</i></button>
           <div class="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>
           {#if $currentDocumentObject.readable}
             <button  title="Rediger" class="edit-button" on:click={changeEdit}><i class="material-icons">edit</i></button>
@@ -87,21 +86,7 @@
     background: whitesmoke;
     box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
     margin-bottom: 3px;
-
     display: flex;
-    /* margin-left:5px;
-    margin-right:5px; */
-    /* border-radius: 3px; */
-    /* padding: 10px;*/
-    
-    /* display: flex;
-    background: #eee;
-    margin-left:5px;
-    margin-right:5px;
-    padding: 7px;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
-    min-width: min-content; */
   }
   
   :global(body.dark-mode) .header-bar{
@@ -122,21 +107,6 @@
   :global(body.dark-mode) .edit-button{
     color: #cccccc;
   }
-
-
-  
-
-  
-  /* .header-bar{
-    display: flex;
-    background: #eee;
-    margin-left:1%;
-    margin-right:1%;
-    padding: 0.6%;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
-    border-bottom: solid 1px black;
-  } */
 
   .link{
     padding: 1vh;

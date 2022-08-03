@@ -60,8 +60,21 @@
 
   $: contentWiewSize = w<600 && $currentDocumentObject ? 100: 50
   function set_content_view_size(event){
-    contentWiewSize = event.detail
+    console.log("cliked")
+    if(contentWiewSize > 70 || contentWiewSize < 30){
+      contentWiewSize = 50
+    }
+    else{
+      contentWiewSize = event.detail
+    }
   }
+
+  function updateContentWiewSize(e){
+    if(e.detail[1]){
+    contentWiewSize = e.detail[1].size
+    }
+  }
+
 </script>
 
 <header>
@@ -93,10 +106,10 @@
         {/if}
 
       {:else}
-        <Splitpanes  theme = "modern-theme">
+        <Splitpanes theme = "modern-theme" style="overflow:hidden;" on:resized="{updateContentWiewSize}">
 
-          <Pane size={(100-contentWiewSize).toString()}>
-              <DocumentList/>
+          <Pane size={(100-contentWiewSize).toString()} >
+              <DocumentList on:set_content_view_size={set_content_view_size}/>
           </Pane>
         {#if $currentDocumentObject}
           {#if w < 600}

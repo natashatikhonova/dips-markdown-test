@@ -32,21 +32,8 @@
     } else if($currentlyAddingNewNote){
         editor.setHTML(marked(""));
     } 
-    let contentViewSize = 50
     function goBack(){
-      editor.setHTML(marked(""));
-      // $currentDocumentObject = null;
-      if (contentViewSize == 100){
-        dispatch("set_content_view_size", 50)
-        contentViewSize = 50
-
-      } else if (contentViewSize == 50){
-        $currentDocumentObject = null
-      }
-    }
-    function showContent(){
-      dispatch("set_content_view_size", 100)
-      contentViewSize = 100
+      dispatch("set_content_view_size", 0)
     }
        
 </script>
@@ -61,12 +48,7 @@
         <Typewriter on:editable={changeEdit} />
     {:else}
         <header class="header-bar">
-          {#if goBackButton } 
-            <button title = "tilbake" class="back" on:click={goBack}><i class="material-icons">arrow_back</i></button>
-          {:else}
-            <button title = "Vis dokument" class="back" disabled = {contentViewSize==100} on:click={showContent}><i class="material-icons">arrow_back</i></button>
-            <button title = "Vis dokumentliste" class="back" on:click={goBack}><i class="material-icons">arrow_forward</i></button>
-          {/if}
+          <button title = "Vis dokumentliste" class="arrow-keys" on:click={goBack}><i class="material-icons">arrow_forward</i></button>
           <div class="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>
           {#if $currentDocumentObject.readable}
             <button  title="Rediger" class="edit-button" on:click={changeEdit}><i class="material-icons">edit</i></button>
@@ -126,8 +108,15 @@
     background-color: rgb(49, 49, 49);
   }
 
-  :global(body.dark-mode) .back {
+  :global(body.dark-mode) .arrow-keys {
     color: #cccccc;
+  }
+  :global(body.dark-mode) .arrow-keys:hover{
+    color: #d43838;
+  }
+
+  :global(body.dark-mode) .arrow-keys:disabled{
+    color:#585858;
   }
 
   :global(body.dark-mode) .edit-button{
@@ -154,27 +143,7 @@
     margin-top: 3vh;
   }
 
-  .back {
-    display: inline-flex;
-    align-items: center;
-    background: none;
-    height: 40px;
-    border:none;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    cursor: pointer;
-  }
 
-  .back:hover {
-    color: #d43838;
-  }
-
-  :global(body.dark-mode) .back:hover{
-    color: #d43838;
-  }
-
-  :global(body.dark-mode) .back:disabled{
-    color:#585858;
-  }
 
   :global(body.dark-mode) a{
     color:#d43838;

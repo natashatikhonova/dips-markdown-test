@@ -99,7 +99,7 @@
 
 </script>
 <div class = "with-toolbar-conteiner">
-    <ToolMenu hideToolBar={true}/>
+    <ToolMenu hideToolBar={true} on:set_content_view_size/>
 
     <div class="document-container">
 

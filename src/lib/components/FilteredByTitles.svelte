@@ -158,7 +158,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<h2>titleer</h2>
+<h2>Overskrifter</h2>
 <div class="main">
 
     <div class="filter-panel">

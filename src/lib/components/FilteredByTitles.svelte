@@ -1,6 +1,5 @@
 <script>
-    import {documentList, current_doctype_filtergroup, searchResult, searchValue, checked_titles_filters, load_markdownNodes, set_filtered_text} from '../stores/stores';
-    // import {set_filtered_text, load_markdownNodes} from "./filterDocumentText"
+    import {allfilterOff, documentList, current_doctype_filtergroup, searchResult, searchValue, checked_titles_filters, load_markdownNodes, set_filtered_text, documentTypes} from '../stores/stores';
 
     let all_checked = true
     let searched_value = "";
@@ -8,18 +7,8 @@
     let show_titles_list_obj =[]
     let filteredDocumentlist = []
 
-    let selected_documentObj_titles = set_filtered_text()
-    // //Reactive tests
-    // $: if (original_titles_list_obj){
-    //     console.log("Original_titles_list_obj")
-    // }
-    // $: if (filteredDocumentlist){
-    //     console.log("filteredDocumentlist")
-    // }
+    let selected_documentObj_titles = set_filtered_text(original_titles_list_obj.filter(item => (item.checked)))
 
-    // $: if ($checked_titles_filters){
-    //     console.log("Checked_titles_filters")
-    // }
     $: filteredDocumentlist = $documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title)));
     let prev_length = -1
 
@@ -43,31 +32,34 @@
         } 
         prev_length = filteredDocumentlist.length
     }
-
+    let checked_not_shown = []
     //sets filtered text in documentObject
     $: if(original_titles_list_obj){
-
+        checked_not_shown = find_hidden_checked_titles()
         //checks if all items are checked whenever the original list is updated
         check_if_all_checked()
-        selected_documentObj_titles = set_filtered_text()
-        
+        selected_documentObj_titles = set_filtered_text(original_titles_list_obj.filter(item => (item.checked)))
     }
-    // $: original_titles_list_obj, check_if_all_checked()
-
-    // function copy_obj_array(list_obj){
-    //     let copy_list = []
-    //     for (let i= 0; i < list_obj.length; i++){
-    //         copy_list[i] = {title: list_obj[i].title, nodes: list_obj[i].nodes, checked: list_obj[i].checked} 
-    //     }
-    //     return copy_list
-    // }
-
-    // $: if (filteredDocumentlist){
-    //     original_titles_list_obj = load_markdownNodes(filteredDocumentlist, original_titles_list_obj, $checked_titles_filters)
-    // }
+    $: if ($checked_titles_filters.length == 0){
+        for(let i = 0; i < original_titles_list_obj.length; i++){
+            original_titles_list_obj[i].checked = false
+        }
+    }
+    //uncheckschecks all items whenever filter is turned off
+    $: if($allfilterOff ){
+        console.log("Reactive: $allfilterOff")
+        $documentList.forEach((doc)=> (doc.temp_filtered_context = ""))
+        $current_doctype_filtergroup = {id: -1, name: "", filters: documentTypes.slice()}
+        for(let i = 0; i < original_titles_list_obj.length; i++){
+            original_titles_list_obj[i].checked = false
+        }
+        $checked_titles_filters = []
+        $allfilterOff = false
+    }  
 
     //happens when an item is checked
     function updateCheckedList(item){
+      
         if (item.checked){
             //remove 
             for(let i = 0; i < $checked_titles_filters.length; i++){
@@ -117,25 +109,37 @@
 
     //unchecks all items
     function removeChecked(){
-        $checked_titles_filters = []
-        for(let i=0; i<original_titles_list_obj.length; i++){
+  
+        for(let i = 0; i < original_titles_list_obj.length; i++){
             original_titles_list_obj[i].checked = false
-        } 
+            for (let j = 0; j < $checked_titles_filters.length; j++) {
+                if ($checked_titles_filters[j].title == original_titles_list_obj[i].title){
+                    $checked_titles_filters.splice(j,1)
+                    $checked_titles_filters = $checked_titles_filters
+                }
+            }
+        }
+        console.log("$checked_titles_filters etter nullstill:" )
+        console.log($checked_titles_filters) 
     }
 
     //checks all items
     function check_all(){
         all_checked = !all_checked
-        $checked_titles_filters = []
+        
         for (let i = 0; i < original_titles_list_obj.length; i++) {
 
             original_titles_list_obj[i].checked = all_checked
             if (all_checked){
                 // add
-
-                $checked_titles_filters.push(original_titles_list_obj[i])
+                if ($checked_titles_filters.find(item => item.title == original_titles_list_obj[i].title) == null) {
+                    $checked_titles_filters.push(original_titles_list_obj[i])
+                    $checked_titles_filters = $checked_titles_filters
+                }
             }
         }
+        console.log("$checked_titles_filters")
+        console.log($checked_titles_filters)
     }
 
     //checks if all items are checked
@@ -150,6 +154,34 @@
             } 
         }
         all_checked = all_bool    
+    }
+    
+
+    //Function that returns an array of object that is checked but not showing because the wrong doctype filter is on
+    function find_hidden_checked_titles(){
+
+        let checked_not_shown = []
+        for (let i = 0; i < $checked_titles_filters.length; i++){
+            let found_title = original_titles_list_obj.find(obj => (obj.title == $checked_titles_filters[i].title ))
+            if (found_title == null){
+                //Found in $checked_titles_filters
+                checked_not_shown.push($checked_titles_filters[i])
+            } else {
+                //Checks if there are more nodes under this element, but not curently showing
+                let nodes_not_shown = []
+                if (found_title.nodes.length < $checked_titles_filters[i].nodes.length){
+                    for (let j = 0; j < $checked_titles_filters[i].nodes.length; j++){
+                        if (found_title.nodes.find(node => (node.compare($checked_titles_filters[i]))) == null) {
+                            nodes_not_shown.push($checked_titles_filters[i])
+
+                        }
+                    }
+                }
+            }
+        }
+        console.log("Checked but not shown titles:")
+        console.log(checked_not_shown)
+        return checked_not_shown
     }
 
 </script>
@@ -171,7 +203,7 @@
                         <button class="secundary-button" on:click={removeChecked}>Nullstill</button>
                         
                     {:else}
-                        <button class="secundary-button" on:click={check_all}>Vis alle</button>
+                        <button class="secundary-button" on:click={check_all}>Velg alle</button>
                     {/if}
 
                 {/if}
@@ -193,8 +225,12 @@
             </div>
             
         {/if}
-        {#if $checked_titles_filters.length == 0}
-            <div class = "shows-all-documents"> *Viser alle dokumenter*</div>
+        {#each checked_not_shown as title}
+            {title.title}
+        {/each} 
+
+        {#if original_titles_list_obj.filter(obj => (obj.checked)).length == 0}
+            <div class = "shows-all-documents"> *Ikke filtrert på overskrifter*</div>
         {/if}
 
 

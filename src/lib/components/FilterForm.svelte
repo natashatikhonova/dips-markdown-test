@@ -10,7 +10,10 @@
     let manageName = edit_bool && edit_obj_indeks != -1? "Rediger filtergruppe" : "Opprett ny filtergruppe"
     let show_list_obj =[]
     let searched_value = ""
-    
+    // $: {
+    //     console.log("       original_doctypes:")
+    //     console.log(original_list_obj)
+    // }
     //modal
     const { close } = getContext('simple-modal');
     setContext('modal', this)
@@ -26,7 +29,11 @@
     }
 
     if (edit_bool && (edit_obj_indeks != -1)){
+        reset_list_obj()
         //checks the correct items in modal
+        console.log("       original_doctypes:")
+        console.log(original_list_obj)
+        console.log("       $doctype_filter_groups:")
         console.log($doctype_filter_groups)
         for (let i = 0; i < $doctype_filter_groups[edit_obj_indeks].filters.length; i++) {
             for (let j = 0; j < original_list_obj.length; j++){

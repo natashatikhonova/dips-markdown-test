@@ -1,12 +1,8 @@
 <script>
 
 
-    import { checked_titles_filters, searchValue, amount_searched_words, showTitles, current_doctype_filtergroup, doctype_filter_groups, showFiltermenu, selected_line_height, selected_text_size, nofilter, allfilterOff, currentDocumentObject} from '../stores/stores.js';
-    import { writable } from 'svelte/store';
+    import { checked_titles_filters, searchValue, amount_searched_words, showTitles, current_doctype_filtergroup, doctype_filter_groups, showFiltermenu, selected_line_height, selected_text_size, allfilterOff, currentDocumentObject, documentTypes} from '../stores/stores.js';
 
-    //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
-    //const documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
-    let documentTypes = ["Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10"];
     let showTextSettings = false
     export let hideToolBar = true;
     let showLineHeights =false;
@@ -29,7 +25,10 @@
             showLineHeights = !showLineHeights
         }
     });
-
+    $: if ($current_doctype_filtergroup){
+        console.log("$current_doctype_filtergroup")
+        console.log($current_doctype_filtergroup)
+    }
     function set_text_size(direction){
         if (direction == "bigger"){
             $selected_text_size++
@@ -50,12 +49,11 @@
 
     function turnOffFilters(){
         $allfilterOff = true
-        $current_doctype_filtergroup = $nofilter
+        $current_doctype_filtergroup = {id: -1, name: "", filters: documentTypes.slice()}
         $checked_titles_filters = []
     }
     function open_filtermenu(){
         $showFiltermenu = true
-        
     }
 </script>
 
@@ -70,7 +68,7 @@
             <button class="close" on:click={null}><i class="material-icons" >close</i></button>
         {/if} -->
         
-        {#if $current_doctype_filtergroup.filters.length != $nofilter.filters.length}
+        {#if ($current_doctype_filtergroup.filters.length != documentTypes.length) || ($checked_titles_filters.length > 0)}
           <button class="filteroff-button" on:click={turnOffFilters}>Skru av filter</button>
         {/if}	
 

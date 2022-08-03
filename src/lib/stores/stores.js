@@ -93,6 +93,27 @@ function find_placement_among_nodes(nodes_list, node){
     return -2 //add into list. is sibling to all the other title nodes
 }
 
+
+let ascendingOrder = true;
+const sortDate = (colHeader, sortData) => {
+    let sortedData = sortData.sort((obj1, obj2) => {
+        if (obj1[colHeader] < obj2[colHeader]) {
+                return -1;
+        } else if (obj1[colHeader] > obj2[colHeader]) {
+            return 1;
+        }
+        return 0; //string code values are equal		
+    });
+
+    if (!ascendingOrder) {
+        sortedData = sortedData.reverse()
+    }
+    ascendingOrder = !ascendingOrder;
+    return sortedData;
+}
+
+
+
 export function set_filtered_text(){
     console.log("Starten av set_filtered_text()")
     let obj_list = []
@@ -226,9 +247,9 @@ export function set_filtered_text(){
     })
     console.log("\n\n")
     console.log("Setter sammen teksten i noder til å bli temp_filtered_context")
-    let documentObj_list = []
+    let new_documentObj_list = []
     for (let i = 0; i < selected_titles_objects.length; i++){
-        documentObj_list.push(selected_titles_objects[i].docObject)
+        new_documentObj_list.push(selected_titles_objects[i].docObject)
         selected_titles_objects[i].docObject.temp_filtered_context = ""
         for (let j = 0; j < selected_titles_objects[i].nodes.length; j++){
             let node = selected_titles_objects[i].nodes[j]
@@ -238,8 +259,10 @@ export function set_filtered_text(){
         console.log("Temp_filtered_context:")
         console.log(selected_titles_objects[i].docObject.temp_filtered_context)
     }
+    ascendingOrder = true
+    sortDate("date", new_documentObj_list);
     // console.log(selected_title_objected)
-    return documentObj_list
+    return new_documentObj_list
 }
 
     //load all title nodes to variables

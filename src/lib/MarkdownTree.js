@@ -1,10 +1,10 @@
 
 
 export class MarkdownNode{
-    constructor(id, markdownCode, overskrift, content, object){
+    constructor(id, markdownCode, title, content, object){
         this.id = id;
         this.markdownCode = markdownCode;
-        this.overskrift = overskrift.trim().replace(/[&\/\\#^+()$~%.'":*?<>{}!@]/g, '') ;
+        this.title = title.trim().replace(/[&\/\\#^+()$~%.'":*?<>{}!@]/g, '') ;
         this.content = content;
         this.level = 0; //Hvilket nivå i treet/ settes når den blir satt inn i treet
         this.parent = null; 
@@ -30,14 +30,14 @@ export class MarkdownNode{
         for(let i = 0; i < this.markdownCode.length; i++){
             string += "-"
         }
-        string += " " + this.overskrift
+        string += " " + this.title
         return string
     }
  
     printNode(node){
         console.log("\nNODEN: ")
         console.log("id: " + node.id)
-        console.log("Overskrift: " + node.overskrift)
+        console.log("title: " + node.title)
         console.log("Content: " + node.content)
         console.log("Level: " + node.level)
         console.log("\n")
@@ -99,10 +99,10 @@ export class Tree {
         let markdown_headline_length = startNode.markdownCode.length
         let nodes = this.get_nodes_in_order(startNode)
 
-        let string = (startNode.markdownCode + " " + startNode.overskrift + "\n" + startNode.content + "\n")
+        let string = (startNode.markdownCode + " " + startNode.title + "\n" + startNode.content + "\n")
         for (let i = 1; i < nodes.length; i++) {
             if (nodes[i].markdownCode.length > markdown_headline_length)
-            string += (nodes[i].markdownCode + " " + nodes[i].overskrift + "\n" + nodes[i].content + "\n")
+            string += (nodes[i].markdownCode + " " + nodes[i].title + "\n" + nodes[i].content + "\n")
         }
         // console.log(string)
         return string;
@@ -112,7 +112,7 @@ export class Tree {
     indent = 1;
     print_tree(tree) {
         tree.forEach((node) => {
-            console.log('--' + Array(this.indent).join('--'), node.overskrift);
+            console.log('--' + Array(this.indent).join('--'), node.title);
             if(node.children) {
                 this.indent ++;
                 this.print_tree(node.children);

@@ -1,5 +1,5 @@
 <script>
-    import {current_doctype_filtergroup, doctype_filter_groups, nofilter, allfilterOff, documentTypes, searchResult, searchValue, documentList, checked_titles_filters, all_markdown_titles, set_filtered_text} from '../stores/stores';
+    import {current_doctype_filtergroup, doctype_filter_groups, allfilterOff, documentTypes, searchResult, searchValue, documentList, checked_titles_filters, set_filtered_text, load_markdownNodes} from '../stores/stores';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
     import FilterForm from './FilterForm.svelte';
@@ -27,14 +27,27 @@
         }
         original_doctypes = obj_list   
     }
+    let all_markdown_titles = []
+    console.log($current_doctype_filtergroup)
     
     //updates list whenever the group is changed
     $: if($current_doctype_filtergroup.filters){
+        console.log(" reactive: $current_doctype_filtergroup")
+        let filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
+
+        //Adds all the markdown titles in the current filtered documentList to an array of objects
+        //Object structure: {title: .. , nodes: [..], checked:true/false}
+        //*checked variable in object is irrelevant here*/
+        all_markdown_titles = load_markdownNodes(filteredDocumentlist,[], $checked_titles_filters)
+
+        //makes a list of object with all doctypes with a correct checked value
+        //object structure: {name: <doctype String>, checked: true/false}
         make_obj_list()
-        for (let i = 0; i<$all_markdown_titles.length; i++){
+
+        for (let i = 0; i<all_markdown_titles.length; i++){
             for (let j =0; j<$checked_titles_filters.length; j++){
-                if ($checked_titles_filters[j].overskrift== $all_markdown_titles[i].overskrift){
-                    $checked_titles_filters[j].nodes = $all_markdown_titles[i].nodes //Chooses all, but it works because it get filtered again in filteredByTitles.svelte
+                if ($checked_titles_filters[j].title == all_markdown_titles[i].title){
+                    $checked_titles_filters[j].nodes = all_markdown_titles[i].nodes //Chooses all nodes under this doctype filter
                 }
             }
         }
@@ -48,12 +61,15 @@
 
     //checks all items whenever filter is turned off
     $: if($allfilterOff){
-        $current_doctype_filtergroup = $nofilter
+        console.log("Reactive: $allfilterOff")
+        $documentList.forEach((doc)=> (doc.temp_filtered_context = ""))
+        $current_doctype_filtergroup = {id: -1, name: "", filters: documentTypes.slice()}
    
         for (let i = 0; i<original_doctypes.length; i++){
             original_doctypes[i].checked = true
         }
         $allfilterOff = false
+        $checked_titles_filters = []
     }  
 
     //switches button name depending on amount of chosen items
@@ -61,7 +77,7 @@
         showAllButtonName = "Nullstill"
     }
     else if ($current_doctype_filtergroup.filters.length < documentTypes.length){
-        showAllButtonName = "Vis alle"
+        showAllButtonName = "Velg alle"
     }
 
     //sorts by first letter whenever search value is changed
@@ -71,15 +87,34 @@
     $: if (filtergroup_searched_value !=""){
         searchedFiltergroups = relevantSort(searchedFiltergroups, filtergroup_searched_value)
     }
+
+    //checked_titles with current doctype filter
+    let checked_titles = []
+    $: if (all_markdown_titles){
+        checked_titles = []
+        for (let i = 0; i < all_markdown_titles.length; i++){
+            if ($checked_titles_filters.find(item => (item.title == all_markdown_titles[i].title )) != null){
+                //Found in $checked_titles_filters
+                checked_titles.push(all_markdown_titles[i])
+            }
+        }
+        // console.log("ny checked_titles")
+        // console.log(checked_titles)
+        // console.log("$checked_title_filters:")
+        // console.log($checked_titles_filters)
+    }
     
-    $: if ($checked_titles_filters.length == 0){
+    $: if ($checked_titles_filters.length == 0 || checked_titles.length == 0){
+        // console.log("Viser alle dokumenter under current filters")
         //sets list depending on what doctypes are chosen
         let filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
         //show documents depending on main search field
         $searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
 
     } else {
-        selected_documentObj_titles = set_filtered_text()
+    //    console.log("Henter dokumenter basert på checked_titles")
+
+        selected_documentObj_titles = set_filtered_text(checked_titles)
         let filteredDocumentlist = (selected_documentObj_titles.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
         //show documents depending on main search field
         $searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
@@ -88,6 +123,7 @@
     //changes between doctype mode and group mode
     function changeMode(){
         customViewMode = !customViewMode
+        make_obj_list()
     }
 
     //sorts by the first letter
@@ -129,7 +165,6 @@
     //finds an index of the group
     function find_index(filterGroup){
         for(let i = 0; i < $doctype_filter_groups.length; i++){
-            console.log(filterGroup)
             if ($doctype_filter_groups[i].id == filterGroup.id) {
                 return i
             }
@@ -142,10 +177,10 @@
 
         if (group){
             //edit group
-            modal.set(bind(FilterForm,{edit_bool: true, edit_obj_indeks: find_index(group), original_list_obj: original_doctypes}))
+            modal.set(bind(FilterForm,{edit_bool: true, edit_obj_indeks: find_index(group), original_list_obj: original_doctypes.slice()}))
         } else {
             //add new group
-            modal.set(bind(FilterForm,{edit_bool: false, edit_obj_indeks: -1, original_list_obj: original_doctypes}))
+            modal.set(bind(FilterForm,{edit_bool: false, edit_obj_indeks: -1, original_list_obj: original_doctypes.slice()}))
         }
         manageGroup = true
     }
@@ -160,7 +195,7 @@
         if (item.checked){
             //remove from current group list
             $current_doctype_filtergroup.filters.splice($current_doctype_filtergroup.filters.indexOf(item.name), 1)
-            
+
         }else if(!item.checked){
             // add to  current group listlist
             $current_doctype_filtergroup.filters.push(item.name)
@@ -188,8 +223,9 @@
                 <button class="secundary-button" on:click={changeMode}>Filtreringsgrupper</button>
             </div>
         </div>
+
         {#if searchedDocumentTypes.length == 0}
-            <div class = "no-titles">Ingen dokumenttyper</div>
+            <div class = "no-doctypes">Ingen dokumenttyper</div>
         {:else}
         <div class="filters">
             {#each searchedDocumentTypes as item}    
@@ -207,6 +243,10 @@
             {/if}
         </div>
 
+        {/if}
+
+        {#if checked_titles.length > 0}
+            <div class = "no-title-filters">*Filtrert på overskrifter*</div>
         {/if}
     </div>
     {:else}    
@@ -258,8 +298,14 @@
         padding-left: 2vw;
         padding-right: 2vw;
     }
-    .no-titles{
+    .no-doctypes{
         margin-top: 2vh;
+    }
+    .no-title-filters{
+
+        margin-top: 5%;
+        color: red;
+    
     }
     .filterItem:hover{
         color:#d43838;

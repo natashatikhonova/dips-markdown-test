@@ -9,7 +9,7 @@ export class ParseMarkdown{
         let content = object.context;
         let substring = "";
         let markdownCode = "";
-        let overskrift = "";
+        let title = "";
         let newNode;
         let prevNode = this.tree.root;
         let possible_parent = null;
@@ -23,15 +23,15 @@ export class ParseMarkdown{
             if (char == "#") {
                 if (started) {;
                     // console.log(markdownCode)
-                    // console.log(overskrift)
+                    // console.log(title)
 
-                    newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring, object);
+                    newNode = new MarkdownNode(this.idCounter++, markdownCode, title, substring, object);
      
                     // newNode.printNode(newNode)
                     this.tree.insert(possible_parent, newNode);
                     prevNode = newNode;
                 }
-                overskrift = ""
+                title = ""
                 substring = ""
             
                 markdownCode = "#";
@@ -45,7 +45,7 @@ export class ParseMarkdown{
          
                 //Finner parentnoden til neste node som skal settes inn
                 possible_parent = prevNode
-                while( markdownCode.length <= possible_parent.markdownCode.length ){ //Hvis denne markdowntaggen er mindre (større overskrift) så fortsetter vi opp i treet til vi har funnet en parent som har mindre tag (større overskrift). Roten har en tom streng som vil si at den har mindre tag enn alle andre markdown noder
+                while( markdownCode.length <= possible_parent.markdownCode.length ){ //Hvis denne markdowntaggen er mindre (større title) så fortsetter vi opp i treet til vi har funnet en parent som har mindre tag (større title). Roten har en tom streng som vil si at den har mindre tag enn alle andre markdown noder
                     possible_parent = possible_parent.parent;
                 }
             
@@ -53,14 +53,14 @@ export class ParseMarkdown{
                 let char = content.charAt(indeks);
                 if (char == " ") { //Må være mellomrom etter markdownkoden
                     while (char != "\n") {
-                        overskrift += char;
+                        title += char;
                         indeks++;
                         char = content.charAt(indeks);
                         console.log("newLine check")
                     }
-                    overskrift += char;
+                    title += char;
                     indeks++;
-                    // console.log("Overskrift: " + overskrift)
+                    // console.log("title: " + title)
                 
                     started = true;
                 } else {
@@ -75,7 +75,7 @@ export class ParseMarkdown{
 
         if (started) { //Legger til den siste noden
          
-            newNode = new MarkdownNode(this.idCounter++, markdownCode, overskrift, substring, object)
+            newNode = new MarkdownNode(this.idCounter++, markdownCode, title, substring, object)
 
             this.tree.insert(possible_parent, newNode)
             // newNode.printNode(newNode)

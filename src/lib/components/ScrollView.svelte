@@ -19,8 +19,10 @@
     $: w = window.innerWidth;
     $: h = window.innerHeight;
 
-    $: if($showFiltermenu==true){
+    $: if($showFiltermenu){
         open()
+    } else{
+        close()
     }
 
     function save(){ 

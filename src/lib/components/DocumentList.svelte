@@ -17,9 +17,12 @@
     $: w = window.innerWidth;
     $: filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
 
-    $: if($showFiltermenu==true){
+    $: if($showFiltermenu){
         open()
+    } else{
+        close()
     }
+
     $: if ($currentDocumentObject && $showFiltermenu && w>600){
         current_size = "60"
     }
@@ -88,7 +91,7 @@
     <div class="document-container">
         <Splitpanes theme="modern-theme">
             <Pane minSize={"20"} size={current_size} maxSize={maxSize_filter}>
-                <FilterMenu on:close={close} showFilterByTitles={false}/>
+                <FilterMenu showFilterByTitles={false}/>
             </Pane>
      
             <Pane size={documentview_size}>
@@ -118,6 +121,7 @@
                         </thead>
     
                         <tbody>
+
                             {#each filteredDocumentlist as item}
                                 {#if $currentDocumentObject === item}
                                     <DocumentItem document = {item} chosen = {true} /> <!--add color if file is chosen -->

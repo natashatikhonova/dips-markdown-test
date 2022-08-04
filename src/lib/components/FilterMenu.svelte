@@ -2,16 +2,15 @@
     import {createEventDispatcher} from 'svelte';
     import FilterByDoctype from './FilterByDoctype.svelte';
     import FilteredByTitles from './FilteredByTitles.svelte';
+    import {showFiltermenu} from "../stores/stores"
 
     export let showFilterByTitles = true;
     
     let groupFilterView = true
 
-    const dispatch = createEventDispatcher();
-
     //sends a message when a panel is to be closed
     function close(){
-        dispatch("close")
+        $showFiltermenu = false
     }
 </script>
 

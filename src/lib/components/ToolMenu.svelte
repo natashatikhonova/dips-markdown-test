@@ -43,8 +43,8 @@
         $current_doctype_filtergroup = {id: -1, name: "", filters: documentTypes.slice()}
         $checked_titles_filters = []
     }
-    function open_filtermenu(){
-        $showFiltermenu = true
+    function filtermenu(){
+        $showFiltermenu = !$showFiltermenu
     }
 
     function showContent(){
@@ -56,7 +56,7 @@
 
 <header class="tool-menu">
     <div class="leftmenu">
-        <button class="main-button" on:click={open_filtermenu}>Filter</button>
+        <button class="main-button" on:click={filtermenu}>Filter</button>
 
         {#if ($current_doctype_filtergroup.filters.length != documentTypes.length) || ($checked_titles_filters.length > 0)}
           <button class="filteroff-button" on:click={turnOffFilters}>Skru av filter</button>

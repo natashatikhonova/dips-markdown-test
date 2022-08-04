@@ -216,9 +216,9 @@
             </div>
             
         {/if}
-        {#each checked_not_shown as title}
+        <!-- {#each checked_not_shown as title}
             {title.title}
-        {/each} 
+        {/each}  -->
 
         {#if original_titles_list_obj.filter(obj => (obj.checked)).length == 0}
             <div class = "shows-all-documents"> *Ikke filtrert på overskrifter*</div>

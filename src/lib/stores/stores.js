@@ -2,6 +2,9 @@
 import { writable } from "svelte/store";
 import { Editor } from 'typewriter-editor';
 
+//if mobile version or not
+export let smallDevice = writable(false)
+
 //the current document oject showing
 export const currentDocumentObject = writable();
 

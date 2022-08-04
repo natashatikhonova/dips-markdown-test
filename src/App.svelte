@@ -3,10 +3,14 @@
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, DocumentObject} from './lib/stores/stores.js';
+  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, DocumentObject, smallDevice} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {ParseMarkdown} from './lib/utils/markdown/Parsemarkdown'
   import ThemeButton from './lib/components/ThemeButton.svelte';
+  import Device from 'svelte-device-info'
+
+  $smallDevice = (Device.isPhone || Device.isTablet || Device.isMobile)
+
 
   //gets document data from JSON file
   documents.forEach(putInDocumentList);  
@@ -48,11 +52,11 @@
   $: h = window.innerHeight;
 
   //tilpasser til mobilversjon
-  $: contentWiewSize = w<600 && $currentDocumentObject ? 100: 50
+  $: contentWiewSize = $smallDevice && $currentDocumentObject ? 100: 50
 
   function set_content_view_size(event){
     //If on mobile the, only one content/pane at time
-    if(w<600){
+    if($smallDevice){
       contentWiewSize = event.detail
     }
 
@@ -92,7 +96,7 @@
   {#if $showSideView}
     <div class="side-container"  >
       {#if $currentlyAddingNewNote}
-        {#if w > 600}
+        {#if !$smallDevice}
         <Splitpanes theme = "modern-theme">
           <Pane> <ScrollView/> </Pane>
           <Pane minSize="30"> <ContentView width={w}/> </Pane>

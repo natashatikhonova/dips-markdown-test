@@ -95,7 +95,7 @@
           if (selectedDocType !== documentTypes[0]) { //new Note
             console.log("New note")
             const readable = true;
-            let newElement = new DocumentObject(findNewDocumentObjId(), new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
+            let newElement = new DocumentObject(findNewDocumentObjId($documentList.slice()), new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
             newElement.readable = readable
             newElement.title = selectedDocType;
 

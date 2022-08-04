@@ -26,6 +26,7 @@
   }
 
 
+
   function set_default(){
     if($currentlyAddingNewNote){
       alert("Vennligst lagre eller avbryt!");

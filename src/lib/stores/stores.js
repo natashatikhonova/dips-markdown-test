@@ -48,12 +48,12 @@ export let selected_line_height = writable("1.5")
 
 export let selected_text_size = writable(11)
 
-export function findNewDocumentObjId(){
-    let documentListCpy = []
-    const unsubscribe4 = documentList.subscribe(value => {
-        documentListCpy = value
-    })
-    unsubscribe4()
+export function findNewDocumentObjId(documentListCpy){
+    // let documentListCpy = []
+    // const unsubscribe4 = documentList.subscribe(value => {
+    //     documentListCpy = value
+    // })
+    // unsubscribe4()
     let ids = []
     documentListCpy.forEach(docType => (ids.push(docType.id)))
     let num = 1;

@@ -1,7 +1,6 @@
 <script>
     import {currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
-    import { marked } from 'marked';
 
     export let document;
     export let date;
@@ -9,7 +8,6 @@
     export let author;
     export let deactivate = false; 
     export let htmlText;
-
 
     const dispatch = createEventDispatcher();
 
@@ -35,13 +33,12 @@
                 {#if deactivate}
                     <button title ="Rediger" disabled><i class="material-icons">edit</i></button>
                 {:else}
-                    <button title ="Rediger" class:visible={$currentlyAddingNewNote} on:click={editItem}><i class="material-icons">edit</i></button>
+                    <button title ="Rediger" class:hidden={$currentlyAddingNewNote} on:click={editItem}><i class="material-icons">edit</i></button>
                 {/if}
             {/if}
         </div>
     </div>
     {#if document.readable}
-        <!-- <div class = "table-test"> {@html marked('| H1 | H2 |  H3 |  H4 | H5 | \n |:---:|---|---|---|---| \n |  U1 | U2 | U3 | U4 | U5 | \n | K1 | K2 |  K3 | K4  |  K5 | \n | J1 |  J2 | J3 |  J4 | J5 |' )}</div> -->
         <div class = "text">{@html htmlText}</div>
     {:else}
         <div class="link"><a href={document.context} target="_blank">Klikk her for å åpne dokumentet i egen visning</a></div>
@@ -116,7 +113,6 @@
         font-style: italic;
     }
     
-    
     button{
         right:10vw;
         width:2vw;
@@ -135,7 +131,6 @@
         color: #d43838;
     }
 
-
     :global(body.dark-mode) button{
         color:#cccccc;
     }
@@ -144,10 +139,8 @@
         color:#d43838;
     }
 
-
-    .visible{
+    .hidden{
         visibility: hidden;
     }
-
 
 </style>

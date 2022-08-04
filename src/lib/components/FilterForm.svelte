@@ -10,31 +10,14 @@
     let manageName = edit_bool && edit_obj_indeks != -1? "Rediger filtergruppe" : "Opprett ny filtergruppe"
     let show_list_obj =[]
     let searched_value = ""
-    // $: {
-    //     console.log("       original_doctypes:")
-    //     console.log(original_list_obj)
-    // }
-    //modal
+
     const { close } = getContext('simple-modal');
     setContext('modal', this)
 
-    // reset_list_obj()
-    
-    //filter list by search
-    $: if (searched_value != ""){
-        show_list_obj = original_list_obj.filter(item => (item.name.toLowerCase().includes(searched_value.toLowerCase())));
-     
-    } else { 
-        show_list_obj = original_list_obj
-    }
-
     if (edit_bool && (edit_obj_indeks != -1)){
-        reset_list_obj()
+        //editing group
+        uncheck_original_list()
         //checks the correct items in modal
-        console.log("       original_doctypes:")
-        console.log(original_list_obj)
-        console.log("       $doctype_filter_groups:")
-        console.log($doctype_filter_groups)
         for (let i = 0; i < $doctype_filter_groups[edit_obj_indeks].filters.length; i++) {
             for (let j = 0; j < original_list_obj.length; j++){
                 if (original_list_obj[j].name === $doctype_filter_groups[edit_obj_indeks].filters[i]){
@@ -42,20 +25,28 @@
                 }
             }
         }
-
-    } else if (edit_bool && (edit_obj_indeks == -1)){ //New filter group for the filters already checked
+    } else if (edit_bool && (edit_obj_indeks == -1)){ 
+        //New filter group for the filters already checked
         edit_bool = false
-
-    } else { //New filterGroup. unchecks all
-        reset_list_obj()
+        
+    } else {
+        //New filterGroup. unchecks all
+        uncheck_original_list()
     }
 
-    
-    function reset_list_obj(){
+    //filter list by search
+    $: if (searched_value != ""){
+        show_list_obj = original_list_obj.filter(item => (item.name.toLowerCase().includes(searched_value.toLowerCase())));
+    } else { 
+        show_list_obj = original_list_obj
+    }
+
+    function uncheck_original_list(){
         for(let i=0; i<original_list_obj.length; i++){
             original_list_obj[i].checked = false
         }
     }
+
     //finds a new id for the group
     function findNewId(){
         let ids = []
@@ -127,6 +118,7 @@
     <input bind:value ={group_name} type="text" placeholder="Skriv inn gruppenavn.." name="search">
     <h3>Velg dokumenttyper</h3>
     <input bind:value ={searched_value} type="text" placeholder="Søk.." name="search">
+
     <div class="filters">
         {#if show_list_obj.length == 0}
             <div class = "no-filters">Ingen dokumenttyper</div>
@@ -146,96 +138,94 @@
 
 <style>
 
-button {
-    position: absolute;
-    right: 2vw;
-    bottom: 2vh;
-    background-color: #d43838;
-    color: white;
-    width: 6vw;
-    height: 4vh;
-    border: none;
-    justify-content: center;
-    border-radius: 4px;
-    cursor: pointer;
-}
+    button {
+        position: absolute;
+        right: 2vw;
+        bottom: 2vh;
+        background-color: #d43838;
+        color: white;
+        width: 6vw;
+        height: 4vh;
+        border: none;
+        justify-content: center;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
-button:hover{
-    border: solid 0.1em;
-    box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
-}
+    button:hover{
+        border: solid 0.1em;
+        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
+    }
 
-.main {
-    height: 70vh;
-    overflow: hidden;
-}
+    .main {
+        height: 70vh;
+        overflow: hidden;
+    }
 
-.filters{
-    padding-right: 2vw;
-    height: 50%;
-    overflow-y: auto;
-}
+    .filters{
+        padding-right: 2vw;
+        height: 50%;
+        overflow-y: auto;
+    }
 
 
-input[type=text] {
+    input[type=text] {
 
-    padding: 6px;
-    border: none;
-    border-bottom: solid;
-    margin-bottom: 2vh;
-    font-size: 17px;
-    width:90%;
-}
+        padding: 6px;
+        border: none;
+        border-bottom: solid;
+        margin-bottom: 2vh;
+        font-size: 17px;
+        width:90%;
+    }
 
-.title{
-    cursor: pointer;
-    display: flex;
-}
+    .title{
+        cursor: pointer;
+        display: flex;
+    }
 
-.title:hover{
-    color:#d43838;
-}
+    .title:hover{
+        color:#d43838;
+    }
 
-.no-filters{
-    margin-top: 2vh;
-}
+    .no-filters{
+        margin-top: 2vh;
+    }
 
-/* Darkmode */
-
-:global(body.dark-mode) button{
-    background: #701c1c;
-  border: 1px solid #cccccc;
-  color:#cccccc;
-}
-
-:global(body.dark-mode) button:hover{
-  box-shadow: 0 0 0 0.25rem rgb(126, 33, 26);
-}
-
-:global(body.dark-mode) input{
-    background-color: rgb(49, 49, 49);
-    border-bottom: 1px solid #cccccc;
+    :global(body.dark-mode) button{
+        background: #701c1c;
+    border: 1px solid #cccccc;
     color:#cccccc;
-}
+    }
 
-:global(body.dark-mode) ::placeholder {
-    color: #cccccc;   
-}
+    :global(body.dark-mode) button:hover{
+    box-shadow: 0 0 0 0.25rem rgb(126, 33, 26);
+    }
 
-:global(body.dark-mode) h2{
-    color:#cccccc;
-}
+    :global(body.dark-mode) input{
+        background-color: rgb(49, 49, 49);
+        border-bottom: 1px solid #cccccc;
+        color:#cccccc;
+    }
 
-:global(body.dark-mode) h3{
-    color:#cccccc;
-}
+    :global(body.dark-mode) ::placeholder {
+        color: #cccccc;   
+    }
 
-:global(body.dark-mode) .title{
-    color:#cccccc;
-}
+    :global(body.dark-mode) h2{
+        color:#cccccc;
+    }
 
-:global(body.dark-mode) .title:hover{
-    color:#d43838;
-}
+    :global(body.dark-mode) h3{
+        color:#cccccc;
+    }
+
+    :global(body.dark-mode) .title{
+        color:#cccccc;
+    }
+
+    :global(body.dark-mode) .title:hover{
+        color:#d43838;
+    }
 
 </style>

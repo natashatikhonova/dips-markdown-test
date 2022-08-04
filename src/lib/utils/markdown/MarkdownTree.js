@@ -1,5 +1,3 @@
-
-
 export class MarkdownNode{
     constructor(id, markdownCode, title, content, object){
         this.id = id;
@@ -59,7 +57,8 @@ export class Tree {
         newNode.parent = parent; 
         this.queue_read.push(newNode)
     }
-    get_subtree(startNode){ //get subtree from a node
+    //get subtree from a node
+    get_subtree(startNode){ 
         let all_nodes = this.get_nodes_in_order(startNode)
         let subtree = []
         for (let i = 1; i < all_nodes.length; i++) {
@@ -72,7 +71,8 @@ export class Tree {
         return subtree
     }
 
-    get_nodes_in_order(startNode){ //Gets the nodes in order from wich they were read from file, starting from a startNode. Or if startNode is null, it is starting from the root
+    //Gets the nodes in order from wich they were read from file, starting from a startNode. Or if startNode is null, it is starting from the root
+    get_nodes_in_order(startNode){ 
         let indeks_in_queue = -1;
 
         if (startNode == null) return this.queue_read
@@ -87,14 +87,11 @@ export class Tree {
             return []
        }
        let queue_read_from_startNode = this.queue_read.slice(indeks_in_queue, this.queue_read.length)
-    //    console.log("New queue:")
-    //    console.log(queue_read_from_startNode)
-    //    console.log("Old queue")
-    //    console.log(this.queue_read)
 
         return queue_read_from_startNode
     }
-    get_text_under(startNode){ //Gets the text from this node and the nodes under this headline
+    //Gets the text from this node and the nodes under this headline
+    get_text_under(startNode){ 
       
         let markdown_headline_length = startNode.markdownCode.length
         let nodes = this.get_nodes_in_order(startNode)

@@ -1,35 +1,15 @@
+//sets the correct temp_filtered_context in each documentObject depending on wich titles filters have been checked
 export function set_filtered_text(checked_titles){
     let obj_list = checked_titles
-    // const unsubscribe = checked_titles_filters.subscribe(value => {
-    //     //Sets obj_list to all the checked_titles_filters
-    //     obj_list = value
-    // })
-    // unsubscribe()
-
     let selected_titles_objects = []
-    //Loop through the whole documentList and sets the filtered text to empty string
 
     obj_list.forEach((item)=>{
-        // console.log("\n\n                      selected_titles_objects:")
-        // selected_titles_objects.forEach((obj)=>{
-        //     console.dir(obj.docObject)
-        //     obj.nodes.forEach((node)=>{
-        //         console.dir(node)
-
-        //     })
-        // })
-        // console.log("\n\n")
-        // console.log("\n\mSer på objekt i listen:")
-        // console.log(item)
-        // console.log("Looper gjennom nodene under denne titleen")
+        //loops through the markdown title nodes under this checked title filter
         item.nodes.forEach((node)=> {
-            
-            // console.log("\nSer på node:")
-            // console.log(node)
-            let index = -1
 
+            let index = -1
+            //loops throug list to see if it has allready been created
             for (let i = 0; i < selected_titles_objects.length; i++) { 
-                //check if document have been created
                 if (selected_titles_objects[i].docObject.id == node.object.id) { 
                     //If they belong to the same object
                     index = i;
@@ -39,96 +19,59 @@ export function set_filtered_text(checked_titles){
             
             if (index != -1){ 
                 //found an object with the same documentObject as node on index <index> in selected_titles_object[index]
-                // console.log("fant objektet: " + selected_titles_objects[index].docObject.title + " med samme dokumentObjekt")
-                // console.log("plasserer på rikitg plass blant nodes inn i rikitg i objektet som er på formen {docObject: .., nodes: [..]}")
 
+                //find_placement_among_nodes(array, node) returns a number:
+                //* return value >= 0, number is index in array where node must be inserted, replacing the node that is allready there
+                //* return value == -1, signals to not adding to list because there allready is a node in the list showing the node's content
+                //* return value == -2, signals to add to list, find right placememt later
                 let nodes_index = find_placement_among_nodes(selected_titles_objects[index].nodes, node)
-                if (nodes_index > -1){ 
-                    //Found a node in the subtree of node in the list selected_titles_objects[index].nodes on index <nodes_index>
-                    //Therefore, Replaces selected_titles_objects[index].nodes[nodes_index] with node b
-                    // console.log("erstatter gammel node med ny node på indeks " + nodes_index)
+                if (nodes_index >= 0){ 
                     selected_titles_objects[index].nodes[nodes_index] = node
-                    let subtree = node.object.markdownTree.get_subtree(node)
-                    // console.log("               Subtree:")
-                    // console.log(subtree)
-                    // console.log("\n\n                      Looper gjennom listen for å fjerne:")
-                    // selected_titles_objects.forEach((obj)=>{
-                    //     console.dir(obj.docObject)
-                    //     obj.nodes.forEach((node)=>{
-                    //         console.dir(node)
-                
-                    //     })
-                    // })
-                    // console.log("\n\n")
+            
                     //Fjerner eventuelt de andre nodene som er i subtreet av den nye noden som ble satt inn 
-                    let new_nodes_list = [] //new node list that only contain one node from each subtree, wich is the highest node in each subtree. Does only need this for showing the context later
+                    //creates a new node list that only contain one node from each subtree, wich is the highest node in each subtree. Does only need this for showing the context later
+                    let new_nodes_list = [] 
                     for (let i = nodes_index; i < selected_titles_objects[index].nodes.length; i++){
                         if (!is_in_subtree(node, selected_titles_objects[index].nodes[i])){
-                            // console.log("Legger til noden " + selected_titles_objects[index].nodes[i].title + " i nodes listen")
-                            // console.log(selected_titles_objects[index].nodes[i])
+                            //selected_titles_objects[index].nodes[i] er ikke i subtreet til node
                             new_nodes_list.push(selected_titles_objects[index].nodes[i])
-                        } else {
-                            // console.log("Fjerner noden " + selected_titles_objects[index].nodes[i].title + " i nodes listen")
-                        }
+                        } 
                     }
                     selected_titles_objects[index].nodes = new_nodes_list
 
 
                 } else if ( nodes_index == -2) {
-                    //The node is a sibling to the ther nodes
-                    //Finds the rigth placement among the nodes in comparison to the original document
+                    //The node is a sibling to the other nodes
+                   
                     let nodes_document_order = selected_titles_objects[index].docObject.markdownTree.get_nodes_in_order()
-                    // console.log("               Nodes_in_order in current documentObject:")
-                    // console.log(nodes_document_order)
-                    let node_index = nodes_document_order.map(function(e) { return e.id; }).indexOf(node.id); //Index among all title nodes in the document
+                    //Index for node among all title nodes in the document
+                    let node_index = nodes_document_order.map(function(e) { return e.id; }).indexOf(node.id); 
             
-
+                    //Finds the rigth placement among the nodes in comparison to the original document
                     let inserted_bool = false
                     for (let i = 0; i < selected_titles_objects[index].nodes.length; i++){
                         let cmpNode = selected_titles_objects[index].nodes[i]
                         let tempIndex = nodes_document_order.map(function(e) { return e.id; }).indexOf(cmpNode.id);
                         if (tempIndex > node_index) {
                             //place in selected_titles_objects[index].nodes list before cmpNode
-                           
                             selected_titles_objects[index].nodes.splice(i, 0, node)
-                            // console.log("Satt " + node.title + " inn på index " + i )
                             inserted_bool = true
                             break
                         }
                     }
                     if (inserted_bool == false) {
-                        // console.log("Satt " + node.title + " inn på slutten" )
                         selected_titles_objects[index].nodes.push(node)
                     }
 
                 }
 
             } else { 
-                // console.log("fant ingen tidligere objekter i selected_titles_objects med samme dokument objekt")
-                // console.log("Legger til noden i nodes i objektet med samme dokumentObjekt")
+                //no object in list belonging to the same documentType
                 selected_titles_objects.push({docObject: node.object, nodes: [node]})
             }
-            // console.log("\n\n                      selected_titles_objects:")
-            // selected_titles_objects.forEach((obj)=>{
-            //     console.dir(obj.docObject)
-            //     obj.nodes.forEach((node)=>{
-            //         console.dir(node)
-
-            //     })
-            // })
-            // console.log("\n\n")
         })
     })
-    // console.log("\n\n                      selected_titles_objects:")
-    // selected_titles_objects.forEach((obj)=>{
-    //     console.dir(obj.docObject)
-    //     obj.nodes.forEach((node)=>{
-    //         console.dir(node)
-
-    //     })
-    // })
-    // console.log("\n\n")
-    // console.log("Setter sammen teksten i noder til å bli temp_filtered_context")
+    //adds the nodes context together into their documentObjects variable temp_filtered_context
     let new_documentObj_list = []
     for (let i = 0; i < selected_titles_objects.length; i++){
         new_documentObj_list.push(selected_titles_objects[i].docObject)
@@ -138,39 +81,27 @@ export function set_filtered_text(checked_titles){
             selected_titles_objects[i].docObject.temp_filtered_context += selected_titles_objects[i].docObject.markdownTree.get_text_under(node)
 
         }
-        // console.log("Temp_filtered_context:")
-        // console.log(selected_titles_objects[i].docObject.temp_filtered_context)
     }
+    //sorts documents by date
     ascendingOrder = true
     sortDate("date", new_documentObj_list);
-    // console.log(selected_title_objected)
+
     return new_documentObj_list
 }
 
 //load all title nodes to variables
 export function load_markdownNodes(chosen_documents, oldObjList, checked_titles) {
-    // console.log("Load markdown nodes")
     let all_nodes = [] 
-    let searched_titles_nodes = []
-    let titles_nodes = []
+
     chosen_documents.forEach((document) => {
-        //Return the nodes in the same order as it was read from file
         let nodes_array = document.markdownTree.get_nodes_in_order() 
         nodes_array.forEach((node)=> {all_nodes.push(node)})
     }) 
+
+    let titles_obj = make_titles_obj_list(all_nodes.filter(item => (item.id != 0)), oldObjList, checked_titles)
     
-    //All the nodes containing the searched_value
-    searched_titles_nodes = all_nodes.filter(item => (item.id != 0));
-    titles_nodes = make_titles_obj_list(searched_titles_nodes, oldObjList, checked_titles)
-    
-    // $all_markdown_titles = []
-    // //copy some values to the store:
-    // for (let i = 0 ; i<original_titles_list_obj.length; i++){
-    //     $all_markdown_titles.push({title: original_titles_list_obj[i].title, nodes: original_titles_list_obj[i].nodes})
-    
-    // }
-    titles_nodes = sortByString(titles_nodes)
-    return titles_nodes
+    titles_obj = sortByString(titles_obj)
+    return titles_obj
 }
 
 

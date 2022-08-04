@@ -1,4 +1,3 @@
-
 <script>
   import documents from './assets/documents.json'
   import DocumentList from './lib/components/DocumentList.svelte';

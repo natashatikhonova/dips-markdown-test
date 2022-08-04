@@ -3,7 +3,7 @@ import { MarkdownNode, Tree } from './MarkdownTree';
 export class ParseMarkdown{
     idCounter = 1;
     
-
+    //Gets the titles in an object and sets it into a tree structur
     parseAndSetIntoTree(object){
         this.tree = new Tree(object);
         let content = object.context;
@@ -14,71 +14,60 @@ export class ParseMarkdown{
         let prevNode = this.tree.root;
         let possible_parent = null;
         let started = false
-
         let indeks = 0;
+
         while(indeks < content.length) {
             let char = content.charAt(indeks);
 
-    
             if (char == "#") {
-                if (started) {;
-                    // console.log(markdownCode)
-                    // console.log(title)
-
+                if (started) {
                     newNode = new MarkdownNode(this.idCounter++, markdownCode, title, substring, object);
-     
-                    // newNode.printNode(newNode)
                     this.tree.insert(possible_parent, newNode);
                     prevNode = newNode;
                 }
                 title = ""
                 substring = ""
-            
                 markdownCode = "#";
                 indeks++;
-                //Lagrer alle hashtaggen i markdownCode variabelen
+
                 while (content.charAt(indeks) == "#") {
-                    // console.log(content.charAt(indeks))
                     markdownCode = markdownCode + "#" ;
                     indeks++;
                 }
          
-                //Finner parentnoden til neste node som skal settes inn
+                //finds the parent for the next node that is going to be inserted
                 possible_parent = prevNode
-                while( markdownCode.length <= possible_parent.markdownCode.length ){ //Hvis denne markdowntaggen er mindre (større title) så fortsetter vi opp i treet til vi har funnet en parent som har mindre tag (større title). Roten har en tom streng som vil si at den har mindre tag enn alle andre markdown noder
+             
+                //continues up in the tree until we have found a title that have a shorter markdown code (bigger title)
+                while( markdownCode.length <= possible_parent.markdownCode.length ){ 
                     possible_parent = possible_parent.parent;
                 }
             
-       
                 let char = content.charAt(indeks);
-                if (char == " ") { //Må være mellomrom etter markdownkoden
+                //It have to be space after the markdown code
+                if (char == " ") { 
                     while (char != "\n") {
                         title += char;
                         indeks++;
                         char = content.charAt(indeks);
-                        console.log("newLine check")
                     }
                     title += char;
                     indeks++;
-                    // console.log("title: " + title)
-                
                     started = true;
                 } else {
                     started = false;
                 }
-            } else { //Registrerer teksten som følger fram til neste #
-                // console.log("Substring: " + substring)
-                substring += char; //Legger til den neste bokstaven
+            } else { 
+                //Registers the text that comes after the markdown title
+                substring += char; 
                 indeks++;
             }
         }
 
-        if (started) { //Legger til den siste noden
-         
+        if (started) { 
+            //Adds in the last node
             newNode = new MarkdownNode(this.idCounter++, markdownCode, title, substring, object)
-
             this.tree.insert(possible_parent, newNode)
-            // newNode.printNode(newNode)
         }
         return this.tree
     }

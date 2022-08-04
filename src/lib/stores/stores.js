@@ -49,14 +49,10 @@ export let amount_searched_words = writable(0)
 //filtered document list based on the $searchedValue
 export let searchedDocuments = writable([])
 
-
-export let showTitles = writable(false)
-
+//signals to show filtering menu
 export let showFiltermenu = writable(false)
 
-
 export let selected_line_height = writable("1.5")
-
 export let selected_text_size = writable(11)
 
 //for storing the markdown text and info

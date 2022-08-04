@@ -2,14 +2,15 @@
     import {createEventDispatcher} from 'svelte';
     import FilterByDoctype from './FilterByDoctype.svelte';
     import FilteredByTitles from './FilteredByTitles.svelte';
+    import {showFiltermenu} from "../stores/stores"
 
     export let showFilterByTitles = true;
+    
     let groupFilterView = true
 
-    const dispatch = createEventDispatcher();
     //sends a message when a panel is to be closed
-    function closeTitles(){
-        dispatch("close")
+    function close(){
+        $showFiltermenu = false
     }
 </script>
 
@@ -24,7 +25,7 @@
             <button class:current-filter = {!groupFilterView} on:click={()=>{groupFilterView = false}} >Overskrifter</button>
             {/if}
         </div>
-        <button class="close" on:click={closeTitles}><i class="material-icons" >close</i></button>
+        <button class="close" on:click={close}><i class="material-icons" >close</i></button>
     </div>
     {#if groupFilterView}
         <FilterByDoctype/>
@@ -57,8 +58,6 @@
         background: rgb(62, 62, 62);
     }
 
-    /* Filter buttons */
-
     .filter-options{
         display: flex;
         flex-direction:row;
@@ -73,7 +72,6 @@
         border: none;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
-
     }
 
     .filter-options .current-filter{
@@ -86,7 +84,6 @@
         background: rgb(62, 62, 62);
         color: #cccccc;
     }
-
 
     :global(body.dark-mode) .filter-options .current-filter{
         background: rgb(49, 49, 49);
@@ -103,8 +100,6 @@
         color:#d43838; 
     }
 
-    /* Close button - darkmode */
-
     :global(body.dark-mode) .close{
         color: #cccccc;
     }
@@ -112,5 +107,4 @@
     :global(body.dark-mode) .close:hover{
         color:#d43838; 
     }
-
 </style>

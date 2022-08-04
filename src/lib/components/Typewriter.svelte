@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, findNewDocumentObjId} from '../stores/stores.js';
+    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, findNewDocumentObjId, DocumentObject, documentTypes} from "../stores/stores";
     import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
     import asRoot from 'typewriter-editor/lib/asRoot';
@@ -7,29 +7,23 @@
     import {documentList} from '../stores/stores.js';
     import toMarkdown from 'to-markdown';
     import {createEventDispatcher} from 'svelte';
-    import { DocumentObject } from '../document.js';
-    import { ParseMarkdown } from '../ParseMarkdown.js';
+    import {ParseMarkdown} from "../utils/markdown/Parsemarkdown"
     import { h as hFromTypewriter} from 'typewriter-editor';
-
-
-  
+    let documentTypesCpy = documentTypes.slice()
+    documentTypesCpy.splice(0,0,"Velg dokumenttype")
     editor.typeset.formats.add({
       name: 'autocomplete',
       selector: 'autoSuggestion',
       render: (attributes, children) => hFromTypewriter('autoSuggestion', null, children),
     });
 	
-
     let selectedDocType = "Velg dokumenttype";
+    
+    
+    const dispatch = createEventDispatcher();
 
-    const documentTypes = ["Velg dokumenttype", "Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
-
-    let w
-    let h
     $: w = window.innerWidth;
     $: h = window.innerHeight;
-
-    let autocompleteOn = true
 
     //Sets text in editor
     $: if ($currentDocumentObject && !$currentlyAddingNewNote){
@@ -38,8 +32,6 @@
         editor.setHTML(marked(""));
     } 
    
-    const dispatch = createEventDispatcher();
-
     //Either editor shows or just the text
     function changeEdit(){
         dispatch('editable');
@@ -56,32 +48,34 @@
       }
       $currentlyAddingNewNote=false;
       $currentlyEditingNote = false;
-      
     }
 
     function mobileDown(){
       dispatch("cancel");
     }
+
     //Saves the text if the text is not empty and stores the text
     function save(){
       remove_suggestion()
 
       changeEdit();
-      if( toMarkdown(editor.getHTML()) === ""){ //Empty note
+      if( toMarkdown(editor.getHTML()) === ""){
+        //Empty note
         alert("Tom notat!");
         $currentlyAddingNewNote=false;
         dispatch("save");
       }else{
-        if($currentlyEditingNote){ //Edit note
+        if($currentlyEditingNote){ 
+          //Edit note
           dispatch("save");
           $currentlyEditingNote = false;
           $documentList.forEach((element)=>{
             if (element.id === $currentDocumentObject.id){
                 element.context= toMarkdown(editor.getHTML()) + " \n";
-                //Lager et tre over markdown overskriftene i teksten
+                //make an tree over all markdown titles
                 let parse = new ParseMarkdown()
                 console.log("Før parse")
-                let tree = parse.parseAndSetIntoTree(element) //Her henger programmet!!. FIKSET:)
+                let tree = parse.parseAndSetIntoTree(element)
                 console.log("Etter parse")
                 element.markdownTree = tree;
 
@@ -90,16 +84,15 @@
           $documentList = $documentList;
           console.log("Setter inn dokumenter i typewriter Edit")
 
-
         } else{
-          if (selectedDocType !== documentTypes[0]) { //new Note
+          if (selectedDocType !== documentTypesCpy[0]) { //new Note
             console.log("New note")
             const readable = true;
             let newElement = new DocumentObject(findNewDocumentObjId($documentList.slice()), new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
             newElement.readable = readable
             newElement.title = selectedDocType;
 
-            //Lager et tre over markdown overskriftene i teksten
+            //make an tree over all markdown titles
             let parse = new ParseMarkdown()
             let tree = parse.parseAndSetIntoTree(newElement)
 
@@ -120,7 +113,25 @@
         } 
       }
     }
+    
+  //Put in Image:
+  let fileinput;
+  const onFileSelected =(e)=>{                      
+    let image = e.target.files[0];
+    let reader = new FileReader();
+    reader.readAsDataURL(image);
+    reader.onload = e => {
+      editor.setHTML(editor.getHTML()+"\n <img src=" + e.target.result + ">") 
+    };      
+  }
 
+  
+  function file_choser(){
+    fileinput.click()
+    editor.root.focus();
+  }
+
+  //Changes to big letter at the start of sentences
   let waitingForSpaceOrEnterOrDot = false
   if (editor.getText().length <= 1){
     waitingForSpaceOrEnterOrDot = true
@@ -173,58 +184,20 @@
       waitingForSpaceOrEnterOrDot = true
     }
   }
-  // console.log(marked("|  |  |  |  |  | \n |:---:|---|---|---|---| \n |  |  |  |  |  | \n |  |  |  |  |  | \n |  |  |  |  |  |"))
 
-
-  //Put in Image:
-  let  fileinput;
-
-
-	const onFileSelected =(e)=>{                      
-  let image = e.target.files[0];
-  let reader = new FileReader();
-  reader.readAsDataURL(image);
-  reader.onload = e => {
-    editor.setHTML(editor.getHTML()+"\n <img src=" + e.target.result + ">") 
-    };      
-  }
-let suggestions_words = ["epikrise", "sykepleier", "lege", "sykdom", "sykehus", "legevakt", "fastlege"]
+//    Autocomplete and TAB:
+let autocomplete_suggestions_words = ["epikrise", "sykepleier", "lege", "sykdom", "sykehus", "legevakt", "fastlege"]
 let prev_suggested_word = ""
 let suggested_word_startindex = -1
-let complete_suggested_word = ""
 let prev_selection = 0
+let autocompleteOn = true
+let complete_suggested_word = ""
 
-function file_choser(){
-  fileinput.click()
-  editor.root.focus();
-}
-
-function whenKeyDown(event){
-  let key = event.key
-
-  if (key == "Tab" && !editor.getActive().list) {
-    remove_suggestion()
-    editor.insert("        ");
-  }
-
-  if ((37 <= event.keyCode) && (event.keyCode <= 40)){
-      //Arrow keys
-      remove_suggestion()
-      waitingForSpaceOrEnterOrDot = false
-      dot_has_happend = false
-  }
-
-  else if (autocompleteOn){
-    autocomplete(key)
-  }
-} 
-
-//Autocomplete:
 function autocomplete(key){
   
   if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
     if (prev_suggested_word.length > 0){
-
+      
       let current_indeks = key == "Enter" ? editor.doc.selection[0]-1: editor.doc.selection[0];
 
       //New
@@ -263,12 +236,12 @@ function autocomplete(key){
       word += editor_text[i]
       
     }
-
+    
     word = word.split("").reverse().join("");
-
+    
     if (word.length != 0) {
-      for (let i = 0; i < suggestions_words.length; i++){
-        let check_word = suggestions_words[i]
+      for (let i = 0; i < autocomplete_suggestions_words.length; i++){
+        let check_word = autocomplete_suggestions_words[i]
         let found_word = true
         
         for (let j = 0; j < word.length; j++){
@@ -311,13 +284,38 @@ function remove_suggestion(){
     let curSel = editor.doc.selection;
     editor.delete([suggested_word_startindex+1, suggested_word_startindex+1 + prev_suggested_word.length])
     editor.select(curSel)
-
+    
     editor.modules.history.setStack(historyStackBefore)
     
     prev_suggested_word = ""
   }
 }
-// $: editor.doc.selection[0], remove_suggestion() //Fjerner suggestion
+
+function whenKeyDown(event){
+  let key = event.key
+
+  if (key == "Tab" && !editor.getActive().list) {
+    remove_suggestion()
+    editor.insert("        ");
+  }
+
+  if ((37 <= event.keyCode) && (event.keyCode <= 40)){
+      //Arrow keys
+      remove_suggestion()
+      waitingForSpaceOrEnterOrDot = false
+      dot_has_happend = false
+    }
+    
+    else if (autocompleteOn){
+      autocomplete(key)
+  }
+} 
+
+function set_autocomplete(){
+  autocompleteOn = !autocompleteOn
+  editor.root.focus();
+}
+
 let min_size = false;
 let max_size = false;
 let selected_text_size = 11
@@ -340,12 +338,6 @@ function set_text_size(direction){
   }
   editor.root.focus();
 }
-
-
-function set_autocomplete(){
-  autocompleteOn = !autocompleteOn
-  editor.root.focus();
-}
 </script>
 
 <head>
@@ -360,7 +352,6 @@ function set_autocomplete(){
         {/if}
       </div>
       <div class="toolmenu-title">
-
         <h4>
           {#if $currentlyAddingNewNote}
             NYTT DOKUMENT
@@ -374,57 +365,6 @@ function set_autocomplete(){
         <button title="Avbryt" class = "save" class:mobile={w<600} on:click={cancel} > <i class="material-icons">close</i></button>
       </div>
     </header>
-  
-  <!-- Image menu for when images are selected
-<BubbleMenu {editor} let:active let:commands let:placement offset={8} for={'image'}>
-  <div class="bubble-menu">
-    <div data-arrow class="arrow {placement}"></div>
-    <button
-      class="bubble-menu-button"
-      class:active={active.style === 'outset-left'}
-      on:click={() => editor.formatLine({ ...editor.doc.getLineFormat(), style: 'outset-left' })}
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        <rect fill="none" width="24" height="24"/>
-        <path d="M22,19 L22,21 L7,21 L7,19 L22,19 Z M22,15 L22,17 L16,17 L16,15 L22,15 Z M14,7 L14,17 L2,17 L2,7 L14,7 Z M22,11 L22,13 L16,13 L16,11 L22,11 Z M22,7 L22,9 L16,9 L16,7 L22,7 Z M22,3 L22,5 L7,5 L7,3 L22,3 Z"></path>
-      </svg>
-    </button>
-
-    <button
-      class="bubble-menu-button header3"
-      class:active={!active.style}
-      on:click={() => editor.formatLine({ ...editor.doc.getLineFormat(), style: null })}
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        <rect fill="none" width="24" height="24"/>
-        <path d="M19,19 L19,21 L5,21 L5,19 L19,19 Z M19,7 L19,17 L5,17 L5,7 L19,7 Z M19,3 L19,5 L5,5 L5,3 L19,3 Z"></path>
-      </svg>
-    </button>
-
-    <button
-      class="bubble-menu-button"
-      class:active={active.style === 'outset-center'}
-      on:click={() => editor.formatLine({ ...editor.doc.getLineFormat(), style: 'outset-center' })}
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        <rect fill="none" width="24" height="24"/>
-        <path d="M19,19 L19,21 L5,21 L5,19 L19,19 Z M21,7 L21,17 L3,17 L3,7 L21,7 Z M19,3 L19,5 L5,5 L5,3 L19,3 Z"></path>
-      </svg>
-    </button>
-
-    <button
-      class="bubble-menu-button"
-      class:active={active.style === 'fill-width'}
-      on:click={() => editor.formatLine({ ...editor.doc.getLineFormat(), style: 'fill-width' })}
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        <rect fill="none" width="24" height="24"/>
-        <path d="M18,19 L18,21 L6,21 L6,19 L18,19 Z M21,3 L21,17 L3,17 L3,3 L21,3 Z"></path>
-      </svg>
-    </button>
- </div>
-</BubbleMenu> -->
-
 
   <div class="toolbar" class:mobile-toolbar = {w<600}>
     <Toolbar {editor} let:active let:commands>
@@ -529,7 +469,7 @@ function set_autocomplete(){
   {#if $currentlyAddingNewNote}
     <div class="dropdown">
       <select class="dropdown-menu" bind:value={selectedDocType} >
-        {#each documentTypes as value}<option {value}>{value}</option>{/each}
+        {#each documentTypesCpy as value}<option {value}>{value}</option>{/each}
       </select>
     </div>
   {/if}
@@ -540,55 +480,43 @@ function set_autocomplete(){
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
-
     <div class="editor" style="font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={whenKeyDown} on:click={clear_check_text}></div>
 
 
 <style>
   .active {
-  border-color: #80bdff;
-  background: #eaf4ff;
-}
-
-
+    border-color: #80bdff;
+    background: #eaf4ff;
+  }
 .toolmenu-title{
   align-self: center;
 }
-
-
 .main-functions{
   display: inline-flex;
   background: whitesmoke;
 }
-
 .secondary-functions{
   display: inline-flex;
   background: whitesmoke;
 
 }
-
 .arrow-down-button{
   background: none;
   border:none;
 }
-
 :global(body.dark-mode) .arrow-down-button{
   color:#cccccc;
 }
-
 .tool-menu{
-    width: 100%;
-    height: 100%;
-    max-height: 40px;
-    min-height: 40px;
-    align-items: center;
-    display: flex;
-    justify-content:space-between;
-    background-color: whitesmoke;
+  width: 100%;
+  height: 100%;
+  max-height: 40px;
+  min-height: 40px;
+  align-items: center;
+  display: flex;
+  justify-content:space-between;
+  background-color: whitesmoke;
 }
-
-
-
 :global(body.dark-mode) .tool-menu{
   background-color: rgb(49,49,49);
   color: #cccccc;
@@ -599,24 +527,18 @@ function set_autocomplete(){
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
   }
-
   :global(body.dark-mode .editor code) {
     color: #666666;
   }
-
   :global(.editor autoSuggestion){
     color:lightgray;
-
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
   }
-
   :global(body.dark-mode .editor autoSuggestion) {
     color: #666666;
   }
-  /* :global(.editor p){
-    font-size: xx-large;
-  } */
+
   :global(.editor img){
     max-height: 50%;
     max-width: 50%
@@ -624,30 +546,22 @@ function set_autocomplete(){
   .toolbar {
     display:flex;
     background: whitesmoke;
-    /* margin-left:5px;
-    margin-right:5px; */
-    /* border-radius: 3px; */
     padding: 10px;
     box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
     margin-bottom: 3px;
-    /* min-width: min-content; */
   }
-
   .mobile-toolbar{
     display: contents;
   }
-
   :global(body.dark-mode) .toolbar{
     background: rgb(32, 32, 32);
   }
-
   :global(body.dark-mode) .main-functions{
     background: rgb(32, 32, 32);
   }
   :global(body.dark-mode) .secondary-functions{
     background: rgb(32, 32, 32);
   }
-
   .toolbar-button {
     display: flex;
     justify-content: center;
@@ -662,53 +576,43 @@ function set_autocomplete(){
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;
   }
-
   .toolbar-button:hover {
     outline: none;
     border-color: #80bdff;
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
   }
-
   .toolbar-button.active {
     border: solid 2px;
     border-color: #80bdff;
   }
-
   :global(body.dark-mode) .toolbar-button{
     background-color: #353535;
     color: #cccccc;
     border: none;
   }
-
   :global(body.dark-mode) .toolbar-button:hover{
     border-color: #b7daff;
     box-shadow: 0 0 0 0.2rem rgba(104, 177, 255, 0.5);
   }
-
   :global(body.dark-mode) .toolbar-button.active{
     border-color: #b7daff;
     box-shadow: 0 0 0 0.2rem rgba(104, 177, 255, 0.5);
   }
-
   .header2{
     font-size:large;
   }
-
   .arrow{
     color:black;
     font-weight: bolder;
     font-size:x-large;
   }
-
   .controls{
     display: inline-flex;
     align-items: center;
   }
-
   .dropdown{
     margin: 2vh;
   }
-
   .dropdown-menu {
     background: #fff;
     width: 21vh;
@@ -717,18 +621,15 @@ function set_autocomplete(){
     border: 1px solid #ced4da;
     cursor: pointer;
   }
-
   .dropdown-menu:hover {
     outline: none;
     border-color: #80bdff;
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
   }
-
   :global(body.dark-mode) .dropdown-menu:hover{
     border-color: #b7daff;
     box-shadow: 0 0 0 0.2rem rgba(104, 177, 255, 0.5);
   }
-
   :global(body.dark-mode) .dropdown-menu{
     background-color: rgb(49,49,49);
     color: #cccccc;
@@ -739,13 +640,11 @@ function set_autocomplete(){
     margin-left: 1vh;
     margin-top:1vh;
   }
-
   .meta{
     font-style: italic;
     margin-left:1vh;
     margin-top:1vh;
   }
-
   .editor{
     margin-top: 1vh;
     margin-right: 1vh;
@@ -756,7 +655,6 @@ function set_autocomplete(){
     overflow-y: auto;
     font-size: 11pt;
   }
-
   :global(body.dark-mode) .editor{
     background-color: rgb(49,49,49);
   }
@@ -765,7 +663,6 @@ function set_autocomplete(){
     border-left: solid rgb(74, 74, 74);
     padding-left: 0.5vw;
   }
-
   .save{
     background: none;
     width: 2.5rem;
@@ -775,159 +672,25 @@ function set_autocomplete(){
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;
   }
-
   :global(body.dark-mode) .save{
     color:#cccccc;
   }
-
   .no-border{
     border:none;
     padding-left:0;
   }
-
   .save:hover{
     color:#d43838;
     border:none;
     border-color: none;
     box-shadow: none;
   }  
-
   :global(body.dark-mode) .save:hover{
     color: #d43838;
   }
-
   .mobile{
     margin: 2px;
     height: 2rem;
     width: 2rem;
   }
-
-
-
-  
-  
-  /*
-    .toolbar {
-    display: flex;
-    background: #eee;
-    margin-left:1%;
-    margin-right:2%;
-    padding: 0.6%;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
-    min-width: 15vw;
-  }
-  
-  .toolbar-button {
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
-    margin-top: 0.5vh;
-    width: calc(2.5vw);
-    height: calc(4.5vh);
-    margin-right: calc(0.5vw);
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    cursor: pointer;
-  }
-
-  .toolbar-button:hover {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-  }
-
-  .toolbar-button.active {
-    border: solid 2px;
-    border-color: #80bdff;
-  } */
-
-  /* .header2{
-    font-size:large;
-  }
-
-
-
-  .arrow{
-    color:black;
-    font-weight: bolder;
-    font-size:x-large;
-  }
-
-  .controls{
-    margin-left: auto;
-    margin-right: calc(0.5vw);
-    display: inline-flex;
-  }
-
-  .dropdown{
-    margin: 2vh;
-  }
-
-  .dropdown-menu {
-    background: #fff;
-    width: 20vh;
-    height: 40px;
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    cursor: pointer;
-  }
-
-  .dropdown-menu:hover {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-  }
-  .title{
-    font-weight: bold;
-    font-style: italic;
-    margin-left: 1vh;
-    margin-top:1vh;
-  }
-
-  .meta{
-    font-style: italic;
-    margin-left:1vh;
-    margin-top:1vh;
-  }
-
-  .editor{
-    margin-top: 1vh;
-    margin-right: 1vh;
-    margin-left: 1vh;
-    padding:0.5vh;
-    height: 100%;
-    overflow-y: auto;
-  }
-
-  .save{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    width: calc(3vw);
-    height: calc(5vh);
-    margin-right: calc(0.3vh);
-    border:none;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    cursor: pointer;
-  }
-
-  .save:hover{
-    color:#d43838;
-    border:none;
-    border-color: none;
-    box-shadow: none;
-  }  
-
-  .mobile{
-    margin: 1vw;
-    height: calc(4vh);
-    width: calc(7vw);
-  } */
-
-
 </style>

@@ -10,6 +10,12 @@
     let edit = $currentlyAddingNewNote;
     const dispatch = createEventDispatcher()
 
+    $: if ($currentDocumentObject!=null && !$currentlyAddingNewNote){
+        editor.setHTML(marked($currentDocumentObject.context));
+    } else if($currentlyAddingNewNote){
+        editor.setHTML(marked(""));
+    } 
+
     function changeEdit(){
           edit=!edit;
           edit ? $currentlyEditingNote = true: $currentlyEditingNote = false
@@ -25,12 +31,6 @@
      }  
     }
       
-
-    $: if ($currentDocumentObject!=null && !$currentlyAddingNewNote){
-        editor.setHTML(marked($currentDocumentObject.context));
-    } else if($currentlyAddingNewNote){
-        editor.setHTML(marked(""));
-    } 
     function showDocumentlist(){
       dispatch("set_content_view_size", 0)
     }
@@ -68,7 +68,6 @@
 </div>
 
 <style>
-
   .content-container{
     display: flex;
     flex-direction: column;
@@ -112,8 +111,6 @@
     padding: 1vh;
     margin-top: 3vh;
   }
-
-
 
   :global(body.dark-mode) a{
     color:#d43838;

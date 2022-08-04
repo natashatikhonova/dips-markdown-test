@@ -1,38 +1,23 @@
 <script>
-    import {current_doctype_filtergroup, doctype_filter_groups, allfilterOff, documentTypes, searchResult, searchValue, documentList, checked_titles_filters, set_filtered_text, load_markdownNodes} from '../stores/stores';
+    import {current_doctype_filtergroup, doctype_filter_groups, allfilterOff, documentTypes, searchedDocuments, searchValue, documentList, checked_titles_filters} from '../stores/stores';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
     import FilterForm from './FilterForm.svelte';
-    
+    import {set_filtered_text, load_markdownNodes} from "../utils/markdown/markdownFunctions"
 
-    const modal = writable(null);
     let customViewMode = true;
     let filter_searched_value = "";
     let filtergroup_searched_value ="";
     let manageGroup = false
     let showAllButtonName = "Nullstill"
     let original_doctypes = []
-
     let selected_documentObj_titles = []
-    //make a list with all doctypes with a correct checked value
-    function make_obj_list(){
-        let obj_list =  []
-        for (let i = 0; i < documentTypes.length; i++) {
-            if($current_doctype_filtergroup.filters.includes(documentTypes[i])){
-                
-                obj_list.push({name: documentTypes[i], checked: true})
-            } else{
-                obj_list.push({name: documentTypes[i], checked: false})
-            }
-        }
-        original_doctypes = obj_list   
-    }
     let all_markdown_titles = []
-    console.log($current_doctype_filtergroup)
-    
+
+    const modal = writable(null);
+
     //updates list whenever the group is changed
     $: if($current_doctype_filtergroup.filters){
-        console.log(" reactive: $current_doctype_filtergroup")
         let filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
 
         //Adds all the markdown titles in the current filtered documentList to an array of objects
@@ -44,6 +29,7 @@
         //object structure: {name: <doctype String>, checked: true/false}
         make_obj_list()
 
+        //Updates $checked_titles_filters to include all the title nodes under this new doctype filter
         for (let i = 0; i<all_markdown_titles.length; i++){
             for (let j =0; j<$checked_titles_filters.length; j++){
                 if ($checked_titles_filters[j].title == all_markdown_titles[i].title){
@@ -52,22 +38,20 @@
             }
         }
     }
-        
-
-    //filters doctypes and groups by search
+    
+    //filters doctypes and groups by search:
     $: searchedDocumentTypes = original_doctypes.filter(item => (item.name.toLowerCase().includes(filter_searched_value.toLowerCase())));
-
     $: searchedFiltergroups = $doctype_filter_groups.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
-
+    
     //checks all items whenever filter is turned off
     $: if($allfilterOff){
-        console.log("Reactive: $allfilterOff")
         $documentList.forEach((doc)=> (doc.temp_filtered_context = ""))
         $current_doctype_filtergroup = {id: -1, name: "", filters: documentTypes.slice()}
    
         for (let i = 0; i<original_doctypes.length; i++){
             original_doctypes[i].checked = true
         }
+
         $allfilterOff = false
         $checked_titles_filters = []
     }  
@@ -88,39 +72,45 @@
         searchedFiltergroups = relevantSort(searchedFiltergroups, filtergroup_searched_value)
     }
 
-    //checked_titles with current doctype filter
+    //add checked titles with current doctype filter to checked_titles
     let checked_titles = []
-    $: if (all_markdown_titles){
+    $: if (all_markdown_titles.length > 0){
         checked_titles = []
         for (let i = 0; i < all_markdown_titles.length; i++){
             if ($checked_titles_filters.find(item => (item.title == all_markdown_titles[i].title )) != null){
-                //Found in $checked_titles_filters
+                //Found all_markdown_titles[i] in $checked_titles_filters
                 checked_titles.push(all_markdown_titles[i])
             }
         }
-        // console.log("ny checked_titles")
-        // console.log(checked_titles)
-        // console.log("$checked_title_filters:")
-        // console.log($checked_titles_filters)
     }
     
     $: if ($checked_titles_filters.length == 0 || checked_titles.length == 0){
-        // console.log("Viser alle dokumenter under current filters")
         //sets list depending on what doctypes are chosen
         let filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
         //show documents depending on main search field
-        $searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
-
+        $searchedDocuments = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
     } else {
-    //    console.log("Henter dokumenter basert på checked_titles")
-
         selected_documentObj_titles = set_filtered_text(checked_titles)
         let filteredDocumentlist = (selected_documentObj_titles.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
         //show documents depending on main search field
-        $searchResult = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
+        $searchedDocuments = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
     }
 
-    //changes between doctype mode and group mode
+    //make a list with all doctypes with a correct checked value
+    function make_obj_list(){
+        let obj_list =  []
+        for (let i = 0; i < documentTypes.length; i++) {
+            if($current_doctype_filtergroup.filters.includes(documentTypes[i])){
+                
+                obj_list.push({name: documentTypes[i], checked: true})
+            } else{
+                obj_list.push({name: documentTypes[i], checked: false})
+            }
+        }
+        original_doctypes = obj_list   
+    }
+
+    //changes between displaying all filters and group filters
     function changeMode(){
         customViewMode = !customViewMode
         make_obj_list()
@@ -141,7 +131,6 @@
 
     //checks/unchecks all items and switches button
     function clickedAll(){
-      
         if($current_doctype_filtergroup.filters.length < documentTypes.length){
             //checks all items
             $current_doctype_filtergroup.filters = documentTypes.slice()
@@ -174,7 +163,6 @@
 
     //open popup window for a new/editable group
     function openModal(group){
-
         if (group){
             //edit group
             modal.set(bind(FilterForm,{edit_bool: true, edit_obj_indeks: find_index(group), original_list_obj: original_doctypes.slice()}))
@@ -289,7 +277,6 @@
     }
     .save-filter-button{
         margin-top: 10px;
-    
     }
     .main{
         display: flex;
@@ -302,27 +289,22 @@
         margin-top: 2vh;
     }
     .no-title-filters{
-
         margin-top: 5%;
         color: red;
-    
     }
     .filterItem:hover{
         color:#d43838;
     }
-
     .filter-panel{
         display: flex;
         flex-direction: column;
         height: 100%;
     }
-
     .meta{
         display: flex;
         flex-direction: column;
         height:25%;
     }
-
     .filters{
         display: flex;
         flex-direction: column;
@@ -339,37 +321,25 @@
         display: flex;
         right: 10%;
     }
-
     .edit-button{
         margin-left: 3%;
         background: none;
         border: none;
     }
-    
     .edit-button:hover{
         color:#d43838;
         cursor: pointer;
     }
-    
-    /* Darkmode */
-
-    /* Edit button - darkmode */
-
     :global(body.dark-mode) .edit-button{
         color:#cccccc;
     }
-
     :global(body.dark-mode) .edit-button:hover{
         color:#d43838;
     }
-
-    /* Search field - darkmode */
-
     :global(body.dark-mode) input{
         border-bottom: 1px solid #cccccc;
         color:#cccccc;  
     }
-
     :global(body.dark-mode) ::placeholder {
         color: #cccccc;   
     }

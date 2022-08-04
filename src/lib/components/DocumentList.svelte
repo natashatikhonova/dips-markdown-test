@@ -1,47 +1,50 @@
 <script>
     import DocumentItem from "./DocumentItem.svelte";
-    import {currentDocumentObject, documentList, currentlyAddingNewNote, current_doctype_filtergroup, showFiltermenu, showSideView} from '../stores/stores.js';
+    import {currentDocumentObject, documentList, currentlyAddingNewNote, current_doctype_filtergroup, showFiltermenu} from '../stores/stores.js';
     import ToolMenu from './ToolMenu.svelte';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilterMenu from './FilterMenu.svelte';
-
-    let w
-    $: w = window.innerWidth;
+    
     let sortedData = $documentList;
     const tableHeaders = ["title", "date","author"];
     let selectedHeader = "date";
     let ascendingOrder = false;
     let lengde;
-
+    let current_size= "0";
+    let documentview_size = "125";
+    let maxSize_filter = "0"
+    
+    $: w = window.innerWidth;
     $: filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
+
+    $: if($showFiltermenu){
+        open()
+    } else{
+        close()
+    }
+
+    $: if ($currentDocumentObject && $showFiltermenu && w>600){
+        current_size = "60"
+    }
+    $: if (!$currentDocumentObject && $showFiltermenu&& w>600){
+        current_size="25"
+    }
 
     function addNote(){
         $currentlyAddingNewNote = true;
     }
-        
-    // SORT BY NUMBER
-    /*
-    const sortByNumber = (colHeader) => {
-        sortedPersonData = sortedPersonData.sort((obj1, obj2) => {
-            return ascendingOrder ? Number(obj1[colHeader]) - Number(obj2[colHeader])
-            : Number(obj2[colHeader]) - Number(obj1[colHeader])
-        });
-        selectedHeader = colHeader;
-    }*/
-        
-    // SORT BY STRINGs
-
+    
+    //sort strings depending on with header is selected
     const sortByString = (colHeader) => {
-        // console.log("click tittel");
         sortedData = sortedData.sort((obj1, obj2) => {
             if (obj1[colHeader] < obj2[colHeader]) {
-                    return -1;
+                return -1;
             } else if (obj1[colHeader] > obj2[colHeader]) {
                 return 1;
             }
             return 0; //string code values are equal		
         });
-
+        
         if (!ascendingOrder) {
             sortedData = sortedData.reverse()
         }
@@ -51,8 +54,7 @@
         ascendingOrder = !ascendingOrder;
         lengde = $documentList.length;
     }
-
-    //sorting by default
+    //sorting by default/start
     sortByString(selectedHeader);
 
     //if documentlist updates, then sort
@@ -60,13 +62,8 @@
         ascendingOrder = false;
         sortByString("date");
     }
-    let current_size= "0";
-    let documentview_size = "125";
-    let maxSize_filter = "0"
-
 
     function close(){
-        //show_titles_button=!show_titles_button;
         current_size = "0";
         documentview_size = "125";
         $showFiltermenu = false;
@@ -86,40 +83,25 @@
         }
     }
 
-    $: if($showFiltermenu==true){
-        open()
-    }
-    $: if ($currentDocumentObject && $showFiltermenu && w>600){
-        current_size = "60"
-    }
-    $: if (!$currentDocumentObject && $showFiltermenu&& w>600){
-        current_size="25"
-    }
-
 
 </script>
 <div class = "with-toolbar-conteiner">
     <ToolMenu hideToolBar={true} on:set_content_view_size/>
 
     <div class="document-container">
-
         <Splitpanes theme="modern-theme">
-    
             <Pane minSize={"20"} size={current_size} maxSize={maxSize_filter}>
-                <FilterMenu on:close={close} showFilterByTitles={false}/>
+                <FilterMenu showFilterByTitles={false}/>
             </Pane>
      
-        
             <Pane size={documentview_size}>
                 <div class="table-container" >
                     <table>
-                        <!--copied from https://svelte.dev/repl/f04266dcd39c4024b1e89084aa549844?version=3.31.2 -->
                         <thead>
                             <tr>
+                                <!--copied from https://svelte.dev/repl/f04266dcd39c4024b1e89084aa549844?version=3.31.2 -->
                                 {#each tableHeaders as header}
                                     <th class:highlighted={selectedHeader === header} on:click={() => sortByString(header)}>
-                                        <!-- {header.replace("_", " ")} -->
-                                        <!-- Swithes language to norwegian -->
                                         {#if header == "title"}
                                             {"Tittel"}
                                         {:else if header == "date"}
@@ -128,7 +110,6 @@
                                             {"Forfatter"}
                                         {/if}
                                         
-                            
                                         {#if header === selectedHeader}	
                                             <span class="order-icon" on:click={() => ascendingOrder = !ascendingOrder}>
                                                 {@html ascendingOrder ? "&#9661;" : "&#9651;"}
@@ -139,9 +120,8 @@
                         </tr>
                         </thead>
     
-                    
                         <tbody>
-                            <!-- {#each $documentList as item} -->
+
                             {#each filteredDocumentlist as item}
                                 {#if $currentDocumentObject === item}
                                     <DocumentItem document = {item} chosen = {true} /> <!--add color if file is chosen -->

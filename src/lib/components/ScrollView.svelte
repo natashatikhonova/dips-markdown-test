@@ -1,26 +1,29 @@
 <script>
-
-    import {documentList, searchValue, amount_searched_words, searchResult, showFiltermenu, selected_line_height, selected_text_size} from '../stores/stores.js';
+    import {documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
-    import {currentlyAddingNewNote, showSideView, current_doctype_filtergroup, currentlyEditingNote} from '../stores/stores.js';
+    import {currentlyAddingNewNote, showSideView, currentlyEditingNote} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
-    import FilteredByTitles from './FilteredByTitles.svelte';
     import ToolMenu from './ToolMenu.svelte';
     import FilterMenu from './FilterMenu.svelte';
-    let s
+
     let show = $currentlyAddingNewNote;
     let sortedData = $documentList;
     let ascendingOrder = true;
     let lengde = $documentList.length;
-
-    let typewritersize = "50"
-
-    let w
-    let h
+    let current_size= "0";
+    let maxSize_filter = "0"
+    let scrollview_size = "125";
+    
     $: w = window.innerWidth;
     $: h = window.innerHeight;
+
+    $: if($showFiltermenu){
+        open()
+    } else{
+        close()
+    }
 
     function save(){ 
         show = false;
@@ -30,18 +33,17 @@
 
     function cancel(){
         show = false;
-        // console.log("tester cancel")
     }
-
+    
     function addNote(){
         $currentlyAddingNewNote = true;
         show =true;
     }
-
+    
     const sortByString = (colHeader) => {
-		sortedData = sortedData.sort((obj1, obj2) => {
-			if (obj1[colHeader] < obj2[colHeader]) {
-					return -1;
+        sortedData = sortedData.sort((obj1, obj2) => {
+            if (obj1[colHeader] < obj2[colHeader]) {
+                return -1;
 			} else if (obj1[colHeader] > obj2[colHeader]) {
 				return 1;
 			}
@@ -49,7 +51,7 @@
 		});
 
 		if (!ascendingOrder) {
-			sortedData = sortedData.reverse()
+            sortedData = sortedData.reverse()
 		}
         $documentList = sortedData;
         ascendingOrder = !ascendingOrder;
@@ -62,8 +64,7 @@
     //sorting by default
     sortByString("date");
 
-
-
+    //markes all the "word" in "el" with a color style
     function wrapWord(el, word){
         var expr = new RegExp(word, "gi");
         var nodes = [].slice.call(el.childNodes, 0);
@@ -101,8 +102,8 @@
         }
     }
 
+    //Highlight all the words searched on in htmlText
     function highlightWord(htmlText) {
-
         if ($searchValue!== "") {
             let container
             container = document.createElement("div")
@@ -113,12 +114,9 @@
             return htmlText
         }
     }
-    let current_size= "0";
-    let maxSize_filter = "0"
-    let scrollview_size = "125";
 
     function close(){
-        //show_titles_button=!show_titles_button;
+        //sets pane sizes
         current_size = "0";
         maxSize_filter = "0"
         scrollview_size = "125";
@@ -126,37 +124,24 @@
     }
 
     function open(){
+        //sets pane sizes
         if(w<600){
+            //mobile
             current_size = "100"
             maxSize_filter = "100"
             scrollview_size="0"
         }else{
-
             current_size = "25";
             maxSize_filter = "50"
             scrollview_size = "100";
         }
     }
-    // function show_documents_checked_titles(event) {
-    //     make_nodes_list(event.detail)
-       
-    // }
-
-    $: if($showFiltermenu==true){
-        open()
-    }
-
-    // $: $showTitles, console.log($showTitles)
 
 
 </script>
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-
-
-
-
     <div class="with-toolbar-conteiner">
         {#if ($currentlyAddingNewNote || $currentlyEditingNote) &&show && w<600}
             <ToolMenu hideToolBar={true}/>
@@ -165,32 +150,18 @@
         {/if}
         <div class="scroll-container">
             <Splitpanes theme="modern-theme">
-                
                 <Pane minSize="20" size={current_size} maxSize={maxSize_filter}>
                     <FilterMenu on:close={close}/>
-                    <!-- <div class="searched-titles">
-                        <FilteredByTitles on:checked_titles={show_documents_checked_titles} on:close={close}/>
-                    </div> -->
                 </Pane>
                 <Pane size={scrollview_size} >
                     <Splitpanes theme="modern-theme" horizontal={true} >
                         <Pane size=100> 
                             <div class:container={show} class:full-container={!show} >
-                                <!-- <input bind:value={searchValue} type="text" placeholder="Søk.." name="search"> -->
-                                <!-- {#if !show_titles_button}
-                                    <button class = "searched-titles-button" on:click={open}>
-                                        <i class="material-icons">read_more</i>
-                                    </button>
-                                {/if} -->
-        
-                                {#if $searchResult.length > 0}
-                                
+                                {#if $searchedDocuments.length > 0}
                                     <div class = "dokumenter" id="documents" style="line-height:{$selected_line_height}; font-size: {$selected_text_size}pt">
-                                        {#each $searchResult as item}
-                                            
+                                        {#each $searchedDocuments as item}
                                             <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                                         {/each}
-                                        
                                     </div>
                                 {:else}
                                     <div class = "no-result"> Ingen Søkeresultater</div>
@@ -219,50 +190,23 @@
 
 
 <style>
-
-header{
-    max-height: 40px;
-    min-height: 40px;
-    align-items: center;
-    background-color: #dadada;
-    display: flex;
-    justify-content:space-between;
-    
-  }
-
-  .arrow-up-button{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    padding: 1%;
-    background: rgb(255, 255, 255);
-    border:none;
-    font-weight: bold;
-    font-size: medium;
-}
-
-:global(body.dark-mode) .arrow-up-button{
-   background: rgb(49, 49, 49);
-   color:#cccccc;
-}
-
-    .searched-titles-button{
-        background: none;
-        border:none;
+    .arrow-up-button{
+        display: flex;
+        justify-content: center;
+        align-items: center;
         position: absolute;
-        right: 2vw;
-        top: 10vh;
-    }
-    .searched-titles-button:hover{
-        color: #d43838;
-    }
-    .searched-titles{
-        background-color: white;
-        height: 100%;
+        bottom: 0;
         width: 100%;
+        padding: 1%;
+        background: rgb(255, 255, 255);
+        border:none;
+        font-weight: bold;
+        font-size: medium;
+    }
+
+    :global(body.dark-mode) .arrow-up-button{
+        background: rgb(49, 49, 49);
+        color:#cccccc;
     }
     .no-result{
         display:flex;
@@ -278,7 +222,6 @@ header{
         font-size:11pt
     }
 
-    
     .scroll-container{
         display: flex;
         flex-direction: column;
@@ -294,8 +237,7 @@ header{
     :global(body.dark-mode) .container{
         background-color: rgb(49, 49, 49);
     }
-    
-    
+
     .full-container{
         flex-grow: 1;
         overflow-y: auto;
@@ -316,18 +258,6 @@ header{
         min-width: 17%;
     }
 
-    input[type=text] {
-        position: absolute;
-        top: 2vh;
-        right:3.2vw;
-        padding: 6px;
-        border: none;
-        border-bottom: solid;
-        font-size: 17px;
-        width:20%;
-     }
-
-
     .editor{
         display:flex;
         flex-direction: column;
@@ -342,11 +272,7 @@ header{
     :global(body.dark-mode) .editor{
         background-color: rgb(49, 49, 49);
     }
-
-
-
     .visible{
         visibility: hidden;
     }
-
 </style>

@@ -174,7 +174,7 @@
                 </Pane>
                 <Pane size={scrollview_size} >
                     <Splitpanes theme="modern-theme" horizontal={true} >
-                        <Pane > 
+                        <Pane size=100> 
                             <div class:container={show} class:full-container={!show} >
                                 <!-- <input bind:value={searchValue} type="text" placeholder="Søk.." name="search"> -->
                                 <!-- {#if !show_titles_button}

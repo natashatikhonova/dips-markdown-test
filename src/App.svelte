@@ -52,9 +52,32 @@
   $: h = window.innerHeight;
 
   $: contentWiewSize = w<600 && $currentDocumentObject ? 100: 50
+
   function set_content_view_size(event){
-    contentWiewSize = event.detail
+
+    //If on mobile the, only one content/pane at time
+    if(w<600){
+      contentWiewSize = event.detail
+    }
+
+    //Different outcome based on panes current size
+    if(contentWiewSize > 70 && event.detail == 0){
+      contentWiewSize = 50
+    }
+    else if(contentWiewSize < 30 && event.detail == 100){
+      contentWiewSize = 50
+    }
+    else{
+      contentWiewSize = event.detail
+    }
   }
+
+  function updateContentWiewSize(e){
+    if(e.detail[1]){
+    contentWiewSize = e.detail[1].size
+    }
+  }
+
 </script>
 
 <header>
@@ -86,17 +109,12 @@
         {/if}
 
       {:else}
-        <Splitpanes  theme = "modern-theme">
-
-          <Pane size={(100-contentWiewSize).toString()}>
-              <DocumentList/>
+        <Splitpanes theme = "modern-theme" style="overflow:hidden;" on:resized="{updateContentWiewSize}">
+          <Pane size={(100-contentWiewSize).toString()} >
+              <DocumentList on:set_content_view_size={set_content_view_size}/>
           </Pane>
         {#if $currentDocumentObject}
-          {#if w < 600}
-            <Pane size="100"><ContentView goBackButton={true} width={w}/></Pane>
-          {:else}
-            <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size} width={w}/></Pane>
-          {/if}
+          <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size} width={w}/></Pane>
         {/if}
         </Splitpanes>
       {/if}

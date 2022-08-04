@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, findNewDocumentObjId} from '../stores/stores.js';
+    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, findNewDocumentObjId, DocumentObject} from '../stores/stores.js';
     import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
     import asRoot from 'typewriter-editor/lib/asRoot';
@@ -7,11 +7,8 @@
     import {documentList} from '../stores/stores.js';
     import toMarkdown from 'to-markdown';
     import {createEventDispatcher} from 'svelte';
-    import { DocumentObject } from '../document.js';
-    import { ParseMarkdown } from '../ParseMarkdown.js';
+    import {ParseMarkdown} from "../utils/markdown/Parsemarkdown"
     import { h as hFromTypewriter} from 'typewriter-editor';
-
-
   
     editor.typeset.formats.add({
       name: 'autocomplete',

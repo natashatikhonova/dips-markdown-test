@@ -1,12 +1,11 @@
 <script>
 
-    import {documentList, searchValue, amount_searched_words, searchResult, showFiltermenu, selected_line_height, selected_text_size} from '../stores/stores.js';
+    import {documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
-    import {currentlyAddingNewNote, showSideView, current_doctype_filtergroup, currentlyEditingNote} from '../stores/stores.js';
+    import {currentlyAddingNewNote, showSideView, currentlyEditingNote} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
-    import FilteredByTitles from './FilteredByTitles.svelte';
     import ToolMenu from './ToolMenu.svelte';
     import FilterMenu from './FilterMenu.svelte';
     let s
@@ -14,8 +13,6 @@
     let sortedData = $documentList;
     let ascendingOrder = true;
     let lengde = $documentList.length;
-
-    let typewritersize = "50"
 
     let w
     let h
@@ -146,9 +143,6 @@
         open()
     }
 
-    // $: $showTitles, console.log($showTitles)
-
-
 </script>
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -183,10 +177,10 @@
                                     </button>
                                 {/if} -->
         
-                                {#if $searchResult.length > 0}
+                                {#if $searchedDocuments.length > 0}
                                 
                                     <div class = "dokumenter" id="documents" style="line-height:{$selected_line_height}; font-size: {$selected_text_size}pt">
-                                        {#each $searchResult as item}
+                                        {#each $searchedDocuments as item}
                                             
                                             <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                                         {/each}

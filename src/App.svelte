@@ -1,16 +1,15 @@
 
 <script>
   import documents from './assets/documents.json'
-  import { DocumentObject } from './lib/document';
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, checked_titles_filters, load_markdownNodes} from './lib/stores/stores.js';
+  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, DocumentObject} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
-  import {ParseMarkdown} from './lib/ParseMarkdown'
+  import {ParseMarkdown} from './lib/utils/markdown/Parsemarkdown'
   import ThemeButton from './lib/components/ThemeButton.svelte';
 
-  //get data from JSON file
+  //gets document data from JSON file
   documents.forEach(putInDocumentList);  
 
   //Makes a new DocumentObject for each file and adds it to the store array $documentList
@@ -25,20 +24,17 @@
     $documentList = $documentList;
   }
 
-
-
+  //takes us to the homescreen/startscreen
   function set_default(){
     if($currentlyAddingNewNote){
       alert("Vennligst lagre eller avbryt!");
     } else {
-
       $currentDocumentObject = null
       $showSideView = true;
     }
-
   }
 
-
+  //swichting between sideview and scrollview (*the two buttons in upper right corner)
   function changeView(){
     if($currentlyAddingNewNote || $currentlyEditingNote){
       alert("Vennligst lagre eller avbryt!");
@@ -46,15 +42,16 @@
       $showSideView = !$showSideView;
     }
   }
+  //Width and height of screen
   let w
   let h
   $: w = window.innerWidth;
   $: h = window.innerHeight;
 
+  //tilpasser til mobilversjon
   $: contentWiewSize = w<600 && $currentDocumentObject ? 100: 50
 
   function set_content_view_size(event){
-
     //If on mobile the, only one content/pane at time
     if(w<600){
       contentWiewSize = event.detail
@@ -98,13 +95,10 @@
       {#if $currentlyAddingNewNote}
         {#if w > 600}
         <Splitpanes theme = "modern-theme">
-          <Pane>
-              <ScrollView/>
-          </Pane>
-          <Pane minSize="30"><ContentView width={w}/></Pane>
+          <Pane> <ScrollView/> </Pane>
+          <Pane minSize="30"> <ContentView width={w}/> </Pane>
         </Splitpanes>
-        {:else} 
-
+        {:else}  
             <ScrollView/>
         {/if}
 
@@ -120,9 +114,9 @@
       {/if}
     </div>
   {:else}
-        <ScrollView/>
+    <ScrollView/>
   {/if}
-  </div>
+</div>
 
 <style>
 
@@ -207,7 +201,4 @@
     }
 
   }
-
-  
-
 </style>

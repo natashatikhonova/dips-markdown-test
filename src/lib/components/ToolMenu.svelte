@@ -1,11 +1,5 @@
 <script>
-
-
-
-    import { checked_titles_filters, searchValue, amount_searched_words, showTitles, current_doctype_filtergroup, doctype_filter_groups, showFiltermenu, selected_line_height, selected_text_size, allfilterOff, currentDocumentObject, documentTypes} from '../stores/stores.js';
-
-   
-    import { writable } from 'svelte/store';
+    import { checked_titles_filters, searchValue, amount_searched_words, current_doctype_filtergroup, showFiltermenu, selected_line_height, selected_text_size, allfilterOff, currentDocumentObject, documentTypes} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
 

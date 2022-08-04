@@ -1,11 +1,10 @@
 <script>
     import DocumentItem from "./DocumentItem.svelte";
-    import {currentDocumentObject, documentList, currentlyAddingNewNote, current_doctype_filtergroup, showFiltermenu, showSideView} from '../stores/stores.js';
+    import {currentDocumentObject, documentList, currentlyAddingNewNote, current_doctype_filtergroup, showFiltermenu} from '../stores/stores.js';
     import ToolMenu from './ToolMenu.svelte';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilterMenu from './FilterMenu.svelte';
-
-    let w
+    
     $: w = window.innerWidth;
     let sortedData = $documentList;
     const tableHeaders = ["title", "date","author"];
@@ -19,18 +18,7 @@
         $currentlyAddingNewNote = true;
     }
         
-    // SORT BY NUMBER
-    /*
-    const sortByNumber = (colHeader) => {
-        sortedPersonData = sortedPersonData.sort((obj1, obj2) => {
-            return ascendingOrder ? Number(obj1[colHeader]) - Number(obj2[colHeader])
-            : Number(obj2[colHeader]) - Number(obj1[colHeader])
-        });
-        selectedHeader = colHeader;
-    }*/
-        
-    // SORT BY STRINGs
-
+    //sort strings depending on with header is selected
     const sortByString = (colHeader) => {
         // console.log("click tittel");
         sortedData = sortedData.sort((obj1, obj2) => {
@@ -52,7 +40,7 @@
         lengde = $documentList.length;
     }
 
-    //sorting by default
+    //sorting by default/start
     sortByString(selectedHeader);
 
     //if documentlist updates, then sort

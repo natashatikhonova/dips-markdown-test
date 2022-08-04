@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, findNewDocumentObjId, DocumentObject} from '../stores/stores.js';
+    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, findNewDocumentObjId, DocumentObject, documentTypes} from '../stores/stores.js';
     import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
     import asRoot from 'typewriter-editor/lib/asRoot';
@@ -16,17 +16,13 @@
       render: (attributes, children) => hFromTypewriter('autoSuggestion', null, children),
     });
 	
-
     let selectedDocType = "Velg dokumenttype";
+    
+    
+    const dispatch = createEventDispatcher();
 
-    const documentTypes = ["Velg dokumenttype", "Epikrise", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll"];
-
-    let w
-    let h
     $: w = window.innerWidth;
     $: h = window.innerHeight;
-
-    let autocompleteOn = true
 
     //Sets text in editor
     $: if ($currentDocumentObject && !$currentlyAddingNewNote){
@@ -35,8 +31,6 @@
         editor.setHTML(marked(""));
     } 
    
-    const dispatch = createEventDispatcher();
-
     //Either editor shows or just the text
     function changeEdit(){
         dispatch('editable');
@@ -53,23 +47,25 @@
       }
       $currentlyAddingNewNote=false;
       $currentlyEditingNote = false;
-      
     }
 
     function mobileDown(){
       dispatch("cancel");
     }
+
     //Saves the text if the text is not empty and stores the text
     function save(){
       remove_suggestion()
 
       changeEdit();
-      if( toMarkdown(editor.getHTML()) === ""){ //Empty note
+      if( toMarkdown(editor.getHTML()) === ""){
+        //Empty note
         alert("Tom notat!");
         $currentlyAddingNewNote=false;
         dispatch("save");
       }else{
-        if($currentlyEditingNote){ //Edit note
+        if($currentlyEditingNote){ 
+          //Edit note
           dispatch("save");
           $currentlyEditingNote = false;
           $documentList.forEach((element)=>{
@@ -78,7 +74,7 @@
                 //Lager et tre over markdown overskriftene i teksten
                 let parse = new ParseMarkdown()
                 console.log("Før parse")
-                let tree = parse.parseAndSetIntoTree(element) //Her henger programmet!!. FIKSET:)
+                let tree = parse.parseAndSetIntoTree(element)
                 console.log("Etter parse")
                 element.markdownTree = tree;
 
@@ -86,7 +82,6 @@
           })
           $documentList = $documentList;
           console.log("Setter inn dokumenter i typewriter Edit")
-
 
         } else{
           if (selectedDocType !== documentTypes[0]) { //new Note
@@ -118,203 +113,32 @@
       }
     }
 
-  let waitingForSpaceOrEnterOrDot = false
-  if (editor.getText().length <= 1){
-    waitingForSpaceOrEnterOrDot = true
-  }
-
-  let dot_has_happend = false
-
-  function clear_check_text(){
-    remove_suggestion()
-    waitingForSpaceOrEnterOrDot = false
-    dot_has_happend = false
-  }
-
-  function check_text(event){
-    let previousEditorSelection = editor.doc.selection
     
-    let key = event.key
-    
-    if(key == "Backspace"){
-      waitingForSpaceOrEnterOrDot = false
-      dot_has_happend = false
-    }
+let autocompleteOn = true
 
-    if(waitingForSpaceOrEnterOrDot && (key == " " || key == "Enter" || key == ".")){
-        //find the previous word
-        for(let i = editor.doc.selection[0]-1; i >= 0; i--){ //goes backwards throught the text
-          let char = editor.getText()[i-1]
-          if (char == " " || i == 0 || char == "\n") {
-
-            editor.insert(editor.getText()[i].toLocaleUpperCase(), {}, [i,i+1])
-            editor.select(previousEditorSelection)
-
-            break;
-          }
-        }
-        waitingForSpaceOrEnterOrDot = false
-        dot_has_happend = false
-    }
-
-    if(key == "Enter"){
-      waitingForSpaceOrEnterOrDot = true
-      dot_has_happend = true
-    }
-
-    if (key == ".") {
-      dot_has_happend = true
-    }
-
-    if (key == " " && dot_has_happend) {
-      waitingForSpaceOrEnterOrDot = true
-    }
-  }
-  // console.log(marked("|  |  |  |  |  | \n |:---:|---|---|---|---| \n |  |  |  |  |  | \n |  |  |  |  |  | \n |  |  |  |  |  |"))
-
-
-  //Put in Image:
-  let  fileinput;
-
-
-	const onFileSelected =(e)=>{                      
+//Put in Image:
+let fileinput;
+const onFileSelected =(e)=>{                      
   let image = e.target.files[0];
   let reader = new FileReader();
   reader.readAsDataURL(image);
   reader.onload = e => {
     editor.setHTML(editor.getHTML()+"\n <img src=" + e.target.result + ">") 
-    };      
-  }
-let suggestions_words = ["epikrise", "sykepleier", "lege", "sykdom", "sykehus", "legevakt", "fastlege"]
-let prev_suggested_word = ""
-let suggested_word_startindex = -1
-let complete_suggested_word = ""
-let prev_selection = 0
+  };      
+}
 
 function file_choser(){
   fileinput.click()
   editor.root.focus();
 }
 
-function whenKeyDown(event){
-  let key = event.key
-
-  if (key == "Tab" && !editor.getActive().list) {
-    remove_suggestion()
-    editor.insert("        ");
-  }
-
-  if ((37 <= event.keyCode) && (event.keyCode <= 40)){
-      //Arrow keys
-      remove_suggestion()
-      waitingForSpaceOrEnterOrDot = false
-      dot_has_happend = false
-  }
-
-  else if (autocompleteOn){
-    autocomplete(key)
-  }
-} 
-
-//Autocomplete:
-function autocomplete(key){
-  
-  if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
-    if (prev_suggested_word.length > 0){
-
-      let current_indeks = key == "Enter" ? editor.doc.selection[0]-1: editor.doc.selection[0];
-
-      //New
-      editor.select([current_indeks, editor.doc.selection[0] + prev_suggested_word.length])
-
-      //historyStackBefore is to store current history so the editorhistory can ignore the suggested word
-      let historyStackBefore = editor.modules.history.getStack()
-      editor.modules.history.clearHistory()
-      editor.delete()
-      editor.modules.history.setStack(historyStackBefore)
-
-      editor.insert(prev_suggested_word, [current_indeks, current_indeks])
-      editor.select(editor.doc.selection[0])
-
-      prev_suggested_word = ""
-
-      if(key == "Enter" && !editor.getActive().list){
-          editor.insert('\n');
-        }
-    }
-  }
-
-  else if( (key.length == 1) || key == "Backspace") {
-    //new suggested word
-    let current_indeks = editor.doc.selection[0]
-
-    let suggested_word = ""
-    let word = ""
-    let editor_text = editor.getText().substring(0, current_indeks) + key
-
-    for (let i = current_indeks; i >= 0; i--){
-      
-      if (editor_text[i] == " " || editor_text[i] == "\n" ){
-        break
-      }
-      word += editor_text[i]
-      
-    }
-
-    word = word.split("").reverse().join("");
-
-    if (word.length != 0) {
-      for (let i = 0; i < suggestions_words.length; i++){
-        let check_word = suggestions_words[i]
-        let found_word = true
-        
-        for (let j = 0; j < word.length; j++){
-          if (word[j].toLowerCase() != check_word[j]){
-            found_word = false
-            break;
-          }
-        }
-        if (found_word) {
-          suggested_word = check_word.substring(word.length)
-          complete_suggested_word = check_word
-          break;
-        }
-      }
-    }
-
-    let historyStackBefore = editor.modules.history.getStack()
-    editor.modules.history.clearHistory()
-
-    let curSel = editor.doc.selection;
-    editor.delete([curSel[0], curSel[0] + prev_suggested_word.length])
-    editor.insert(suggested_word, {autocomplete:true}, [current_indeks, current_indeks])
-    editor.select(curSel)
-
-    editor.modules.history.setStack(historyStackBefore)
-
-    prev_suggested_word = suggested_word
-    suggested_word_startindex = current_indeks
-    prev_selection = current_indeks
-
-  }
+function set_autocomplete(){
+  autocompleteOn = !autocompleteOn
+  editor.root.focus();
 }
 
-function remove_suggestion(){
-  if (prev_selection != editor.doc.selection[0]) {
-    
-    let historyStackBefore = editor.modules.history.getStack()
-    editor.modules.history.clearHistory()
 
-    let curSel = editor.doc.selection;
-    editor.delete([suggested_word_startindex+1, suggested_word_startindex+1 + prev_suggested_word.length])
-    editor.select(curSel)
 
-    editor.modules.history.setStack(historyStackBefore)
-    
-    prev_suggested_word = ""
-  }
-}
-// $: editor.doc.selection[0], remove_suggestion() //Fjerner suggestion
 let min_size = false;
 let max_size = false;
 let selected_text_size = 11
@@ -339,10 +163,6 @@ function set_text_size(direction){
 }
 
 
-function set_autocomplete(){
-  autocompleteOn = !autocompleteOn
-  editor.root.focus();
-}
 </script>
 
 <head>
@@ -371,56 +191,6 @@ function set_autocomplete(){
         <button title="Avbryt" class = "save" class:mobile={w<600} on:click={cancel} > <i class="material-icons">close</i></button>
       </div>
     </header>
-  
-  <!-- Image menu for when images are selected
-<BubbleMenu {editor} let:active let:commands let:placement offset={8} for={'image'}>
-  <div class="bubble-menu">
-    <div data-arrow class="arrow {placement}"></div>
-    <button
-      class="bubble-menu-button"
-      class:active={active.style === 'outset-left'}
-      on:click={() => editor.formatLine({ ...editor.doc.getLineFormat(), style: 'outset-left' })}
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        <rect fill="none" width="24" height="24"/>
-        <path d="M22,19 L22,21 L7,21 L7,19 L22,19 Z M22,15 L22,17 L16,17 L16,15 L22,15 Z M14,7 L14,17 L2,17 L2,7 L14,7 Z M22,11 L22,13 L16,13 L16,11 L22,11 Z M22,7 L22,9 L16,9 L16,7 L22,7 Z M22,3 L22,5 L7,5 L7,3 L22,3 Z"></path>
-      </svg>
-    </button>
-
-    <button
-      class="bubble-menu-button header3"
-      class:active={!active.style}
-      on:click={() => editor.formatLine({ ...editor.doc.getLineFormat(), style: null })}
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        <rect fill="none" width="24" height="24"/>
-        <path d="M19,19 L19,21 L5,21 L5,19 L19,19 Z M19,7 L19,17 L5,17 L5,7 L19,7 Z M19,3 L19,5 L5,5 L5,3 L19,3 Z"></path>
-      </svg>
-    </button>
-
-    <button
-      class="bubble-menu-button"
-      class:active={active.style === 'outset-center'}
-      on:click={() => editor.formatLine({ ...editor.doc.getLineFormat(), style: 'outset-center' })}
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        <rect fill="none" width="24" height="24"/>
-        <path d="M19,19 L19,21 L5,21 L5,19 L19,19 Z M21,7 L21,17 L3,17 L3,7 L21,7 Z M19,3 L19,5 L5,5 L5,3 L19,3 Z"></path>
-      </svg>
-    </button>
-
-    <button
-      class="bubble-menu-button"
-      class:active={active.style === 'fill-width'}
-      on:click={() => editor.formatLine({ ...editor.doc.getLineFormat(), style: 'fill-width' })}
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        <rect fill="none" width="24" height="24"/>
-        <path d="M18,19 L18,21 L6,21 L6,19 L18,19 Z M21,3 L21,17 L3,17 L3,3 L21,3 Z"></path>
-      </svg>
-    </button>
- </div>
-</BubbleMenu> -->
 
 
   <div class="toolbar" class:mobile-toolbar = {w<600}>
@@ -537,7 +307,6 @@ function set_autocomplete(){
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}
   <!-- svelte-ignore a11y-autofocus -->
-
     <div class="editor" style="font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={whenKeyDown} on:click={clear_check_text}></div>
 
 
@@ -798,133 +567,5 @@ function set_autocomplete(){
     height: 2rem;
     width: 2rem;
   }
-
-
-
-  
-  
-  /*
-    .toolbar {
-    display: flex;
-    background: #eee;
-    margin-left:1%;
-    margin-right:2%;
-    padding: 0.6%;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 6px rgba(0, 0, 0, .1);
-    min-width: 15vw;
-  }
-  
-  .toolbar-button {
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
-    margin-top: 0.5vh;
-    width: calc(2.5vw);
-    height: calc(4.5vh);
-    margin-right: calc(0.5vw);
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    cursor: pointer;
-  }
-
-  .toolbar-button:hover {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-  }
-
-  .toolbar-button.active {
-    border: solid 2px;
-    border-color: #80bdff;
-  } */
-
-  /* .header2{
-    font-size:large;
-  }
-
-
-
-  .arrow{
-    color:black;
-    font-weight: bolder;
-    font-size:x-large;
-  }
-
-  .controls{
-    margin-left: auto;
-    margin-right: calc(0.5vw);
-    display: inline-flex;
-  }
-
-  .dropdown{
-    margin: 2vh;
-  }
-
-  .dropdown-menu {
-    background: #fff;
-    width: 20vh;
-    height: 40px;
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    cursor: pointer;
-  }
-
-  .dropdown-menu:hover {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-  }
-  .title{
-    font-weight: bold;
-    font-style: italic;
-    margin-left: 1vh;
-    margin-top:1vh;
-  }
-
-  .meta{
-    font-style: italic;
-    margin-left:1vh;
-    margin-top:1vh;
-  }
-
-  .editor{
-    margin-top: 1vh;
-    margin-right: 1vh;
-    margin-left: 1vh;
-    padding:0.5vh;
-    height: 100%;
-    overflow-y: auto;
-  }
-
-  .save{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    width: calc(3vw);
-    height: calc(5vh);
-    margin-right: calc(0.3vh);
-    border:none;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    cursor: pointer;
-  }
-
-  .save:hover{
-    color:#d43838;
-    border:none;
-    border-color: none;
-    box-shadow: none;
-  }  
-
-  .mobile{
-    margin: 1vw;
-    height: calc(4vh);
-    width: calc(7vw);
-  } */
-
 
 </style>

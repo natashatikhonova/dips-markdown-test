@@ -135,6 +135,8 @@
     }
 
 
+
+
 </script>
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -169,8 +171,8 @@
                                 {/if}
                             </div>
                         </Pane>
-                        {#if show && ((!$showSideView && $smallDevice) || $smallDevice)}
-                            <Pane size={$smallDevice ? "100" : "50"}>
+                        {#if show && ((!$showSideView && !$smallDevice) || $smallDevice)}
+                            <Pane size={$smallDevice ? "100" : typewriterWiewSize.toString()}>
                                 <div class="editor">
                                     <Typewriter on:save = {save} on:cancel = {cancel} />
                                 </div>

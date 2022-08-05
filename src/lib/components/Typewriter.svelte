@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, findNewDocumentObjId, DocumentObject, documentTypes} from "../stores/stores";
+    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, findNewDocumentObjId, DocumentObject, documentTypes, smallDevice} from "../stores/stores";
     import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
     import asRoot from 'typewriter-editor/lib/asRoot';
@@ -21,9 +21,6 @@
     
     
     const dispatch = createEventDispatcher();
-
-    $: w = window.innerWidth;
-    $: h = window.innerHeight;
 
     //Sets text in editor
     $: if ($currentDocumentObject && !$currentlyAddingNewNote){
@@ -347,7 +344,7 @@ function set_text_size(direction){
 <!-- source: https://github.com/typewriter-editor/typewriter -->
     <header class="tool-menu">
       <div>
-        {#if w<600  &&(!$showSideView || $currentlyAddingNewNote)}
+        {#if $smallDevice  &&(!$showSideView || $currentlyAddingNewNote)}
           <button class="arrow-down-button" on:click={mobileDown}> <i class="material-icons">keyboard_arrow_down</i></button>
         {/if}
       </div>
@@ -361,12 +358,12 @@ function set_text_size(direction){
         </h4>
       </div>
       <div class = "controls">
-        <button title="Lagre"class="save " class:mobile={w<600} on:click={save}> <i class="material-icons">save</i></button>
-        <button title="Avbryt" class = "save" class:mobile={w<600} on:click={cancel} > <i class="material-icons">close</i></button>
+        <button title="Lagre"class="save " class:mobile={$smallDevice} on:click={save}> <i class="material-icons">save</i></button>
+        <button title="Avbryt" class = "save" class:mobile={$smallDevice} on:click={cancel} > <i class="material-icons">close</i></button>
       </div>
     </header>
 
-  <div class="toolbar" class:mobile-toolbar = {w<600}>
+  <div class="toolbar" class:mobile-toolbar = {$smallDevice}>
     <Toolbar {editor} let:active let:commands>
 
       <div class="main-functions">
@@ -375,65 +372,65 @@ function set_text_size(direction){
           title="Overskrift"
           class="toolbar-button"
           class:active={active.header === 1}
-          class:mobile={w<600}
+          class:mobile={$smallDevice}
           on:click={commands.header1}><i class="material-icons">title</i></button>
     
         <button
           title="Underskrift"
           class="toolbar-button"
           class:active={active.header === 2}
-          class:mobile={w<600}
+          class:mobile={$smallDevice}
           on:click={commands.header2}><i class="material-icons header2">title</i></button>
     
         <button
           title="Uthevet"
           class="toolbar-button"
           class:active={active.bold}
-          class:mobile={w<600}
+          class:mobile={$smallDevice}
           on:click={commands.bold}><i class="material-icons">format_bold</i></button>
     
         <button
           title="Kursiv"
           class="toolbar-button"
           class:active={active.italic}
-          class:mobile={w<600}
+          class:mobile={$smallDevice}
           on:click={commands.italic}><i class="material-icons">format_italic</i></button>
 
         <button
           title="Punktliste"
           class="toolbar-button"
           class:active={active.bulletList}
-          class:mobile={w<600}
+          class:mobile={$smallDevice}
           on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
         <button
           title="Nummerert liste"
           class="toolbar-button"
           class:active={active.orderedList}
-          class:mobile={w<600}
+          class:mobile={$smallDevice}
           on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
         <button
           title="Angre"
           class="toolbar-button arrow"
           disabled={!active.undo}
-          class:mobile={w<600}
+          class:mobile={$smallDevice}
           on:click={commands.undo}><i class="material-icons">undo</i></button>
 
         <button
           title="Gjøre om"
           class="toolbar-button arrow"
           disabled={!active.redo}
-          class:mobile={w<600}
+          class:mobile={$smallDevice}
           on:click={commands.redo}><i class="material-icons">redo</i></button>
       </div>
 
       <div class="secondary-functions">
 
-        <div class="extra-functions" class:no-border={w<600}>
+        <div class="extra-functions" class:no-border={$smallDevice}>
   
           <button 
           title="Legg til bilde"
           class="toolbar-button"
-          class:mobile={w<600}
+          class:mobile={$smallDevice}
           on:click={file_choser}  ><i class="material-icons">image</i></button>
   
           <input style="display:none" type="file" accept="*/image" on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
@@ -442,23 +439,23 @@ function set_text_size(direction){
           title="Autocomplete"
           class="toolbar-button "
           class:active={autocompleteOn}
-          class:mobile={w<600}
+          class:mobile={$smallDevice}
           on:click={set_autocomplete}><i class="material-icons">auto_awesome</i></button>
   
         </div>
   
-        <div class="extra-functions" class:no-border={w<600}>
+        <div class="extra-functions" class:no-border={$smallDevice}>
           <button
           title="Zoom out"
           class="toolbar-button"
           disabled={min_size}
-          class:mobile={w<600}
+          class:mobile={$smallDevice}
           on:click={() => {set_text_size("lower")}}><i class="material-icons">zoom_out</i></button>
           <button
           title="Zoom in"
           class="toolbar-button"
           disabled={max_size}
-          class:mobile={w<600}
+          class:mobile={$smallDevice}
           on:click={() => {set_text_size("bigger")}}><i class="material-icons">zoom_in</i></button>
         </div>
       </div>

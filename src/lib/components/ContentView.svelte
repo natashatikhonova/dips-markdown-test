@@ -5,7 +5,6 @@
     import {editor} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
-    export let width;
 
     let edit = $currentlyAddingNewNote;
     const dispatch = createEventDispatcher()
@@ -41,7 +40,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
   
-<div class="content-container" class:mobile={width<600}>
+<div class="content-container">
   {#if $currentDocumentObject || $currentlyAddingNewNote}
     {#if edit} 
         <Typewriter on:editable={changeEdit} />
@@ -156,10 +155,6 @@
     
   .editor{
     padding: 1vh;
-  }
-
-  .mobile{
-    width: calc(100vw);
   }
 
 </style>

@@ -218,10 +218,9 @@
         <div class="filters">
             {#each searchedDocumentTypes as item}    
                 <label class = "filterItem" >
-                    <!-- <input type="checkbox"  bind:group={$current_doctype_filtergroup.filters} value={item} > -->
-                    <input type="checkbox" on:click={()=>updateCheckedList(item)} bind:checked={item.checked} >
+                    <input class='test' type="checkbox" on:click={()=>updateCheckedList(item)} bind:checked={item.checked} >
+                    <span class="checkmark"></span>
                     {item.name}
-                   
                 </label>
             {/each}
         </div>
@@ -246,16 +245,17 @@
             <button class="secundary-button" on:click={()=>{openModal(null)}}>Nytt filter</button>
         </div>
 
-        <div class="filtermenu-button-conteiner">
+        <div class="filters">
             {#each searchedFiltergroups as filter}
             
             <div class="group">
-                <input type="radio"  checked={$current_doctype_filtergroup  == filter} on:change={() => $current_doctype_filtergroup = filter}  />
-                
-                <div class="title">
-                    {filter.name} 
-                </div>
-                
+                <label class="filter-group-label">
+                    <input type="radio"  checked={$current_doctype_filtergroup  == filter} on:change={() => $current_doctype_filtergroup = filter}  />
+                    
+                    <div class="title">
+                        {filter.name} 
+                    </div>
+                </label>
                 <div class="group-buttons">
                     <button class="edit-button" title ="Rediger" on:click={()=>openModal(filter)} ><i class="material-icons">edit</i></button>
                     <button class="edit-button" title="Slett" on:click={()=> $doctype_filter_groups = $doctype_filter_groups.filter(item => (item.id != filter.id))}><i class="material-icons">delete</i></button>
@@ -275,25 +275,13 @@
     h2{
         align-self: center;
     }
-    .save-filter-button{
-        margin-top: 10px;
-    }
     .main{
         display: flex;
         flex-direction: column;
         height: 100%;
         padding-left: 2vw;
         padding-right: 2vw;
-    }
-    .no-doctypes{
-        margin-top: 2vh;
-    }
-    .no-title-filters{
-        margin-top: 5%;
-        color: red;
-    }
-    .filterItem:hover{
-        color:#d43838;
+        overflow-y: auto;
     }
     .filter-panel{
         display: flex;
@@ -303,32 +291,66 @@
     .meta{
         display: flex;
         flex-direction: column;
-        height:25%;
+    }
+    .no-doctypes{
+        margin: 10px;
     }
     .filters{
         display: flex;
         flex-direction: column;
-        height: 45%;
+        margin-top: 10px;
+        height: 100%;
+        min-height: 100px;
         overflow-y: auto;
     }
-    .group{
-        display: flex;
+
+    .filterItem{
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    .filterItem:hover{
+        color:#d43838;
+        
+    }
+    
+    .save-filter-button{
         margin-top: 10px;
+    }
+    .filter-group-label{
+        padding: 10px;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
         align-items: center;
     }
+
+    
+    .group{
+        display: flex;
+        align-items: center;
+    }
+    .group:hover{
+        background-color: #e6f2ff;
+    }
+    
     .group-buttons{
-        position: absolute;
         display: flex;
         right: 10%;
     }
     .edit-button{
-        margin-left: 3%;
         background: none;
         border: none;
     }
     .edit-button:hover{
         color:#d43838;
         cursor: pointer;
+    }
+    .no-title-filters{
+        margin-top: 5%;
+        color: red;
     }
     :global(body.dark-mode) .edit-button{
         color:#cccccc;
@@ -343,5 +365,16 @@
     :global(body.dark-mode) ::placeholder {
         color: #cccccc;   
     }
+
+    :global(body.dark-mode) .filterItem:hover{
+        color:#d43838;
+        background-color: rgb(50, 50, 50);
+    }
+
+    :global(body.dark-mode) .group:hover{
+        background-color: rgb(50, 50, 50);
+    }
+
+
 
 </style>

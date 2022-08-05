@@ -1,6 +1,6 @@
 <script>
     import DocumentItem from "./DocumentItem.svelte";
-    import {currentDocumentObject, documentList, currentlyAddingNewNote, current_doctype_filtergroup, showFiltermenu} from '../stores/stores.js';
+    import {currentDocumentObject, documentList, currentlyAddingNewNote, current_doctype_filtergroup, showFiltermenu, smallDevice} from '../stores/stores.js';
     import ToolMenu from './ToolMenu.svelte';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilterMenu from './FilterMenu.svelte';
@@ -14,7 +14,6 @@
     let documentview_size = "125";
     let maxSize_filter = "0"
     
-    $: w = window.innerWidth;
     $: filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
 
     $: if($showFiltermenu){
@@ -23,10 +22,10 @@
         close()
     }
 
-    $: if ($currentDocumentObject && $showFiltermenu && w>600){
+    $: if ($currentDocumentObject && $showFiltermenu && !$smallDevice){
         current_size = "60"
     }
-    $: if (!$currentDocumentObject && $showFiltermenu&& w>600){
+    $: if (!$currentDocumentObject && $showFiltermenu&& !$smallDevice){
         current_size="25"
     }
 
@@ -71,7 +70,7 @@
     }
 
     function open(){
-        if(w<600){
+        if($smallDevice){
             current_size = "100"
             maxSize_filter = "100"
             documentview_size="0"
@@ -137,9 +136,9 @@
         </Splitpanes>
     </div>
 </div>
-
-<button title="Ny notat"class="add-button" class:mobile = {w<600} class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
-
+{#if !$showFiltermenu && $smallDevice}
+    <button title="Ny notat"class="add-button" class:mobile = {$smallDevice} class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
+{/if}
 <style>
 
     table {
@@ -153,7 +152,7 @@
         flex-direction: column;
         width: 100%;
         height: 100%;
-        overflow: auto;
+        overflow-x: hidden;
     }
 
     :global(body.dark-mode) table{
@@ -198,14 +197,6 @@
         position:sticky;
         top:0;
     }
-/*     
-    .mobile{
-        right: 3vw;
-        bottom: 3vh;
-        height: 6vh;
-        width: 6vh;
-        font-size:x-large;
-    } */
 
 </style>
 

@@ -273,6 +273,7 @@ function autocomplete(key){
 }
 
 function remove_suggestion(){
+  if(!editor.doc.selection) return;
   if (prev_selection != editor.doc.selection[0]) {
     
     let historyStackBefore = editor.modules.history.getStack()
@@ -564,7 +565,6 @@ function set_text_size(direction){
     justify-content: center;
     align-items: center;
     background: #fff;
-    margin-top: 0.5vh;
     width: 2.3rem;
     height: 2.3rem;
     margin-right: 0.4rem;
@@ -608,11 +608,10 @@ function set_text_size(direction){
     align-items: center;
   }
   .dropdown{
-    margin: 2vh;
+    margin-left: 10px;
   }
   .dropdown-menu {
     background: #fff;
-    width: 21vh;
     height: 35px;
     border-radius: 4px;
     border: 1px solid #ced4da;
@@ -634,20 +633,17 @@ function set_text_size(direction){
   .title{
     font-weight: bold;
     font-style: italic;
-    margin-left: 1vh;
+    margin-left: 1vw;
     margin-top:1vh;
   }
   .meta{
     font-style: italic;
-    margin-left:1vh;
+    margin-left:1vw;
     margin-top:1vh;
   }
   .editor{
-    margin-top: 1vh;
-    margin-right: 1vh;
-    margin-left: 1vh;
-    padding-left:1vw;
-    padding-right:1vw;
+    margin: 5px;
+    padding-right:5px;
     height: 100%;
     overflow-y: auto;
     font-size: 11pt;

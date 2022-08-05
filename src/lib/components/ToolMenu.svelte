@@ -1,5 +1,5 @@
 <script>
-    import { checked_titles_filters, searchValue, amount_searched_words, current_doctype_filtergroup, showFiltermenu, selected_line_height, selected_text_size, allfilterOff, currentDocumentObject, documentTypes} from '../stores/stores.js';
+    import { checked_titles_filters, searchValue, amount_searched_words, current_doctype_filtergroup, showFiltermenu, selected_line_height, selected_text_size, allfilterOff, currentDocumentObject, documentTypes, smallDevice, currentlyAddingNewNote, currentlyEditingNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
     export let hideToolBar = true;
@@ -100,8 +100,8 @@
                     {/if}
                 </div>
             </div>
-        {:else if $currentDocumentObject}
-            <button title = "tilbake" class="arrow-keys" on:click={showContent}><i class="material-icons">arrow_back</i></button>
+        {:else if $currentDocumentObject && !($smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote))}
+            <button title = "tilbake" class="arrow-keys" on:click={showContent}><i class="material-icons">keyboard_arrow_left</i></button>
         {/if}
     </div>
 

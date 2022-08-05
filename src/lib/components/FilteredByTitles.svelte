@@ -213,6 +213,8 @@
             {/each} 
         </div>            
     {/if}
+
+    <!-- Later add button that shows all checked filters independent of doctypfilters -->
     <!-- {#each checked_not_shown as title}
         {title.title}
     {/each}  -->
@@ -273,6 +275,6 @@
     }
     :global(body.dark-mode) .filterItem:hover{
         color:#d43838;
-        background-color: rgb(50, 50, 50);
+        background-color: rgb(55, 55, 55);
     }
 </style>

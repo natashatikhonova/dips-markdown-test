@@ -259,8 +259,7 @@
                 <div class="group-buttons">
                     <button class="edit-button" title ="Rediger" on:click={()=>openModal(filter)} ><i class="material-icons">edit</i></button>
                     <button class="edit-button" title="Slett" on:click={()=> $doctype_filter_groups = $doctype_filter_groups.filter(item => (item.id != filter.id))}><i class="material-icons">delete</i></button>
-                </div>
-                
+                </div> 
             </div>
             {/each}
         </div>
@@ -282,6 +281,7 @@
         padding-left: 2vw;
         padding-right: 2vw;
         overflow-y: auto;
+        margin-bottom: 10px;
     }
     .filter-panel{
         display: flex;
@@ -299,7 +299,6 @@
         display: flex;
         flex-direction: column;
         margin-top: 10px;
-        height: 100%;
         min-height: 100px;
         overflow-y: auto;
     }
@@ -349,7 +348,7 @@
         cursor: pointer;
     }
     .no-title-filters{
-        margin-top: 5%;
+        margin-top: 10px;
         color: red;
     }
     :global(body.dark-mode) .edit-button{
@@ -368,13 +367,12 @@
 
     :global(body.dark-mode) .filterItem:hover{
         color:#d43838;
-        background-color: rgb(50, 50, 50);
+        background-color: rgb(55, 55, 55);
     }
-
     :global(body.dark-mode) .group:hover{
-        background-color: rgb(50, 50, 50);
+        color:#d43838;
+        background-color: rgb(55, 55, 55);
     }
-
 
 
 </style>

@@ -136,7 +136,7 @@
         </Splitpanes>
     </div>
 </div>
-{#if !$showFiltermenu && $smallDevice}
+{#if (!$showFiltermenu && $smallDevice) || !$smallDevice}
     <button title="Ny notat"class="add-button" class:mobile = {$smallDevice} class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
 {/if}
 <style>

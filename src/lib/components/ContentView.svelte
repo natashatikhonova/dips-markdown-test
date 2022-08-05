@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote, documentList } from '../stores/stores.js';
+    import { currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote, documentList, smallDevice } from '../stores/stores.js';
     import {marked } from 'marked';
     import Typewriter from './Typewriter.svelte';
     import {editor} from '../stores/stores.js';
@@ -42,11 +42,11 @@
   
 <div class="content-container">
   {#if $currentDocumentObject || $currentlyAddingNewNote}
-    {#if edit} 
-        <Typewriter on:editable={changeEdit} />
+    {#if edit}
+        <Typewriter on:editable={changeEdit} on:set_typewriter_view_size={(e)=> dispatch("set_typewriter_view_size", e)}/>
     {:else}
         <header class="header-bar">
-          <button title = "Vis dokumentliste" class="arrow-keys" on:click={showDocumentlist}><i class="material-icons">arrow_forward</i></button>
+          <button title = "Vis dokumentliste" class="arrow-keys" on:click={showDocumentlist}><i class="material-icons">keyboard_arrow_right</i></button>
           <div class="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>
           {#if $currentDocumentObject.readable}
             <button  title="Rediger" class="edit-button" on:click={changeEdit}><i class="material-icons">edit</i></button>

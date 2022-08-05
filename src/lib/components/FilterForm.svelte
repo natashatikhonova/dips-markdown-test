@@ -124,10 +124,10 @@
             <div class = "no-filters">Ingen dokumenttyper</div>
         {:else}
             {#each show_list_obj as elementObj}
-                <div class="title">
+                <label class="title">
                     <input type="checkbox" bind:checked={elementObj.checked} />
                     <div class="title">{elementObj.name}</div>
-                </div>                
+                </label>                
             {/each} 
         {/if}
     </div>
@@ -139,17 +139,10 @@
 <style>
 
     button {
-        position: absolute;
-        right: 2vw;
-        bottom: 2vh;
+        margin-top: 10px;
+        align-self: flex-end;
+        max-height: 30px;
         background-color: #d43838;
-        color: white;
-        width: 6vw;
-        height: 4vh;
-        border: none;
-        justify-content: center;
-        border-radius: 4px;
-        cursor: pointer;
     }
 
     button:hover{
@@ -158,14 +151,16 @@
     }
 
     .main {
+        display: flex;
+        flex-direction: column;
         height: 70vh;
-        overflow: hidden;
+        overflow: auto;
     }
 
     .filters{
         padding-right: 2vw;
-        height: 50%;
         overflow-y: auto;
+        min-height: 100px;
     }
 
 
@@ -182,10 +177,12 @@
     .title{
         cursor: pointer;
         display: flex;
+        padding: 2px;
     }
 
     .title:hover{
         color:#d43838;
+        background-color: #e6f2ff;
     }
 
     .no-filters{
@@ -226,6 +223,7 @@
 
     :global(body.dark-mode) .title:hover{
         color:#d43838;
+        background-color: rgb(55, 55, 55);
     }
 
 </style>

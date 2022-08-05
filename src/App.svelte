@@ -45,11 +45,7 @@
       $showSideView = !$showSideView;
     }
   }
-  //Width and height of screen
-  let w
-  let h
-  $: w = window.innerWidth;
-  $: h = window.innerHeight;
+
 
   //tilpasser til mobilversjon
   $: contentWiewSize = $smallDevice && $currentDocumentObject ? 100: 50
@@ -99,7 +95,7 @@
         {#if !$smallDevice}
         <Splitpanes theme = "modern-theme">
           <Pane> <ScrollView/> </Pane>
-          <Pane minSize="30"> <ContentView width={w}/> </Pane>
+          <Pane minSize="30"> <ContentView/> </Pane>
         </Splitpanes>
         {:else}  
             <ScrollView/>
@@ -111,7 +107,7 @@
               <DocumentList on:set_content_view_size={set_content_view_size}/>
           </Pane>
         {#if $currentDocumentObject}
-          <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size} width={w}/></Pane>
+          <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size}/></Pane>
         {/if}
         </Splitpanes>
       {/if}

@@ -1,5 +1,5 @@
 <script>
-    import {documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size} from '../stores/stores.js';
+    import {documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size, smallDevice} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './Typewriter.svelte';
     import {currentlyAddingNewNote, showSideView, currentlyEditingNote} from '../stores/stores.js';
@@ -16,9 +16,6 @@
     let maxSize_filter = "0"
     let scrollview_size = "125";
     
-    $: w = window.innerWidth;
-    $: h = window.innerHeight;
-
     $: if($showFiltermenu){
         open()
     } else{
@@ -125,7 +122,7 @@
 
     function open(){
         //sets pane sizes
-        if(w<600){
+        if($smallDevice){
             //mobile
             current_size = "100"
             maxSize_filter = "100"
@@ -138,12 +135,14 @@
     }
 
 
+
+
 </script>
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
     <div class="with-toolbar-conteiner">
-        {#if ($currentlyAddingNewNote || $currentlyEditingNote) &&show && w<600}
+        {#if ($currentlyAddingNewNote || $currentlyEditingNote) &&show && $smallDevice}
             <ToolMenu hideToolBar={true}/>
         {:else}
             <ToolMenu hideToolBar={false}/>
@@ -172,15 +171,15 @@
                                 {/if}
                             </div>
                         </Pane>
-                        {#if show && ((!$showSideView && w>600) || w<600)}
-                            <Pane size={w<600 ? "100" : "50"}>
+                        {#if show && ((!$showSideView && !$smallDevice) || $smallDevice)}
+                            <Pane size={$smallDevice ? "100" : typewriterWiewSize.toString()}>
                                 <div class="editor">
                                     <Typewriter on:save = {save} on:cancel = {cancel} />
                                 </div>
                             </Pane>
                         {/if}
                     </Splitpanes>
-                    {#if w<600 && ($currentlyAddingNewNote || $currentlyEditingNote)&&!show}
+                    {#if $smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote)&&!show}
                         <button class="arrow-up-button" on:click={()=>{show=true}}>Vis <i class="material-icons">keyboard_arrow_up</i></button>
                     {/if}
                 </Pane>
@@ -228,6 +227,7 @@
         width: 100%;
         height: 100%;
         overflow: auto;
+        overflow-x: hidden;
     }
 
     :global(body.dark-mode) .full-container{

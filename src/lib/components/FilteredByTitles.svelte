@@ -9,6 +9,7 @@
     let show_titles_list_obj =[]
     let filteredDocumentlist = []
     let checked_not_shown = []
+    let checked_under_doctype = []
     let prev_length = -1
     let selected_documentObj_titles = set_filtered_text(original_titles_list_obj.filter(item => (item.checked)))
 
@@ -39,7 +40,9 @@
     $: if(original_titles_list_obj || $checked_titles_filters){
         checked_not_shown = find_hidden_checked_titles()
         //checks if all items are checked whenever the original list is updated
+
         check_if_all_checked()
+        console.log(original_titles_list_obj)
         selected_documentObj_titles = set_filtered_text(original_titles_list_obj.filter(item => (item.checked)))
     }
 
@@ -63,11 +66,19 @@
 
     //Updates the shown titles with search on titles
     $: if (searched_value.length >= 0){ 
+        if(showClicked){
+            checked_under_doctype = []
+            for (let i = 0; i < original_titles_list_obj.length; i++){
+                if (original_titles_list_obj[i].checked){
+                    checked_under_doctype.push(original_titles_list_obj[i])
+                }
+            }
+        }
          if (searched_value != ""){
             if(!showClicked){
                 show_titles_list_obj = original_titles_list_obj.filter(item => (item.title.toLowerCase().includes(searched_value.toLowerCase())));
             }else{
-                show_titles_list_obj = $checked_titles_filters.filter(item => (item.title.toLowerCase().includes(searched_value.toLowerCase())));
+                show_titles_list_obj = checked_under_doctype.filter(item => (item.title.toLowerCase().includes(searched_value.toLowerCase())));
             }
             
              let startsWithSearch = []
@@ -84,16 +95,11 @@
              if (!showClicked){
                  show_titles_list_obj = original_titles_list_obj
              }else{
-                show_titles_list_obj = $checked_titles_filters
+                show_titles_list_obj = checked_under_doctype
              }
          }     
      }
 
-    $: if(showClicked){
-        show_titles_list_obj = $checked_titles_filters.filter(item => (item.title.toLowerCase().includes(searched_value.toLowerCase())));
-    }else{
-        show_titles_list_obj = original_titles_list_obj
-    }
 
     $: if(selected_documentObj_titles.length == 0){
         //when no filters on
@@ -109,7 +115,12 @@
             //remove 
             for(let i = 0; i < $checked_titles_filters.length; i++){
                 if ($checked_titles_filters[i].title == item.title){
+                    for (let j = 0; j < $checked_titles_filters[i].nodes.length; j++){
+                        console.log("Setter tem_filtered_context til tom streng i " + $checked_titles_filters[i].nodes[j].title)
+                        $checked_titles_filters[i].nodes[j].object.temp_filtered_context = ""
+                    }
                     $checked_titles_filters.splice(i, 1)
+                    $checked_titles_filters = $checked_titles_filters
                 }
             }
         } else if(!item.checked){
@@ -127,6 +138,10 @@
             original_titles_list_obj[i].checked = false
             for (let j = 0; j < $checked_titles_filters.length; j++) {
                 if ($checked_titles_filters[j].title == original_titles_list_obj[i].title){
+                    for (let j = 0; j < $checked_titles_filters[i].nodes.length; j++){
+                        console.log("Setter tem_filtered_context til tom streng i " + $checked_titles_filters[i].nodes[j].title)
+                        $checked_titles_filters[i].nodes[j].object.temp_filtered_context = ""
+                    }
                     $checked_titles_filters.splice(j,1)
                     $checked_titles_filters = $checked_titles_filters
                 }
@@ -189,6 +204,7 @@
         }
         return checked_not_shown
     }
+    $:console.log($checked_titles_filters)
 
 </script>
 

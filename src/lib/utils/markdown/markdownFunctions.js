@@ -1,5 +1,7 @@
 //sets the correct temp_filtered_context in each documentObject depending on wich titles filters have been checked
 export function set_filtered_text(checked_titles){
+    console.log("set_temp_filtered-text")
+
     let obj_list = checked_titles
     let selected_titles_objects = []
 

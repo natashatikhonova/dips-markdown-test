@@ -21,8 +21,7 @@
     }
 
     :global(body.dark-mode) .selected{
-        background-color: rgb(61, 61, 61);
-        
+        background-color: rgb(61, 61, 61);  
     }
 
     .notSelected:hover{
@@ -30,12 +29,13 @@
     }
 
     :global(body.dark-mode) .notSelected:hover{
-        background-color: rgb(61, 61, 61);
-        
+        background-color: rgb(61, 61, 61);    
     }
+
     tr {
      height: 5vh;
     }
+
     td {
 		text-align: left;
 		padding-top: 10px;
@@ -44,6 +44,4 @@
         padding-left: 10px;
         border-bottom:1px solid rgb(97, 96, 96);  
 	}
-
-    
 </style>

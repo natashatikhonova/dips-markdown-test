@@ -42,7 +42,6 @@
         //checks if all items are checked whenever the original list is updated
 
         check_if_all_checked()
-        console.log(original_titles_list_obj)
         selected_documentObj_titles = set_filtered_text(original_titles_list_obj.filter(item => (item.checked)))
     }
 
@@ -138,9 +137,8 @@
             original_titles_list_obj[i].checked = false
             for (let j = 0; j < $checked_titles_filters.length; j++) {
                 if ($checked_titles_filters[j].title == original_titles_list_obj[i].title){
-                    for (let j = 0; j < $checked_titles_filters[i].nodes.length; j++){
-                        console.log("Setter tem_filtered_context til tom streng i " + $checked_titles_filters[i].nodes[j].title)
-                        $checked_titles_filters[i].nodes[j].object.temp_filtered_context = ""
+                    for (let k = 0; k < $checked_titles_filters[j].nodes.length; k++){
+                        $checked_titles_filters[j].nodes[k].object.temp_filtered_context = ""
                     }
                     $checked_titles_filters.splice(j,1)
                     $checked_titles_filters = $checked_titles_filters
@@ -204,7 +202,7 @@
         }
         return checked_not_shown
     }
-    $:console.log($checked_titles_filters)
+
 
 </script>
 

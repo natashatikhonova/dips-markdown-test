@@ -11,6 +11,7 @@
     let filtergroup_searched_value ="";
     let manageGroup = false
     let showAllButtonName = "Nullstill"
+    let searchedDocumentTypes = []
     let original_doctypes = []
     let selected_documentObj_titles = []
     let all_markdown_titles = []
@@ -40,10 +41,10 @@
         }
     }
     
-    //filters doctypes and groups by search:
-    $: searchedDocumentTypes = original_doctypes.filter(item => (item.name.toLowerCase().includes(filter_searched_value.toLowerCase())));
+    //filters groups by search:
     $: searchedFiltergroups = $doctype_filter_groups.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
     
+    //filters doctypes by search && updates showing doctypes
     $: if(showClicked){
         let clickedDocTypes = []
         for(let i = 0; i<original_doctypes.length; i++){

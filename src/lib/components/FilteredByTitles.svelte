@@ -3,6 +3,7 @@
     import {set_filtered_text, load_markdownNodes} from "../utils/markdown/markdownFunctions"
 
     let all_checked = true
+    let showClicked = false;
     let searched_value = "";
     let original_titles_list_obj = []
     let show_titles_list_obj =[]
@@ -35,7 +36,7 @@
     }
 
     //sets filtered text in documentObject
-    $: if(original_titles_list_obj){
+    $: if(original_titles_list_obj || $checked_titles_filters){
         checked_not_shown = find_hidden_checked_titles()
         //checks if all items are checked whenever the original list is updated
         check_if_all_checked()
@@ -63,7 +64,11 @@
     //Updates the shown titles with search on titles
     $: if (searched_value.length >= 0){ 
          if (searched_value != ""){
-             show_titles_list_obj = original_titles_list_obj.filter(item => (item.title.toLowerCase().includes(searched_value.toLowerCase())));
+            if(!showClicked){
+                show_titles_list_obj = original_titles_list_obj.filter(item => (item.title.toLowerCase().includes(searched_value.toLowerCase())));
+            }else{
+                show_titles_list_obj = $checked_titles_filters.filter(item => (item.title.toLowerCase().includes(searched_value.toLowerCase())));
+            }
             
              let startsWithSearch = []
              for(let i = 0; i<show_titles_list_obj.length; i++){
@@ -76,9 +81,19 @@
              show_titles_list_obj = startsWithSearch.concat(show_titles_list_obj)
          } else {
              //no search value
-             show_titles_list_obj = original_titles_list_obj
+             if (!showClicked){
+                 show_titles_list_obj = original_titles_list_obj
+             }else{
+                show_titles_list_obj = $checked_titles_filters
+             }
          }     
      }
+
+    $: if(showClicked){
+        show_titles_list_obj = $checked_titles_filters.filter(item => (item.title.toLowerCase().includes(searched_value.toLowerCase())));
+    }else{
+        show_titles_list_obj = original_titles_list_obj
+    }
 
     $: if(selected_documentObj_titles.length == 0){
         //when no filters on
@@ -184,7 +199,11 @@
 <h2>Overskrifter</h2>
 <div class="main">
     <div class="meta">
-        <h3>Alle overskrifter:</h3>
+        {#if !showClicked}
+            <h3>Alle overskrifter:</h3>
+        {:else}
+            <h3>Valgte overskrifter:</h3>
+        {/if}
         <input class="search-input" bind:value={searched_value} type="text" placeholder="Søk.." name="search">
         <div>
             {#if show_titles_list_obj.length > 0}
@@ -195,6 +214,12 @@
                     <button class="secundary-button" on:click={check_all}>Velg alle</button>
                 {/if}
 
+                
+            {/if}
+            {#if !showClicked}
+                <button class="secundary-button" on:click={()=>{showClicked=true}}>Vis valgte</button>
+            {:else}
+                <button class="secundary-button" on:click={()=>{showClicked=false}}>Alle overskrifter</button>
             {/if}
 
         </div>

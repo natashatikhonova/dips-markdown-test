@@ -644,6 +644,7 @@ function set_text_size(direction){
   .editor{
     margin: 5px;
     padding-right:5px;
+    padding-left:5px;
     height: 100%;
     overflow-y: auto;
     font-size: 11pt;

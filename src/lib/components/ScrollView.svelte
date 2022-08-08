@@ -172,7 +172,7 @@
                             </div>
                         </Pane>
                         {#if show && ((!$showSideView && !$smallDevice) || $smallDevice)}
-                            <Pane size={$smallDevice ? "100" : typewriterWiewSize.toString()}>
+                            <Pane size={$smallDevice ? "100" : "50"}>
                                 <div class="editor">
                                     <Typewriter on:save = {save} on:cancel = {cancel} />
                                 </div>

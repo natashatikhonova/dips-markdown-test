@@ -1,12 +1,12 @@
 //sets the correct temp_filtered_context in each documentObject depending on wich titles filters have been checked
 export function set_filtered_text(checked_titles){
+
     let obj_list = checked_titles
     let selected_titles_objects = []
 
     obj_list.forEach((item)=>{
         //loops through the markdown title nodes under this checked title filter
         item.nodes.forEach((node)=> {
-
             let index = -1
             //loops throug list to see if it has allready been created
             for (let i = 0; i < selected_titles_objects.length; i++) { 
@@ -18,6 +18,7 @@ export function set_filtered_text(checked_titles){
             }
             
             if (index != -1){ 
+
                 //found an object with the same documentObject as node on index <index> in selected_titles_object[index]
 
                 //find_placement_among_nodes(array, node) returns a number:
@@ -27,22 +28,18 @@ export function set_filtered_text(checked_titles){
                 let nodes_index = find_placement_among_nodes(selected_titles_objects[index].nodes, node)
                 if (nodes_index >= 0){ 
                     selected_titles_objects[index].nodes[nodes_index] = node
-            
-                    //Fjerner eventuelt de andre nodene som er i subtreet av den nye noden som ble satt inn 
-                    //creates a new node list that only contain one node from each subtree, wich is the highest node in each subtree. Does only need this for showing the context later
-                    let new_nodes_list = [] 
-                    for (let i = nodes_index; i < selected_titles_objects[index].nodes.length; i++){
-                        if (!is_in_subtree(node, selected_titles_objects[index].nodes[i])){
-                            //selected_titles_objects[index].nodes[i] er ikke i subtreet til node
-                            new_nodes_list.push(selected_titles_objects[index].nodes[i])
-                        } 
-                    }
-                    selected_titles_objects[index].nodes = new_nodes_list
 
+                    //removes toher nodes that are in the subtree of the new node that was added
+                    //creates a new node list that only contain one node from each subtree, wich is the highest node in each subtree. Does only need this for showing the context later
+                    for (let i = nodes_index+1; i < selected_titles_objects[index].nodes.length; i++){
+                        let cmpNode = selected_titles_objects[index].nodes[i]
+                        if(is_in_subtree(node,cmpNode)){
+                            selected_titles_objects[index].nodes.splice(i, 1)
+                        }
+                    }
 
                 } else if ( nodes_index == -2) {
                     //The node is a sibling to the other nodes
-                   
                     let nodes_document_order = selected_titles_objects[index].docObject.markdownTree.get_nodes_in_order()
                     //Index for node among all title nodes in the document
                     let node_index = nodes_document_order.map(function(e) { return e.id; }).indexOf(node.id); 
@@ -62,7 +59,6 @@ export function set_filtered_text(checked_titles){
                     if (inserted_bool == false) {
                         selected_titles_objects[index].nodes.push(node)
                     }
-
                 }
 
             } else { 
@@ -71,16 +67,19 @@ export function set_filtered_text(checked_titles){
             }
         })
     })
+    
     //adds the nodes context together into their documentObjects variable temp_filtered_context
     let new_documentObj_list = []
     for (let i = 0; i < selected_titles_objects.length; i++){
-        new_documentObj_list.push(selected_titles_objects[i].docObject)
         selected_titles_objects[i].docObject.temp_filtered_context = ""
+        let text = "" //Storing filtered text in this document
+
         for (let j = 0; j < selected_titles_objects[i].nodes.length; j++){
             let node = selected_titles_objects[i].nodes[j]
-            selected_titles_objects[i].docObject.temp_filtered_context += selected_titles_objects[i].docObject.markdownTree.get_text_under(node)
-
+            text += selected_titles_objects[i].docObject.markdownTree.get_text_under(node)
         }
+        selected_titles_objects[i].docObject.temp_filtered_context = text
+        new_documentObj_list.push(selected_titles_objects[i].docObject)
     }
     //sorts documents by date
     ascendingOrder = true

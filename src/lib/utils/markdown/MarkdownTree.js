@@ -98,7 +98,9 @@ export class Tree {
 
         let string = (startNode.markdownCode + " " + startNode.title + "\n" + startNode.content + "\n")
         for (let i = 1; i < nodes.length; i++) {
-            if (nodes[i].markdownCode.length > markdown_headline_length)
+            if (nodes[i].markdownCode.length <= markdown_headline_length) {
+                break
+            }
             string += (nodes[i].markdownCode + " " + nodes[i].title + "\n" + nodes[i].content + "\n")
         }
         // console.log(string)

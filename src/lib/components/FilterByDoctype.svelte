@@ -5,11 +5,13 @@
     import FilterForm from './FilterForm.svelte';
     import {set_filtered_text, load_markdownNodes} from "../utils/markdown/markdownFunctions"
 
-    let customViewMode = true;
+    let showAllFilters = true;
+    let showClicked = false;
     let filter_searched_value = "";
     let filtergroup_searched_value ="";
     let manageGroup = false
     let showAllButtonName = "Nullstill"
+    let searchedDocumentTypes = []
     let original_doctypes = []
     let selected_documentObj_titles = []
     let all_markdown_titles = []
@@ -39,10 +41,22 @@
         }
     }
     
-    //filters doctypes and groups by search:
-    $: searchedDocumentTypes = original_doctypes.filter(item => (item.name.toLowerCase().includes(filter_searched_value.toLowerCase())));
+    //filters groups by search:
     $: searchedFiltergroups = $doctype_filter_groups.filter(item => (item.name.toLowerCase().includes(filtergroup_searched_value.toLowerCase())));
     
+    //filters doctypes by search && updates showing doctypes
+    $: if(showClicked){
+        let clickedDocTypes = []
+        for(let i = 0; i<original_doctypes.length; i++){
+            if (original_doctypes[i].checked){
+                clickedDocTypes.push(original_doctypes[i])
+            }
+        }
+        searchedDocumentTypes = clickedDocTypes.filter(item => (item.name.toLowerCase().includes(filter_searched_value.toLowerCase())));
+    }else{
+        searchedDocumentTypes = original_doctypes.filter(item => (item.name.toLowerCase().includes(filter_searched_value.toLowerCase())));
+    }
+
     //checks all items whenever filter is turned off
     $: if($allfilterOff){
         $documentList.forEach((doc)=> (doc.temp_filtered_context = ""))
@@ -112,7 +126,7 @@
 
     //changes between displaying all filters and group filters
     function changeMode(){
-        customViewMode = !customViewMode
+        showAllFilters = !showAllFilters
         make_obj_list()
     }
 
@@ -192,6 +206,7 @@
         $current_doctype_filtergroup = $current_doctype_filtergroup
     }
 
+
 </script>
 
 
@@ -199,16 +214,25 @@
 <div class="main">
     {#if manageGroup}
         <Modal on:closed={() => manageGroup = false } show={$modal}/>
-    {:else if customViewMode}
+    {:else if showAllFilters}
     <div class="filter-panel">
         <div class="meta">
-            <h3>Alle filtere:</h3>
+            {#if !showClicked}
+                <h3>Alle filtere:</h3>
+            {:else}
+                <h3>Valgte filtere:</h3>
+            {/if}
             <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
             <div>
                 {#if searchedDocumentTypes.length > 0}
                     <button class="secundary-button" on:click={clickedAll}>{showAllButtonName}</button>
                 {/if}
                 <button class="secundary-button" on:click={changeMode}>Filtreringsgrupper</button>
+                {#if !showClicked}
+                    <button class="secundary-button" on:click={()=>{showClicked=true}}>Vis valgte</button>
+                {:else}
+                    <button class="secundary-button" on:click={()=>{showClicked=false}}>Alle filtere</button>
+                {/if}
             </div>
         </div>
 

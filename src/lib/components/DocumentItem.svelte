@@ -3,6 +3,7 @@
     export let document;
     export let chosen = false;
 
+    //update currentDocumentObject when item is clicked on
     function handleClick(){
         $currentDocumentObject = document
     }
@@ -15,33 +16,34 @@
     <td>{document.author}</td>
 </tr>
 
-<style>
-    .selected{
-        background-color: #ccebff;
-    }
-
-    :global(body.dark-mode) .selected{
-        background-color: rgb(61, 61, 61);  
-    }
-
-    .notSelected:hover{
-        background-color: #e6f2ff;
-    }
-
-    :global(body.dark-mode) .notSelected:hover{
-        background-color: rgb(61, 61, 61);    
-    }
-
+<style> 
     tr {
-     height: 5vh;
+        height: 5vh;
     }
-
+    
     td {
-		text-align: left;
+        text-align: left;
 		padding-top: 10px;
 		padding-bottom: 10px;
         padding-right: 16px;
         padding-left: 10px;
         border-bottom:1px solid rgb(97, 96, 96);  
 	}
+
+    .selected{
+        background-color: #ccebff;
+    }
+
+    .notSelected:hover{
+        background-color: #e6f2ff;
+    }
+    
+    /* dark mode styling */
+    :global(body.dark-mode) .selected{
+        background-color: rgb(61, 61, 61);  
+    }
+
+    :global(body.dark-mode) .notSelected:hover{
+        background-color: rgb(61, 61, 61);    
+    }
 </style>

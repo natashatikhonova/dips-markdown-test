@@ -13,6 +13,7 @@
     let prev_length = -1
     let selected_documentObj_titles = set_filtered_text(original_titles_list_obj.filter(item => (item.checked)))
 
+    //filter by document types from current filtergroup
     $: filteredDocumentlist = $documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title)));
 
     //sets list depending on what doctypes are chosen
@@ -220,16 +221,15 @@
         {/if}
         <input class="search-input" bind:value={searched_value} type="text" placeholder="Søk.." name="search">
         <div>
+            <!-- Toggle between show all or remove all buttons -->
             {#if show_titles_list_obj.length > 0}
                 {#if all_checked} 
-                    <button class="secundary-button" on:click={removeChecked}>Nullstill</button>
-                    
+                    <button class="secundary-button" on:click={removeChecked}>Nullstill</button>    
                 {:else}
                     <button class="secundary-button" on:click={check_all}>Velg alle</button>
-                {/if}
-
-                
+                {/if}    
             {/if}
+            <!-- Toggle between chosen or all titles -->
             {#if !showClicked}
                 <button class="secundary-button" on:click={()=>{showClicked=true}}>Vis valgte</button>
             {:else}
@@ -238,7 +238,7 @@
 
         </div>
     </div>
-
+    <!-- All titles as checkboxes -->
     {#if show_titles_list_obj.length == 0}
         <div class = "no-titles">Ingen overskrifter</div>
     {:else}
@@ -246,18 +246,12 @@
             {#each show_titles_list_obj as elementObj}
                 <label class = "filterItem">
                     <input type="checkbox" bind:checked={elementObj.checked} on:click={()=>updateCheckedList(elementObj)}>
-                    {elementObj.title}
-                    
+                    {elementObj.title}    
                 </label>   
             {/each} 
         </div>            
     {/if}
-
-    <!-- Later add button that shows all checked filters independent of doctypfilters -->
-    <!-- {#each checked_not_shown as title}
-        {title.title}
-    {/each}  -->
-
+    <!-- Tells user whether none title filters are chosen -->
     {#if original_titles_list_obj.filter(obj => (obj.checked)).length == 0}
         <div class = "shows-all-documents">*Ikke filtrert på overskrifter*</div>
     {/if}
@@ -267,6 +261,7 @@
     h2{
         align-self: center;
     }
+
     .main{
         display: flex;
         flex-direction: column;
@@ -284,6 +279,7 @@
     .no-titles{
         margin: 10px;
     }
+
     .filters{
         display: flex;
         flex-direction: column;
@@ -291,6 +287,7 @@
         min-height: 100px;
         overflow-y: auto;
     }
+
     .filterItem{
         padding: 5px;
     }
@@ -305,13 +302,17 @@
         margin-bottom: 10px;
         color: red;
     }
+
+    /* dark mode styling */
     :global(body.dark-mode) input{
         border-bottom: 1px solid #cccccc;
         color:#cccccc;   
     }
+
     :global(body.dark-mode) ::placeholder {
         color: #cccccc;   
     }
+    
     :global(body.dark-mode) .filterItem:hover{
         color:#d43838;
         background-color: rgb(55, 55, 55);

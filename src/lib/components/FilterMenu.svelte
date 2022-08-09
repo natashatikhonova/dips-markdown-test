@@ -1,11 +1,9 @@
 <script>
-    import {createEventDispatcher} from 'svelte';
     import FilterByDoctype from './FilterByDoctype.svelte';
     import FilteredByTitles from './FilteredByTitles.svelte';
     import {showFiltermenu} from "../stores/stores"
 
     export let showFilterByTitles = true;
-    
     let groupFilterView = true
 
     //sends a message when a panel is to be closed
@@ -27,12 +25,12 @@
         </div>
         <button class="close" on:click={close}><i class="material-icons" >close</i></button>
     </div>
+    <!-- shows different filter options -->
     {#if groupFilterView}
         <FilterByDoctype/>
     {:else if showFilterByTitles}
         <FilteredByTitles />  
     {/if}
-
 </div>
 
 <style>
@@ -44,26 +42,18 @@
         background: whitesmoke;
     }
 
-    :global(body.dark-mode) .main{
-        background: rgb(49, 49, 49);
-    }
-
     .top-bar{
         display: flex;
         flex-direction:row;
         background-color: #fff;
     }
-
-    :global(body.dark-mode) .top-bar{
-        background: rgb(62, 62, 62);
-    }
-
+    
     .filter-options{
         display: flex;
         flex-direction:row;
         flex-grow: 1;
     }
-
+    
     .filter-options button{
         width: 100%;
         height: 40px;
@@ -73,23 +63,12 @@
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
     }
-
+    
     .filter-options .current-filter{
         background: whitesmoke;
         font-weight: bold;
     }
 
-    /* Filter buttons - darkmode */
-    :global(body.dark-mode) .filter-options button{
-        background: rgb(62, 62, 62);
-        color: #cccccc;
-    }
-
-    :global(body.dark-mode) .filter-options .current-filter{
-        background: rgb(49, 49, 49);
-    }
-
-    /* Close button */
     .close{
         background: none;
         border: none;
@@ -98,6 +77,24 @@
     }
     .close:hover {
         color:#d43838; 
+    }
+    
+    /* dark mode styling */
+    :global(body.dark-mode) .main{
+        background: rgb(49, 49, 49);
+    }
+
+    :global(body.dark-mode) .top-bar{
+        background: rgb(62, 62, 62);
+    }
+
+    :global(body.dark-mode) .filter-options button{
+        background: rgb(62, 62, 62);
+        color: #cccccc;
+    }
+    
+    :global(body.dark-mode) .filter-options .current-filter{
+        background: rgb(49, 49, 49);
     }
 
     :global(body.dark-mode) .close{

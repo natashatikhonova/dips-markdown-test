@@ -16,7 +16,7 @@
     } 
 
     function changeEdit(){
-          edit=!edit;
+          edit = !edit
           edit ? $currentlyEditingNote = true: $currentlyEditingNote = false
     }
 

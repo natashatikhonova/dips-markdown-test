@@ -2,30 +2,34 @@
     import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, findNewDocumentObjId, DocumentObject, documentTypes, smallDevice} from "../stores/stores";
     import {marked} from 'marked';
     import {editor} from '../stores/stores.js';
-    import asRoot from 'typewriter-editor/lib/asRoot';
-    import Toolbar from 'typewriter-editor/lib/Toolbar.svelte';
     import {documentList} from '../stores/stores.js';
     import toMarkdown from 'to-markdown';
     import {createEventDispatcher} from 'svelte';
     import {ParseMarkdown} from "../utils/markdown/Parsemarkdown"
     import { h as hFromTypewriter} from 'typewriter-editor';
+    import TypewriterToolbar from "./TypewriterToolbar.svelte";
+    import TypewriterEditor from "./TypewriterEditor.svelte";
+
+    const dispatch = createEventDispatcher();
+
+    let typewriterEditor;
+    //document types
+    let selectedDocType = "Velg dokumenttype";
     let documentTypesCpy = documentTypes.slice()
     documentTypesCpy.splice(0,0,"Velg dokumenttype")
+
     editor.typeset.formats.add({
       name: 'autocomplete',
       selector: 'autoSuggestion',
       render: (attributes, children) => hFromTypewriter('autoSuggestion', null, children),
     });
-	
-    let selectedDocType = "Velg dokumenttype";
-    
-    
-    const dispatch = createEventDispatcher();
 
     //Sets text in editor
     $: if ($currentDocumentObject && !$currentlyAddingNewNote){
+        //edit document -> get text from currentDocumentObject
         editor.setHTML(marked($currentDocumentObject.context));
     } else if($currentDocumentObject && $currentlyAddingNewNote){
+        //add new document -> no text in editor
         editor.setHTML(marked(""));
     } 
    
@@ -47,43 +51,43 @@
       $currentlyEditingNote = false;
     }
 
+    //available ONLY on mobile -> takes editor down
     function mobileDown(){
       dispatch("cancel");
     }
 
     //Saves the text if the text is not empty and stores the text
     function save(){
-      remove_suggestion()
+      //remove autocomplete before saving
+      typewriterEditor.remove_suggestion()
 
-      changeEdit();
       if( toMarkdown(editor.getHTML()) === ""){
-        //Empty note
+        //Empty note -> dont save
         alert("Tom notat!");
-        $currentlyAddingNewNote=false;
-        dispatch("save");
       }else{
+
         if($currentlyEditingNote){ 
           //Edit note
           dispatch("save");
           $currentlyEditingNote = false;
+          //find the right document in the list
           $documentList.forEach((element)=>{
             if (element.id === $currentDocumentObject.id){
+                //update document
                 element.context= toMarkdown(editor.getHTML()) + " \n";
                 //make an tree over all markdown titles
                 let parse = new ParseMarkdown()
-                console.log("Før parse")
                 let tree = parse.parseAndSetIntoTree(element)
-                console.log("Etter parse")
                 element.markdownTree = tree;
-
             }
           })
           $documentList = $documentList;
-          console.log("Setter inn dokumenter i typewriter Edit")
+          changeEdit();
 
         } else{
-          if (selectedDocType !== documentTypesCpy[0]) { //new Note
-            console.log("New note")
+          //adding new document
+          if (selectedDocType !== documentTypesCpy[0]) { 
+            //create new document object
             const readable = true;
             let newElement = new DocumentObject(findNewDocumentObjId($documentList.slice()), new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
             newElement.readable = readable
@@ -92,250 +96,23 @@
             //make an tree over all markdown titles
             let parse = new ParseMarkdown()
             let tree = parse.parseAndSetIntoTree(newElement)
-
             newElement.markdownTree = tree;
 
+            //update store values
             $documentList.push(newElement);
             $documentList = $documentList;
-            console.log("Setter inn dokumenter i Typewriter. New note")
-
             $currentDocumentObject = newElement;
             $currentlyAddingNewNote = false;
+
             dispatch("save");
+            changeEdit();
 
           } else{ //must choose documenttype
             alert("Vennligst velg dokumenttype!");
-            changeEdit();
           }  
         } 
       }
     }
-    
-  //Put in Image:
-  let fileinput;
-  const onFileSelected =(e)=>{                      
-    let image = e.target.files[0];
-    let reader = new FileReader();
-    reader.readAsDataURL(image);
-    reader.onload = e => {
-      editor.setHTML(editor.getHTML()+"\n <img src=" + e.target.result + ">") 
-    };      
-  }
-
-  
-  function file_choser(){
-    fileinput.click()
-    editor.root.focus();
-  }
-
-  //Changes to big letter at the start of sentences
-  let waitingForSpaceOrEnterOrDot = false
-  if (editor.getText().length <= 1){
-    waitingForSpaceOrEnterOrDot = true
-  }
-
-  let dot_has_happend = false
-
-  function clear_check_text(){
-    remove_suggestion()
-    waitingForSpaceOrEnterOrDot = false
-    dot_has_happend = false
-  }
-
-  function check_text(event){
-    let previousEditorSelection = editor.doc.selection
-    
-    let key = event.key
-    
-    if(key == "Backspace"){
-      waitingForSpaceOrEnterOrDot = false
-      dot_has_happend = false
-    }
-
-    if(waitingForSpaceOrEnterOrDot && (key == " " || key == "Enter" || key == ".")){
-        //find the previous word
-        for(let i = editor.doc.selection[0]-1; i >= 0; i--){ //goes backwards throught the text
-          let char = editor.getText()[i-1]
-          if (char == " " || i == 0 || char == "\n") {
-
-            editor.insert(editor.getText()[i].toLocaleUpperCase(), {}, [i,i+1])
-            editor.select(previousEditorSelection)
-
-            break;
-          }
-        }
-        waitingForSpaceOrEnterOrDot = false
-        dot_has_happend = false
-    }
-
-    if(key == "Enter"){
-      waitingForSpaceOrEnterOrDot = true
-      dot_has_happend = true
-    }
-
-    if (key == ".") {
-      dot_has_happend = true
-    }
-
-    if (key == " " && dot_has_happend) {
-      waitingForSpaceOrEnterOrDot = true
-    }
-  }
-
-//    Autocomplete and TAB:
-let autocomplete_suggestions_words = ["epikrise", "sykepleier", "lege", "sykdom", "sykehus", "legevakt", "fastlege"]
-let prev_suggested_word = ""
-let suggested_word_startindex = -1
-let prev_selection = 0
-let autocompleteOn = true
-let complete_suggested_word = ""
-
-function autocomplete(key){
-  
-  if (key == " " || key == "Enter" || key == "."){ //add in the suggested word
-    if (prev_suggested_word.length > 0){
-      
-      let current_indeks = key == "Enter" ? editor.doc.selection[0]-1: editor.doc.selection[0];
-
-      //New
-      editor.select([current_indeks, editor.doc.selection[0] + prev_suggested_word.length])
-
-      //historyStackBefore is to store current history so the editorhistory can ignore the suggested word
-      let historyStackBefore = editor.modules.history.getStack()
-      editor.modules.history.clearHistory()
-      editor.delete()
-      editor.modules.history.setStack(historyStackBefore)
-
-      editor.insert(prev_suggested_word, [current_indeks, current_indeks])
-      editor.select(editor.doc.selection[0])
-
-      prev_suggested_word = ""
-
-      if(key == "Enter" && !editor.getActive().list){
-          editor.insert('\n');
-        }
-    }
-  }
-
-  else if( (key.length == 1) || key == "Backspace") {
-    //new suggested word
-    let current_indeks = editor.doc.selection[0]
-
-    let suggested_word = ""
-    let word = ""
-    let editor_text = editor.getText().substring(0, current_indeks) + key
-
-    for (let i = current_indeks; i >= 0; i--){
-      
-      if (editor_text[i] == " " || editor_text[i] == "\n" ){
-        break
-      }
-      word += editor_text[i]
-      
-    }
-    
-    word = word.split("").reverse().join("");
-    
-    if (word.length != 0) {
-      for (let i = 0; i < autocomplete_suggestions_words.length; i++){
-        let check_word = autocomplete_suggestions_words[i]
-        let found_word = true
-        
-        for (let j = 0; j < word.length; j++){
-          if (word[j].toLowerCase() != check_word[j]){
-            found_word = false
-            break;
-          }
-        }
-        if (found_word) {
-          suggested_word = check_word.substring(word.length)
-          complete_suggested_word = check_word
-          break;
-        }
-      }
-    }
-
-    let historyStackBefore = editor.modules.history.getStack()
-    editor.modules.history.clearHistory()
-
-    let curSel = editor.doc.selection;
-    editor.delete([curSel[0], curSel[0] + prev_suggested_word.length])
-    editor.insert(suggested_word, {autocomplete:true}, [current_indeks, current_indeks])
-    editor.select(curSel)
-
-    editor.modules.history.setStack(historyStackBefore)
-
-    prev_suggested_word = suggested_word
-    suggested_word_startindex = current_indeks
-    prev_selection = current_indeks
-
-  }
-}
-
-function remove_suggestion(){
-  if(!editor.doc.selection) return;
-  if (prev_selection != editor.doc.selection[0]) {
-    
-    let historyStackBefore = editor.modules.history.getStack()
-    editor.modules.history.clearHistory()
-
-    let curSel = editor.doc.selection;
-    editor.delete([suggested_word_startindex+1, suggested_word_startindex+1 + prev_suggested_word.length])
-    editor.select(curSel)
-    
-    editor.modules.history.setStack(historyStackBefore)
-    
-    prev_suggested_word = ""
-  }
-}
-
-function whenKeyDown(event){
-  let key = event.key
-
-  if (key == "Tab" && !editor.getActive().list) {
-    remove_suggestion()
-    editor.insert("        ");
-  }
-
-  if ((37 <= event.keyCode) && (event.keyCode <= 40)){
-      //Arrow keys
-      remove_suggestion()
-      waitingForSpaceOrEnterOrDot = false
-      dot_has_happend = false
-    }
-    
-    else if (autocompleteOn){
-      autocomplete(key)
-  }
-} 
-
-function set_autocomplete(){
-  autocompleteOn = !autocompleteOn
-  editor.root.focus();
-}
-
-let min_size = false;
-let max_size = false;
-let selected_text_size = 11
-
-function set_text_size(direction){
-  if (direction == "bigger"){
-      selected_text_size++
-      if (selected_text_size == 20){
-        max_size=true
-      }else if (selected_text_size>7){
-      min_size =false
-    }
-  } else if (direction == "lower"){
-    selected_text_size--
-    if (selected_text_size == 7){
-        min_size=true
-    } else if (selected_text_size<20){
-      max_size =false
-    }
-  }
-  editor.root.focus();
-}
 </script>
 
 <head>
@@ -343,127 +120,35 @@ function set_text_size(direction){
 </head>
 
 <!-- source: https://github.com/typewriter-editor/typewriter -->
-    <header class="tool-menu">
-      <div>
-        {#if $smallDevice  &&(!$showSideView || $currentlyAddingNewNote)}
-          <button class="arrow-down-button" on:click={mobileDown}> <i class="material-icons">keyboard_arrow_down</i></button>
+  <header class="tool-menu">
+    <!-- ONLY on mobile -> pushes editor down -->
+    <div>
+      {#if $smallDevice  &&(!$showSideView || $currentlyAddingNewNote)}
+        <button class="arrow-down-button" on:click={mobileDown}> <i class="material-icons">keyboard_arrow_down</i></button>
+      {/if}
+    </div>
+
+    <div class="toolmenu-title">
+      <h4>
+        {#if $currentlyAddingNewNote}
+          NYTT DOKUMENT
+        {:else}
+          REDIGER DOKUMENT
         {/if}
-      </div>
-      <div class="toolmenu-title">
-        <h4>
-          {#if $currentlyAddingNewNote}
-            NYTT DOKUMENT
-          {:else}
-            REDIGER DOKUMENT
-          {/if}
-        </h4>
-      </div>
-      <div class = "controls">
-        <button title="Lagre"class="save " class:mobile={$smallDevice} on:click={save}> <i class="material-icons">save</i></button>
-        <button title="Avbryt" class = "save" class:mobile={$smallDevice} on:click={cancel} > <i class="material-icons">close</i></button>
-      </div>
-    </header>
+      </h4>
+    </div>
+    <!-- Buttons to save/ignore changes -->
+    <div class = "controls">
+      <button title="Lagre"class="save " class:mobile={$smallDevice} on:click={save}> <i class="material-icons">save</i></button>
+      <button title="Avbryt" class = "save" class:mobile={$smallDevice} on:click={cancel} > <i class="material-icons">close</i></button>
+    </div>
+  </header>
 
   <div class="toolbar" class:mobile-toolbar = {$smallDevice}>
-    <Toolbar {editor} let:active let:commands>
-
-      <div class="main-functions">
-
-        <button
-          title="Overskrift"
-          class="toolbar-button"
-          class:active={active.header === 1}
-          class:mobile={$smallDevice}
-          on:click={commands.header1}><i class="material-icons">title</i></button>
-    
-        <button
-          title="Underskrift"
-          class="toolbar-button"
-          class:active={active.header === 2}
-          class:mobile={$smallDevice}
-          on:click={commands.header2}><i class="material-icons header2">title</i></button>
-    
-        <button
-          title="Uthevet"
-          class="toolbar-button"
-          class:active={active.bold}
-          class:mobile={$smallDevice}
-          on:click={commands.bold}><i class="material-icons">format_bold</i></button>
-    
-        <button
-          title="Kursiv"
-          class="toolbar-button"
-          class:active={active.italic}
-          class:mobile={$smallDevice}
-          on:click={commands.italic}><i class="material-icons">format_italic</i></button>
-
-        <button
-          title="Punktliste"
-          class="toolbar-button"
-          class:active={active.bulletList}
-          class:mobile={$smallDevice}
-          on:click={commands.bulletList}><i class="material-icons">format_list_bulleted</i></button>
-        <button
-          title="Nummerert liste"
-          class="toolbar-button"
-          class:active={active.orderedList}
-          class:mobile={$smallDevice}
-          on:click={commands.orderedList}><i class="material-icons">format_list_numbered</i></button>
-        <button
-          title="Angre"
-          class="toolbar-button arrow"
-          disabled={!active.undo}
-          class:mobile={$smallDevice}
-          on:click={commands.undo}><i class="material-icons">undo</i></button>
-
-        <button
-          title="Gjøre om"
-          class="toolbar-button arrow"
-          disabled={!active.redo}
-          class:mobile={$smallDevice}
-          on:click={commands.redo}><i class="material-icons">redo</i></button>
-      </div>
-
-      <div class="secondary-functions">
-
-        <div class="extra-functions" class:no-border={$smallDevice}>
-  
-          <button 
-          title="Legg til bilde"
-          class="toolbar-button"
-          class:mobile={$smallDevice}
-          on:click={file_choser}  ><i class="material-icons">image</i></button>
-  
-          <input style="display:none" type="file" accept="*/image" on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
-  
-          <button
-          title="Autocomplete"
-          class="toolbar-button "
-          class:active={autocompleteOn}
-          class:mobile={$smallDevice}
-          on:click={set_autocomplete}><i class="material-icons">auto_awesome</i></button>
-  
-        </div>
-  
-        <div class="extra-functions" class:no-border={$smallDevice}>
-          <button
-          title="Zoom out"
-          class="toolbar-button"
-          disabled={min_size}
-          class:mobile={$smallDevice}
-          on:click={() => {set_text_size("lower")}}><i class="material-icons">zoom_out</i></button>
-          <button
-          title="Zoom in"
-          class="toolbar-button"
-          disabled={max_size}
-          class:mobile={$smallDevice}
-          on:click={() => {set_text_size("bigger")}}><i class="material-icons">zoom_in</i></button>
-        </div>
-      </div>
-    </Toolbar>
+    <TypewriterToolbar/>
   </div>
 
-
+  <!-- Dropdown menu for document types (only while adding new document) -->
   {#if $currentlyAddingNewNote}
     <div class="dropdown">
       <select class="dropdown-menu" bind:value={selectedDocType} >
@@ -472,75 +157,31 @@ function set_text_size(direction){
     </div>
   {/if}
   
+  <!-- Meta data about document (only while editing exising document) -->
   {#if !$currentlyAddingNewNote  && $currentDocumentObject} 
-
     <div class="title">{$currentDocumentObject.title}</div>
     <div class="meta">Skrevet av {$currentDocumentObject.author}, {$currentDocumentObject.date.toDateString()}</div>
   {/if}
-  <!-- svelte-ignore a11y-autofocus -->
-    <div class="editor" style="font-size: {selected_text_size}pt" autofocus use:asRoot = {editor} on:keyup={check_text} on:keydown={whenKeyDown} on:click={clear_check_text}></div>
 
+  <TypewriterEditor bind:this = {typewriterEditor}/>
 
 <style>
-  .active {
-    border-color: #80bdff;
-    background: #eaf4ff;
-  }
-.toolmenu-title{
-  align-self: center;
-}
-.main-functions{
-  display: inline-flex;
-  background: whitesmoke;
-}
-.secondary-functions{
-  display: inline-flex;
-  background: whitesmoke;
-
-}
-.arrow-down-button{
-  background: none;
-  border:none;
-}
-:global(body.dark-mode) .arrow-down-button{
-  color:#cccccc;
-}
-.tool-menu{
-  width: 100%;
-  height: 100%;
-  max-height: 40px;
-  min-height: 40px;
-  align-items: center;
-  display: flex;
-  justify-content:space-between;
-  background-color: whitesmoke;
-}
-:global(body.dark-mode) .tool-menu{
-  background-color: rgb(49,49,49);
-  color: #cccccc;
-}
-  :global(.editor code){
-    color:lightgray;
-
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
-  }
-  :global(body.dark-mode .editor code) {
-    color: #666666;
-  }
-  :global(.editor autoSuggestion){
-    color:lightgray;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
-  }
-  :global(body.dark-mode .editor autoSuggestion) {
-    color: #666666;
+  
+  .toolmenu-title{
+    align-self: center;
   }
 
-  :global(.editor img){
-    max-height: 50%;
-    max-width: 50%
+  .tool-menu{
+    width: 100%;
+    height: 100%;
+    max-height: 40px;
+    min-height: 40px;
+    align-items: center;
+    display: flex;
+    justify-content:space-between;
+    background-color: whitesmoke;
   }
+
   .toolbar {
     display:flex;
     background: whitesmoke;
@@ -548,115 +189,12 @@ function set_text_size(direction){
     box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
     margin-bottom: 3px;
   }
-  .mobile-toolbar{
-    display: contents;
-  }
-  :global(body.dark-mode) .toolbar{
-    background: rgb(32, 32, 32);
-  }
-  :global(body.dark-mode) .main-functions{
-    background: rgb(32, 32, 32);
-  }
-  :global(body.dark-mode) .secondary-functions{
-    background: rgb(32, 32, 32);
-  }
-  .toolbar-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #fff;
-    width: 2.3rem;
-    height: 2.3rem;
-    margin-right: 0.4rem;
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    cursor: pointer;
-  }
-  .toolbar-button:hover {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-  }
-  .toolbar-button.active {
-    border: solid 2px;
-    border-color: #80bdff;
-  }
-  :global(body.dark-mode) .toolbar-button{
-    background-color: #353535;
-    color: #cccccc;
-    border: none;
-  }
-  :global(body.dark-mode) .toolbar-button:hover{
-    border-color: #b7daff;
-    box-shadow: 0 0 0 0.2rem rgba(104, 177, 255, 0.5);
-  }
-  :global(body.dark-mode) .toolbar-button.active{
-    border-color: #b7daff;
-    box-shadow: 0 0 0 0.2rem rgba(104, 177, 255, 0.5);
-  }
-  .header2{
-    font-size:large;
-  }
-  .arrow{
-    color:black;
-    font-weight: bolder;
-    font-size:x-large;
-  }
+
   .controls{
     display: inline-flex;
     align-items: center;
   }
-  .dropdown{
-    margin-left: 10px;
-  }
-  .dropdown-menu {
-    background: #fff;
-    height: 35px;
-    border-radius: 4px;
-    border: 1px solid #ced4da;
-    cursor: pointer;
-  }
-  .dropdown-menu:hover {
-    outline: none;
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-  }
-  :global(body.dark-mode) .dropdown-menu:hover{
-    border-color: #b7daff;
-    box-shadow: 0 0 0 0.2rem rgba(104, 177, 255, 0.5);
-  }
-  :global(body.dark-mode) .dropdown-menu{
-    background-color: rgb(49,49,49);
-    color: #cccccc;
-  }
-  .title{
-    font-weight: bold;
-    font-style: italic;
-    margin-left: 1vw;
-    margin-top:1vh;
-  }
-  .meta{
-    font-style: italic;
-    margin-left:1vw;
-    margin-top:1vh;
-  }
-  .editor{
-    margin: 5px;
-    padding-right:5px;
-    padding-left:5px;
-    height: 100%;
-    overflow-y: auto;
-    font-size: 11pt;
-  }
-  :global(body.dark-mode) .editor{
-    background-color: rgb(49,49,49);
-  }
-  .extra-functions{
-    display: flex;
-    border-left: solid rgb(74, 74, 74);
-    padding-left: 0.5vw;
-  }
+
   .save{
     background: none;
     width: 2.5rem;
@@ -666,25 +204,115 @@ function set_text_size(direction){
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     cursor: pointer;
   }
-  :global(body.dark-mode) .save{
-    color:#cccccc;
-  }
-  .no-border{
-    border:none;
-    padding-left:0;
-  }
+
   .save:hover{
     color:#d43838;
     border:none;
     border-color: none;
     box-shadow: none;
   }  
-  :global(body.dark-mode) .save:hover{
-    color: #d43838;
+  
+  .dropdown{
+    margin-left: 10px;
   }
+
+  .dropdown-menu {
+    background: #fff;
+    height: 35px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    cursor: pointer;
+  }
+
+  .dropdown-menu:hover {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
+
+  .title{
+    font-weight: bold;
+    font-style: italic;
+    margin-left: 1vw;
+    margin-top:1vh;
+  }
+  
+  .meta{
+    font-style: italic;
+    margin-left:1vw;
+    margin-top:1vh;
+  }
+  
+  /* mobile styling */
+  .arrow-down-button{
+    background: none;
+    border:none;
+  }
+
+  .mobile-toolbar{
+    display: contents;
+  }
+
   .mobile{
     margin: 2px;
     height: 2rem;
     width: 2rem;
+  }
+  
+  /* dark mode styling */
+  :global(body.dark-mode) .tool-menu{
+    background-color: rgb(49,49,49);
+    color: #cccccc;
+  }
+
+  :global(body.dark-mode) .toolbar{
+    background: rgb(32, 32, 32);
+  }
+
+  :global(body.dark-mode) .arrow-down-button{
+    color:#cccccc;
+  }
+
+  :global(body.dark-mode) .dropdown-menu{
+    background-color: rgb(49,49,49);
+    color: #cccccc;
+  }
+
+  :global(body.dark-mode) .dropdown-menu:hover{
+    border-color: #b7daff;
+    box-shadow: 0 0 0 0.2rem rgba(104, 177, 255, 0.5);
+  }
+
+  :global(.editor code){
+    color:lightgray;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
+  }
+
+  :global(body.dark-mode .editor code) {
+    color: #666666;
+  }
+
+  :global(.editor autoSuggestion){
+    color:lightgray;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;;
+  }
+
+  :global(body.dark-mode .editor autoSuggestion) {
+    color: #666666;
+  }
+
+  :global(.editor img){
+    max-height: 50%;
+    max-width: 50%
+  }
+
+  :global(body.dark-mode) .save{
+    color:#cccccc;
+  }
+  
+  :global(body.dark-mode) .save:hover{
+    color: #d43838;
   }
 </style>

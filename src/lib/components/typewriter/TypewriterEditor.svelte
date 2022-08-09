@@ -1,5 +1,5 @@
 <script>
-  import { editor, selected_text_size, autocompleteOn} from "../stores/stores.js"
+  import { editor, selected_text_size, autocompleteOn} from "../../stores/stores.js"
   import asRoot from 'typewriter-editor/lib/asRoot';
 
   let waitingForSpaceOrEnterOrDot = false
@@ -11,6 +11,14 @@
   let prev_selection = 0
   let complete_suggested_word = ""
 
+  //reset textsize in editor to default 
+  function reset_textsize(){
+    $selected_text_size = 11
+  }
+
+  //when editor opens - reset textsize
+  reset_textsize()
+
   //resets variables and  removes autocomplete
   function clear_check_text(){
       remove_suggestion()
@@ -18,12 +26,10 @@
       dot_has_happend = false
   }
 
-    
   //Changes to big letter at the start of sentences
   if (editor.getText().length <= 1){
     waitingForSpaceOrEnterOrDot = true
   }
-
 
   //checkes for enter, dot and space to change to an uppercase letter 
   function check_text(event){

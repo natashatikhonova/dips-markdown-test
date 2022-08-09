@@ -1,7 +1,7 @@
 <script>
     import { currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote, documentList, smallDevice } from '../stores/stores.js';
     import {marked } from 'marked';
-    import Typewriter from './Typewriter.svelte';
+    import Typewriter from './typewriter/Typewriter.svelte';
     import {editor} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 

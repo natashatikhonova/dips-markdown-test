@@ -3,7 +3,7 @@
     import {currentDocumentObject, documentList, currentlyAddingNewNote, current_doctype_filtergroup, showFiltermenu, smallDevice} from '../stores/stores.js';
     import ToolMenu from './ToolMenu.svelte';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
-    import FilterMenu from './FilterMenu.svelte';
+    import FilterMenu from './filter/FilterMenu.svelte';
     
     let sortedData = $documentList;
     const tableHeaders = ["title", "date","author"];

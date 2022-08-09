@@ -1,9 +1,9 @@
 <script>
-    import {current_doctype_filtergroup, doctype_filter_groups, allfilterOff, documentTypes, searchedDocuments, searchValue, documentList, checked_titles_filters} from '../stores/stores';
+    import {current_doctype_filtergroup, doctype_filter_groups, allfilterOff, documentTypes, searchedDocuments, searchValue, documentList, checked_titles_filters} from '../../stores/stores';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
     import FilterForm from './FilterForm.svelte';
-    import {set_filtered_text, load_markdownNodes} from "../utils/markdown/markdownFunctions"
+    import {set_filtered_text, load_markdownNodes} from "../../utils/markdown/markdownFunctions"
 
     let showAllFilters = true;
     let showClicked = false;

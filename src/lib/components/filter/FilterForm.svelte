@@ -1,5 +1,5 @@
 <script>
-    import {doctype_filter_groups, current_doctype_filtergroup } from '../stores/stores';
+    import {doctype_filter_groups, current_doctype_filtergroup } from '../../stores/stores';
     import { getContext, setContext } from 'svelte';
 
     export let original_list_obj =[]

@@ -1,5 +1,5 @@
 <script>
-    import { checked_titles_filters, searchValue, amount_searched_words, current_doctype_filtergroup, showFiltermenu, selected_line_height, selected_text_size, allfilterOff, currentDocumentObject, documentTypes, smallDevice, currentlyAddingNewNote, currentlyEditingNote} from '../stores/stores.js';
+    import { checked_titles_filters, searchValue, amount_searched_words, current_doctype_filtergroup, showFiltermenu, selected_line_height, selected_text_size_scrollview, allfilterOff, currentDocumentObject, documentTypes, smallDevice, currentlyAddingNewNote, currentlyEditingNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
     export let hideToolBar = true;
@@ -24,17 +24,17 @@
     //zoom in and out on text inside scrollview
     function set_text_size(direction){
         if (direction == "bigger"){
-            $selected_text_size++
-            if ($selected_text_size == 20){
+            $selected_text_size_scrollview++
+            if ($selected_text_size_scrollview == 20){
                 max_size=true
-            }else if ($selected_text_size>7){
+            }else if ($selected_text_size_scrollview>7){
             min_size =false
             }
         } else if (direction == "lower"){
-            $selected_text_size--
-            if ($selected_text_size == 7){
+            $selected_text_size_scrollview--
+            if ($selected_text_size_scrollview == 7){
                 min_size=true
-            } else if ($selected_text_size<20){
+            } else if ($selected_text_size_scrollview<20){
             max_size =false
             }
         }

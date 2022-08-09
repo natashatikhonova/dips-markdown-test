@@ -1,7 +1,7 @@
 <script>
     import FilterByDoctype from './FilterByDoctype.svelte';
     import FilteredByTitles from './FilteredByTitles.svelte';
-    import {showFiltermenu} from "../stores/stores"
+    import {showFiltermenu} from '../../stores/stores';
 
     export let showFilterByTitles = true;
     let groupFilterView = true

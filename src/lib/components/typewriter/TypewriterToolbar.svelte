@@ -1,6 +1,6 @@
 <script>
     import Toolbar from 'typewriter-editor/lib/Toolbar.svelte';
-    import {editor, smallDevice, selected_text_size, autocompleteOn} from '../stores/stores.js';
+    import {editor, smallDevice, selected_text_size, autocompleteOn} from '../../stores/stores.js';
 
     let fileinput;
     let min_size = false;

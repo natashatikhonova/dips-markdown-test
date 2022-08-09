@@ -1,11 +1,11 @@
 <script>
-    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, findNewDocumentObjId, DocumentObject, documentTypes, smallDevice} from "../stores/stores";
+    import { currentDocumentObject, showSideView, currentlyAddingNewNote, currentlyEditingNote, findNewDocumentObjId, DocumentObject, documentTypes, smallDevice} from "../../stores/stores";
     import {marked} from 'marked';
-    import {editor} from '../stores/stores.js';
-    import {documentList} from '../stores/stores.js';
+    import {editor} from '../../stores/stores.js';
+    import {documentList} from '../../stores/stores.js';
     import toMarkdown from 'to-markdown';
     import {createEventDispatcher} from 'svelte';
-    import {ParseMarkdown} from "../utils/markdown/Parsemarkdown"
+    import {ParseMarkdown} from "../../utils/markdown/Parsemarkdown"
     import { h as hFromTypewriter} from 'typewriter-editor';
     import TypewriterToolbar from "./TypewriterToolbar.svelte";
     import TypewriterEditor from "./TypewriterEditor.svelte";

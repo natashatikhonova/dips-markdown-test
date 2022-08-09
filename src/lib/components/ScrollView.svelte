@@ -1,12 +1,12 @@
 <script>
-    import {documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size, smallDevice} from '../stores/stores.js';
+    import {documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size_scrollview, smallDevice} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
-    import Typewriter from './Typewriter.svelte';
+    import Typewriter from './typewriter/Typewriter.svelte';
     import {currentlyAddingNewNote, showSideView, currentlyEditingNote} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import ToolMenu from './ToolMenu.svelte';
-    import FilterMenu from './FilterMenu.svelte';
+    import FilterMenu from './filter/FilterMenu.svelte';
 
     let show = $currentlyAddingNewNote;
     let sortedData = $documentList;
@@ -166,7 +166,7 @@
                             <div class:container={show} class:full-container={!show} >
                                 <!-- Shows all documents as ScrollItem components -->
                                 {#if $searchedDocuments.length > 0}
-                                    <div class = "dokumenter" id="documents" style="line-height:{$selected_line_height}; font-size: {$selected_text_size}pt">
+                                    <div class = "dokumenter" id="documents" style="line-height:{$selected_line_height}; font-size: {$selected_text_size_scrollview}pt">
                                         {#each $searchedDocuments as item}
                                             <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                                         {/each}

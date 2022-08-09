@@ -1,6 +1,6 @@
 <script>
-    import {allfilterOff, documentList, current_doctype_filtergroup, searchedDocuments, searchValue, checked_titles_filters, documentTypes} from '../stores/stores';
-    import {set_filtered_text, load_markdownNodes} from "../utils/markdown/markdownFunctions"
+    import {allfilterOff, documentList, current_doctype_filtergroup, searchedDocuments, searchValue, checked_titles_filters, documentTypes} from '../../stores/stores';
+    import {set_filtered_text, load_markdownNodes} from "../../utils/markdown/markdownFunctions"
 
     let all_checked = true
     let showClicked = false;

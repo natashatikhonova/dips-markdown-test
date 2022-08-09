@@ -1,5 +1,5 @@
 <script>
-    import {doctype_filter_groups, current_doctype_filtergroup } from '../stores/stores';
+    import {doctype_filter_groups, current_doctype_filtergroup } from '../../stores/stores';
     import { getContext, setContext } from 'svelte';
 
     export let original_list_obj =[]
@@ -11,6 +11,7 @@
     let show_list_obj =[]
     let searched_value = ""
 
+    //using modal for a popup form
     const { close } = getContext('simple-modal');
     setContext('modal', this)
 
@@ -41,6 +42,7 @@
         show_list_obj = original_list_obj
     }
 
+    //loops through and unchecks all items
     function uncheck_original_list(){
         for(let i=0; i<original_list_obj.length; i++){
             original_list_obj[i].checked = false
@@ -111,7 +113,6 @@
     }
 </script>
 
-<!-- <button on:click={onClose}>Custom Close Button</button> -->
 <div class = "main">
 
     <h2>{manageName}</h2>
@@ -120,6 +121,7 @@
     <input bind:value ={searched_value} type="text" placeholder="Søk.." name="search">
 
     <div class="filters">
+        <!-- Shows all filters as checkboxes -->
         {#if show_list_obj.length == 0}
             <div class = "no-filters">Ingen dokumenttyper</div>
         {:else}
@@ -137,19 +139,6 @@
 </div>
 
 <style>
-
-    button {
-        margin-top: 10px;
-        align-self: flex-end;
-        max-height: 30px;
-        background-color: #d43838;
-    }
-
-    button:hover{
-        border: solid 0.1em;
-        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
-    }
-
     .main {
         display: flex;
         flex-direction: column;
@@ -163,6 +152,17 @@
         min-height: 100px;
     }
 
+    button {
+        margin-top: 10px;
+        align-self: flex-end;
+        max-height: 30px;
+        background-color: #d43838;
+    }
+
+    button:hover{
+        border: solid 0.1em;
+        box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
+    }
 
     input[type=text] {
 
@@ -189,14 +189,16 @@
         margin-top: 2vh;
     }
 
+    /* dark mode styling */
+
     :global(body.dark-mode) button{
         background: #701c1c;
-    border: 1px solid #cccccc;
-    color:#cccccc;
+        border: 1px solid #cccccc;
+        color:#cccccc;
     }
 
     :global(body.dark-mode) button:hover{
-    box-shadow: 0 0 0 0.25rem rgb(126, 33, 26);
+        box-shadow: 0 0 0 0.25rem rgb(126, 33, 26);
     }
 
     :global(body.dark-mode) input{

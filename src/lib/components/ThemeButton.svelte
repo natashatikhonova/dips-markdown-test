@@ -1,10 +1,10 @@
 <script>
+	//default: darkmode is off
 	let darkmodeOff = true
 	
-	toggle()
-
+	//darkmode on/off
     function toggle(){
-        window.document.body.classList.toggle('dark-mode')
+		window.document.body.classList.toggle('dark-mode')
 		darkmodeOff = !darkmodeOff
     }
 </script>
@@ -25,16 +25,17 @@
 	button:hover{
 		color:#d43838;
 	}
+	
+	i{
+		font-size: xx-large;
+	}
 
+	/* dark mode styling */
 	:global(body.dark-mode) button {
 		color: #cccccc;
 	}
 
 	:global(body.dark-mode) button:hover{
 		color:#d43838;
-	}
-
-	i{
-		font-size: xx-large;
 	}
 </style>

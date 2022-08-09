@@ -1,4 +1,3 @@
-
 import { writable } from "svelte/store";
 import { Editor } from 'typewriter-editor';
 
@@ -45,7 +44,7 @@ export let doctype_filter_groups = writable([
 export let checked_titles_filters = writable([]) 
 
 //      searchfield values:
-//Wich word is searched on
+//Which word is searched on
 export let searchValue = writable("")
 export let amount_searched_words = writable(0)
 
@@ -55,9 +54,13 @@ export let searchedDocuments = writable([])
 //signals to show filtering menu
 export let showFiltermenu = writable(false)
 
-export let selected_line_height = writable("1.5")
+//for storing value about settings in editor
 export let selected_text_size = writable(11)
 export let autocompleteOn = writable(false)
+
+//for storing value about text settings in scrollview
+export let selected_text_size_scrollview = writable(11)
+export let selected_line_height = writable("1.5")
 
 //for storing the markdown text and info
 export class DocumentObject{
@@ -70,11 +73,10 @@ export class DocumentObject{
         this.author = "Dr.Who";
         this.markdownTree = null;
         //Sorting on titles
-        this.temp_filtered_context = "" 
-        
-     
+        this.temp_filtered_context = ""      
     }
 }
+
 //finds an id for the documentObject
 export function findNewDocumentObjId(documentListCpy){
     let ids = []

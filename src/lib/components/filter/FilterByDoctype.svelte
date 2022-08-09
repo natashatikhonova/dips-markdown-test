@@ -1,9 +1,9 @@
 <script>
-    import {current_doctype_filtergroup, doctype_filter_groups, allfilterOff, documentTypes, searchedDocuments, searchValue, documentList, checked_titles_filters} from '../stores/stores';
+    import {current_doctype_filtergroup, doctype_filter_groups, allfilterOff, documentTypes, searchedDocuments, searchValue, documentList, checked_titles_filters} from '../../stores/stores';
     import { writable } from 'svelte/store';
     import Modal, { bind } from 'svelte-simple-modal';
     import FilterForm from './FilterForm.svelte';
-    import {set_filtered_text, load_markdownNodes} from "../utils/markdown/markdownFunctions"
+    import {set_filtered_text, load_markdownNodes} from "../../utils/markdown/markdownFunctions"
 
     let showAllFilters = true;
     let showClicked = false;
@@ -205,13 +205,11 @@
 
         $current_doctype_filtergroup = $current_doctype_filtergroup
     }
-
-
 </script>
-
 
 <h2>Filter dokumenttyper</h2>
 <div class="main">
+    <!-- Popup modal for creating/editing filtergroup -->
     {#if manageGroup}
         <Modal on:closed={() => manageGroup = false } show={$modal}/>
     {:else if showAllFilters}
@@ -239,6 +237,7 @@
         {#if searchedDocumentTypes.length == 0}
             <div class = "no-doctypes">Ingen dokumenttyper</div>
         {:else}
+        <!-- Shows all documenttypes as checkboxes -->
         <div class="filters">
             {#each searchedDocumentTypes as item}    
                 <label class = "filterItem" >
@@ -253,7 +252,6 @@
                 <button class="secundary-button" on:click={()=>openModal($current_doctype_filtergroup)}>Lagre som filreringsgruppe</button>
             {/if}
         </div>
-
         {/if}
 
         {#if checked_titles.length > 0}
@@ -261,6 +259,7 @@
         {/if}
     </div>
     {:else}    
+        <!-- Filter groups -->
         <h3>Filtergrupper:</h3>
         <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
 
@@ -270,6 +269,7 @@
         </div>
 
         <div class="filters">
+            <!-- Show all filtergroups as radio buttons with possibility to edit and delete -->
             {#each searchedFiltergroups as filter}
             
             <div class="group">
@@ -298,6 +298,7 @@
     h2{
         align-self: center;
     }
+
     .main{
         display: flex;
         flex-direction: column;
@@ -307,18 +308,22 @@
         overflow-y: auto;
         margin-bottom: 10px;
     }
+
     .filter-panel{
         display: flex;
         flex-direction: column;
         height: 100%;
     }
+
     .meta{
         display: flex;
         flex-direction: column;
     }
+
     .no-doctypes{
         margin: 10px;
     }
+
     .filters{
         display: flex;
         flex-direction: column;
@@ -333,13 +338,13 @@
     }
 
     .filterItem:hover{
-        color:#d43838;
-        
+        color:#d43838; 
     }
     
     .save-filter-button{
         margin-top: 10px;
     }
+
     .filter-group-label{
         padding: 10px;
         display: flex;
@@ -350,11 +355,11 @@
         align-items: center;
     }
 
-    
     .group{
         display: flex;
         align-items: center;
     }
+
     .group:hover{
         background-color: #e6f2ff;
     }
@@ -363,28 +368,36 @@
         display: flex;
         right: 10%;
     }
+
     .edit-button{
         background: none;
         border: none;
     }
+
     .edit-button:hover{
         color:#d43838;
         cursor: pointer;
     }
+
     .no-title-filters{
         margin-top: 10px;
         color: red;
     }
+
+    /* dark mode styling */
     :global(body.dark-mode) .edit-button{
         color:#cccccc;
     }
+
     :global(body.dark-mode) .edit-button:hover{
         color:#d43838;
     }
+
     :global(body.dark-mode) input{
         border-bottom: 1px solid #cccccc;
         color:#cccccc;  
     }
+
     :global(body.dark-mode) ::placeholder {
         color: #cccccc;   
     }
@@ -393,10 +406,9 @@
         color:#d43838;
         background-color: rgb(55, 55, 55);
     }
+
     :global(body.dark-mode) .group:hover{
         color:#d43838;
         background-color: rgb(55, 55, 55);
     }
-
-
 </style>

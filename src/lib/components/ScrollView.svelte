@@ -1,42 +1,48 @@
 <script>
-    import {documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size, smallDevice} from '../stores/stores.js';
+    import {documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size_scrollview, smallDevice} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
-    import Typewriter from './Typewriter.svelte';
+    import Typewriter from './typewriter/Typewriter.svelte';
     import {currentlyAddingNewNote, showSideView, currentlyEditingNote} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import ToolMenu from './ToolMenu.svelte';
-    import FilterMenu from './FilterMenu.svelte';
+    import FilterMenu from './filter/FilterMenu.svelte';
 
     let show = $currentlyAddingNewNote;
     let sortedData = $documentList;
     let ascendingOrder = true;
     let lengde = $documentList.length;
+    //default sliding panes sizes
     let current_size= "0";
     let maxSize_filter = "0"
     let scrollview_size = "125";
     
+    //toggle filters panel
     $: if($showFiltermenu){
         open()
     } else{
         close()
     }
 
+    //default sort adn hide editor after saving
     function save(){ 
         show = false;
         ascendingOrder= true;
         sortByString("date")
     }
 
+    //hide editor
     function cancel(){
         show = false;
     }
     
+    //show editor and update currentlyAddingNewNote
     function addNote(){
         $currentlyAddingNewNote = true;
         show =true;
     }
     
+    //sort documents by date
     const sortByString = (colHeader) => {
         sortedData = sortedData.sort((obj1, obj2) => {
             if (obj1[colHeader] < obj2[colHeader]) {
@@ -112,6 +118,7 @@
         }
     }
 
+    //update sizes for sliding panes
     function close(){
         //sets pane sizes
         current_size = "0";
@@ -120,8 +127,8 @@
         $showFiltermenu = false;
     }
 
+    //update sizes for sliding panes
     function open(){
-        //sets pane sizes
         if($smallDevice){
             //mobile
             current_size = "100"
@@ -133,15 +140,14 @@
             scrollview_size = "100";
         }
     }
-
-
-
-
 </script>
+
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
+
     <div class="with-toolbar-conteiner">
+        <!-- Toggle Toolmenu (header with searchfield, filter button and textsettings) -->
         {#if ($currentlyAddingNewNote || $currentlyEditingNote) &&show && $smallDevice}
             <ToolMenu hideToolBar={true}/>
         {:else}
@@ -149,15 +155,18 @@
         {/if}
         <div class="scroll-container">
             <Splitpanes theme="modern-theme">
+                <!-- Pane for filter panel -->
                 <Pane minSize="20" size={current_size} maxSize={maxSize_filter}>
                     <FilterMenu on:close={close}/>
                 </Pane>
                 <Pane size={scrollview_size} >
                     <Splitpanes theme="modern-theme" horizontal={true} >
+                        <!-- Pane for scroll view of documents -->
                         <Pane size=100> 
                             <div class:container={show} class:full-container={!show} >
+                                <!-- Shows all documents as ScrollItem components -->
                                 {#if $searchedDocuments.length > 0}
-                                    <div class = "dokumenter" id="documents" style="line-height:{$selected_line_height}; font-size: {$selected_text_size}pt">
+                                    <div class = "dokumenter" id="documents" style="line-height:{$selected_line_height}; font-size: {$selected_text_size_scrollview}pt">
                                         {#each $searchedDocuments as item}
                                             <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                                         {/each}
@@ -165,13 +174,14 @@
                                 {:else}
                                     <div class = "no-result"> Ingen Søkeresultater</div>
                                 {/if}
-                    
+                                <!-- Button to add new document - right bottom corner -->
                                 {#if !show}
                                     <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote|| $currentlyEditingNote} on:click = {addNote}>+</button>
                                 {/if}
                             </div>
                         </Pane>
                         {#if show && ((!$showSideView && !$smallDevice) || $smallDevice)}
+                            <!--  Pane for Typewriter -->
                             <Pane size={$smallDevice ? "100" : "50"}>
                                 <div class="editor">
                                     <Typewriter on:save = {save} on:cancel = {cancel} />
@@ -179,6 +189,7 @@
                             </Pane>
                         {/if}
                     </Splitpanes>
+                    <!-- ONLY mobile button to toggle editor up and down -->
                     {#if $smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote)&&!show}
                         <button class="arrow-up-button" on:click={()=>{show=true}}>Vis <i class="material-icons">keyboard_arrow_up</i></button>
                     {/if}
@@ -187,34 +198,7 @@
         </div>
     </div>
 
-
 <style>
-    .arrow-up-button{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        padding: 1%;
-        background: rgb(255, 255, 255);
-        border:none;
-        font-weight: bold;
-        font-size: medium;
-    }
-
-    :global(body.dark-mode) .arrow-up-button{
-        background: rgb(49, 49, 49);
-        color:#cccccc;
-    }
-    .no-result{
-        display:flex;
-        font-size: xx-large;
-        align-self: center;
-        justify-self: center;
-        position: absolute;
-        top: 40%;
-    }
     .dokumenter {
         margin-top: 4vh;
         line-height: normal;
@@ -229,15 +213,7 @@
         overflow: auto;
         overflow-x: hidden;
     }
-
-    :global(body.dark-mode) .full-container{
-        background-color: rgb(49, 49, 49);
-    }
-
-    :global(body.dark-mode) .container{
-        background-color: rgb(49, 49, 49);
-    }
-
+    
     .full-container{
         flex-grow: 1;
         overflow-y: auto;
@@ -269,10 +245,48 @@
         background-color: white;
     }
 
+    .visible{
+        visibility: hidden;
+    }
+    
+    .no-result{
+        display:flex;
+        font-size: xx-large;
+        align-self: center;
+        justify-self: center;
+        position: absolute;
+        top: 40%;
+    }
+
+    .arrow-up-button{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding: 1%;
+        background: rgb(255, 255, 255);
+        border:none;
+        font-weight: bold;
+        font-size: medium;
+    }
+    
+    /* dark mode styling */
+    :global(body.dark-mode) .full-container{
+        background-color: rgb(49, 49, 49);
+    }
+
+    :global(body.dark-mode) .container{
+        background-color: rgb(49, 49, 49);
+    }
+
     :global(body.dark-mode) .editor{
         background-color: rgb(49, 49, 49);
     }
-    .visible{
-        visibility: hidden;
+    
+    :global(body.dark-mode) .arrow-up-button{
+        background: rgb(49, 49, 49);
+        color:#cccccc;
     }
 </style>

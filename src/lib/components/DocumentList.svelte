@@ -10,18 +10,22 @@
     let selectedHeader = "date";
     let ascendingOrder = false;
     let lengde;
+    // default sizes for sliding panes
     let current_size= "0";
     let documentview_size = "125";
     let maxSize_filter = "0"
     
+    //filter list by documenttypes
     $: filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
 
+    //toggle filterpanel
     $: if($showFiltermenu){
         open()
     } else{
         close()
     }
 
+    //set sizes for sliding panes depending on whether content view is showing
     $: if ($currentDocumentObject && $showFiltermenu && !$smallDevice){
         current_size = "60"
     }
@@ -29,11 +33,12 @@
         current_size="25"
     }
 
+    //update store value
     function addNote(){
         $currentlyAddingNewNote = true;
     }
     
-    //sort strings depending on with header is selected
+    //sort strings depending on which header is selected
     const sortByString = (colHeader) => {
         sortedData = sortedData.sort((obj1, obj2) => {
             if (obj1[colHeader] < obj2[colHeader]) {
@@ -62,6 +67,7 @@
         sortByString("date");
     }
 
+    //update sizes for sliding panes
     function close(){
         current_size = "0";
         documentview_size = "125";
@@ -69,36 +75,37 @@
         maxSize_filter = "0"
     }
 
+    //update sizes for sliding panes
     function open(){
         if($smallDevice){
             current_size = "100"
             maxSize_filter = "100"
             documentview_size="0"
         }else{
-
             current_size = "25";
             maxSize_filter = "50"
             documentview_size = "100";
         }
     }
-
-
 </script>
+
 <div class = "with-toolbar-conteiner">
     <ToolMenu hideToolBar={true} on:set_content_view_size/>
 
     <div class="document-container">
         <Splitpanes theme="modern-theme">
+            <!-- Panel for filters -->
             <Pane minSize={"20"} size={current_size} maxSize={maxSize_filter}>
                 <FilterMenu showFilterByTitles={false}/>
             </Pane>
-     
+            <!-- Main panel with documents -->
             <Pane size={documentview_size}>
                 <div class="table-container" >
                     <table>
                         <thead>
                             <tr>
                                 <!--copied from https://svelte.dev/repl/f04266dcd39c4024b1e89084aa549844?version=3.31.2 -->
+                                <!-- Table headers -->
                                 {#each tableHeaders as header}
                                     <th class:highlighted={selectedHeader === header} on:click={() => sortByString(header)}>
                                         {#if header == "title"}
@@ -108,7 +115,7 @@
                                         {:else if header == "author"}
                                             {"Forfatter"}
                                         {/if}
-                                        
+                                        <!-- Toggle arrows by headers depending on what order is used for sorting -->
                                         {#if header === selectedHeader}	
                                             <span class="order-icon" on:click={() => ascendingOrder = !ascendingOrder}>
                                                 {@html ascendingOrder ? "&#9661;" : "&#9651;"}
@@ -118,9 +125,8 @@
                                 {/each}
                         </tr>
                         </thead>
-    
                         <tbody>
-
+                            <!-- Shows documents as DocumentItem components -->
                             {#each filteredDocumentlist as item}
                                 {#if $currentDocumentObject === item}
                                     <DocumentItem document = {item} chosen = {true} /> <!--add color if file is chosen -->
@@ -128,19 +134,19 @@
                                     <DocumentItem document = {item} chosen = {false} />
                                 {/if}
                             {/each} 
-                        </tbody>
-                        
+                        </tbody>    
                     </table>
                 </div>
             </Pane>
         </Splitpanes>
     </div>
 </div>
+<!-- Button to add new document - right bottom corner -->
 {#if (!$showFiltermenu && $smallDevice) || !$smallDevice}
     <button title="Ny notat"class="add-button" class:mobile = {$smallDevice} class:visible={$currentlyAddingNewNote} on:click = {addNote}>+</button>
 {/if}
-<style>
 
+<style>
     table {
 		width: 100%;
         border-collapse: collapse;
@@ -154,13 +160,9 @@
         height: 100%;
         overflow-x: hidden;
     }
-
-    :global(body.dark-mode) table{
-        background-color: rgb(49, 49, 49);
-    }
-
+    
 	th {
-		text-transform: uppercase;
+        text-transform: uppercase;
         background: rgb(253, 253, 253);
 		cursor: pointer;
         text-align: left;
@@ -168,35 +170,38 @@
         border-bottom:1.5px solid rgb(0, 0, 0);
 	}
 
-    :global(body.dark-mode) th{
-        background-color: rgb(49, 49, 49);
-        border-bottom:1.5px solid #cccccc;
-        
-    }
-
 	.order-icon {
-		color: hsl(15, 100%, 25%);
+        color: hsl(15, 100%, 25%);
 	}
 	
 	.highlighted {
-		color: #cf2417;
+        color: #cf2417;
 	}
-
-    :global(body.dark-mode) .highlighted{
-        color: rgb(148, 17, 17);
-    }
-
+     
     .table-container{
         min-width: none;
         overflow-y: auto;
         height: 100%;
         width: 100%;
     }
-
+    
     .table-container thead th{
         position:sticky;
         top:0;
     }
+    
+    /* dark mode styling */
+    :global(body.dark-mode) table{
+        background-color: rgb(49, 49, 49);
+    }
+    
+    :global(body.dark-mode) th{
+        background-color: rgb(49, 49, 49);
+        border-bottom:1.5px solid #cccccc;    
+    }
 
+    :global(body.dark-mode) .highlighted{
+        color: rgb(148, 17, 17);
+    }
 </style>
 

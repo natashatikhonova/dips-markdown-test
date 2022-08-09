@@ -1,19 +1,16 @@
 :root {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-
-
+}
 
   /* Body */
-
   body {
     background-color: #ffffff;
     color: #000000;
     transition: background-color 0.3s
   }
 
-  /* Darkmode */
+  /* Body - Darkmode */
   body.dark-mode {
     background-color: rgb(49,49,49);
     color: #cccccc;
@@ -29,20 +26,12 @@
     background-color:rgb(236, 236, 236);
   }
 
-  /* Darkmode */
+  /* Main Header - Darkmode */
   body.dark-mode header{
     background-color: rgb(43, 43, 43);
   }
 
-
-  .splitpanes__pane {
-    box-shadow: 0 0 3px rgba(0, 0, 0, .2) inset;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    position: relative;
-  }
-
+  /* Container with toolbar */
   .with-toolbar-conteiner{
     height: 100%;
     width: 100%;
@@ -51,6 +40,7 @@
 
 }
 
+/* Search field */
   .search-input{
     background: none;
     border: none;
@@ -58,14 +48,13 @@
     margin: 2px;
     padding-bottom: 0;
     min-height: 30px;
-}
+  }
 
   .search-input:focus{
     outline:none
 }
 
-
-
+/* Main button */
 .main-button{
   background: #d43838;
   height: 80%;
@@ -86,7 +75,7 @@
   box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
 }
 
-/* Main button darkmode */
+/* Main button - Darkmode */
 
 body.dark-mode .main-button{
   background: #701c1c;
@@ -98,6 +87,7 @@ body.dark-mode .main-button:hover{
   box-shadow: 0 0 0 0.2rem rgb(126, 33, 26);
 }
 
+/* Secondary button */
 .secundary-button {
   align-items: center;
   appearance: none;
@@ -128,26 +118,11 @@ body.dark-mode .main-button:hover{
   width: fit-content;
 }
 
-/* .secundary-button{
-  background: lightgray;
-  display: inline-flex;
-  align-items: center;
-  margin: 5px;
-  width: fit-content;
-  height:20px;
-  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-  color:#000000;
-  padding: 0.9em;
-  font-size: 0.85em;
-  cursor: pointer;
-  border: solid 0.1em rgb(255, 92, 81 ,0);
-  box-shadow: 0 0 0 0.2rem rgb(255, 92, 81, 0);
-} */
-
 .secundary-button:hover {
   background: rgb(226, 226, 226);
 }
-/* Darkmode secondary button */
+
+/* Secondary button - darkmode*/
 body.dark-mode .secundary-button{
   background-color: #cccccc;
 }
@@ -158,7 +133,7 @@ body.dark-mode .secundary-button:hover{
 
 /* Add button */
 .add-button{
-    position: absolute;
+  position: absolute;
     bottom: 4vh;
     font-size:xx-large;
     color:#ffffff;
@@ -173,14 +148,14 @@ body.dark-mode .secundary-button:hover{
 }
 
 .add-button:hover{
-    border: solid 0.1em;
-    box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
+  border: solid 0.1em;
+  box-shadow: 0 0 0 0.2rem rgb(255, 92, 81);
 }
 
 
-/* Add button darkmode */
+/* Add button - Darkmode */
 
- body.dark-mode .add-button{
+body.dark-mode .add-button{
   background: #701c1c;
   border: 1px solid #cccccc;
   color:#cccccc;
@@ -189,49 +164,77 @@ body.dark-mode .secundary-button:hover{
 body.dark-mode .add-button:hover{
   box-shadow: 0 0 0 0.25rem rgb(126, 33, 26);
 }
-  .splitpanes.modern-theme .splitpanes__splitter {
+
+/* Arrow keys */
+.arrow-keys {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  height: 40px;
+  border:none;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  cursor: pointer;
+}
+
+.arrow-keys:hover {
+  color: #d43838;
+}
+
+/* Splitpanes */
+.splitpanes__pane {
+  box-shadow: 0 0 3px rgba(0, 0, 0, .2) inset;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  position: relative;
+}
+
+/* Splitpanes - modern theme */
+.splitpanes.modern-theme .splitpanes__splitter {
     background-color: rgb(10, 10, 10); 
     position: relative;
-  }
+}
 
-  .splitpanes.modern-theme .splitpanes__splitter.dark-mode{
-    background-color: rgb(49,49,49);
-  }
-  .splitpanes.modern-theme .splitpanes__splitter:before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    transition: opacity 1s;
-    background-color: #d43838;
-    opacity: 0;
-    z-index: 1;
-  }
-  .splitpanes.modern-theme .splitpanes__splitter:hover:before {
-    opacity: 1;
-  }
-  
-  .modern-theme.splitpanes--vertical > .splitpanes__splitter:before {
-    left: -2px;
-    right: -2px;
-    height: 100%;
-    cursor: col-resize;
-  }
-  .modern-theme.splitpanes--horizontal > .splitpanes__splitter:before {
-    top: -2px;
-    bottom: -2px;
-    width: 100%;
-    cursor: row-resize;
-  }
+.splitpanes.modern-theme .splitpanes__splitter.dark-mode{
+  background-color: rgb(49,49,49);
+}
 
-  body.dark-mode .s-_bRanQFElcIc .content{
-    background: rgb(49,49,49);
-    border-radius: 7px;
-  }
+.splitpanes.modern-theme .splitpanes__splitter:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: opacity 1s;
+  background-color: #d43838;
+  opacity: 0;
+  z-index: 1;
+}
+.splitpanes.modern-theme .splitpanes__splitter:hover:before {
+  opacity: 1;
+}
 
-  /* Scrollbar */
+.modern-theme.splitpanes--vertical > .splitpanes__splitter:before {
+  left: -2px;
+  right: -2px;
+  height: 100%;
+  cursor: col-resize;
+}
+.modern-theme.splitpanes--horizontal > .splitpanes__splitter:before {
+  top: -2px;
+  bottom: -2px;
+  width: 100%;
+  cursor: row-resize;
+}
 
-      /* width */
+/* Dark mode - border around PopUp modal (FilterForm) */
+body.dark-mode .s-_bRanQFElcIc .content{
+  background: rgb(49,49,49);
+  border-radius: 7px;
+}
+
+/* Scrollbar */
+
+/* width */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -253,17 +256,4 @@ body.dark-mode .add-button:hover{
   background: #7e7e7e; 
 }
 
-.arrow-keys {
-  display: inline-flex;
-  align-items: center;
-  background: none;
-  height: 40px;
-  border:none;
-  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-  cursor: pointer;
-}
-
-.arrow-keys:hover {
-  color: #d43838;
-}
 

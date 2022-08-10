@@ -5,7 +5,7 @@
   import ScrollView from './lib/components/ScrollView.svelte';
   import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, DocumentObject, smallDevice} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
-  import {ParseMarkdown} from './lib/utils/markdown/Parsemarkdown'
+  import {ParseMarkdown} from './lib/utils/markdown/ParseMarkdown.js'
   import ThemeButton from './lib/components/ThemeButton.svelte';
   import Device from 'svelte-device-info'
 

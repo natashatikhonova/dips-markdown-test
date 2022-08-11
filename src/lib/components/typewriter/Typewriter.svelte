@@ -5,7 +5,7 @@
     import {documentList} from '../../stores/stores.js';
     import toMarkdown from 'to-markdown';
     import {createEventDispatcher} from 'svelte';
-    import {ParseMarkdown} from "../../utils/markdown/Parsemarkdown"
+    import {ParseMarkdown} from "../../utils/markdown/ParseMarkdown.js"
     import { h as hFromTypewriter} from 'typewriter-editor';
     import TypewriterToolbar from "./TypewriterToolbar.svelte";
     import TypewriterEditor from "./TypewriterEditor.svelte";

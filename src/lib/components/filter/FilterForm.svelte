@@ -113,7 +113,7 @@
     }
 </script>
 
-<div class = "main">
+<div class="main">
 
     <h2>{manageName}</h2>
     <input bind:value ={group_name} type="text" placeholder="Skriv inn gruppenavn.." name="search">

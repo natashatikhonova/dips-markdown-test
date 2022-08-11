@@ -95,7 +95,7 @@
     <div class="document-container">
         <Splitpanes theme="modern-theme">
             <!-- Panel for filters -->
-            <Pane minSize={"20"} size={current_size} maxSize={maxSize_filter}>
+            <Pane minSize=20 size={current_size} maxSize={maxSize_filter}>
                 <FilterMenu showFilterByTitles={false}/>
             </Pane>
             <!-- Main panel with documents -->
@@ -147,18 +147,19 @@
 {/if}
 
 <style>
-    table {
-		width: 100%;
-        border-collapse: collapse;
-        background-color: white;
-	}
-
+    
     .document-container{
         display: flex;
         flex-direction: column;
         width: 100%;
         height: 100%;
         overflow-x: hidden;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: white;
     }
     
 	th {

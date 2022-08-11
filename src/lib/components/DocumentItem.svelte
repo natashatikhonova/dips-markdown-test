@@ -17,10 +17,6 @@
 </tr>
 
 <style> 
-    tr {
-        height: 5vh;
-    }
-    
     td {
         text-align: left;
 		padding-top: 10px;

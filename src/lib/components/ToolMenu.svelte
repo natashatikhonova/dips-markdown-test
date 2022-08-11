@@ -99,6 +99,9 @@
             <!-- Search field for all documents (content, date, author, title) in scroll view-->
             <div class = "search_field" class:hidden={hideToolBar}>
                 <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} placeholder="Søk.." name="search" class="search-input searchWord-input"/>
+                {#if $searchValue != ""}
+                    <button class="cancel-button" on:click={()=>{$searchValue = ""}}><i class="material-icons">close</i></button>
+                {/if}
                 <div class="searched_words"> 
                     {#if $searchValue != "" && $amount_searched_words != 0}
                     {$amount_searched_words} ord
@@ -248,6 +251,22 @@
         border: solid 2px;
         border-color: #80bdff;
     }
+
+    /* Cancel button - searchfield */
+
+    .cancel-button{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: none;
+        width: 2.2rem;
+        height: 2.2rem;
+        border:none;
+        border-bottom: solid;
+        margin-top: 3px;
+        cursor: pointer;
+        border-bottom: solid;
+    }
     
     /* Text settings button */
     .settings-button {
@@ -316,6 +335,11 @@
     
     :global(body.dark-mode) .settings-button{
         color: #cccccc;
+    }
+
+    :global(body.dark-mode) .cancel-button{
+        color:#cccccc;
+        border-bottom: 1px solid #cccccc;
     }
     
     :global(body.dark-mode) .arrow-keys {

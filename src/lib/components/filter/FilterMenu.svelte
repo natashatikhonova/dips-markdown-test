@@ -20,7 +20,7 @@
         <div class="filter-options">
             <button class:current-filter = {groupFilterView} on:click={()=>{groupFilterView = true}} >Dokumenttyper</button>
             {#if showFilterByTitles}
-            <button class:current-filter = {!groupFilterView} on:click={()=>{groupFilterView = false}} >Overskrifter</button>
+                <button class:current-filter = {!groupFilterView} on:click={()=>{groupFilterView = false}} >Overskrifter</button>
             {/if}
         </div>
         <button class="close" on:click={close}><i class="material-icons" >close</i></button>

@@ -93,10 +93,10 @@
     <div class="side-container"  >
       {#if $currentlyAddingNewNote}
         {#if !$smallDevice}
-        <Splitpanes theme = "modern-theme">
-          <Pane> <ScrollView/> </Pane>
-          <Pane minSize="30"> <ContentView/> </Pane>
-        </Splitpanes>
+          <Splitpanes theme = "modern-theme">
+            <Pane> <ScrollView/> </Pane>
+            <Pane minSize="30"> <ContentView/> </Pane>
+          </Splitpanes>
         {:else}  
             <ScrollView/>
         {/if}
@@ -175,29 +175,4 @@
     color:#d43838;
   }
 
-
-  /* Tilpasser skjermen og innholdet til vinduet */
-  @media (max-width: 430px) {
-    button i {
-      font-size: x-large;
-    }
-    img {
-      height: small;
-    }
-    h3 {
-      font-size: medium;
-    }
-
-  }
-
-  @media (max-height: 1000px) {
-    header {
-      height: 35px;
-    }
-
-    img {
-      height: 22px;
-    }
-
-  }
 </style>

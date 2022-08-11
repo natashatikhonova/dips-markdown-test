@@ -213,13 +213,15 @@
 
 <h2>Overskrifter</h2>
 <div class="main">
-    <div class="meta">
+    <div class="filter-panel-tools">
         {#if !showClicked}
             <h3>Alle overskrifter:</h3>
         {:else}
             <h3>Valgte overskrifter:</h3>
         {/if}
+
         <input class="search-input" bind:value={searched_value} type="text" placeholder="Søk.." name="search">
+
         <div>
             <!-- Toggle between show all or remove all buttons -->
             {#if show_titles_list_obj.length > 0}
@@ -235,9 +237,9 @@
             {:else}
                 <button class="secundary-button" on:click={()=>{showClicked=false}}>Alle overskrifter</button>
             {/if}
-
         </div>
     </div>
+
     <!-- All titles as checkboxes -->
     {#if show_titles_list_obj.length == 0}
         <div class = "no-titles">Ingen overskrifter</div>
@@ -271,7 +273,7 @@
         overflow-y: auto;
     }
 
-    .meta{
+    .filter-panel-tools{
         display: flex;
         flex-direction: column;
     }

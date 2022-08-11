@@ -53,8 +53,8 @@
         <button title = "Vis dokumentliste" class="arrow-keys" on:click={showDocumentlist}><i class="material-icons">keyboard_arrow_right</i></button>
         <div class="doc-title">{$currentDocumentObject.title.toUpperCase()}</div>
         {#if $currentDocumentObject.readable}
-        <button  title="Rediger" class="edit-button" on:click={changeEdit}><i class="material-icons">edit</i></button>
-        <button  title="Slett" class="edit-button" on:click={deleteNote}><i class="material-icons">delete</i></button>
+          <button  title="Rediger" class="edit-button" on:click={changeEdit}><i class="material-icons">edit</i></button>
+          <button  title="Slett" class="edit-button" on:click={deleteNote}><i class="material-icons">delete</i></button>
         {/if}
       </header>
       <!-- showing document text + meta data -->
@@ -89,8 +89,8 @@
   }
   
   .link{
-    padding: 1vh;
-    margin-top: 3vh;
+    padding: 8px;
+    margin-top: 25px;
   }
   
   .doc-title{
@@ -103,7 +103,7 @@
   
   .doc-meta{
     font-style: italic;
-    margin-left:1vh;
+    margin-left:8px;
   }
 
   .edit-button {
@@ -128,7 +128,7 @@
   }
     
   .editor{
-    padding: 1vh;
+    padding: 8px;
   }
   
   /* dark mode styling */

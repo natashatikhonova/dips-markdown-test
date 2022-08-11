@@ -102,12 +102,27 @@
         //sets list depending on what doctypes are chosen
         let filteredDocumentlist = ($documentList.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
         //show documents depending on main search field
-        $searchedDocuments = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
+        $searchedDocuments = filteredDocumentlist.filter(item =>(
+            (item.context.toLowerCase().includes($searchValue.toLowerCase()))  ||
+            (item.author.toLowerCase().includes($searchValue.toLowerCase())) ||
+            (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase())) ||
+            (item.title.toLowerCase().includes($searchValue.toLowerCase()))))
+            
     } else {
         selected_documentObj_titles = set_filtered_text(checked_titles)
         let filteredDocumentlist = (selected_documentObj_titles.filter(item => ($current_doctype_filtergroup.filters.includes(item.title))));
         //show documents depending on main search field
-        $searchedDocuments = filteredDocumentlist.filter(item => (item.context.toLowerCase().includes($searchValue.toLowerCase()))  || (item.author.toLowerCase().includes($searchValue.toLowerCase()))|| (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase()))|| (item.title.toLowerCase().includes($searchValue.toLowerCase())));
+        $searchedDocuments = filteredDocumentlist.filter(item => (
+            (item.context.toLowerCase().includes($searchValue.toLowerCase())) ||
+            (item.author.toLowerCase().includes($searchValue.toLowerCase())) ||
+            (item.date.toDateString().toLowerCase().includes($searchValue.toLowerCase())) ||
+            (item.title.toLowerCase().includes($searchValue.toLowerCase()))))
+    }
+    
+    //changes between displaying all filters and group filters
+    function changeMode(){
+        showAllFilters = !showAllFilters
+        make_obj_list()
     }
 
     //make a list with all doctypes with a correct checked value
@@ -124,11 +139,6 @@
         original_doctypes = obj_list   
     }
 
-    //changes between displaying all filters and group filters
-    function changeMode(){
-        showAllFilters = !showAllFilters
-        make_obj_list()
-    }
 
     //sorts by the first letter
     function relevantSort(list, value){
@@ -213,51 +223,50 @@
     {#if manageGroup}
         <Modal on:closed={() => manageGroup = false } show={$modal}/>
     {:else if showAllFilters}
-    <div class="filter-panel">
-        <div class="meta">
-            {#if !showClicked}
-                <h3>Alle filtere:</h3>
-            {:else}
-                <h3>Valgte filtere:</h3>
-            {/if}
-            <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
-            <div>
-                {#if searchedDocumentTypes.length > 0}
-                    <button class="secundary-button" on:click={clickedAll}>{showAllButtonName}</button>
-                {/if}
-                <button class="secundary-button" on:click={changeMode}>Filtreringsgrupper</button>
+        <div class="filter-panel">
+            <div class="filter-panel-tools">
                 {#if !showClicked}
-                    <button class="secundary-button" on:click={()=>{showClicked=true}}>Vis valgte</button>
+                    <h3>Alle filtere:</h3>
                 {:else}
-                    <button class="secundary-button" on:click={()=>{showClicked=false}}>Alle filtere</button>
+                    <h3>Valgte filtere:</h3>
                 {/if}
+                <input class="search-input" bind:value={filter_searched_value} type="text" placeholder="Søk.." name="search">
+                <div>
+                    {#if searchedDocumentTypes.length > 0}
+                        <button class="secundary-button" on:click={clickedAll}>{showAllButtonName}</button>
+                    {/if}
+                    <button class="secundary-button" on:click={changeMode}>Filtreringsgrupper</button>
+                    {#if !showClicked}
+                        <button class="secundary-button" on:click={()=>{showClicked=true}}>Vis valgte</button>
+                    {:else}
+                        <button class="secundary-button" on:click={()=>{showClicked=false}}>Alle filtere</button>
+                    {/if}
+                </div>
             </div>
-        </div>
+            {#if searchedDocumentTypes.length == 0}
+                <div class = "no-doctypes">Ingen dokumenttyper</div>
+            {:else}
+                <!-- Shows all documenttypes as checkboxes -->
+                <div class="filters">
+                    {#each searchedDocumentTypes as item}    
+                        <label class = "filterItem" >
+                            <input class='test' type="checkbox" on:click={()=>updateCheckedList(item)} bind:checked={item.checked} >
+                            <span class="checkmark"></span>
+                            {item.name}
+                        </label>
+                    {/each}
+                </div>
+                <div class = "save-filter-button">
+                    {#if $current_doctype_filtergroup.filters.length>0}
+                        <button class="secundary-button" on:click={()=>openModal($current_doctype_filtergroup)}>Lagre som filreringsgruppe</button>
+                    {/if}
+                </div>
+            {/if}
 
-        {#if searchedDocumentTypes.length == 0}
-            <div class = "no-doctypes">Ingen dokumenttyper</div>
-        {:else}
-        <!-- Shows all documenttypes as checkboxes -->
-        <div class="filters">
-            {#each searchedDocumentTypes as item}    
-                <label class = "filterItem" >
-                    <input class='test' type="checkbox" on:click={()=>updateCheckedList(item)} bind:checked={item.checked} >
-                    <span class="checkmark"></span>
-                    {item.name}
-                </label>
-            {/each}
-        </div>
-        <div class = "save-filter-button">
-            {#if $current_doctype_filtergroup.filters.length>0}
-                <button class="secundary-button" on:click={()=>openModal($current_doctype_filtergroup)}>Lagre som filreringsgruppe</button>
+            {#if checked_titles.length > 0}
+                <div class = "no-title-filters">*Filtrert på overskrifter*</div>
             {/if}
         </div>
-        {/if}
-
-        {#if checked_titles.length > 0}
-            <div class = "no-title-filters">*Filtrert på overskrifter*</div>
-        {/if}
-    </div>
     {:else}    
         <!-- Filter groups -->
         <h3>Filtergrupper:</h3>
@@ -271,26 +280,25 @@
         <div class="filters">
             <!-- Show all filtergroups as radio buttons with possibility to edit and delete -->
             {#each searchedFiltergroups as filter}
-            
-            <div class="group">
-                <label class="filter-group-label">
-                    <input type="radio"  checked={$current_doctype_filtergroup  == filter} on:change={() => $current_doctype_filtergroup = filter}  />
-                    
-                    <div class="title">
-                        {filter.name} 
-                    </div>
-                </label>
-                <div class="group-buttons">
-                    <button class="edit-button" title ="Rediger" on:click={()=>openModal(filter)} ><i class="material-icons">edit</i></button>
-                    <button class="edit-button" title="Slett" on:click={()=> $doctype_filter_groups = $doctype_filter_groups.filter(item => (item.id != filter.id))}><i class="material-icons">delete</i></button>
-                </div> 
-            </div>
+                <div class="group">
+                    <label class="filter-group-label">
+                        <input type="radio"  checked={$current_doctype_filtergroup  == filter} on:change={() => $current_doctype_filtergroup = filter}  />
+
+                        <div class="title">
+                            {filter.name} 
+                        </div>
+                    </label>
+                    <div class="group-buttons">
+                        <button class="edit-button" title ="Rediger" on:click={()=>openModal(filter)} ><i class="material-icons">edit</i></button>
+                        <button class="edit-button" title="Slett" on:click={()=> $doctype_filter_groups = $doctype_filter_groups.filter(item => (item.id != filter.id))}><i class="material-icons">delete</i></button>
+                    </div> 
+                </div>
             {/each}
         </div>
     {/if}
 
     {#if manageGroup}
-    <Modal on:closed={() => manageGroup = false } show={$modal}/>
+        <Modal on:closed={() => manageGroup = false } show={$modal}/>
     {/if}
 </div>
 
@@ -315,7 +323,7 @@
         height: 100%;
     }
 
-    .meta{
+    .filter-panel-tools{
         display: flex;
         flex-direction: column;
     }
@@ -326,6 +334,7 @@
 
     .filters{
         display: flex;
+        height: 100%;
         flex-direction: column;
         margin-top: 10px;
         min-height: 100px;
@@ -365,8 +374,7 @@
     }
     
     .group-buttons{
-        display: flex;
-        right: 10%;
+        display: inline-flex;
     }
 
     .edit-button{

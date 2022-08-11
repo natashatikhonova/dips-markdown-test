@@ -166,7 +166,7 @@
                             <div class:container={show} class:full-container={!show} >
                                 <!-- Shows all documents as ScrollItem components -->
                                 {#if $searchedDocuments.length > 0}
-                                    <div class = "dokumenter" id="documents" style="line-height:{$selected_line_height}; font-size: {$selected_text_size_scrollview}pt">
+                                    <div class = "document-list" style="line-height:{$selected_line_height}; font-size: {$selected_text_size_scrollview}pt">
                                         {#each $searchedDocuments as item}
                                             <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                                         {/each}
@@ -199,7 +199,7 @@
     </div>
 
 <style>
-    .dokumenter {
+    .document-list {
         margin-top: 4vh;
         line-height: normal;
         font-size:11pt

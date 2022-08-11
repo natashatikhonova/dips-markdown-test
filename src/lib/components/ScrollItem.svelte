@@ -57,6 +57,10 @@
     .item-container:hover{
         background-color: whitesmoke;
     }
+
+    .date, .meta{
+        font-weight: bold; 
+    }
     
     .meta{
         display: flex;
@@ -64,10 +68,6 @@
         justify-content:space-between;
     }
     
-    .date, .meta{
-        font-weight: bold; 
-    }
-
     .link{
         margin-top: 2vh;
     }
@@ -79,7 +79,6 @@
     }
     
     button{
-        right:10vw;
         width:2vw;
         margin-left: 2vw;
         padding: 0;

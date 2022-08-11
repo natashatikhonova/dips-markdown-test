@@ -59,7 +59,7 @@
 </script>
 
 <header class="tool-menu">
-    <div class="leftmenu">
+    <div class="left-menu">
         <button class="main-button" on:click={filtermenu}>Filter</button>
         {#if ($current_doctype_filtergroup.filters.length != documentTypes.length) || ($checked_titles_filters.length > 0)}
           <button class="filteroff-button" on:click={turnOffFilters}>Skru av filter</button>
@@ -124,8 +124,8 @@
         border: none;
         border-bottom: solid;
         margin: 2px;
-        min-height: 30px;
         margin-left: 0;
+        min-height: 30px;
         font-weight: bold;
     }
 
@@ -140,7 +140,7 @@
         margin-right: 0;
     }
 
-    .leftmenu{
+    .left-menu{
         height: 100%;
         display: flex;
         flex-direction: row;

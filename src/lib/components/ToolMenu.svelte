@@ -1,5 +1,5 @@
 <script>
-    import { checked_titles_filters, searchValue, amount_searched_words, current_doctype_filtergroup, showFiltermenu, selected_line_height, selected_text_size_scrollview, allfilterOff, currentDocumentObject, documentTypes, smallDevice, currentlyAddingNewNote, currentlyEditingNote} from '../stores/stores.js';
+    import { checked_titles_filters, searchValue, amount_searched_words, current_doctype_filtergroup, showFiltermenu, selected_line_height, selected_text_size_scrollview, allfilterOff, currentDocumentObject, documentTypes, smallDevice, currentlyAddingNewNote, currentlyEditingNote, showSideView} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
     export let hideToolBar = true;
@@ -56,6 +56,12 @@
     function showContent(){
       dispatch("set_content_view_size", 100)
     }
+
+    //make typewriter take entire screen
+    function showTypewriter(){
+        console.log("clicked")
+        dispatch("set_typewriter_size", 100)
+    }
 </script>
 
 <header class="tool-menu">
@@ -68,6 +74,9 @@
 
     <div class="right-menu">
         {#if !hideToolBar}
+            {#if $showSideView}
+                <button title = "Vis dokumentliste" class="arrow-keys" on:click={showTypewriter}><i class="material-icons">keyboard_arrow_left</i></button>
+            {/if}
             <button class="settings-button" class:active={showTextSettings} on:click={()=>{showTextSettings=!showTextSettings}}><i class="material-icons">settings</i></button>
             {#if showTextSettings}
                 <div class="text-settings">

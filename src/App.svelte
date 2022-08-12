@@ -11,6 +11,8 @@
 
   $smallDevice = (Device.isPhone || Device.isTablet || Device.isMobile)
 
+  let typewriter_size = 50
+
 
   //gets document data from JSON file
   documents.forEach(putInDocumentList);  
@@ -68,9 +70,30 @@
     }
   }
 
+  function set_typewriter_size(event){
+    //Different outcome based on panes current size
+    if(typewriter_size > 70 && event.detail == 0){
+      typewriter_size = 50
+      console.log(1)
+    }
+    else if(typewriter_size < 30 && event.detail == 100){
+      typewriter_size = 50
+      console.log(2)
+    }
+    else{
+      typewriter_size = event.detail
+    }
+  }
+
   function updateContentWiewSize(e){
     if(e.detail[1]){
     contentWiewSize = e.detail[1].size
+    }
+  }
+
+  function updateTypewriterSize(e){
+    if(e.detail[1]){
+    typewriter_size = e.detail[1].size
     }
   }
 
@@ -93,9 +116,9 @@
     <div class="side-container"  >
       {#if $currentlyAddingNewNote}
         {#if !$smallDevice}
-          <Splitpanes theme = "modern-theme">
-            <Pane> <ScrollView/> </Pane>
-            <Pane minSize="30"> <ContentView/> </Pane>
+          <Splitpanes theme = "modern-theme" on:resized="{updateTypewriterSize}">
+            <Pane size={(100-typewriter_size).toString()}> <ScrollView on:set_typewriter_size={set_typewriter_size}/> </Pane>
+            <Pane minSize="35" size={typewriter_size.toString()}> <ContentView on:set_typewriter_view_size={set_typewriter_size}/> </Pane>
           </Splitpanes>
         {:else}  
             <ScrollView/>

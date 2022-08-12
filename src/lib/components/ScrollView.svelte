@@ -1,5 +1,5 @@
 <script>
-    import {documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size_scrollview, smallDevice} from '../stores/stores.js';
+    import {documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size_scrollview, smallDevice, editor} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './typewriter/Typewriter.svelte';
     import {currentlyAddingNewNote, showSideView, currentlyEditingNote} from '../stores/stores.js';
@@ -7,7 +7,10 @@
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import ToolMenu from './ToolMenu.svelte';
     import FilterMenu from './filter/FilterMenu.svelte';
+    import {createEventDispatcher} from 'svelte';
 
+    const dispatch = createEventDispatcher()
+    let editor_size = 50
     let show = $currentlyAddingNewNote;
     let sortedData = $documentList;
     let ascendingOrder = true;
@@ -140,6 +143,27 @@
             scrollview_size = "100";
         }
     }
+
+    function set_editor_size(size){
+        //Different outcome based on panes current size
+        if(editor_size > 70 && size == 0){
+        editor_size = 50
+        console.log(1)
+        }
+        else if(editor_size < 30 && size == 100){
+        editor_size = 50
+        console.log(2)
+        }
+        else{
+        editor_size = size
+        }
+    }
+
+    function updateEditorSize(e){
+    if(e.detail[1]){
+        editor_size = e.detail[1].size
+    }
+  }
 </script>
 
 <head>
@@ -151,7 +175,7 @@
         {#if ($currentlyAddingNewNote || $currentlyEditingNote) &&show && $smallDevice}
             <ToolMenu hideToolBar={true}/>
         {:else}
-            <ToolMenu hideToolBar={false}/>
+            <ToolMenu hideToolBar={false} on:set_typewriter_size={()=>{dispatch("set_typewriter_size", 100)}}/>
         {/if}
         <div class="scroll-container">
             <Splitpanes theme="modern-theme">
@@ -160,9 +184,9 @@
                     <FilterMenu on:close={close}/>
                 </Pane>
                 <Pane size={scrollview_size} >
-                    <Splitpanes theme="modern-theme" horizontal={true} >
+                    <Splitpanes theme="modern-theme" horizontal={true} on:resized="{updateEditorSize}">
                         <!-- Pane for scroll view of documents -->
-                        <Pane size=100> 
+                        <Pane size={(100 - editor_size).toString()}> 
                             <div class:container={show} class:full-container={!show} >
                                 <!-- Shows all documents as ScrollItem components -->
                                 {#if $searchedDocuments.length > 0}
@@ -182,16 +206,21 @@
                         </Pane>
                         {#if show && ((!$showSideView && !$smallDevice) || $smallDevice)}
                             <!--  Pane for Typewriter -->
-                            <Pane size={$smallDevice ? "100" : "50"}>
+                            <Pane size={$smallDevice ? "100" : editor_size.toString()}>
                                 <div class="editor">
-                                    <Typewriter on:save = {save} on:cancel = {cancel} />
+                                    <Typewriter editor_size = {editor_size} on:save = {save} on:cancel = {cancel} on:set_editor_size={(e)=>set_editor_size(e.detail)}/>
                                 </div>
                             </Pane>
+                            {#if editor_size==0}
+                            <div class="hidden-typewriter">
+                                <button class="arrow-up-button" on:click={()=>{set_editor_size(50)}}>Vis <i class="material-icons">keyboard_arrow_up</i></button>
+                            </div>
+                            {/if}
                         {/if}
                     </Splitpanes>
                     <!-- ONLY mobile button to toggle editor up and down -->
                     {#if $smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote)&&!show}
-                        <button class="arrow-up-button" on:click={()=>{show=true}}>Vis <i class="material-icons">keyboard_arrow_up</i></button>
+                        <button class="mobile-arrow-up-button" on:click={()=>{show=true}}>Vis <i class="material-icons">keyboard_arrow_up</i></button>
                     {/if}
                 </Pane>
             </Splitpanes>
@@ -245,6 +274,10 @@
         background-color: white;
     }
 
+    .hidden-typewriter{
+        height:3%;
+    }
+
     .visible{
         visibility: hidden;
     }
@@ -259,6 +292,20 @@
     }
 
     .arrow-up-button{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-self: center;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background: rgb(255, 255, 255);
+        border:none;
+        font-weight: bold;
+        font-size: 300;
+    }
+
+    .mobile-arrow-up-button{
         display: flex;
         justify-content: center;
         align-items: center;
@@ -284,8 +331,13 @@
     :global(body.dark-mode) .editor{
         background-color: rgb(49, 49, 49);
     }
-    
+
     :global(body.dark-mode) .arrow-up-button{
+        background: rgb(49, 49, 49);
+        color:#cccccc;
+    }
+    
+    :global(body.dark-mode) .mobile-arrow-up-button{
         background: rgb(49, 49, 49);
         color:#cccccc;
     }

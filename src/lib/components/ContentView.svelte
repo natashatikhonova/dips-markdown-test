@@ -47,7 +47,7 @@
   {#if $currentDocumentObject || $currentlyAddingNewNote}
     <!-- triggers typewriter when editing/adding document -->
     {#if edit}
-        <Typewriter on:editable={changeEdit} on:set_typewriter_view_size={(e)=> dispatch("set_typewriter_view_size", e)}/>
+        <Typewriter on:editable={changeEdit} on:set_typewriter_view_size={(e)=> dispatch("set_typewriter_view_size", 0)} editor_size={50}/>
     {:else}
       <header class="header-bar">
         <button title = "Vis dokumentliste" class="arrow-keys" on:click={showDocumentlist}><i class="material-icons">keyboard_arrow_right</i></button>

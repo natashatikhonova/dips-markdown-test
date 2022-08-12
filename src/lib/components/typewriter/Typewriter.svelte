@@ -10,9 +10,13 @@
     import TypewriterToolbar from "./TypewriterToolbar.svelte";
     import TypewriterEditor from "./TypewriterEditor.svelte";
 
-    const dispatch = createEventDispatcher();
+    //size for sliding panes
+    export let editor_size 
 
+    const dispatch = createEventDispatcher();
+    //size for sliding panes
     let typewriterEditor;
+
     //document types
     let selectedDocType = "Velg dokumenttype";
     let documentTypesCpy = documentTypes.slice()
@@ -113,6 +117,15 @@
         } 
       }
     }
+
+    //manage sliding panes
+    function showDocuments(){
+      dispatch("set_typewriter_view_size", 0)
+    }
+
+    function manageScrollView(size){
+      dispatch("set_editor_size", size)
+    }
 </script>
 
 <head>
@@ -122,9 +135,18 @@
 <!-- source: https://github.com/typewriter-editor/typewriter -->
   <header class="tool-menu">
     <!-- ONLY on mobile -> pushes editor down -->
-    <div>
-      {#if $smallDevice  &&(!$showSideView || $currentlyAddingNewNote)}
-        <button class="arrow-down-button" on:click={mobileDown}> <i class="material-icons">keyboard_arrow_down</i></button>
+    {#if $smallDevice  &&(!$showSideView || $currentlyAddingNewNote)}
+      <div>
+          <button class="arrow-down-button" on:click={mobileDown}> <i class="material-icons">keyboard_arrow_down</i></button>
+      </div>
+    {/if}
+
+    <div >
+      {#if !$smallDevice && $showSideView}
+        <button title = "Vis dokumentliste" class="arrow-keys" on:click={showDocuments}><i class="material-icons">keyboard_arrow_right</i></button>
+      {:else if !$smallDevice && !$showSideView}
+        <button title = "Vis dokumenter" class="arrow-keys" on:click={()=>{manageScrollView(0)}}><i class="material-icons">keyboard_arrow_down</i></button>
+        <button disabled={editor_size==100} title = "Vis teksteditor" class="arrow-keys" on:click={()=>{manageScrollView(100)}}><i class="material-icons">keyboard_arrow_up</i></button>
       {/if}
     </div>
 
@@ -176,9 +198,8 @@
     height: 100%;
     max-height: 40px;
     min-height: 40px;
-    align-items: center;
-    display: flex;
-    justify-content:space-between;
+    display: inline-flex;
+    justify-content: space-between;
     background-color: whitesmoke;
   }
 

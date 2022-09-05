@@ -126,6 +126,18 @@
         } else if(!item.checked){
             // add
             $checked_titles_filters.push(item)
+            console.log(item)
+            for (let i = 0; i < item.nodes.length; i++){
+                let all_children = item.nodes[i].object.markdownTree.get_subtree(item.nodes[i])
+                for (let j = 0; j< all_children.length; j++){
+                    for (let k = 0; k < original_titles_list_obj.length; k++){
+                        if (original_titles_list_obj[k].title == all_children[j].title && original_titles_list_obj[k].nodes.length==1){
+                            console.log("tester overskrifter")
+                            console.log(original_titles_list_obj[k])
+                        }
+                    }
+                }
+            }
             // $checked_titles_filters.push({title: item.title, nodes: item.nodes.slice(), checked: true})
         }
         item.checked = !item.checked

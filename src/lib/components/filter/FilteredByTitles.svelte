@@ -10,6 +10,7 @@
     let filteredDocumentlist = []
     let checked_not_shown = []
     let checked_under_doctype = []
+    let deactivated_titles = []
     let prev_length = -1
     let selected_documentObj_titles = set_filtered_text(original_titles_list_obj.filter(item => (item.checked)))
 
@@ -127,21 +128,47 @@
             // add
             $checked_titles_filters.push(item)
             console.log(item)
-            for (let i = 0; i < item.nodes.length; i++){
-                let all_children = item.nodes[i].object.markdownTree.get_subtree(item.nodes[i])
-                for (let j = 0; j< all_children.length; j++){
-                    for (let k = 0; k < original_titles_list_obj.length; k++){
-                        if (original_titles_list_obj[k].title == all_children[j].title && original_titles_list_obj[k].nodes.length==1){
-                            console.log("tester overskrifter")
-                            console.log(original_titles_list_obj[k])
-                        }
-                    }
-                }
-            }
             // $checked_titles_filters.push({title: item.title, nodes: item.nodes.slice(), checked: true})
         }
         item.checked = !item.checked
         $checked_titles_filters = $checked_titles_filters
+
+        let list = []
+        for (let i = 0; i <$checked_titles_filters.length; i++){
+            for (let l = 0; l<$checked_titles_filters[i].nodes.length; l++){
+                let all_children = $checked_titles_filters[i].nodes[l].object.markdownTree.get_subtree($checked_titles_filters[i].nodes[l])
+                for (let j = 0; j< all_children.length; j++){
+                    for (let k = 0; k < original_titles_list_obj.length; k++){
+                        if (original_titles_list_obj[k].title == all_children[j].title ){
+                            list.push(original_titles_list_obj[k])
+                        }
+                    }
+                }
+            }
+        }
+
+
+        console.log("list")
+        console.log(list)
+
+        deactivated_titles = []
+
+        for (let i = 0; i<original_titles_list_obj.length; i++){
+            let counter = 0
+            for (let j = 0; j<list.length; j++){
+                if (list[j].title == original_titles_list_obj[i].title){
+                    counter++
+                }
+            }
+            if (counter == original_titles_list_obj[i].nodes.length){
+                console.log("deaktiver "+original_titles_list_obj[i].title)
+                deactivated_titles.push(original_titles_list_obj[i])
+                original_titles_list_obj[i].checked = true
+                $checked_titles_filters.push(original_titles_list_obj[i])
+            }
+        }
+        $checked_titles_filters = $checked_titles_filters
+
     }
  
     //unchecks all items
@@ -258,8 +285,8 @@
     {:else}
         <div class="filters">
             {#each show_titles_list_obj as elementObj}
-                <label class = "filterItem">
-                    <input type="checkbox" bind:checked={elementObj.checked} on:click={()=>updateCheckedList(elementObj)}>
+                <label class:filterItem={!deactivated_titles.includes(elementObj)} class:deactivated = {deactivated_titles.includes(elementObj)}>
+                    <input type="checkbox" class:deactivated-checkbox = {deactivated_titles.includes(elementObj)} bind:checked={elementObj.checked}  on:click={()=>updateCheckedList(elementObj)}>
                     {elementObj.title}    
                 </label>   
             {/each} 
@@ -292,6 +319,16 @@
     
     .no-titles{
         margin: 10px;
+    }
+
+    .deactivated{
+        padding: 5px;
+        color: rgb(145, 145, 145);
+    }
+
+    .deactivated-checkbox{
+        accent-color: rgb(145, 145, 145);
+        color: white;
     }
 
     .filters{

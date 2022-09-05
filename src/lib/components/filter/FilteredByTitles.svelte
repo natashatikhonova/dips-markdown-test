@@ -1,5 +1,6 @@
 <script>
-    import {allfilterOff, documentList, current_doctype_filtergroup, searchedDocuments, searchValue, checked_titles_filters, documentTypes} from '../../stores/stores';
+import { includes } from 'to-markdown/lib/md-converters';
+import {allfilterOff, documentList, current_doctype_filtergroup, searchedDocuments, searchValue, checked_titles_filters, documentTypes} from '../../stores/stores';
     import {set_filtered_text, load_markdownNodes} from "../../utils/markdown/markdownFunctions"
 
     let all_checked = true
@@ -10,7 +11,8 @@
     let filteredDocumentlist = []
     let checked_not_shown = []
     let checked_under_doctype = []
-    let deactivated_titles = []
+    let deactivated_titles = new Map()
+    let all_deactivated = []
     let prev_length = -1
     let selected_documentObj_titles = set_filtered_text(original_titles_list_obj.filter(item => (item.checked)))
 
@@ -117,7 +119,6 @@
             for(let i = 0; i < $checked_titles_filters.length; i++){
                 if ($checked_titles_filters[i].title == item.title){
                     for (let j = 0; j < $checked_titles_filters[i].nodes.length; j++){
-                        console.log("Setter tem_filtered_context til tom streng i " + $checked_titles_filters[i].nodes[j].title)
                         $checked_titles_filters[i].nodes[j].object.temp_filtered_context = ""
                     }
                     $checked_titles_filters.splice(i, 1)
@@ -127,19 +128,26 @@
         } else if(!item.checked){
             // add
             $checked_titles_filters.push(item)
-            console.log(item)
             // $checked_titles_filters.push({title: item.title, nodes: item.nodes.slice(), checked: true})
         }
         item.checked = !item.checked
         $checked_titles_filters = $checked_titles_filters
 
+        let dict = new Map()
         let list = []
+        //loops through checked titles and sets up a Map with parents
         for (let i = 0; i <$checked_titles_filters.length; i++){
             for (let l = 0; l<$checked_titles_filters[i].nodes.length; l++){
+                if (dict.get($checked_titles_filters[i]) == null){
+                    dict.set($checked_titles_filters[i], [])
+                }
+                //all children of a parent that is being looped through
                 let all_children = $checked_titles_filters[i].nodes[l].object.markdownTree.get_subtree($checked_titles_filters[i].nodes[l])
+                //placing children in the Map based on a parent
                 for (let j = 0; j< all_children.length; j++){
                     for (let k = 0; k < original_titles_list_obj.length; k++){
                         if (original_titles_list_obj[k].title == all_children[j].title ){
+                            dict.set($checked_titles_filters[i], [...dict.get($checked_titles_filters[i]), original_titles_list_obj[k]])
                             list.push(original_titles_list_obj[k])
                         }
                     }
@@ -147,28 +155,36 @@
             }
         }
 
-
-        console.log("list")
-        console.log(list)
-
-        deactivated_titles = []
-
+        //reset the map and array with deactivated titles
+        deactivated_titles = new Map()
+        all_deactivated = []
         for (let i = 0; i<original_titles_list_obj.length; i++){
             let counter = 0
+            //counts ocurrencies of a title 
             for (let j = 0; j<list.length; j++){
                 if (list[j].title == original_titles_list_obj[i].title){
                     counter++
                 }
             }
+            //compares amount of ocurrencies to the total amount
             if (counter == original_titles_list_obj[i].nodes.length){
-                console.log("deaktiver "+original_titles_list_obj[i].title)
-                deactivated_titles.push(original_titles_list_obj[i])
+                dict.forEach(function(value, key){
+                    //pushes to the map
+                    if (value.includes(original_titles_list_obj[i])){
+                        if (deactivated_titles.get(key) == null){
+                            deactivated_titles.set(key, [original_titles_list_obj[i]])
+                        } else{
+                            deactivated_titles.set(key, [...deactivated_titles.get(key), original_titles_list_obj[i]])
+                        }
+                    }
+                })
+                //updates the lists
+                all_deactivated.push(original_titles_list_obj[i])
                 original_titles_list_obj[i].checked = true
                 $checked_titles_filters.push(original_titles_list_obj[i])
             }
         }
         $checked_titles_filters = $checked_titles_filters
-
     }
  
     //unchecks all items
@@ -285,10 +301,32 @@
     {:else}
         <div class="filters">
             {#each show_titles_list_obj as elementObj}
-                <label class:filterItem={!deactivated_titles.includes(elementObj)} class:deactivated = {deactivated_titles.includes(elementObj)}>
-                    <input type="checkbox" class:deactivated-checkbox = {deactivated_titles.includes(elementObj)} bind:checked={elementObj.checked}  on:click={()=>updateCheckedList(elementObj)}>
-                    {elementObj.title}    
-                </label>   
+                    {#if deactivated_titles.get(elementObj) != null} 
+                    <!-- Title has children that are deactivated -->
+                        <details>
+                            <summary class="main-filterItem">
+                                <label class="filterItem">
+                                    <input type="checkbox" class:deactivated-checkbox = {false} bind:checked={elementObj.checked}  on:click={()=>updateCheckedList(elementObj)}>
+                                    {elementObj.title}    
+                                </label> 
+                            </summary>
+                            <div class="deactivated-filters">
+                                {#each deactivated_titles.get(elementObj) as deactivated}
+                                    <label class = "deactivated">
+                                        <input type="checkbox" class = "deactivated-checkbox" bind:checked={elementObj.checked}  on:click={()=>updateCheckedList(elementObj)}>
+                                        {deactivated.title}    
+                                    </label> 
+                                {/each}
+                            </div>
+                        </details>
+                    {:else if (searched_value.length == 0 && !all_deactivated.includes(elementObj))|| searched_value}
+                    <!-- While searching/default -->
+                        <label class:filterItem={!all_deactivated.includes(elementObj)} class:deactivated = {all_deactivated.includes(elementObj)}>
+                            <input type="checkbox" class:deactivated-checkbox = {all_deactivated.includes(elementObj)} bind:checked={elementObj.checked}  on:click={()=>updateCheckedList(elementObj)}>
+                            {elementObj.title}    
+                        </label>   
+                    {/if}
+
             {/each} 
         </div>            
     {/if}
@@ -307,8 +345,8 @@
         display: flex;
         flex-direction: column;
         height: 100%;
-        padding-left: 2vw;
-        padding-right: 2vw;
+        padding-left: 1vw;
+        padding-right: 1vw;
         overflow-y: auto;
     }
 
@@ -319,6 +357,12 @@
     
     .no-titles{
         margin: 10px;
+    }
+
+    .deactivated-filters{
+        display:flex;
+        flex-direction: column;
+        padding-left: 15px;
     }
 
     .deactivated{
@@ -335,12 +379,17 @@
         display: flex;
         flex-direction: column;
         margin-top: 10px;
+        padding-left: 18px;
         min-height: 100px;
         overflow-y: auto;
     }
 
     .filterItem{
         padding: 5px;
+    }
+
+    summary{
+        margin-left:-13px;
     }
 
     .filterItem:hover{

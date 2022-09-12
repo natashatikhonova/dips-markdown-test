@@ -200,7 +200,9 @@
                                 {/if}
                                 <!-- Button to add new document - right bottom corner -->
                                 {#if !show}
+
                                     <button title="Ny notat"class="add-button" class:visible={$currentlyAddingNewNote|| $currentlyEditingNote} on:click = {addNote}>+</button>
+
                                 {/if}
                             </div>
                         </Pane>
@@ -228,10 +230,12 @@
     </div>
 
 <style>
+
     .document-list {
         margin-top: 4vh;
         line-height: normal;
-        font-size:11pt
+        font-size:11pt;
+        margin-bottom: 6vh;
     }
 
     .scroll-container{
@@ -239,8 +243,9 @@
         flex-direction: column;
         width: 100%;
         height: 100%;
-        overflow: auto;
-        overflow-x: hidden;
+        overflow-y:auto;
+        
+     
     }
     
     .full-container{
@@ -251,6 +256,8 @@
         background-color: white;
         width: 100%;
         height: 100%;
+        
+        
     }
 
     .container{
@@ -261,6 +268,7 @@
         width: 100%;
         height: 100%;
         min-width: 17%;
+        
     }
 
     .editor{

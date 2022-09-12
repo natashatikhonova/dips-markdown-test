@@ -62,6 +62,9 @@ export let autocompleteOn = writable(false)
 export let selected_text_size_scrollview = writable(11)
 export let selected_line_height = writable("1.5")
 
+//list with open documents - tabs
+export let openedDocTabs = writable([])
+
 //for storing the markdown text and info
 export class DocumentObject{
     constructor(id, date, context, title, readable){

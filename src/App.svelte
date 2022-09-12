@@ -3,15 +3,18 @@
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, DocumentObject, smallDevice} from './lib/stores/stores.js';
+  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, DocumentObject, smallDevice, openedDocTabs} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {ParseMarkdown} from './lib/utils/markdown/ParseMarkdown.js'
   import ThemeButton from './lib/components/ThemeButton.svelte';
   import Device from 'svelte-device-info'
+import ScrollyTellingView from './lib/components/ScrollyTellingView.svelte';
+import DocumentsTabs from './lib/components/DocumentsTabs.svelte';
 
   $smallDevice = (Device.isPhone || Device.isTablet || Device.isMobile)
 
   let typewriter_size = 50
+  let scrollyTelling = false
 
 
   //gets document data from JSON file
@@ -106,37 +109,51 @@
   <div>
     <button class="switch-view-button" disabled={$showSideView} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
     <button class="switch-view-button" disabled={!$showSideView} title="Kontinuerlig visning" on:click={changeView}><i class="material-icons">horizontal_split</i></button>
+    <button class="switch-view-button"  title="Scrollytelling visning" on:click={()=>{scrollyTelling =!scrollyTelling}}><i class="material-icons">vertical_split</i></button>
     <ThemeButton/>
   </div>
 </header>
 
 
 <div class="main">
-  {#if $showSideView}
-    <div class="side-container"  >
-      {#if $currentlyAddingNewNote}
-        {#if !$smallDevice}
-          <Splitpanes theme = "modern-theme" on:resized="{updateTypewriterSize}">
-            <Pane size={(100-typewriter_size).toString()}> <ScrollView on:set_typewriter_size={set_typewriter_size}/> </Pane>
-            <Pane minSize="35" size={typewriter_size.toString()}> <ContentView on:set_typewriter_view_size={set_typewriter_size}/> </Pane>
-          </Splitpanes>
-        {:else}  
-            <ScrollView/>
-        {/if}
-
-      {:else}
-        <Splitpanes theme = "modern-theme" style="overflow:hidden;" on:resized="{updateContentWiewSize}">
-          <Pane size={(100-contentWiewSize).toString()} >
-              <DocumentList on:set_content_view_size={set_content_view_size}/>
-          </Pane>
-        {#if $currentDocumentObject}
-          <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size}/></Pane>
-        {/if}
-        </Splitpanes>
-      {/if}
-    </div>
+  {#if scrollyTelling}
+    <ScrollyTellingView/>
   {:else}
-    <ScrollView/>
+    {#if $showSideView}
+      <div class="side-container"  >
+        {#if $currentlyAddingNewNote}
+          {#if !$smallDevice}
+            <Splitpanes theme = "modern-theme" on:resized="{updateTypewriterSize}">
+              <Pane size={(100-typewriter_size).toString()}> <ScrollView on:set_typewriter_size={set_typewriter_size}/> </Pane>
+              <Pane minSize="35" size={typewriter_size.toString()}> <ContentView on:set_typewriter_view_size={set_typewriter_size}/> </Pane>
+            </Splitpanes>
+          {:else}  
+              <ScrollView/>
+          {/if}
+
+        {:else}
+          <Splitpanes theme = "modern-theme" style="overflow:hidden;" on:resized="{updateContentWiewSize}">
+            <Pane size={(100-contentWiewSize).toString()} >
+                <DocumentList on:set_content_view_size={set_content_view_size}/>
+            </Pane>
+          {#if $currentDocumentObject}
+            <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size}/></Pane>
+          {/if}
+          </Splitpanes>
+        {/if}
+      </div>
+    {:else}
+    <Splitpanes theme = "modern-theme">
+      <Pane size={$openedDocTabs.length== 0? "100": "50"}>
+        <ScrollView/>
+      </Pane>
+      <Pane size={$openedDocTabs.length== 0? "0": "50"}>
+        {#if $openedDocTabs.length>0}
+          <DocumentsTabs/>
+        {/if}
+      </Pane>
+    </Splitpanes>
+    {/if}
   {/if}
 </div>
 
@@ -144,7 +161,9 @@
 
    .main {
     height: 100%;
-    overflow: auto;
+    overflow-y: none;
+    overflow-x: hidden;
+
   }
 
   .side-container{

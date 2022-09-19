@@ -1,6 +1,7 @@
 <script>
-    import { checked_titles_filters, searchValue, amount_searched_words, current_doctype_filtergroup, showFiltermenu, selected_line_height, selected_text_size_scrollview, allfilterOff, currentDocumentObject, documentTypes, smallDevice, currentlyAddingNewNote, currentlyEditingNote, showSideView} from '../stores/stores.js';
+    import { currentView, checked_titles_filters, searchValue, amount_searched_words, current_doctype_filtergroup, showFiltermenu, selected_line_height, selected_text_size_scrollview, allfilterOff, currentDocumentObject, documentTypes, smallDevice, currentlyAddingNewNote, currentlyEditingNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
+    import ThemeButton from './ThemeButton.svelte';
 
     export let hideToolBar = true;
 
@@ -8,9 +9,21 @@
     let showLineHeights =false;
     let min_size = false;
     let max_size = false;
+    let allViews = ["Dokumentliste", "Kontinuerlig visning", "Scrollytelling"]
+    let selected_view = $currentView
 
     const line_heights = ["1.0", "1.15", "1.5", "2.0", "2.5", "3.0"]
     const dispatch = createEventDispatcher()
+
+      //swichting between sideview and scrollview (*the two buttons in upper right corner)
+    $: if (selected_view != $currentView) {
+        if($currentlyAddingNewNote || $currentlyEditingNote){
+            alert("Vennligst lagre eller avbryt!");
+            selected_view = $currentView;
+        } else{
+            $currentView = selected_view;
+        }
+    }
 
     //remove line height window when clicked outside of it
     window.addEventListener("click", function(event) {
@@ -72,11 +85,31 @@
         {/if}	
     </div>
 
+    <div class="middle-menu">
+        <div class="settings">
+            <select class="dropdown-menu" bind:value={selected_view} >
+              {#each allViews as value}<option {value} class = "dropdown-option">{value}</option>{/each}
+            </select>
+          
+        </div>
+    </div>
+
     <div class="right-menu">
-        {#if !hideToolBar}
-            {#if $showSideView}
-                <button title = "Vis dokumentliste" class="arrow-keys" on:click={showTypewriter}><i class="material-icons">keyboard_arrow_left</i></button>
-            {/if}
+        
+        {#if $currentView}
+            <!-- Search field for all documents (content, date, author, title) in scroll view-->
+            <div class = "search_field" class:hidden={hideToolBar}>
+                <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} placeholder="Søk.." name="search" class="search-input searchWord-input"/>
+                {#if $searchValue != ""}
+                    <button class="cancel-button" on:click={()=>{$searchValue = ""}}><i class="material-icons">close</i></button>
+                {/if}
+                <div class="searched_words"> 
+                    {#if $searchValue != "" && $amount_searched_words != 0}
+                        {$amount_searched_words} ord
+                    {/if}
+                </div>
+            </div>
+
             <button class="settings-button" title= "Instillinger" class:active={showTextSettings} on:click={()=>{showTextSettings=!showTextSettings}}><i class="material-icons">settings</i></button>
             {#if showTextSettings}
                 <div class="text-settings">
@@ -105,21 +138,18 @@
                     </div>
                 </div>
             {/if}
-            <!-- Search field for all documents (content, date, author, title) in scroll view-->
-            <div class = "search_field" class:hidden={hideToolBar}>
-                <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} placeholder="Søk.." name="search" class="search-input searchWord-input"/>
-                {#if $searchValue != ""}
-                    <button class="cancel-button" on:click={()=>{$searchValue = ""}}><i class="material-icons">close</i></button>
-                {/if}
-                <div class="searched_words"> 
-                    {#if $searchValue != "" && $amount_searched_words != 0}
-                    {$amount_searched_words} ord
-                    {/if}
-                </div>
-            </div>
-        {:else if $currentDocumentObject && !($smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote))}
-            <button title = "tilbake" class="arrow-keys" on:click={showContent}><i class="material-icons">keyboard_arrow_left</i></button>
+        
         {/if}
+        <ThemeButton/>
+        {#if $currentView != "Kontinuerlig visning"}
+            {#if !hideToolBar && ($currentView == "Dokumentliste")}
+                <button title = "Vis dokumentliste" class="arrow-keys" on:click={showTypewriter}><i class="material-icons">keyboard_arrow_left</i></button>
+            {:else if $currentDocumentObject && !($smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote))}
+                <button title = "tilbake" class="arrow-keys" on:click={showContent}><i class="material-icons">keyboard_arrow_left</i></button>
+            {/if}
+        {/if}
+
+        
     </div>
 </header>
 
@@ -158,7 +188,7 @@
     .right-menu{
         display: flex;
         height: 100%;
-        flex-direction: row-reverse;
+        flex-direction: row;
         align-items: center;
     }
 
@@ -297,11 +327,40 @@
     .settings-button.active{
         color:#d43838;
     }
+    .dropdown-menu {
+        background-color:whitesmoke;
+        height: 25px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+  }
+
+  .dropdown-menu:hover {
+    outline: none;
+    border: none;
+    border-bottom: solid;
+    border-color: #d43838;
+    
+  }
+
+
+  /* Darkmode */
+  :global(body.dark-mode) .dropdown-menu{
+    background-color: rgb(43, 43, 43);
+    color: #cccccc;
+  }
+
+  :global(body.dark-mode) .dropdown-menu:hover{
+    border: none;
+    border-bottom: solid 1px;
+    border-color: #cccccc;
+  }
+
     
     /* dark mode styling */
     :global(body.dark-mode) .tool-menu{
         background-color: rgb(43, 43, 43);
-      
         color: white;
     }
 

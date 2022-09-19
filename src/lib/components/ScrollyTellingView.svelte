@@ -4,8 +4,10 @@
     import ScrollItem from "./ScrollItem.svelte";
     import ContentView from "./ContentView.svelte";
     import { marked } from 'marked';
+    import ToolMenu from './ToolMenu.svelte'
     
 	let value = 0
+    
     $:{
         $currentDocumentObject = $documentList[value]
         $currentDocumentObject = $currentDocumentObject
@@ -16,6 +18,8 @@
 
     <div class="main">
         <div class="scrolly-telling">
+            <ToolMenu hideToolBar = {false}/>
+
             <Scrolly bind:value>
                 {#each $documentList as item, i}
                 <div class="step" class:active={value === i}>
@@ -23,6 +27,7 @@
                     </div>
                 {/each}
             </Scrolly>
+
         </div>
         <div class="content-view">
             <ContentView/>

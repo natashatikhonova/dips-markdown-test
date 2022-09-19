@@ -3,7 +3,7 @@
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import { documentList, currentView, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, DocumentObject, smallDevice, openedDocTabs} from './lib/stores/stores.js';
+  import { documentList, currentView, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, DocumentObject, smallDevice, openedDocTabs} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {ParseMarkdown} from './lib/utils/markdown/ParseMarkdown.js'
   import ThemeButton from './lib/components/ThemeButton.svelte';
@@ -32,26 +32,18 @@
     $documentList = $documentList;
   }
 
-  //takes us to the homescreen/startscreen
-  function set_default(){
-    if($currentlyAddingNewNote){
-      alert("Vennligst lagre eller avbryt!");
+  // //takes us to the homescreen/startscreen
+  // function set_default(){
+  //   if($currentlyAddingNewNote){
+  //     alert("Vennligst lagre eller avbryt!");
       
-    } else {
-      $currentDocumentObject = null
-      $showSideView = true;
-    }
-  }
+  //   } else {
+  //     $currentDocumentObject = null
+  //     $showSideView = true;
+  //   }
+  // }
 
-  //swichting between sideview and scrollview (*the two buttons in upper right corner)
- $: if (selected_view != $currentView) {
-    if($currentlyAddingNewNote || $currentlyEditingNote){
-      alert("Vennligst lagre eller avbryt!");
-      selected_view = $currentView;
-    } else{
-      $currentView = selected_view;
-    }
-  }
+
 
 
   //tilpasser til mobilversjon
@@ -104,7 +96,7 @@
 
 </script>
 
-<header>
+<!-- <header>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <img on:click={set_default} src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test"/>
   <h3>PASIENTJOURNAL</h3>
@@ -115,7 +107,7 @@
       </select>
     <ThemeButton/>
   </div>
-</header>
+</header> -->
 
 
 <div class="main">
@@ -181,38 +173,6 @@
     justify-content: space-between;
   }
 
-  /* Dips Logo */
-  img{
-    max-height: 60%;
-    min-height: 60%;
-  }
-
-  .dropdown-menu {
-    background-color:rgb(236, 236, 236);
-    height: 25px;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  .dropdown-menu:hover {
-    outline: none;
-    border-color: #4693e6;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-  }
-
-
-  /* Darkmode */
-  :global(body.dark-mode) .dropdown-menu{
-    background-color: rgb(43, 43, 43);
-    color: #cccccc;
-  }
-
-  :global(body.dark-mode) .dropdown-menu:hover{
-    border-color: #cccccc;
-    box-shadow: 0 0 0 0.2rem rgba(252, 252, 252, 0.5);
-  }
-
+  
 
 </style>

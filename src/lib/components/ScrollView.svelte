@@ -1,8 +1,8 @@
 <script>
-    import {documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size_scrollview, smallDevice, editor} from '../stores/stores.js';
+    import {currentView, documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size_scrollview, smallDevice, editor} from '../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
     import Typewriter from './typewriter/Typewriter.svelte';
-    import {currentlyAddingNewNote, showSideView, currentlyEditingNote} from '../stores/stores.js';
+    import {currentlyAddingNewNote, currentlyEditingNote} from '../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import ToolMenu from './ToolMenu.svelte';
@@ -172,7 +172,7 @@
 
     <div class="with-toolbar-conteiner">
         <!-- Toggle Toolmenu (header with searchfield, filter button and textsettings) -->
-        {#if ($currentlyAddingNewNote || $currentlyEditingNote) &&show && $smallDevice}
+        {#if ($currentlyAddingNewNote || $currentlyEditingNote) && show && $smallDevice}
             <ToolMenu hideToolBar={true}/>
         {:else}
             <ToolMenu hideToolBar={false} on:set_typewriter_size={()=>{dispatch("set_typewriter_size", 100)}}/>
@@ -191,6 +191,7 @@
                                 <!-- Shows all documents as ScrollItem components -->
                                 {#if $searchedDocuments.length > 0}
                                     <div class = "document-list" style="line-height:{$selected_line_height}; font-size: {$selected_text_size_scrollview}pt">
+                                        
                                         {#each $searchedDocuments as item}
                                             <ScrollItem htmlText = {(item.temp_filtered_context == "") ? highlightWord(marked(item.context)) : highlightWord(marked(item.temp_filtered_context))} date = {highlightWord(item.date.toDateString())} title = {highlightWord(item.title)} author = {highlightWord(item.author)} on:editItem = {()=>show=!show} document = {item} deactivate ={show}/>
                                         {/each}
@@ -206,7 +207,7 @@
                                 {/if}
                             </div>
                         </Pane>
-                        {#if show && ((!$showSideView && !$smallDevice) || $smallDevice)}
+                        {#if show && ((!($currentView == "Dokumentliste") && !$smallDevice) || $smallDevice)}
                             <!--  Pane for Typewriter -->
                             <Pane size={$smallDevice ? "100" : editor_size.toString()}>
                                 <div class="editor">

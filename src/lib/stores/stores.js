@@ -17,9 +17,6 @@ export const editor = new Editor();
 export let currentlyAddingNewNote = writable(false);
 export let currentlyEditingNote = writable(false);
 
-//true/false value if sideView is displayed
-export let showSideView = writable(true)
-
 //when true it signals that all filters must be turned off 
 export let allfilterOff = writable(false);
 //all documentTypes available

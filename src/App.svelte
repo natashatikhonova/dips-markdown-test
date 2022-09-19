@@ -6,7 +6,6 @@
   import { documentList, currentView, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, DocumentObject, smallDevice, openedDocTabs} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {ParseMarkdown} from './lib/utils/markdown/ParseMarkdown.js'
-  import ThemeButton from './lib/components/ThemeButton.svelte';
   import Device from 'svelte-device-info'
   import ScrollyTellingView from './lib/components/ScrollyTellingView.svelte';
   import DocumentsTabs from './lib/components/DocumentsTabs.svelte';
@@ -14,8 +13,6 @@
   $smallDevice = (Device.isPhone || Device.isTablet || Device.isMobile)
 
   let typewriter_size = 50
-  let allViews = ["Dokumentliste", "Kontinuerlig visning", "Scrollytelling"]
-  let selected_view = "Dokumentliste"
 
   //gets document data from JSON file
   documents.forEach(putInDocumentList);  
@@ -31,20 +28,6 @@
     $documentList.push(document);
     $documentList = $documentList;
   }
-
-  // //takes us to the homescreen/startscreen
-  // function set_default(){
-  //   if($currentlyAddingNewNote){
-  //     alert("Vennligst lagre eller avbryt!");
-      
-  //   } else {
-  //     $currentDocumentObject = null
-  //     $showSideView = true;
-  //   }
-  // }
-
-
-
 
   //tilpasser til mobilversjon
   $: contentWiewSize = $smallDevice && $currentDocumentObject ? 100: 50

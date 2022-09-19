@@ -7,7 +7,7 @@
     import ToolMenu from './ToolMenu.svelte'
     
 	let value = 0
-    
+
     $:{
         $currentDocumentObject = $documentList[value]
         $currentDocumentObject = $currentDocumentObject
@@ -17,18 +17,22 @@
 </script>
 
     <div class="main">
-        <div class="scrolly-telling">
-            <ToolMenu hideToolBar = {false}/>
+        <div class="scroll">
+            <div>
+                <ToolMenu hideToolBar = {false}/>
+            </div>
 
-            <Scrolly bind:value>
-                {#each $documentList as item, i}
-                <div class="step" class:active={value === i}>
-                    <ScrollItem htmlText = {marked(item.context)} date = {marked(item.date.toDateString())} title = {marked(item.title)} author = {marked(item.author)} document = {item}/>
-                    </div>
-                {/each}
-            </Scrolly>
-
+            <div class="scrolly-telling">
+                <Scrolly bind:value>
+                    {#each $documentList as item, i}
+                    <div class="step" class:active={value === i}>
+                        <ScrollItem htmlText = {marked(item.context)} date = {marked(item.date.toDateString())} title = {marked(item.title)} author = {marked(item.author)} document = {item}/>
+                        </div>
+                    {/each}
+                </Scrolly>
+            </div>
         </div>
+
         <div class="content-view">
             <ContentView/>
         </div>
@@ -41,14 +45,18 @@
     .main{
         height: calc(100%);
         width: 100%;
-        display: flex;
-        flex-direction: row;        
+        display: flex; 
+        flex-direction: row;       
     }
-
+    .scroll{
+        display:flex;
+        flex-direction: column;
+        width: 70%;
+    }
 	.scrolly-telling{
         display: flex;
         flex-direction: column;
-        width: 70%;
+        width: 100%;
         height: 100%;
         overflow-x:hidden;
 
@@ -56,7 +64,6 @@
 
     .content-view{
         display: flex;
-        flex-direction: column;
         width: 30%;
         height: 100%;
     }

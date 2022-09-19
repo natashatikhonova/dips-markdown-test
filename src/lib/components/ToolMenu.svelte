@@ -198,7 +198,7 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        background-color: whitesmoke;
+        background-color: #87bbde;
         box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
         margin-bottom: 3px;
     }
@@ -282,13 +282,13 @@
     
     .toolbar-button:hover {
         outline: none;
-        border-color: #80bdff;
+        border-color: #87bbde;
         box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
     }
     
     .toolbar-button.active {
         border: solid 2px;
-        border-color: #80bdff;
+        border-color: #87bbde;
     }
 
     /* Cancel button - searchfield */
@@ -328,12 +328,13 @@
         color:#d43838;
     }
     .dropdown-menu {
-        background-color:whitesmoke;
+        background-color:#87bbde;
         height: 25px;
         border-radius: 4px;
         border: none;
         cursor: pointer;
         font-weight: bold;
+        color: whitesmoke
   }
 
   .dropdown-menu:hover {

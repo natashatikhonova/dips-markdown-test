@@ -77,7 +77,7 @@
             {#if $showSideView}
                 <button title = "Vis dokumentliste" class="arrow-keys" on:click={showTypewriter}><i class="material-icons">keyboard_arrow_left</i></button>
             {/if}
-            <button class="settings-button" class:active={showTextSettings} on:click={()=>{showTextSettings=!showTextSettings}}><i class="material-icons">settings</i></button>
+            <button class="settings-button" title= "Instillinger" class:active={showTextSettings} on:click={()=>{showTextSettings=!showTextSettings}}><i class="material-icons">settings</i></button>
             {#if showTextSettings}
                 <div class="text-settings">
                     <div class="extra-functions">

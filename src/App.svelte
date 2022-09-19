@@ -3,19 +3,19 @@
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, DocumentObject, smallDevice, openedDocTabs} from './lib/stores/stores.js';
+  import { documentList, currentView, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, DocumentObject, smallDevice, openedDocTabs} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {ParseMarkdown} from './lib/utils/markdown/ParseMarkdown.js'
   import ThemeButton from './lib/components/ThemeButton.svelte';
   import Device from 'svelte-device-info'
-import ScrollyTellingView from './lib/components/ScrollyTellingView.svelte';
-import DocumentsTabs from './lib/components/DocumentsTabs.svelte';
+  import ScrollyTellingView from './lib/components/ScrollyTellingView.svelte';
+  import DocumentsTabs from './lib/components/DocumentsTabs.svelte';
 
   $smallDevice = (Device.isPhone || Device.isTablet || Device.isMobile)
 
   let typewriter_size = 50
-  let scrollyTelling = false
-
+  let allViews = ["Dokumentliste", "Kontinuerlig visning", "Scrollytelling"]
+  let selected_view = "Dokumentliste"
 
   //gets document data from JSON file
   documents.forEach(putInDocumentList);  
@@ -36,6 +36,7 @@ import DocumentsTabs from './lib/components/DocumentsTabs.svelte';
   function set_default(){
     if($currentlyAddingNewNote){
       alert("Vennligst lagre eller avbryt!");
+      
     } else {
       $currentDocumentObject = null
       $showSideView = true;
@@ -43,11 +44,12 @@ import DocumentsTabs from './lib/components/DocumentsTabs.svelte';
   }
 
   //swichting between sideview and scrollview (*the two buttons in upper right corner)
-  function changeView(){
+ $: if (selected_view != $currentView) {
     if($currentlyAddingNewNote || $currentlyEditingNote){
       alert("Vennligst lagre eller avbryt!");
+      selected_view = $currentView;
     } else{
-      $showSideView = !$showSideView;
+      $currentView = selected_view;
     }
   }
 
@@ -106,43 +108,43 @@ import DocumentsTabs from './lib/components/DocumentsTabs.svelte';
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <img on:click={set_default} src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test"/>
   <h3>PASIENTJOURNAL</h3>
-  <div>
-    <button class="switch-view-button" disabled={$showSideView} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
-    <button class="switch-view-button" disabled={!$showSideView} title="Kontinuerlig visning" on:click={changeView}><i class="material-icons">horizontal_split</i></button>
-    <button class="switch-view-button"  title="Scrollytelling visning" on:click={()=>{scrollyTelling =!scrollyTelling}}><i class="material-icons">vertical_split</i></button>
+  <div class="settings">
+
+      <select class="dropdown-menu" bind:value={selected_view} >
+        {#each allViews as value}<option {value} class = "dropdown-option">{value}</option>{/each}
+      </select>
     <ThemeButton/>
   </div>
 </header>
 
 
 <div class="main">
-  {#if scrollyTelling}
+  {#if $currentView=="Scrollytelling"}
     <ScrollyTellingView/>
-  {:else}
-    {#if $showSideView}
-      <div class="side-container"  >
-        {#if $currentlyAddingNewNote}
-          {#if !$smallDevice}
-            <Splitpanes theme = "modern-theme" on:resized="{updateTypewriterSize}">
-              <Pane size={(100-typewriter_size).toString()}> <ScrollView on:set_typewriter_size={set_typewriter_size}/> </Pane>
-              <Pane minSize="35" size={typewriter_size.toString()}> <ContentView on:set_typewriter_view_size={set_typewriter_size}/> </Pane>
-            </Splitpanes>
-          {:else}  
-              <ScrollView/>
-          {/if}
-
-        {:else}
-          <Splitpanes theme = "modern-theme" style="overflow:hidden;" on:resized="{updateContentWiewSize}">
-            <Pane size={(100-contentWiewSize).toString()} >
-                <DocumentList on:set_content_view_size={set_content_view_size}/>
-            </Pane>
-          {#if $currentDocumentObject}
-            <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size}/></Pane>
-          {/if}
+  {:else if $currentView == "Dokumentliste"}
+    <div class="side-container"  >
+      {#if $currentlyAddingNewNote}
+        {#if !$smallDevice}
+          <Splitpanes theme = "modern-theme" on:resized="{updateTypewriterSize}">
+            <Pane size={(100-typewriter_size).toString()}> <ScrollView on:set_typewriter_size={set_typewriter_size}/> </Pane>
+            <Pane minSize="35" size={typewriter_size.toString()}> <ContentView on:set_typewriter_view_size={set_typewriter_size}/> </Pane>
           </Splitpanes>
+        {:else}  
+            <ScrollView/>
         {/if}
-      </div>
-    {:else}
+
+      {:else}
+        <Splitpanes theme = "modern-theme" style="overflow:hidden;" on:resized="{updateContentWiewSize}">
+          <Pane size={(100-contentWiewSize).toString()} >
+              <DocumentList on:set_content_view_size={set_content_view_size}/>
+          </Pane>
+        {#if $currentDocumentObject}
+          <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size}/></Pane>
+        {/if}
+        </Splitpanes>
+      {/if}
+    </div>
+  {:else  if $currentView == "Kontinuerlig visning"}
     <Splitpanes theme = "modern-theme">
       <Pane size={$openedDocTabs.length== 0? "100": "50"}>
         <ScrollView/>
@@ -153,7 +155,6 @@ import DocumentsTabs from './lib/components/DocumentsTabs.svelte';
         {/if}
       </Pane>
     </Splitpanes>
-    {/if}
   {/if}
 </div>
 
@@ -173,48 +174,45 @@ import DocumentsTabs from './lib/components/DocumentsTabs.svelte';
     flex-direction: row;
   }
 
+  .settings{
+    display: flex;
+    width: 200px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   /* Dips Logo */
   img{
     max-height: 60%;
     min-height: 60%;
   }
 
-  /* Buttons that switch between views */
-  .switch-view-button{
-    display: inline-flex;
-    align-items: center;
-    background: none;;
-    margin-right: 2px;
-    border:none;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  .dropdown-menu {
+    background-color:rgb(236, 236, 236);
+    height: 25px;
+    border-radius: 4px;
+    border: none;
     cursor: pointer;
+    font-weight: bold;
   }
 
-  .switch-view-button i{
-    font-size: xx-large;
+  .dropdown-menu:hover {
+    outline: none;
+    border-color: #4693e6;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
   }
 
-  .switch-view-button:hover {
-    color:#666363;
-  }
-
-  .switch-view-button:disabled,
-  .switch-view-button[disabled]{
-    color:#d43838;
-  }
 
   /* Darkmode */
-  :global(body.dark-mode) .switch-view-button{
-    color:white;
+  :global(body.dark-mode) .dropdown-menu{
+    background-color: rgb(43, 43, 43);
+    color: #cccccc;
   }
 
-  :global(body.dark-mode) .switch-view-button:hover {
-    color:#cccccc;
+  :global(body.dark-mode) .dropdown-menu:hover{
+    border-color: #cccccc;
+    box-shadow: 0 0 0 0.2rem rgba(252, 252, 252, 0.5);
   }
 
-  :global(body.dark-mode) .switch-view-button:disabled,
-  .switch-view-button[disabled]{
-    color:#d43838;
-  }
 
 </style>

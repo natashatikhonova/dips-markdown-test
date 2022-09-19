@@ -25,6 +25,7 @@ export let allfilterOff = writable(false);
 //all documentTypes available
 export let documentTypes = ["Epikrise","hehehe", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10", "typ11", "typ12", "typ13", "typ14", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10", "typ11", "typ12", "typ13", "typ14"].sort();
 
+export let currentView = writable("Dokumentliste");
 //stores wich doctypes filters who is chosen
 //When id is -1, no group is selected but it stores wich filters is checked among all doctypes
 //when id >= 0, group is selected

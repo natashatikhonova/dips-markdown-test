@@ -61,6 +61,6 @@
 	}
 
 	.step.active {
-		background: #aaa;
+		background: rgb(224, 224, 224);
 	}
 </style>

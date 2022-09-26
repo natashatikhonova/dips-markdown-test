@@ -2,12 +2,9 @@
 	import Scrolly from "./Scrolly.svelte";
     import {documentList, currentDocumentObject, smallDevice} from "../stores/stores.js"
     import ScrollyElement from "./ScrollyElement.svelte";
-    import { Pane, Splitpanes } from 'svelte-splitpanes';
     import { marked } from 'marked';
     import ToolMenu from './ToolMenu.svelte'
-    import DocumentInfo from "./DocumentInfo.svelte";
     import GraphSVG from "./GraphSVG.svelte";
-    import { readable } from "svelte/store";
     import { fly, fade } from 'svelte/transition';
 
     
@@ -22,8 +19,6 @@
         let steps = event.detail
         let currentStepRatio = steps[value];
         current_opacity = currentStepRatio
-        console.log(currentStepRatio)
-        console.log(steps)
     }
   
 </script>

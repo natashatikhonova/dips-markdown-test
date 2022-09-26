@@ -3,12 +3,12 @@
 	import { tweened } from 'svelte/motion';
 
 	import Grid from './Grid.svelte';
-	import { eases, types } from './eases.js';
+	import { easeElastic } from './eases.js';
 
 	let current_type = 'In';
 	let current_ease = 'elastic';
 	let duration = 10000;
-	let current = eases.get(current_ease)[current_type];
+	let current = easeElastic;
 	let playing = false;
 	let width;
 
@@ -31,7 +31,7 @@
 		playing = false;
 	}
 
-	$: current = eases.get(current_ease)[current_type];
+	$: current = easeElastic;
 	$: current && runAnimations();
 </script>
 
@@ -39,15 +39,34 @@
 	<svg viewBox="0 0 1400 1802">
 
 		<g class="canvas">
-					<line x1="0" x2="300" y1="100" y2="100"></line>
-		<g class="x" transform="translate(0,120)">
-			<text x="0">0</text>
-			<text x="60">2</text>
-			<text x="120">4</text>
-			<text x="180">6</text>
-			<text x="240">8</text>
-			<text x="300">10</text>
-		</g>
+			<path
+				d="M200 1400 L1400 1400"
+				class="axes"
+			/>
+
+			<g class="x" transform="translate(0,120)">
+				<text x="200" y="1400">0</text>
+				<text x="400" y="1400">2</text>
+				<text x="600" y="1400">4</text>
+				<text x="800" y="1400">6</text>
+				<text x="1000" y="1400">8</text>
+				<text x="1200" y="1400">10</text>
+			</g>
+
+			<path
+				d="M200 1400 L200 200"
+				class="axes"
+			/>
+			<g class="y" transform="translate(-10,0)">
+				<text x="150" y="400">41</text>
+				<text x="150" y="600">40</text>
+				<text x="150" y="800">39</text>
+				<text x="150" y="1000">38</text>
+				<text x="150" y="1200">37</text>
+				<text x="150" y="1400">36</text>
+			</g>
+
+		
 			<Grid x={$time} y={$value}/>
 			<g class="graph">
 				<path
@@ -91,9 +110,23 @@
 		margin: 0 20px 0 0;
 	}
 
+	.axes {
+		stroke: black;
+		stroke-width: 3;
+	}
+	
+	.y text {
+		text-anchor: end;
+		
+	}
+
 	.graph {
 		transform: translate(200px,400px);
 	
+	}
+
+	text{
+		font-size: 50px;
 	}
 
 	@media (max-width:600px) {

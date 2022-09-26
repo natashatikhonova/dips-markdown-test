@@ -12,14 +12,18 @@
      * <Scrolly root={null} top={0} bottom={0} increments={100}>
      */
     import { onMount } from "svelte";
+    import {createEventDispatcher} from 'svelte';
+
     export let root = null;
     export let top = 0;
     export let bottom = 0;
     export let increments = 100;
     export let value = undefined;
   
+  
     const steps = [];
     const threshold = [];
+    const dispatch = createEventDispatcher();
   
     let nodes = [];
     let intersectionObservers = [];
@@ -51,6 +55,7 @@
         const intersecting = e[0].isIntersecting;
         const ratio = e[0].intersectionRatio;
         steps[index] = ratio;
+        dispatch("steps_ratio", steps);
         mostInView();
       };
   

@@ -6,32 +6,58 @@
     import { marked } from 'marked';
     import ToolMenu from './ToolMenu.svelte'
     import DocumentInfo from "./DocumentInfo.svelte";
+    import GraphSVG from "./GraphSVG.svelte";
+    import { readable } from "svelte/store";
+    import { fly, fade } from 'svelte/transition';
+
     
 	let value = 0
+    let current_opacity = 0;
 
     $:{
         $currentDocumentObject = $documentList[value]
         $currentDocumentObject = $currentDocumentObject
     }
+    function check_steps(event){
+        let steps = event.detail
+        let currentStepRatio = steps[value];
+        current_opacity = currentStepRatio
+        console.log(currentStepRatio)
+        console.log(steps)
+    }
   
 </script>
 
     <div class="main">
-        <div class="scroll">
-            <div>
-                <ToolMenu hideToolBar = {false}/>
-            </div>
+        <div>
+            <ToolMenu hideToolBar = {false}/>
+        </div>
 
-            <div class="scrolly-telling">
-                <Scrolly bind:value>
-                    {#each $documentList as item, i}
-                    <div class="step" class:active={value === i}>
-                        <ScrollyElement htmlText = {marked(item.context)} date = {marked(item.date.toDateString())} title = {marked(item.title)} author = {marked(item.author)} document = {item}/>
+        <div class="scroll">
+            <div class="element">
+
+                <div class="scrolly-telling">
+                    <Scrolly bind:value on:steps_ratio={check_steps}>
+                        {#each $documentList as item, i}
+    
+                            <div class="step" class:active={value === i}>
+                                <ScrollyElement htmlText = {marked(item.context)} date = {marked(item.date.toDateString())} title = {marked(item.title)} author = {marked(item.author)} document = {item}/>
+                            </div>
+    
+                        {/each}
+                    </Scrolly>
+                    
+                    {#if value%2==0}
+                        <div in:fly="{{ x: -170, duration: 2000 }}" out:fade class = "graph">
+                            <h2> Kroppstemperatur </h2>
+                            <GraphSVG/>
                         </div>
-                    {/each}
-                </Scrolly>
+                    {/if}
+                 
+                </div>
             </div>
         </div>
+        
 
     </div>
 
@@ -43,11 +69,30 @@
         height: calc(100%);
         width: 100%;
         display: flex; 
-        flex-direction: row;       
+        flex-direction: column;       
+    }
+    .graph{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 500px;
+        width: 500px;
+        position: absolute;
+        right: 5%;
+        top:20%;
+    }
+
+    .element{
+        display: flex;
+
     }
     .scroll{
         display:flex;
         flex-direction: column;
+        width: 100%;
+        height: 100%;
+        overflow-y:auto;
         
     }
 	.scrolly-telling{
@@ -56,6 +101,7 @@
         width: 100%;
         height: 100%;
         overflow-x:hidden;
+        margin-bottom: 30%;
         
     }
     

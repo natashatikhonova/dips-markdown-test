@@ -1,7 +1,7 @@
 <script>
 	import Scrolly from "./Scrolly.svelte";
     import {documentList, currentDocumentObject, smallDevice} from "../stores/stores.js"
-    import ScrollItem from "./ScrollItem.svelte";
+    import ScrollyElement from "./ScrollyElement.svelte";
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import { marked } from 'marked';
     import ToolMenu from './ToolMenu.svelte'
@@ -26,15 +26,13 @@
                 <Scrolly bind:value>
                     {#each $documentList as item, i}
                     <div class="step" class:active={value === i}>
-                        <ScrollItem htmlText = {marked(item.context)} date = {marked(item.date.toDateString())} title = {marked(item.title)} author = {marked(item.author)} document = {item}/>
+                        <ScrollyElement htmlText = {marked(item.context)} date = {marked(item.date.toDateString())} title = {marked(item.title)} author = {marked(item.author)} document = {item}/>
                         </div>
                     {/each}
                 </Scrolly>
             </div>
         </div>
-         <div class="content-view">
-            <DocumentInfo />
-         </div> 
+
     </div>
 
 
@@ -50,7 +48,7 @@
     .scroll{
         display:flex;
         flex-direction: column;
-        width: 70%;
+        
     }
 	.scrolly-telling{
         display: flex;
@@ -58,20 +56,19 @@
         width: 100%;
         height: 100%;
         overflow-x:hidden;
-
+        
     }
-
-    .content-view{
-        display: flex;
-        width: 30%;
-        height: 100%;
-    }
-
+    
 	.step {
-		transition: background 100ms;
+        transition: background 100ms;
+        width: 60%;
+        margin: 5% 0 5% 50px;
+        opacity: 0.5;
 	}
-
+    
 	.step.active {
-		background: rgb(224, 224, 224);
+        background: whitesmoke;
+        border-radius: 20px;
+        opacity: 1;
 	}
 </style>

@@ -92,7 +92,9 @@
   </div>
 </header> -->
 
-
+<head>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
 <div class="main">
   {#if $currentView=="Scrollytelling"}
     <ScrollyTellingView/>

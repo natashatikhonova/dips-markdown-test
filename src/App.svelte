@@ -3,16 +3,16 @@
   import DocumentList from './lib/components/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/ScrollView.svelte';
-  import { documentList, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, showSideView, DocumentObject, smallDevice} from './lib/stores/stores.js';
+  import { documentList, currentView, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, DocumentObject, smallDevice, openedDocTabs} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {ParseMarkdown} from './lib/utils/markdown/ParseMarkdown.js'
-  import ThemeButton from './lib/components/ThemeButton.svelte';
   import Device from 'svelte-device-info'
+  import ScrollyTellingView from './lib/components/ScrollyTellingView.svelte';
+  import DocumentsTabs from './lib/components/DocumentsTabs.svelte';
 
   $smallDevice = (Device.isPhone || Device.isTablet || Device.isMobile)
 
   let typewriter_size = 50
-
 
   //gets document data from JSON file
   documents.forEach(putInDocumentList);  
@@ -28,26 +28,6 @@
     $documentList.push(document);
     $documentList = $documentList;
   }
-
-  //takes us to the homescreen/startscreen
-  function set_default(){
-    if($currentlyAddingNewNote){
-      alert("Vennligst lagre eller avbryt!");
-    } else {
-      $currentDocumentObject = null
-      $showSideView = true;
-    }
-  }
-
-  //swichting between sideview and scrollview (*the two buttons in upper right corner)
-  function changeView(){
-    if($currentlyAddingNewNote || $currentlyEditingNote){
-      alert("Vennligst lagre eller avbryt!");
-    } else{
-      $showSideView = !$showSideView;
-    }
-  }
-
 
   //tilpasser til mobilversjon
   $: contentWiewSize = $smallDevice && $currentDocumentObject ? 100: 50
@@ -99,20 +79,24 @@
 
 </script>
 
-<header>
+<!-- <header>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <img on:click={set_default} src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test"/>
   <h3>PASIENTJOURNAL</h3>
-  <div>
-    <button class="switch-view-button" disabled={$showSideView} title="Dokument visning" on:click={changeView}><i class="material-icons">vertical_split</i></button>
-    <button class="switch-view-button" disabled={!$showSideView} title="Kontinuerlig visning" on:click={changeView}><i class="material-icons">horizontal_split</i></button>
+  <div class="settings">
+
+      <select class="dropdown-menu" bind:value={selected_view} >
+        {#each allViews as value}<option {value} class = "dropdown-option">{value}</option>{/each}
+      </select>
     <ThemeButton/>
   </div>
-</header>
+</header> -->
 
 
 <div class="main">
-  {#if $showSideView}
+  {#if $currentView=="Scrollytelling"}
+    <ScrollyTellingView/>
+  {:else if $currentView == "Dokumentliste"}
     <div class="side-container"  >
       {#if $currentlyAddingNewNote}
         {#if !$smallDevice}
@@ -135,8 +119,17 @@
         </Splitpanes>
       {/if}
     </div>
-  {:else}
-    <ScrollView/>
+  {:else  if $currentView == "Kontinuerlig visning"}
+    <Splitpanes theme = "modern-theme">
+      <Pane size={$openedDocTabs.length== 0? "100": "50"}>
+        <ScrollView/>
+      </Pane>
+      <Pane size={$openedDocTabs.length== 0? "0": "50"}>
+        {#if $openedDocTabs.length>0}
+          <DocumentsTabs/>
+        {/if}
+      </Pane>
+    </Splitpanes>
   {/if}
 </div>
 
@@ -144,7 +137,9 @@
 
    .main {
     height: 100%;
-    overflow: auto;
+    overflow-y: none;
+    overflow-x: hidden;
+
   }
 
   .side-container{
@@ -154,48 +149,13 @@
     flex-direction: row;
   }
 
-  /* Dips Logo */
-  img{
-    max-height: 60%;
-    min-height: 60%;
-  }
-
-  /* Buttons that switch between views */
-  .switch-view-button{
-    display: inline-flex;
+  .settings{
+    display: flex;
+    width: 200px;
     align-items: center;
-    background: none;;
-    margin-right: 2px;
-    border:none;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-    cursor: pointer;
+    justify-content: space-between;
   }
 
-  .switch-view-button i{
-    font-size: xx-large;
-  }
-
-  .switch-view-button:hover {
-    color:#666363;
-  }
-
-  .switch-view-button:disabled,
-  .switch-view-button[disabled]{
-    color:#d43838;
-  }
-
-  /* Darkmode */
-  :global(body.dark-mode) .switch-view-button{
-    color:white;
-  }
-
-  :global(body.dark-mode) .switch-view-button:hover {
-    color:#cccccc;
-  }
-
-  :global(body.dark-mode) .switch-view-button:disabled,
-  .switch-view-button[disabled]{
-    color:#d43838;
-  }
+  
 
 </style>

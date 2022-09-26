@@ -17,14 +17,12 @@ export const editor = new Editor();
 export let currentlyAddingNewNote = writable(false);
 export let currentlyEditingNote = writable(false);
 
-//true/false value if sideView is displayed
-export let showSideView = writable(true)
-
 //when true it signals that all filters must be turned off 
 export let allfilterOff = writable(false);
 //all documentTypes available
 export let documentTypes = ["Epikrise","hehehe", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10", "typ11", "typ12", "typ13", "typ14", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10", "typ11", "typ12", "typ13", "typ14"].sort();
 
+export let currentView = writable("Dokumentliste");
 //stores wich doctypes filters who is chosen
 //When id is -1, no group is selected but it stores wich filters is checked among all doctypes
 //when id >= 0, group is selected
@@ -61,6 +59,9 @@ export let autocompleteOn = writable(false)
 //for storing value about text settings in scrollview
 export let selected_text_size_scrollview = writable(11)
 export let selected_line_height = writable("1.5")
+
+//list with open documents - tabs
+export let openedDocTabs = writable([])
 
 //for storing the markdown text and info
 export class DocumentObject{

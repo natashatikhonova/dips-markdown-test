@@ -1,5 +1,5 @@
 <script>
-    import {currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote} from '../stores/stores.js';
+    import {currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote, openedDocTabs} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
     export let document;
@@ -17,7 +17,10 @@
         dispatch('editItem');
         $currentlyEditingNote = true;
     }
- 
+ function open_new_tab(){
+    $openedDocTabs.push(document)
+    $openedDocTabs = $openedDocTabs
+ }
 </script>
 
 <head>
@@ -38,6 +41,8 @@
                     <button title ="Rediger" class:hidden={$currentlyAddingNewNote} on:click={editItem}><i class="material-icons">edit</i></button>
                 {/if}
             {/if}
+
+            <button title ="Åpne i ny fane" disabled={$openedDocTabs.includes(document)} on:click={open_new_tab}><i class="material-icons">open_in_new</i></button>
         </div>
     </div>
     <!-- show document text (link if document is not readable) -->
@@ -145,4 +150,8 @@
     :global(body.dark-mode) button:hover{
         color:#d43838;
     }
+
+    :global(body.dark-mode)  :disabled{
+    color: #7e7d7d;
+}
 </style>

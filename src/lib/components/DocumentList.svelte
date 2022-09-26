@@ -4,6 +4,7 @@
     import ToolMenu from './ToolMenu.svelte';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilterMenu from './filter/FilterMenu.svelte';
+  
     
     let sortedData = $documentList;
     const tableHeaders = ["title", "date","author"];
@@ -91,7 +92,6 @@
 
 <div class = "with-toolbar-conteiner">
     <ToolMenu hideToolBar={true} on:set_content_view_size/>
-
     <div class="document-container">
         <Splitpanes theme="modern-theme">
             <!-- Panel for filters -->

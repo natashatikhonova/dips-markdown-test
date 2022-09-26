@@ -144,7 +144,7 @@
         {#if $currentView != "Kontinuerlig visning"}
             {#if !hideToolBar && ($currentView == "Dokumentliste")}
                 <button title = "Vis dokumentliste" class="arrow-keys" on:click={showTypewriter}><i class="material-icons">keyboard_arrow_left</i></button>
-            {:else if $currentDocumentObject && !($smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote))}
+            {:else if $currentDocumentObject && !($smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote) ) && ($currentView != "Scrollytelling")}
                 <button title = "tilbake" class="arrow-keys" on:click={showContent}><i class="material-icons">keyboard_arrow_left</i></button>
             {/if}
         {/if}

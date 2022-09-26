@@ -1,10 +1,11 @@
 <script>
 	import Scrolly from "./Scrolly.svelte";
-    import {documentList, currentDocumentObject} from "../stores/stores.js"
+    import {documentList, currentDocumentObject, smallDevice} from "../stores/stores.js"
     import ScrollItem from "./ScrollItem.svelte";
-    import ContentView from "./ContentView.svelte";
+    import { Pane, Splitpanes } from 'svelte-splitpanes';
     import { marked } from 'marked';
     import ToolMenu from './ToolMenu.svelte'
+    import DocumentInfo from "./DocumentInfo.svelte";
     
 	let value = 0
 
@@ -12,7 +13,6 @@
         $currentDocumentObject = $documentList[value]
         $currentDocumentObject = $currentDocumentObject
     }
-    
   
 </script>
 
@@ -32,10 +32,9 @@
                 </Scrolly>
             </div>
         </div>
-
-        <div class="content-view">
-            <ContentView/>
-        </div>
+         <div class="content-view">
+            <DocumentInfo />
+         </div> 
     </div>
 
 

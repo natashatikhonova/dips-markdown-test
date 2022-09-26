@@ -198,7 +198,7 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        background-color: #87bbde;
+        background-color: whitesmoke;
         box-shadow: 0 3px 5px -2px rgba(57, 63, 72, 0.3);
         margin-bottom: 3px;
     }
@@ -328,13 +328,13 @@
         color:#d43838;
     }
     .dropdown-menu {
-        background-color:#87bbde;
+        background-color:whitesmoke;
         height: 25px;
         border-radius: 4px;
         border: none;
         cursor: pointer;
         font-weight: bold;
-        color: whitesmoke
+
   }
 
   .dropdown-menu:hover {

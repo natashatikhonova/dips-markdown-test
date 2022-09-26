@@ -56,13 +56,13 @@
 
 /* Main button */
 .main-button{
-  background:#87bbde;
+  background:#d43838;
   height: 80%;
   margin: 4px;
   width: 70px;
   min-width: fit-content;
   transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-  color:black;
+  color:white;
   font-size: 0.85em;
   cursor: pointer;
   border: solid 0.1em rgb(255, 92, 81 ,0);

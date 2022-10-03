@@ -1,9 +1,9 @@
 <script>
     import DocumentItem from "./DocumentItem.svelte";
-    import {currentDocumentObject, documentList, currentlyAddingNewNote, current_doctype_filtergroup, showFiltermenu, smallDevice} from '../stores/stores.js';
-    import ToolMenu from './ToolMenu.svelte';
+    import {currentDocumentObject, documentList, currentlyAddingNewNote, current_doctype_filtergroup, showFiltermenu, smallDevice} from '../../stores/stores.js';
+    import ToolMenu from '../ToolMenu.svelte';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
-    import FilterMenu from './filter/FilterMenu.svelte';
+    import FilterMenu from '../filter/FilterMenu.svelte';
   
     
     let sortedData = $documentList;

@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject} from "../stores/stores.js"
+    import { currentDocumentObject} from "../../stores/stores.js"
 
 </script>
 

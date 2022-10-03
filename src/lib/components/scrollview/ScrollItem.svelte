@@ -1,5 +1,5 @@
 <script>
-    import {currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote, openedDocTabs} from '../stores/stores.js';
+    import {currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote, openedDocTabs} from '../../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
 
     export let document;

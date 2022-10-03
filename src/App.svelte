@@ -1,14 +1,14 @@
 <script>
   import documents from './assets/documents.json'
-  import DocumentList from './lib/components/DocumentList.svelte';
+  import DocumentList from './lib/components/documentview/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
-  import ScrollView from './lib/components/ScrollView.svelte';
+  import ScrollView from './lib/components/scrollview/ScrollView.svelte';
   import { documentList, currentView, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, DocumentObject, smallDevice, openedDocTabs} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {ParseMarkdown} from './lib/utils/markdown/ParseMarkdown.js'
   import Device from 'svelte-device-info'
-  import ScrollyTellingView from './lib/components/ScrollyTellingView.svelte';
-  import DocumentsTabs from './lib/components/DocumentsTabs.svelte';
+  import ScrollyTellingView from './lib/components/scrollytelling/ScrollyTellingView.svelte';
+  import DocumentsTabs from './lib/components/scrollview/DocumentsTabs.svelte';
 
   $smallDevice = (Device.isPhone || Device.isTablet || Device.isMobile)
 

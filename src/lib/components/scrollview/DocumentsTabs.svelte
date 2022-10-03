@@ -1,5 +1,5 @@
 <script>
-    import {openedDocTabs, documentList} from '../stores/stores.js';
+    import {openedDocTabs, documentList} from '../../stores/stores.js';
     import { marked } from 'marked';
     let selectedDoc = null;
     $: if ($documentList) {

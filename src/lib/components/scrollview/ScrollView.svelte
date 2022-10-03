@@ -1,12 +1,12 @@
 <script>
-    import {currentView, documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size_scrollview, smallDevice, editor} from '../stores/stores.js';
+    import {currentView, documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size_scrollview, smallDevice, editor} from '../../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
-    import Typewriter from './typewriter/Typewriter.svelte';
-    import {currentlyAddingNewNote, currentlyEditingNote} from '../stores/stores.js';
+    import Typewriter from '../typewriter/Typewriter.svelte';
+    import {currentlyAddingNewNote, currentlyEditingNote} from '../../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
-    import ToolMenu from './ToolMenu.svelte';
-    import FilterMenu from './filter/FilterMenu.svelte';
+    import ToolMenu from '../ToolMenu.svelte';
+    import FilterMenu from '../filter/FilterMenu.svelte';
     import {createEventDispatcher} from 'svelte';
 
     const dispatch = createEventDispatcher()

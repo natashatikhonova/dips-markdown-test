@@ -10,32 +10,50 @@
 	export let xName;
 	export let yName;
 	export let points;
+	export let removed;
+	$: console.log(removed)
+	$: console.log(durationTime)
+
 
 	let maxValuesGridX = 10;
 	let maxValuesGridY = 10;
+	$: durationTime = removed? 0: points.length*300;
+
 	const initialCount = points.length
 	const animatedHeight = tweened(0, { easing: circOut})
 	const animatedWidth = tweened(0, { easing: circOut })
-	
 	$: maxY = Math.max(...points.map(p => p.y))
 	$: minY = Math.min(...points.map(p => p.y))
 	$: maxX = Math.max(...points.map(p => p.x))
 	$: minX = Math.min(...points.map(p => p.x))
 	$: xScale = width/points.length;
-	$: heightDict = calcHeight(points)
+	$: heightDict = (maxY == minY)? noHeightDif():calcHeight(points);
 	$: path = `M${points[0].x},${heightDict[points[0].y]} ${points.slice(1, initialCount).map(p => `L${p.x*xScale},${heightDict[p.y]}`).join(' ')}`
 	$: $animatedHeight = height
 	$: $animatedWidth = width
-	
+
 	let showLine = false
 
 	function calcHeight(points){
 		let dif = maxY - minY;
+		
 		let heightDict = {maxY: 0, minY: height}
 		
 		for (let i = 0; i < points.length; i++){
 			let y = points[i].y;
 			let heigthPx = (y-minY) * (height/dif)
+			heightDict[y] = height-heigthPx;
+		}
+		return heightDict;
+	}
+	function noHeightDif(){
+		let dif = height/2
+		
+		let heightDict = {maxY: 0, minY: height}
+		
+		for (let i = 0; i < points.length; i++){
+			let y = points[i].y;
+			let heigthPx = (y) * (height/dif)
 			heightDict[y] = height-heigthPx;
 		}
 		return heightDict;
@@ -61,9 +79,10 @@
 	}
 
 	onMount(() => {
-		const interval = setInterval(addRandomPoint, 5000)
+		// const interval = setInterval(addRandomPoint, 5000)
+
 		setTimeout(() => showLine = true)
-		return () => clearInterval(interval)
+		// return () => clearInterval(interval)
 	})
 	
 	function addRandomPoint() {
@@ -73,7 +92,7 @@
 
 </script>
 
-<p> Punkter: {points.length}</p>
+
 
 <svg viewBox="0 0 {$animatedWidth} {$animatedHeight}">
 	<path
@@ -112,15 +131,16 @@
 	</g>
 
 	{#if showLine}
-	 <path transition:draw={{duration: points.length*300, delay: 300, easing: expoInOut}} d={path} stroke-linecap="round" stroke-linejoin="round"/>
+	 <path transition:draw={{duration: (removed? 0: 300), delay: (removed? 0: 300), easing: expoInOut}} d={path} stroke-linecap="round" stroke-linejoin="round"/>
 	{/if} 
 
 	{#each points.slice(initialCount) as point, i}
-		<path transition:draw={{duration: 500, delay: 300}} d={`M${points[initialCount-1+i].x*xScale},${heightDict[points[initialCount-1+i].y]} L${point.x*xScale},${heightDict[point.y]}`} />
+		{console.log(initialCount)}
+		<path transition:draw={{duration:(removed? 0: 300), delay: (removed? 0: 300)}} d={`M${points[initialCount-1+i].x*xScale},${heightDict[points[initialCount-1+i].y]} L${point.x*xScale},${heightDict[point.y]}`} />
 	{/each}
 
   {#each points as point}
-		<Point x={point.x * xScale} y={heightDict[point.y]} values = {point} />
+		<Point x={point.x * xScale} y={heightDict[point.y]} values = {point} data = {point.data} />
 	{/each}
 </svg>
 

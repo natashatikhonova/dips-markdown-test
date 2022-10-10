@@ -1,11 +1,24 @@
 <script>
 	import { tweened } from 'svelte/motion'
 	
-	export let x, y, values;
+	export let x, y, values, data;
 	
 	const pos = tweened(0, { duration: y})
 	$: $pos = y
 	let showInfoBox = false;
+
+	function padTo2Digits(num) {
+ 		 return num.toString().padStart(2, '0');
+	}
+
+	function formatDate(date) {
+		return [
+			padTo2Digits(date.getDate()),
+			padTo2Digits(date.getMonth() + 1),
+			date.getFullYear(),
+		].join('/');
+	}	
+
 
 </script>
 
@@ -14,14 +27,14 @@
 {#if showInfoBox}
 <defs>
     <filter x="0" y="0" width="1" height="1" id="solid">
-      <feFlood flood-color="white" result="bg" />
+      <feFlood flood-color="#e1ebfc" result="bg"/>
       <feMerge>
         <feMergeNode in="bg"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
   </defs>
-  <text  x={x-100} y = {$pos - 10} filter="url(#solid)" >(Dag: {values.x}, Temperatur: {values.y}) </text>
+  <text  x={x-100} y = {$pos - 10} filter="url(#solid)" >Måling: {values.x}, Temperatur: {values.y} ℃, Dato: {formatDate(data.date)}  </text>
 {/if}
 
 <style>

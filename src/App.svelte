@@ -20,6 +20,8 @@
   //Makes a new DocumentObject for each file and adds it to the store array $documentList
   function putInDocumentList(item){
     let document = new DocumentObject(item.id, item.date, item.content, item.title, item.readable);
+    document.add_temp(item.temperature);
+
     //Makes a tree structur for all markdown formated titles:
     let parse = new ParseMarkdown
     let tree = parse.parseAndSetIntoTree(document) 
@@ -78,19 +80,6 @@
   }
 
 </script>
-
-<!-- <header>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <img on:click={set_default} src="https://f.hubspotusercontent-eu1.net/hubfs/25152567/Dips_logo.png" alt="test"/>
-  <h3>PASIENTJOURNAL</h3>
-  <div class="settings">
-
-      <select class="dropdown-menu" bind:value={selected_view} >
-        {#each allViews as value}<option {value} class = "dropdown-option">{value}</option>{/each}
-      </select>
-    <ThemeButton/>
-  </div>
-</header> -->
 
 <head>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">

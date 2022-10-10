@@ -65,6 +65,7 @@ export let openedDocTabs = writable([])
 
 //for storing the markdown text and info
 export class DocumentObject{
+    
     constructor(id, date, context, title, readable){
         this.id = id;
         this.date = new Date(date);
@@ -74,8 +75,17 @@ export class DocumentObject{
         this.author = "Dr.Who";
         this.markdownTree = null;
         //Sorting on titles
-        this.temp_filtered_context = ""      
+        this.temp_filtered_context = ""     
+        this.temperature = null;
+        
     }
+    add_temp(temp_degrees){
+        this.temperature= temp_degrees;
+    }
+    get_temp(){
+        return this.temperature;
+    }
+
 }
 
 //finds an id for the documentObject

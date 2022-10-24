@@ -1,4 +1,5 @@
 <script>
+  import {Router, Route, Link} from "svelte-navigator"
   import documents from './assets/documents.json'
   import DocumentList from './lib/components/documentview/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
@@ -84,45 +85,70 @@
 <head>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<div class="main">
-  {#if $currentView=="Scrollytelling"}
-    <ScrollyTellingView/>
-  {:else if $currentView == "Dokumentliste"}
-    <div class="side-container"  >
-      {#if $currentlyAddingNewNote}
-        {#if !$smallDevice}
-          <Splitpanes theme = "modern-theme" on:resized="{updateTypewriterSize}">
-            <Pane size={(100-typewriter_size).toString()}> <ScrollView on:set_typewriter_size={set_typewriter_size}/> </Pane>
-            <Pane minSize="35" size={typewriter_size.toString()}> <ContentView on:set_typewriter_view_size={set_typewriter_size}/> </Pane>
-          </Splitpanes>
-        {:else}  
-            <ScrollView/>
-        {/if}
 
-      {:else}
-        <Splitpanes theme = "modern-theme" style="overflow:hidden;" on:resized="{updateContentWiewSize}">
-          <Pane size={(100-contentWiewSize).toString()} >
-              <DocumentList on:set_content_view_size={set_content_view_size}/>
-          </Pane>
-        {#if $currentDocumentObject}
-          <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size}/></Pane>
-        {/if}
-        </Splitpanes>
-      {/if}
-    </div>
-  {:else  if $currentView == "Kontinuerlig visning"}
-    <Splitpanes theme = "modern-theme">
-      <Pane size={$openedDocTabs.length== 0? "100": "50"}>
+<Router>
+  <h1>Felles</h1>
+  <nav>
+    <Link to="/">DocumentList</Link>
+    <Link to="scrollview">Scrollview</Link>
+    <Link to="scrollytelling">ScrollyTelling</Link>
+  </nav>
+  <!-- <div class="main"> -->
+    <main>
+
+      <Route path="/">
+        <DocumentList on:set_content_view_size={set_content_view_size}/>
+      </Route>
+
+      <Route path="scrollview">
         <ScrollView/>
-      </Pane>
-      <Pane size={$openedDocTabs.length== 0? "0": "50"}>
-        {#if $openedDocTabs.length>0}
-          <DocumentsTabs/>
+      </Route>
+  
+      <Route path="scrollytelling">
+        <ScrollyTellingView/>
+      </Route>
+    </main>
+    <!-- {#if $currentView == "Dokumentliste"}
+      <div class="side-container"  >
+        {#if $currentlyAddingNewNote}
+          {#if !$smallDevice}
+            <Splitpanes theme = "modern-theme" on:resized="{updateTypewriterSize}">
+              <Pane size={(100-typewriter_size).toString()}> <ScrollView on:set_typewriter_size={set_typewriter_size}/> </Pane>
+              <Pane minSize="35" size={typewriter_size.toString()}> <ContentView on:set_typewriter_view_size={set_typewriter_size}/> </Pane>
+            </Splitpanes>
+          {:else}  
+              <ScrollView/>
+          {/if}
+  
+        {:else}
+          <Splitpanes theme = "modern-theme" style="overflow:hidden;" on:resized="{updateContentWiewSize}">
+            <Pane size={(100-contentWiewSize).toString()} >
+              <Route path="/">
+                <DocumentList on:set_content_view_size={set_content_view_size}/>
+              </Route>
+            </Pane>
+          {#if $currentDocumentObject}
+            <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size}/></Pane>
+          {/if}
+          </Splitpanes>
         {/if}
-      </Pane>
-    </Splitpanes>
-  {/if}
-</div>
+      </div>
+    {:else  if $currentView == "Kontinuerlig visning"}
+      <Splitpanes theme = "modern-theme">
+        <Pane size={$openedDocTabs.length== 0? "100": "50"}>
+          <Route path="scrollview">
+            <ScrollView/>
+          </Route>
+        </Pane>
+        <Pane size={$openedDocTabs.length== 0? "0": "50"}>
+          {#if $openedDocTabs.length>0}
+            <DocumentsTabs/>
+          {/if}
+        </Pane>
+      </Splitpanes>
+    {/if} -->
+  <!-- </div> -->
+</Router>
 
 <style>
 

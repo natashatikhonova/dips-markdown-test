@@ -1,19 +1,34 @@
 <script>
-  import {Router, Route, Link} from "svelte-navigator"
+  import {Router, Route, Link, useNavigate, useLocation, navigate} from "svelte-navigator"
   import documents from './assets/documents.json'
   import DocumentList from './lib/components/documentview/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/scrollview/ScrollView.svelte';
-  import { documentList, currentView, currentlyAddingNewNote,currentlyEditingNote,  currentDocumentObject, DocumentObject, smallDevice, openedDocTabs} from './lib/stores/stores.js';
+  import { documentList, currentView, currentlyAddingNewNote,currentlyEditingNote, selected_text_size_scrollview, currentDocumentObject, DocumentObject, smallDevice, openedDocTabs} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
   import {ParseMarkdown} from './lib/utils/markdown/ParseMarkdown.js'
   import Device from 'svelte-device-info'
   import ScrollyTellingView from './lib/components/scrollytelling/ScrollyTellingView.svelte';
   import DocumentsTabs from './lib/components/scrollview/DocumentsTabs.svelte';
 
+
   $smallDevice = (Device.isPhone || Device.isTablet || Device.isMobile)
 
   let typewriter_size = 50
+
+
+
+  $: if ($currentView){
+    
+    if($currentView == "dokumentliste"){
+      console.log("Dokumentlist")
+      navigate("/");
+    }else{
+      console.log($currentView)
+      navigate("/"+$currentView);
+    }
+    
+  }
 
   //gets document data from JSON file
   documents.forEach(putInDocumentList);  
@@ -87,67 +102,53 @@
 </head>
 
 <Router>
-  <h1>Felles</h1>
-  <nav>
-    <Link to="/">DocumentList</Link>
-    <Link to="scrollview">Scrollview</Link>
-    <Link to="scrollytelling">ScrollyTelling</Link>
-  </nav>
-  <!-- <div class="main"> -->
     <main>
-
-      <Route path="/">
-        <DocumentList on:set_content_view_size={set_content_view_size}/>
-      </Route>
-
-      <Route path="scrollview">
-        <ScrollView/>
-      </Route>
-  
-      <Route path="scrollytelling">
-        <ScrollyTellingView/>
-      </Route>
-    </main>
-    <!-- {#if $currentView == "Dokumentliste"}
-      <div class="side-container"  >
-        {#if $currentlyAddingNewNote}
-          {#if !$smallDevice}
-            <Splitpanes theme = "modern-theme" on:resized="{updateTypewriterSize}">
-              <Pane size={(100-typewriter_size).toString()}> <ScrollView on:set_typewriter_size={set_typewriter_size}/> </Pane>
-              <Pane minSize="35" size={typewriter_size.toString()}> <ContentView on:set_typewriter_view_size={set_typewriter_size}/> </Pane>
-            </Splitpanes>
-          {:else}  
+        <Route path="/">
+          <div class="side-container"  >
+            {#if $currentlyAddingNewNote}
+              {#if !$smallDevice}
+                <Splitpanes theme = "modern-theme" on:resized="{updateTypewriterSize}">
+                  <Pane size={(100-typewriter_size).toString()}> <ScrollView on:set_typewriter_size={set_typewriter_size}/> </Pane>
+                  <Pane minSize="35" size={typewriter_size.toString()}> <ContentView on:set_typewriter_view_size={set_typewriter_size}/> </Pane>
+                </Splitpanes>
+              {:else}  
+                  <ScrollView/>
+              {/if}
+      
+            {:else}
+              <Splitpanes theme = "modern-theme" style="overflow:hidden;" on:resized="{updateContentWiewSize}">
+                <Pane size={(100-contentWiewSize).toString()} >
+                  <Route path="/">
+                    <DocumentList on:set_content_view_size={set_content_view_size}/>
+                  </Route>
+                </Pane>
+              {#if $currentDocumentObject}
+                <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size}/></Pane>
+              {/if}
+              </Splitpanes>
+            {/if}
+          </div>
+        </Route>
+        
+        <Route path="scrollview">
+          <Splitpanes theme = "modern-theme">
+            <Pane size={$openedDocTabs.length== 0? "100": "50"}>
               <ScrollView/>
-          {/if}
-  
-        {:else}
-          <Splitpanes theme = "modern-theme" style="overflow:hidden;" on:resized="{updateContentWiewSize}">
-            <Pane size={(100-contentWiewSize).toString()} >
-              <Route path="/">
-                <DocumentList on:set_content_view_size={set_content_view_size}/>
-              </Route>
             </Pane>
-          {#if $currentDocumentObject}
-            <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size}/></Pane>
-          {/if}
+            <Pane size={$openedDocTabs.length== 0? "0": "50"}>
+              {#if $openedDocTabs.length>0}
+                <DocumentsTabs/>
+              {/if}
+            </Pane>
           </Splitpanes>
-        {/if}
-      </div>
-    {:else  if $currentView == "Kontinuerlig visning"}
-      <Splitpanes theme = "modern-theme">
-        <Pane size={$openedDocTabs.length== 0? "100": "50"}>
-          <Route path="scrollview">
-            <ScrollView/>
-          </Route>
-        </Pane>
-        <Pane size={$openedDocTabs.length== 0? "0": "50"}>
-          {#if $openedDocTabs.length>0}
-            <DocumentsTabs/>
-          {/if}
-        </Pane>
-      </Splitpanes>
-    {/if} -->
-  <!-- </div> -->
+        </Route>
+
+      <Route path="scrollytelling">
+          <ScrollyTellingView/>
+      </Route>
+     
+    </main>
+  
 </Router>
 
 <style>

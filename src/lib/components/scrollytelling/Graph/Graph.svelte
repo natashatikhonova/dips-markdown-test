@@ -14,7 +14,6 @@
 	$: console.log(removed)
 	$: console.log(durationTime)
 
-
 	let maxValuesGridX = 10;
 	let maxValuesGridY = 10;
 	$: durationTime = removed? 0: points.length*300;

@@ -9,8 +9,8 @@
     let showLineHeights =false;
     let min_size = false;
     let max_size = false;
-    let allViews = ["Dokumentliste", "Kontinuerlig visning", "Scrollytelling"]
-    let selected_view = $currentView
+    let allViews = ["dokumentliste", "scrollview", "scrollytelling"]
+    let selected_view = ""
 
     const line_heights = ["1.0", "1.15", "1.5", "2.0", "2.5", "3.0"]
     const dispatch = createEventDispatcher()
@@ -88,7 +88,10 @@
     <div class="middle-menu">
         <div class="settings">
             <select class="dropdown-menu" bind:value={selected_view} >
-              {#each allViews as value}<option {value} class = "dropdown-option">{value}</option>{/each}
+              {#each allViews as value, i}
+                <option {value} class = "dropdown-option">{value}</option>
+              {/each}
+
             </select>
           
         </div>
@@ -141,7 +144,7 @@
         
         {/if}
         <ThemeButton/>
-        {#if $currentView != "Kontinuerlig visning"}
+        {#if $currentView != "Scrollview"}
             {#if !hideToolBar && ($currentView == "Dokumentliste")}
                 <button title = "Vis dokumentliste" class="arrow-keys" on:click={showTypewriter}><i class="material-icons">keyboard_arrow_left</i></button>
             {:else if $currentDocumentObject && !($smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote) ) && ($currentView != "Scrollytelling")}

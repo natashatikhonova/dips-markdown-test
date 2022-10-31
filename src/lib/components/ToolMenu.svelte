@@ -2,6 +2,7 @@
     import { currentView, checked_titles_filters, searchValue, amount_searched_words, current_doctype_filtergroup, showFiltermenu, selected_line_height, selected_text_size_scrollview, allfilterOff, currentDocumentObject, documentTypes, smallDevice, currentlyAddingNewNote, currentlyEditingNote} from '../stores/stores.js';
     import {createEventDispatcher} from 'svelte';
     import ThemeButton from './ThemeButton.svelte';
+    import { navigate } from 'svelte-navigator';
 
     export let hideToolBar = true;
 
@@ -10,17 +11,18 @@
     let min_size = false;
     let max_size = false;
     let allViews = ["dokumentliste", "scrollview", "scrollytelling"]
-    let selected_view = ""
-
+    let selected_view = $currentView
+    
     const line_heights = ["1.0", "1.15", "1.5", "2.0", "2.5", "3.0"]
     const dispatch = createEventDispatcher()
 
-      //swichting between sideview and scrollview (*the two buttons in upper right corner)
+      //swichting between view
     $: if (selected_view != $currentView) {
         if($currentlyAddingNewNote || $currentlyEditingNote){
             alert("Vennligst lagre eller avbryt!");
             selected_view = $currentView;
         } else{
+            navigate("/" + selected_view);
             $currentView = selected_view;
         }
     }

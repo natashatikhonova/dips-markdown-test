@@ -30,7 +30,7 @@
 	$: path = `M${points[0].x},${heightDict[points[0].y]} ${points.slice(1, initialCount).map(p => `L${p.x*xScale},${heightDict[p.y]}`).join(' ')}`
 	$: $animatedHeight = height
 	$: $animatedWidth = width
-
+	console.log(points)
 	let showLine = false
 
 	function calcHeight(points){

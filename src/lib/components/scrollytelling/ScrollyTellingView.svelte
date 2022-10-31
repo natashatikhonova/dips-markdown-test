@@ -11,7 +11,7 @@
     import { onDestroy} from "svelte";
     import {useLocation} from "svelte-navigator"
     const location = useLocation()
-
+    
     $currentView = $location.pathname.substring(1);
     {console.log("scrollytelling")}
 	let value = 0
@@ -27,7 +27,7 @@
     let filteredDocumentlist = $documentList;
     
     $currentDocumentObject = filteredDocumentlist[value]
-    $: console.log(filteredDocumentlist)
+    // $: console.log(filteredDocumentlist)
     let sortedData = filteredDocumentlist;
     let current_index = -1;
 
@@ -182,8 +182,8 @@
         }
         $currentDocumentObject = filteredDocumentlist[value]
         $currentDocumentObject = $currentDocumentObject
-        console.log(filteredDocumentlist)
-        console.log("value " + value)
+        // console.log(filteredDocumentlist)
+        // console.log("value " + value)
        
         if (value > current_index ) {
             if ($currentDocumentObject.temperature != null){
@@ -252,12 +252,15 @@
                         <div in:fly="{{ x: -170, duration: 2000 }}" out:fade class = "graph" >
                             <h4> Temperatur </h4>
                             <h6> Viser Temperatur for de siste årene</h6>
+                           
                             {#if $current_doctype_filtergroup.filters.length != documentTypes.length}
                                 <!-- filter on -->
                                 <h6 style = "color: #d43838"> *Filtrert på dokumenter. Sjekk filtermenyen</h6>
 
                             {/if}
-                            <Graph height={500} width = {500} points = {points.slice(0, value)} xName = {"Målinger"} yName = {"Grader"} removed = {points.length != points.slice(0, value).length }/>
+                            {console.log("Før grafkomponent")}
+                            <Graph height={500} width = {500} points = {points.slice(0, value+1)} xName = {"Målinger"} yName = {"Grader"} removed = {points.length != points.slice(0, value).length }/>
+                            
                         </div>
                     {/if}
                    
@@ -272,7 +275,6 @@
     .main{
         height: 100%;
         overflow-y: auto;   
-       
     }
 
 

@@ -9,8 +9,8 @@
     import FilterMenu from '../filter/FilterMenu.svelte';
     import {createEventDispatcher} from 'svelte';
     import {useLocation} from "svelte-navigator"
-    const location = useLocation()
     console.log("scrollview")
+    const location = useLocation()
     $currentView = $location.pathname.substring(1);
 
     const dispatch = createEventDispatcher()

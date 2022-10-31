@@ -15,20 +15,9 @@
   $smallDevice = (Device.isPhone || Device.isTablet || Device.isMobile)
 
   let typewriter_size = 50
-
-
-
-  $: if ($currentView){
-    
-    if($currentView == "dokumentliste"){
-      console.log("Dokumentlist")
-      navigate("/");
-    }else{
-      console.log($currentView)
-      navigate("/"+$currentView);
-    }
-    
-  }
+  console.log("APP")
+  //Standard page
+  //navigate("/dokumentliste");
 
   //gets document data from JSON file
   documents.forEach(putInDocumentList);  
@@ -102,8 +91,8 @@
 </head>
 
 <Router>
-    <main>
-        <Route path="/">
+    <div class = "main">
+        <Route path="dokumentliste">
           <div class="side-container"  >
             {#if $currentlyAddingNewNote}
               {#if !$smallDevice}
@@ -131,6 +120,7 @@
         </Route>
         
         <Route path="scrollview">
+  
           <Splitpanes theme = "modern-theme">
             <Pane size={$openedDocTabs.length== 0? "100": "50"}>
               <ScrollView/>
@@ -147,7 +137,7 @@
           <ScrollyTellingView/>
       </Route>
      
-    </main>
+    </div>
   
 </Router>
 

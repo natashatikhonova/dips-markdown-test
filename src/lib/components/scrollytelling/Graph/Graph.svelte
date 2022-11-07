@@ -11,8 +11,7 @@
 	export let yName;
 	export let points;
 	export let removed;
-	$: console.log(removed)
-	$: console.log(durationTime)
+
 
 	let maxValuesGridX = 10;
 	let maxValuesGridY = 10;
@@ -30,7 +29,7 @@
 	$: path = `M${points[0].x},${heightDict[points[0].y]} ${points.slice(1, initialCount).map(p => `L${p.x*xScale},${heightDict[p.y]}`).join(' ')}`
 	$: $animatedHeight = height
 	$: $animatedWidth = width
-	console.log(points)
+	
 	let showLine = false
 
 	function calcHeight(points){
@@ -134,7 +133,7 @@
 	{/if} 
 
 	{#each points.slice(initialCount) as point, i}
-		{console.log(initialCount)}
+	
 		<path transition:draw={{duration:(removed? 0: 300), delay: (removed? 0: 300)}} d={`M${points[initialCount-1+i].x*xScale},${heightDict[points[initialCount-1+i].y]} L${point.x*xScale},${heightDict[point.y]}`} />
 	{/each}
 

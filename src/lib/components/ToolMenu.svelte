@@ -35,6 +35,12 @@
             showLineHeights = !showLineHeights
         }
     });
+    //remove text settings window when clicked outside of it
+    window.addEventListener("click", function(event) {
+        if(event.target.id != "settings-button"){
+            showTextSettings = false
+        }
+    });
 
     //zoom in and out on text inside scrollview
     function set_text_size(direction){
@@ -101,7 +107,7 @@
 
     <div class="right-menu">
         
-        {#if $currentView}
+        <!-- {#if $currentView} -->
             <!-- Search field for all documents (content, date, author, title) in scroll view-->
             <div class = "search_field" class:hidden={hideToolBar}>
                 <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} placeholder="Søk.." name="search" class="search-input searchWord-input"/>
@@ -114,10 +120,11 @@
                     {/if}
                 </div>
             </div>
-
-            <button class="settings-button" title= "Instillinger" class:active={showTextSettings} on:click={()=>{showTextSettings=!showTextSettings}}><i class="material-icons">settings</i></button>
+            {#if $currentView != "dokumentliste"}
+                <button id="settings-button" title= "Instillinger" class:active={showTextSettings} on:click={()=>{showTextSettings=!showTextSettings}}><i class="material-icons">settings</i></button>
+            {/if}
             {#if showTextSettings}
-                <div class="text-settings">
+                <div class="text-settings" >
                     <div class="extra-functions">
                         <!-- Zoom in/out -->
                         <button
@@ -144,10 +151,10 @@
                 </div>
             {/if}
         
-        {/if}
+        <!-- {/if} -->
         <ThemeButton/>
-        {#if $currentView != "Scrollview"}
-            {#if !hideToolBar && ($currentView == "Dokumentliste")}
+        {#if $currentView != "scrollview"}
+            {#if !hideToolBar && ($currentView == "dokumentliste")}
                 <button title = "Vis dokumentliste" class="arrow-keys" on:click={showTypewriter}><i class="material-icons">keyboard_arrow_left</i></button>
             {:else if $currentDocumentObject && !($smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote) ) && ($currentView != "Scrollytelling")}
                 <button title = "tilbake" class="arrow-keys" on:click={showContent}><i class="material-icons">keyboard_arrow_left</i></button>
@@ -195,6 +202,7 @@
         height: 100%;
         flex-direction: row;
         align-items: center;
+     
     }
 
     .tool-menu{
@@ -229,7 +237,8 @@
         position: absolute;
         flex-direction: row-reverse;
         align-items: center;
-        top:80px;
+        top:40px;
+        right: 10px;
         width: 8.7rem;
         background-color: #f1f1f1;
         border: 1px rgb(191, 190, 190) solid;
@@ -313,7 +322,7 @@
     }
     
     /* Text settings button */
-    .settings-button {
+    #settings-button {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -325,11 +334,11 @@
         cursor: pointer;
     }
     
-    .settings-button :hover {
+    #settings-button :hover {
         color:#d43838;
     }
     
-    .settings-button.active{
+    #settings-button.active{
         color:#d43838;
     }
     .dropdown-menu {
@@ -407,7 +416,7 @@
         box-shadow: 0 0 0 0.2rem rgba(104, 177, 255, 0.5);
     }
     
-    :global(body.dark-mode) .settings-button{
+    :global(body.dark-mode) #settings-button{
         color: #cccccc;
     }
 

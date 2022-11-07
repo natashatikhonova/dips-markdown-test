@@ -9,9 +9,13 @@
     import FilterMenu from '../filter/FilterMenu.svelte';
     import {createEventDispatcher} from 'svelte';
     import {useLocation} from "svelte-navigator"
-    console.log("scrollview")
+    export let tempView = false;
+    console.log(tempView)
     const location = useLocation()
-    $currentView = $location.pathname.substring(1);
+    if (!tempView){
+        console.log("scrollview")
+        $currentView = $location.pathname.substring(1);
+    }
 
     const dispatch = createEventDispatcher()
     let editor_size = 50
@@ -152,11 +156,10 @@
         //Different outcome based on panes current size
         if(editor_size > 70 && size == 0){
         editor_size = 50
-        console.log(1)
         }
         else if(editor_size < 30 && size == 100){
         editor_size = 50
-        console.log(2)
+        
         }
         else{
         editor_size = size
@@ -211,7 +214,9 @@
                                 {/if}
                             </div>
                         </Pane>
-                        {#if show && ((!($currentView == "Dokumentliste") && !$smallDevice) || $smallDevice)}
+                     
+                        {#if show && ((!($currentView == "dokumentliste") && !$smallDevice) || $smallDevice)}
+                    
                             <!--  Pane for Typewriter -->
                             <Pane size={$smallDevice ? "100" : editor_size.toString()}>
                                 <div class="editor">
@@ -227,6 +232,7 @@
                     </Splitpanes>
                     <!-- ONLY mobile button to toggle editor up and down -->
                     {#if $smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote)&&!show}
+                    
                         <button class="mobile-arrow-up-button" on:click={()=>{show=true}}>Vis <i class="material-icons">keyboard_arrow_up</i></button>
                     {/if}
                 </Pane>

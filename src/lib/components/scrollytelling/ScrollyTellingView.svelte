@@ -1,6 +1,6 @@
 <script>
     import Scrolly from "./Scrolly.svelte";
-    import {documentList, currentDocumentObject, smallDevice, showFiltermenu, amount_searched_words, searchValue, current_doctype_filtergroup, documentTypes, currentView} from "../../stores/stores.js"
+    import {selected_line_height, selected_text_size_scrollview, documentList, currentDocumentObject, smallDevice, showFiltermenu, amount_searched_words, searchValue, current_doctype_filtergroup, documentTypes, currentView} from "../../stores/stores.js"
     import ScrollyElement from "./ScrollyElement.svelte";
     import { marked } from 'marked';
     import ToolMenu from '../ToolMenu.svelte'
@@ -10,10 +10,18 @@
     import FilterMenu from '../filter/FilterMenu.svelte';
     import { onDestroy} from "svelte";
     import {useLocation} from "svelte-navigator"
+   
+
+    export let tempView = false;
     const location = useLocation()
+    if (!tempView){
+        console.log("scrollytelling")
+        $currentView = $location.pathname.substring(1);
+    }
+    
     
     $currentView = $location.pathname.substring(1);
-    {console.log("scrollytelling")}
+    
 	let value = 0
     let current_opacity = 0;
     let current_size= "0";
@@ -208,7 +216,6 @@
     init_docList();
 
     $: if ($searchValue != prevSearchValue) {
-        console.log("Oppdaterer listen")
         marked_html = []
         for (let i = 0; i < filteredDocumentlist.length; i++) {
             marked_html[i] = {doc: filteredDocumentlist[i], text: highlightWord(marked(filteredDocumentlist[i].context)), title: highlightWord(marked(filteredDocumentlist[i].title)) , author: highlightWord(marked(filteredDocumentlist[i].author)), date: highlightWord(marked(filteredDocumentlist[i].date.toDateString()))} 
@@ -232,7 +239,7 @@
             <Pane size={scrollytelling_size} >
                 <div class="scrolly-telling">
         
-                    <div class="scroll">
+                    <div class="scroll" style="line-height:{$selected_line_height}; font-size: {$selected_text_size_scrollview}pt">
                         <Scrolly bind:value on:steps_ratio={check_steps}>
                                 {#each marked_html as item, i}
                                 {#if i != marked_html.length-1}
@@ -248,7 +255,7 @@
                         </Scrolly>
                     </div>
                     
-                   {#if filteredDocumentlist.length!=0 && $currentDocumentObject.get_temp() != null && points.length != 0}
+                   {#if filteredDocumentlist.length!=0 && $currentDocumentObject.get_temp() != null && points.length != 0 && !$smallDevice}
                         <div in:fly="{{ x: -170, duration: 2000 }}" out:fade class = "graph" >
                             <h4> Temperatur </h4>
                             <h6> Viser Temperatur for de siste årene</h6>
@@ -258,8 +265,8 @@
                                 <h6 style = "color: #d43838"> *Filtrert på dokumenter. Sjekk filtermenyen</h6>
 
                             {/if}
-                            {console.log("Før grafkomponent")}
-                            <Graph height={500} width = {500} points = {points.slice(0, value+1)} xName = {"Målinger"} yName = {"Grader"} removed = {points.length != points.slice(0, value).length }/>
+                    
+                            <Graph height={500} width = {500} points = {points.slice(0, value+1)} xName = {"Målinger"} yName = {"Grader"} removed = {points.length != points.slice(0, value+1).length }/>
                             
                         </div>
                     {/if}

@@ -5,9 +5,13 @@
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import FilterMenu from '../filter/FilterMenu.svelte';
     import {useLocation} from "svelte-navigator"
+    export let tempView = false;
     const location = useLocation()
-    console.log("dokumentliste")
-    $currentView = $location.pathname.substring(1);
+    if (!tempView){
+        console.log("dokumentliste")
+        $currentView = $location.pathname.substring(1);
+    }
+
     let sortedData = $documentList;
     const tableHeaders = ["title", "date","author"];
     let selectedHeader = "date";

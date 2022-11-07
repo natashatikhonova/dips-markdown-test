@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 8080",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -23,6 +23,7 @@
     "html-to-text": "^8.2.0",
     "marked": "^4.0.17",
     "node-html-markdown": "^1.2.0",
+    "openehr-client-js": "^1.0.0-alpha.7",
     "skeleton": "^0.1.2",
     "skeleton-elements": "^4.0.0",
     "svelte-device-info": "^1.0.0",

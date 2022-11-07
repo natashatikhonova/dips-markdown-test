@@ -1,5 +1,5 @@
 <script>
-    import { currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote, documentList, smallDevice } from '../stores/stores.js';
+    import { currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote, documentList} from '../stores/stores.js';
     import {marked } from 'marked';
     import Typewriter from './typewriter/Typewriter.svelte';
     import {editor} from '../stores/stores.js';

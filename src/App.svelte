@@ -1,40 +1,21 @@
-<script>
-  import {Router, Route, Link, useNavigate, useLocation, navigate} from "svelte-navigator"
-  import documents from './assets/documents.json'
+<script lang="ts">
+  import {Router, Route} from "svelte-navigator"
   import DocumentList from './lib/components/documentview/DocumentList.svelte';
   import ContentView from './lib/components/ContentView.svelte';
   import ScrollView from './lib/components/scrollview/ScrollView.svelte';
-  import { documentList, currentView, currentlyAddingNewNote,currentlyEditingNote, selected_text_size_scrollview, currentDocumentObject, DocumentObject, smallDevice, openedDocTabs} from './lib/stores/stores.js';
+  import { currentlyAddingNewNote, currentDocumentObject, smallDevice, openedDocTabs} from './lib/stores/stores.js';
   import { Pane, Splitpanes } from 'svelte-splitpanes';
-  import {ParseMarkdown} from './lib/utils/markdown/ParseMarkdown.js'
   import Device from 'svelte-device-info'
   import ScrollyTellingView from './lib/components/scrollytelling/ScrollyTellingView.svelte';
   import DocumentsTabs from './lib/components/scrollview/DocumentsTabs.svelte';
+  import Launch from "./Launch.svelte";
+  import Load from "./Load.svelte";
 
 
   $smallDevice = (Device.isPhone || Device.isTablet || Device.isMobile)
 
   let typewriter_size = 50
   console.log("APP")
-  //Standard page
-  //navigate("/dokumentliste");
-
-  //gets document data from JSON file
-  documents.forEach(putInDocumentList);  
-
-  //Makes a new DocumentObject for each file and adds it to the store array $documentList
-  function putInDocumentList(item){
-    let document = new DocumentObject(item.id, item.date, item.content, item.title, item.readable);
-    document.add_temp(item.temperature);
-
-    //Makes a tree structur for all markdown formated titles:
-    let parse = new ParseMarkdown
-    let tree = parse.parseAndSetIntoTree(document) 
-    document.markdownTree = tree;
-
-    $documentList.push(document);
-    $documentList = $documentList;
-  }
 
   //tilpasser til mobilversjon
   $: contentWiewSize = $smallDevice && $currentDocumentObject ? 100: 50
@@ -61,11 +42,9 @@
     //Different outcome based on panes current size
     if(typewriter_size > 70 && event.detail == 0){
       typewriter_size = 50
-      console.log(1)
     }
     else if(typewriter_size < 30 && event.detail == 100){
       typewriter_size = 50
-      console.log(2)
     }
     else{
       typewriter_size = event.detail
@@ -92,51 +71,57 @@
 
 <Router>
     <div class = "main">
-        <Route path="dokumentliste">
-          <div class="side-container"  >
-            {#if $currentlyAddingNewNote}
-              {#if !$smallDevice}
-                <Splitpanes theme = "modern-theme" on:resized="{updateTypewriterSize}">
-                  <Pane size={(100-typewriter_size).toString()}> <ScrollView on:set_typewriter_size={set_typewriter_size}/> </Pane>
-                  <Pane minSize="35" size={typewriter_size.toString()}> <ContentView on:set_typewriter_view_size={set_typewriter_size}/> </Pane>
-                </Splitpanes>
-              {:else}  
-                  <ScrollView/>
-              {/if}
-      
-            {:else}
-              <Splitpanes theme = "modern-theme" style="overflow:hidden;" on:resized="{updateContentWiewSize}">
-                <Pane size={(100-contentWiewSize).toString()} >
-                  <Route path="/">
-                    <DocumentList on:set_content_view_size={set_content_view_size}/>
-                  </Route>
-                </Pane>
-              {#if $currentDocumentObject}
-                <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size}/></Pane>
-              {/if}
-              </Splitpanes>
-            {/if}
-          </div>
-        </Route>
-        
-        <Route path="scrollview">
-  
-          <Splitpanes theme = "modern-theme">
-            <Pane size={$openedDocTabs.length== 0? "100": "50"}>
-              <ScrollView/>
-            </Pane>
-            <Pane size={$openedDocTabs.length== 0? "0": "50"}>
-              {#if $openedDocTabs.length>0}
-                <DocumentsTabs/>
-              {/if}
-            </Pane>
-          </Splitpanes>
-        </Route>
 
-      <Route path="scrollytelling">
-          <ScrollyTellingView/>
+      <Route path="/" primary={false}>
+        <Launch/>
       </Route>
-     
+
+      <Route path="/app" primary={false}>
+        <Load/>
+      </Route>
+
+      <Route path="dokumentliste">
+        <div class="side-container"  >
+          {#if $currentlyAddingNewNote}
+            {#if !$smallDevice}
+              <Splitpanes theme = "modern-theme" on:resized="{updateTypewriterSize}">
+                <Pane size={(100-typewriter_size).toString()}> <ScrollView on:set_typewriter_size={set_typewriter_size} tempView={true}/> </Pane>
+                <Pane minSize="35" size={typewriter_size.toString()}> <ContentView on:set_typewriter_view_size={set_typewriter_size}/> </Pane>
+              </Splitpanes>
+            {:else}  
+                <ScrollView tempView={true} />
+            {/if}
+    
+          {:else}
+            <Splitpanes theme = "modern-theme" style="overflow:hidden;" on:resized="{updateContentWiewSize}">
+              <Pane size={(100-contentWiewSize).toString()} >
+                  <DocumentList on:set_content_view_size={set_content_view_size}/>
+              </Pane>
+            {#if $currentDocumentObject}
+              <Pane size={contentWiewSize.toString()} ><ContentView on:set_content_view_size={set_content_view_size}/></Pane>
+            {/if}
+            </Splitpanes>
+          {/if}
+        </div>
+      </Route>
+      
+      <Route path="scrollview">
+        <Splitpanes theme = "modern-theme">
+          <Pane size={$openedDocTabs.length== 0? "100": "50"}>
+            <ScrollView/>
+          </Pane>
+          <Pane size={$openedDocTabs.length== 0? "0": "50"}>
+            {#if $openedDocTabs.length>0}
+              <DocumentsTabs/>
+            {/if}
+          </Pane>
+        </Splitpanes>
+      </Route>
+
+    <Route path="scrollytelling">
+        <ScrollyTellingView/>
+    </Route>
+
     </div>
   
 </Router>
@@ -147,7 +132,6 @@
     height: 100%;
     overflow-y: none;
     overflow-x: hidden;
-
   }
 
   .side-container{
@@ -156,14 +140,5 @@
     display: flex;
     flex-direction: row;
   }
-
-  .settings{
-    display: flex;
-    width: 200px;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  
 
 </style>

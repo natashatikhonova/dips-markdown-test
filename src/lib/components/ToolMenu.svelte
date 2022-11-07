@@ -12,6 +12,8 @@
     let max_size = false;
     let allViews = ["dokumentliste", "scrollview", "scrollytelling"]
     let selected_view = $currentView
+    let filterSearchValue = "";
+    $: $searchValue = filterWord(filterSearchValue);
     
     const line_heights = ["1.0", "1.15", "1.5", "2.0", "2.5", "3.0"]
     const dispatch = createEventDispatcher()
@@ -41,6 +43,9 @@
     //         showTextSettings = false
     //     }
     // });
+    function filterWord(word){
+        return word.replace(/[^a-zA-Z0-9 ]/g, '');
+    }
 
     //zoom in and out on text inside scrollview
     function set_text_size(direction){
@@ -101,7 +106,6 @@
               {/each}
 
             </select>
-          
         </div>
     </div>
 
@@ -110,13 +114,14 @@
         <!-- {#if $currentView} -->
             <!-- Search field for all documents (content, date, author, title) in scroll view-->
             <div class = "search_field" class:hidden={hideToolBar}>
-                <input on:input={()=>{$amount_searched_words = 0}} bind:value = {$searchValue} placeholder="Søk.." name="search" class="search-input searchWord-input"/>
+                <input on:input={()=>{$amount_searched_words = 0}} bind:value = {filterSearchValue} placeholder="Søk.." name="search" class="search-input searchWord-input"/>
                 {#if $searchValue != ""}
                     <button class="cancel-button" on:click={()=>{$searchValue = ""}}><i class="material-icons">close</i></button>
                 {/if}
-                <div class="searched_words"> 
-                    {#if $searchValue != "" && $amount_searched_words != 0}
-                        {$amount_searched_words} ord
+                <div class="searched_words" style="font-size: 9pt"> 
+                    {#if $searchValue != ""}
+                        {$amount_searched_words == 0? "Ingen": $amount_searched_words} ord
+
                     {/if}
                 </div>
             </div>
@@ -156,7 +161,7 @@
         {#if $currentView != "scrollview"}
             {#if !hideToolBar && ($currentView == "dokumentliste")}
                 <button title = "Vis dokumentliste" class="arrow-keys" on:click={showTypewriter}><i class="material-icons">keyboard_arrow_left</i></button>
-            {:else if $currentDocumentObject && !($smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote) ) && ($currentView != "Scrollytelling")}
+            {:else if $currentDocumentObject && !($smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote) ) && ($currentView != "scrollytelling")}
                 <button title = "tilbake" class="arrow-keys" on:click={showContent}><i class="material-icons">keyboard_arrow_left</i></button>
             {/if}
         {/if}

@@ -35,12 +35,12 @@
             showLineHeights = !showLineHeights
         }
     });
-    //remove text settings window when clicked outside of it
-    window.addEventListener("click", function(event) {
-        if(event.target.id != "settings-button"){
-            showTextSettings = false
-        }
-    });
+    // //remove text settings window when clicked outside of it
+    // window.addEventListener("click", function(event) {
+    //     if(event.target.id != "settings-button"){
+    //         showTextSettings = false
+    //     }
+    // });
 
     //zoom in and out on text inside scrollview
     function set_text_size(direction){

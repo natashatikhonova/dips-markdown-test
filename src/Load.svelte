@@ -4,7 +4,14 @@
     import { DocumentObject, documentList } from './lib/stores/stores';
     import { ParseMarkdown } from './lib/utils/markdown/ParseMarkdown';
     import {openEHR} from "./openehrStore";
-    
+    import {SyncLoader} from "svelte-loading-spinners";
+    import Modal, { bind } from 'svelte-simple-modal';
+    import ErrorModal from "./lib/components/ErrorModal.svelte";
+    import { writable } from 'svelte/store';
+    console.log("LOAD!!")
+    const modal = writable(null);
+    let error = false
+
     let aql = `
         SELECT
         c/uid/value as "CID",
@@ -36,41 +43,68 @@
     }
 
     async function getDocuments() {
-        var data = await $openEHR.query(aql, {});
-        var sorted = groupBy(data.rows, (r) => r.documentMetadata.documentId);
-        Object.values(sorted).forEach(document => {
+        try {
+            var data = await $openEHR.query(aql, {});
+            console.log(data);
+            var sorted = groupBy(data.rows, (r) => r.documentMetadata.documentId);
+            Object.values(sorted).forEach(document => {
+    
+                console.log(document);
+                let markdownText = "";
+                Object.values(document).forEach(heading => {
+                    markdownText += "## " + heading.items[3] + "\n\n " + heading.items[2] + "\n";
+                })
+                
+                let newDocObj = new DocumentObject(document[0].documentMetadata.documentId, document[0].items[1], markdownText, "Epikrise", true, document[0].documentMetadata.authorId.toString());
+                newDocObj.add_temp(randomTeperature().toString());
+    
+                //Makes a tree structur for all markdown formated titles:
+                let parse = new ParseMarkdown()
+                let tree = parse.parseAndSetIntoTree(newDocObj) 
+                newDocObj.markdownTree = tree;
+    
+                $documentList.push(newDocObj);
+                $documentList = $documentList;
+                // console.log(newDocObj);
+            });
+            navigate("/dokumentliste") //Redirecter directly to out standard view,
 
-            console.log(document);
-            let markdownText = "";
-            Object.values(document).forEach(heading => {
-                markdownText += "## " + heading.items[3] + "\n\n " + heading.items[2] + "\n";
-            })
-          
-            let newDocObj = new DocumentObject(document[0].documentMetadata.documentId, document[0].items[1], markdownText, "Epikrise", true, document[0].documentMetadata.authorId.toString());
-            newDocObj.add_temp(randomTeperature().toString());
+        } catch (err){
+            createError(err)
+        } 
+    }
 
-            //Makes a tree structur for all markdown formated titles:
-            let parse = new ParseMarkdown()
-            let tree = parse.parseAndSetIntoTree(newDocObj) 
-            newDocObj.markdownTree = tree;
-
-            $documentList.push(newDocObj);
-            $documentList = $documentList;
-            // console.log(newDocObj);
-        });
-        return sorted;
+    function createError(message){
+        error = true
+        modal.set(bind(ErrorModal,{errMessage: message, type: "Database Error"}))
     }
 
     $: if ($openEHR){
         //Load documents to store
         getDocuments();
-
-        navigate("/dokumentliste") //Redirecter directly to out standard view,
     }
-</script>
 
-{#if $openEHR}
-    Loading documents.default..
-{:else}
-    Loading client
-{/if}
+
+</script>
+<div class= "main">
+    {#if error}
+        <Modal show={$modal} closeButton ={false} />
+    {:else}
+        {#if $openEHR}
+            Loading documents.default  
+        {:else}
+            Loading client  
+        {/if}
+        <SyncLoader size="60" color="#d43838" unit="px"/>
+    {/if}
+
+</div>
+<style>
+    .main{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: larger;
+        margin-top: 30%;
+    }
+</style>

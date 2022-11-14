@@ -10,10 +10,8 @@
     import {createEventDispatcher} from 'svelte';
     import {useLocation} from "svelte-navigator"
     export let tempView = false;
-    console.log(tempView)
     const location = useLocation()
     if (!tempView){
-        console.log("scrollview")
         $currentView = $location.pathname.substring(1);
     }
 

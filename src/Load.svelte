@@ -8,7 +8,7 @@
     import Modal, { bind } from 'svelte-simple-modal';
     import ErrorModal from "./lib/components/ErrorModal.svelte";
     import { writable } from 'svelte/store';
-    console.log("LOAD!!")
+
     const modal = writable(null);
     let error = false
 
@@ -45,11 +45,10 @@
     async function getDocuments() {
         try {
             var data = await $openEHR.query(aql, {});
-            console.log(data);
+
             var sorted = groupBy(data.rows, (r) => r.documentMetadata.documentId);
             Object.values(sorted).forEach(document => {
     
-                console.log(document);
                 let markdownText = "";
                 Object.values(document).forEach(heading => {
                     markdownText += "## " + heading.items[3] + "\n\n " + heading.items[2] + "\n";
@@ -65,7 +64,6 @@
     
                 $documentList.push(newDocObj);
                 $documentList = $documentList;
-                // console.log(newDocObj);
             });
             navigate("/dokumentliste") //Redirecter directly to out standard view,
 

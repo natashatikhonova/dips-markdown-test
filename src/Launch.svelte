@@ -5,7 +5,7 @@
     import {SyncLoader} from "svelte-loading-spinners";
     import Modal, { bind } from 'svelte-simple-modal';
     import ErrorModal from "./lib/components/ErrorModal.svelte";
-    console.log("LAUNCH!!")
+
     const modal = writable(null);
     let error = false
 

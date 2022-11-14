@@ -85,7 +85,6 @@
 
     //make typewriter take entire screen
     function showTypewriter(){
-        console.log("clicked")
         dispatch("set_typewriter_size", 100)
     }
 </script>

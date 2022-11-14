@@ -15,7 +15,6 @@
   $smallDevice = (Device.isPhone || Device.isTablet || Device.isMobile)
 
   let typewriter_size = 50
-  console.log("APP")
 
   //tilpasser til mobilversjon
   $: contentWiewSize = $smallDevice && $currentDocumentObject ? 100: 50

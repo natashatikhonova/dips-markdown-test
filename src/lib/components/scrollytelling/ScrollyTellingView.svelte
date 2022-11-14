@@ -15,7 +15,6 @@
     export let tempView = false;
     const location = useLocation()
     if (!tempView){
-        console.log("scrollytelling")
         $currentView = $location.pathname.substring(1);
     }
     
@@ -35,7 +34,6 @@
     let filteredDocumentlist = $documentList;
     
     $currentDocumentObject = filteredDocumentlist[value]
-    // $: console.log(filteredDocumentlist)
     let sortedData = filteredDocumentlist;
     let current_index = -1;
 
@@ -68,8 +66,6 @@
             marked_html[i] = {doc: filteredDocumentlist[i], text: highlightWord(marked(filteredDocumentlist[i].context)), title: highlightWord(marked(filteredDocumentlist[i].title)) , author: highlightWord(marked(filteredDocumentlist[i].author)), date: highlightWord(marked(filteredDocumentlist[i].date.toDateString()))} 
         }
         marked_html = marked_html
-        console.log("filter endret seg")
-        console.log(marked_html)
     }); 
 
     onDestroy(unsubscribe);
@@ -121,9 +117,7 @@
      //Highlight all the words searched on in htmlText
      function highlightWord(htmlText) {
         if ($searchValue != "" && $searchValue != prevSearchValue) {
-            console.log(prevSearchValue!=$searchValue)
             let container
-            console.log("marker ord")
             container = document.createElement("div")
             container.innerHTML = htmlText
             wrapWord(container, $searchValue)
@@ -190,8 +184,6 @@
         }
         $currentDocumentObject = filteredDocumentlist[value]
         $currentDocumentObject = $currentDocumentObject
-        // console.log(filteredDocumentlist)
-        // console.log("value " + value)
        
         if (value > current_index ) {
             if ($currentDocumentObject.temperature != null){

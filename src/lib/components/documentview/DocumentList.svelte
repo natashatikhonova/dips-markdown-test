@@ -8,7 +8,6 @@
     export let tempView = false;
     const location = useLocation()
     if (!tempView){
-        console.log("dokumentliste")
         $currentView = $location.pathname.substring(1);
     }
 

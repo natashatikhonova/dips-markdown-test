@@ -1,11 +1,16 @@
 <script>
     import DocumentItem from "./DocumentItem.svelte";
-    import {currentDocumentObject, documentList, currentlyAddingNewNote, current_doctype_filtergroup, showFiltermenu, smallDevice} from '../stores/stores.js';
-    import ToolMenu from './ToolMenu.svelte';
+    import {currentDocumentObject, documentList, currentlyAddingNewNote, current_doctype_filtergroup, showFiltermenu, smallDevice, currentView} from '../../stores/stores.js';
+    import ToolMenu from '../ToolMenu.svelte';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
-    import FilterMenu from './filter/FilterMenu.svelte';
-  
-    
+    import FilterMenu from '../filter/FilterMenu.svelte';
+    import {useLocation} from "svelte-navigator"
+    export let tempView = false;
+    const location = useLocation()
+    if (!tempView){
+        $currentView = $location.pathname.substring(1);
+    }
+
     let sortedData = $documentList;
     const tableHeaders = ["title", "date","author"];
     let selectedHeader = "date";

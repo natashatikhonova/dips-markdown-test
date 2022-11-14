@@ -135,16 +135,16 @@
 <!-- source: https://github.com/typewriter-editor/typewriter -->
   <header class="tool-menu">
     <!-- ONLY on mobile -> pushes editor down -->
-    {#if $smallDevice  &&(!($currentView == "Dokumentliste") || $currentlyAddingNewNote)}
+    {#if $smallDevice  &&(!($currentView == "dokumentliste") || $currentlyAddingNewNote)}
       <div>
           <button class="arrow-down-button" on:click={mobileDown}> <i class="material-icons">keyboard_arrow_down</i></button>
       </div>
     {/if}
 
     <div >
-      {#if !$smallDevice && ($currentView == "Dokumentliste")}
+      {#if !$smallDevice && ($currentView == "dokumentliste")}
         <button title = "Vis dokumentliste" class="arrow-keys" on:click={showDocuments}><i class="material-icons">keyboard_arrow_right</i></button>
-      {:else if !$smallDevice && !($currentView == "Dokumentliste")}
+      {:else if !$smallDevice && !($currentView == "dokumentliste")}
         <button title = "Vis dokumenter" class="arrow-keys" on:click={()=>{manageScrollView(0)}}><i class="material-icons">keyboard_arrow_down</i></button>
         <button disabled={editor_size==100} title = "Vis teksteditor" class="arrow-keys" on:click={()=>{manageScrollView(100)}}><i class="material-icons">keyboard_arrow_up</i></button>
       {/if}

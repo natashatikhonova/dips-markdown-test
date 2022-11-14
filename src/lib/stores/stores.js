@@ -22,7 +22,7 @@ export let allfilterOff = writable(false);
 //all documentTypes available
 export let documentTypes = ["Epikrise","hehehe", "Poliklinisk notat", "Lab", "Sykepleier notat", "Rutinekontroll", "Røntgen bilde", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10", "typ11", "typ12", "typ13", "typ14", "typ1", "typ2", "typ3", "typ4", "typ5", "typ6", "typ7", "typ8", "typ9", "typ10", "typ11", "typ12", "typ13", "typ14"].sort();
 
-export let currentView = writable("Dokumentliste");
+export let currentView = writable("");
 //stores wich doctypes filters who is chosen
 //When id is -1, no group is selected but it stores wich filters is checked among all doctypes
 //when id >= 0, group is selected
@@ -65,17 +65,28 @@ export let openedDocTabs = writable([])
 
 //for storing the markdown text and info
 export class DocumentObject{
-    constructor(id, date, context, title, readable){
+    
+    constructor(id, date, context, title, readable, author){
         this.id = id;
         this.date = new Date(date);
         this.context = context;
         this.title = title;
         this.readable = readable;
-        this.author = "Dr.Who";
+        this.author = author;
         this.markdownTree = null;
         //Sorting on titles
-        this.temp_filtered_context = ""      
+        this.temp_filtered_context = ""     
+        this.temperature = null;
+        
+        
     }
+    add_temp(temp_degrees){
+        this.temperature= temp_degrees;
+    }
+    get_temp(){
+        return this.temperature;
+    }
+
 }
 
 //finds an id for the documentObject

@@ -1,13 +1,19 @@
 <script>
-    import {currentView, documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size_scrollview, smallDevice, editor} from '../stores/stores.js';
+    import {currentView, documentList, searchValue, amount_searched_words, searchedDocuments, showFiltermenu, selected_line_height, selected_text_size_scrollview, smallDevice, editor} from '../../stores/stores.js';
     import ScrollItem from "./ScrollItem.svelte";
-    import Typewriter from './typewriter/Typewriter.svelte';
-    import {currentlyAddingNewNote, currentlyEditingNote} from '../stores/stores.js';
+    import Typewriter from '../typewriter/Typewriter.svelte';
+    import {currentlyAddingNewNote, currentlyEditingNote} from '../../stores/stores.js';
     import { marked } from 'marked';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
-    import ToolMenu from './ToolMenu.svelte';
-    import FilterMenu from './filter/FilterMenu.svelte';
+    import ToolMenu from '../ToolMenu.svelte';
+    import FilterMenu from '../filter/FilterMenu.svelte';
     import {createEventDispatcher} from 'svelte';
+    import {useLocation} from "svelte-navigator"
+    export let tempView = false;
+    const location = useLocation()
+    if (!tempView){
+        $currentView = $location.pathname.substring(1);
+    }
 
     const dispatch = createEventDispatcher()
     let editor_size = 50
@@ -148,11 +154,10 @@
         //Different outcome based on panes current size
         if(editor_size > 70 && size == 0){
         editor_size = 50
-        console.log(1)
         }
         else if(editor_size < 30 && size == 100){
         editor_size = 50
-        console.log(2)
+        
         }
         else{
         editor_size = size
@@ -207,7 +212,9 @@
                                 {/if}
                             </div>
                         </Pane>
-                        {#if show && ((!($currentView == "Dokumentliste") && !$smallDevice) || $smallDevice)}
+                     
+                        {#if show && ((!($currentView == "dokumentliste") && !$smallDevice) || $smallDevice)}
+                    
                             <!--  Pane for Typewriter -->
                             <Pane size={$smallDevice ? "100" : editor_size.toString()}>
                                 <div class="editor">
@@ -223,6 +230,7 @@
                     </Splitpanes>
                     <!-- ONLY mobile button to toggle editor up and down -->
                     {#if $smallDevice && ($currentlyAddingNewNote || $currentlyEditingNote)&&!show}
+                    
                         <button class="mobile-arrow-up-button" on:click={()=>{show=true}}>Vis <i class="material-icons">keyboard_arrow_up</i></button>
                     {/if}
                 </Pane>

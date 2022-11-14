@@ -1,31 +1,10 @@
 <script>
-    import {currentDocumentObject, currentlyAddingNewNote, currentlyEditingNote, openedDocTabs} from '../stores/stores.js';
-    import {createEventDispatcher} from 'svelte';
-
     export let document;
     export let date;
     export let title;
     export let author;
-    export let deactivate = false; 
     export let htmlText;
-
-    const dispatch = createEventDispatcher();
-
-    //update currentDocumentObject + trigger typewriter
-    function editItem(){
-        currentDocumentObject.set(document);
-        dispatch('editItem');
-        $currentlyEditingNote = true;
-    }
- function open_new_tab(){
-    $openedDocTabs.push(document)
-    $openedDocTabs = $openedDocTabs
- }
 </script>
-
-<head>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
 
 <div class="item-container">
     <div class="date">{@html date}</div>
@@ -33,16 +12,6 @@
         <div class="title">{@html title}</div>
         <div class="author">
             {@html author}
-            <!-- Editing is enabled for ONLY readable documents -->
-            {#if document.readable}
-                {#if deactivate}
-                    <button title ="Rediger" disabled><i class="material-icons">edit</i></button>
-                {:else}
-                    <button title ="Rediger" class:hidden={$currentlyAddingNewNote} on:click={editItem}><i class="material-icons">edit</i></button>
-                {/if}
-            {/if}
-
-            <button title ="Åpne i ny fane" disabled={$openedDocTabs.includes(document)} on:click={open_new_tab}><i class="material-icons">open_in_new</i></button>
         </div>
     </div>
     <!-- show document text (link if document is not readable) -->
@@ -57,10 +26,6 @@
 <style>
     .item-container{
         padding: 2em;
-    }
-
-    .item-container:hover{
-        background-color: whitesmoke;
     }
 
     .date, .meta{
@@ -83,26 +48,6 @@
         font-style: italic;
     }
     
-    button{
-        width:2vw;
-        margin-left: 2vw;
-        padding: 0;
-        height: 4vh;
-        align-items: center;
-        justify-content: center;
-        background: #fff;
-        border:none;
-        cursor: pointer;
-        background: none;
-    }
-    
-    button:hover{
-        color: #d43838;
-    }
-    
-    .hidden{
-        visibility: hidden;
-    }
     
     /* dark mode styling */
     :global(body.dark-mode) .item-container:hover {
@@ -143,13 +88,6 @@
         border:1.5px solid rgb(0, 0, 0);
     }
 
-    :global(body.dark-mode) button{
-        color:#cccccc;
-    }
-    
-    :global(body.dark-mode) button:hover{
-        color:#d43838;
-    }
 
     :global(body.dark-mode)  :disabled{
     color: #7e7d7d;

@@ -24,7 +24,7 @@
             alert("Vennligst lagre eller avbryt!");
             selected_view = $currentView;
         } else{
-            navigate("/" + selected_view);
+            navigate("/app/" + selected_view);
             $currentView = selected_view;
         }
     }

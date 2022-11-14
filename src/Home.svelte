@@ -78,7 +78,7 @@
   
         <div class = "main">
   
-          <Route path="dokumentliste">
+          <Route path="/dokumentliste">
             <div class="side-container"  >
               {#if $currentlyAddingNewNote}
                 {#if !$smallDevice}
@@ -103,7 +103,7 @@
             </div>
           </Route>
           
-          <Route path="scrollview">
+          <Route path="/scrollview">
             <Splitpanes theme = "modern-theme">
               <Pane size={$openedDocTabs.length== 0? "100": "50"}>
                 <ScrollView/>
@@ -116,7 +116,7 @@
             </Splitpanes>
           </Route>
   
-        <Route path="scrollytelling">
+        <Route path="/scrollytelling">
             <ScrollyTellingView/>
         </Route>
   

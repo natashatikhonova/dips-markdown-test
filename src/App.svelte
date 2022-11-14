@@ -11,7 +11,7 @@ console.log("APP")
         <Launch/>
     </Route>
     
-    <Route path="/app">
+    <Route path="/app/*">
         <Home/>
     </Route>
 

@@ -71,7 +71,7 @@
                 // console.log(newDocObj);
             });
             // dispatch("finishedLoading")
-            navigate("/dokumentliste")
+            navigate("/app/dokumentliste")
 
         } catch (err){
             createError(err)

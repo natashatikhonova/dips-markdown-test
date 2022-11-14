@@ -8,8 +8,11 @@
     import Modal, { bind } from 'svelte-simple-modal';
     import ErrorModal from "./lib/components/ErrorModal.svelte";
     import { writable } from 'svelte/store';
+    import {createEventDispatcher} from 'svelte';
+
     console.log("LOAD!!")
     const modal = writable(null);
+    const dispatch = createEventDispatcher();
     let error = false
 
     let aql = `
@@ -67,7 +70,8 @@
                 $documentList = $documentList;
                 // console.log(newDocObj);
             });
-            navigate("/dokumentliste") //Redirecter directly to out standard view,
+            // dispatch("finishedLoading")
+            navigate("/dokumentliste")
 
         } catch (err){
             createError(err)

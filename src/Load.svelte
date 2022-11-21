@@ -53,6 +53,8 @@
                 Object.values(document).forEach(heading => {
                     markdownText += "## " + heading.items[3] + "\n\n " + heading.items[2] + "\n";
                 })
+
+                console.log(document)
                 
                 let newDocObj = new DocumentObject(document[0].documentMetadata.documentId, document[0].items[1], markdownText, "Epikrise", true, document[0].documentMetadata.authorId.toString());
                 newDocObj.add_temp(randomTeperature().toString());

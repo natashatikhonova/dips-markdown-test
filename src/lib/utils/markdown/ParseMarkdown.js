@@ -71,4 +71,28 @@ export class ParseMarkdown{
         }
         return this.tree
     }
+    arrayOfHeaders(markdown) {
+        var headings = [];
+
+        const lines = markdown.split("\n");
+        console.log(lines)
+        var h;
+        
+        lines.forEach(line => {
+            if (line.startsWith("##")) {
+                line = line.replace("##", "");
+                h = new Array();
+                h.push(line);
+                headings[headings.push(h)];
+            }
+            else if(h) {   
+                if (line != "") {                    
+                    h.push(line);
+                }
+            }                
+        });
+
+        return headings;
+    } 
+
 }

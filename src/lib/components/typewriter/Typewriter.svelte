@@ -9,6 +9,8 @@
     import { h as hFromTypewriter} from 'typewriter-editor';
     import TypewriterToolbar from "./TypewriterToolbar.svelte";
     import TypewriterEditor from "./TypewriterEditor.svelte";
+    import { openEHR } from '../../../openehrStore';
+    import CompositionFactory from '../../../compositionFactory';
 
     //size for sliding panes
     export let editor_size 
@@ -61,7 +63,7 @@
     }
 
     //Saves the text if the text is not empty and stores the text
-    function save(){
+    async function save(){
       //remove autocomplete before saving
       typewriterEditor.remove_suggestion()
 
@@ -95,6 +97,7 @@
             const readable = true;
             let newElement = new DocumentObject(findNewDocumentObjId($documentList.slice()), new Date().toDateString(), (toMarkdown(editor.getHTML())+" \n"), readable);
             newElement.readable = readable
+            newElement.author = 0
             newElement.title = selectedDocType;
 
             //make an tree over all markdown titles
@@ -107,6 +110,11 @@
             $documentList = $documentList;
             $currentDocumentObject = newElement;
             $currentlyAddingNewNote = false;
+            console.log(newElement.context);
+            let arrayHead = parse.arrayOfHeaders( newElement.context);
+            console.log(arrayHead);
+            //Add document to database
+            await postComposition(arrayHead, newElement.title);
 
             dispatch("save");
             changeEdit();
@@ -116,6 +124,13 @@
           }  
         } 
       }
+    }
+    async function postComposition(headings)
+    {
+        var concept = "-4027:1003101";
+        await $openEHR.compose(            
+            concept,
+            new CompositionFactory().getEhrNotesDocument(headings));
     }
 
     //manage sliding panes

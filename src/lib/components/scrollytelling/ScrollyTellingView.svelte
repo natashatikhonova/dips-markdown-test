@@ -220,16 +220,16 @@
    
 </script>
 
-    <div class="main">
+    <div class="with-toolbar-conteiner">
   
         <ToolMenu hideToolBar = {false}/>
 
-        <Splitpanes theme = "modern-theme">
-            <Pane minSize="20" size={current_size} maxSize={maxSize_filter}>
-                <FilterMenu showFilterByTitles={false}/>
-            </Pane>
-            <Pane size={scrollytelling_size} >
-                <div class="scrolly-telling">
+        <div class="scrolly-telling">
+            <Splitpanes theme = "modern-theme">
+                <Pane minSize="20" size={current_size} maxSize={maxSize_filter}>
+                    <FilterMenu showFilterByTitles={false}/>
+                </Pane>
+                <Pane size={scrollytelling_size} >
         
                     <div class="scroll" style="line-height:{$selected_line_height}; font-size: {$selected_text_size_scrollview}pt">
                         <Scrolly bind:value on:steps_ratio={check_steps}>
@@ -262,20 +262,12 @@
                             
                         </div>
                     {/if}
-                   
-                </div>
-
-            </Pane>
-        </Splitpanes>
+                </Pane>
+            </Splitpanes>
+        </div>
     </div>
 
 <style>
-
-    .main{
-        height: 100%;
-        overflow-y: auto;   
-    }
-
 
     .graph{
         display: flex;
@@ -295,8 +287,7 @@
         flex-direction: row;
         width: 100%;
         height: 100%;  
-      
-        
+        overflow-y:auto;
     }
 
 	.scroll{
@@ -305,7 +296,6 @@
         width: 100%;
         height: 100%;
         overflow-y: auto;   
-        
     }
     
 	.step {

@@ -75,7 +75,6 @@ export class ParseMarkdown{
         var headings = [];
 
         const lines = markdown.split("\n");
-        console.log(lines)
         var h;
         
         lines.forEach(line => {

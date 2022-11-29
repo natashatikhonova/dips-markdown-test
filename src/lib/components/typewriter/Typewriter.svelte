@@ -110,9 +110,8 @@
             $documentList = $documentList;
             $currentDocumentObject = newElement;
             $currentlyAddingNewNote = false;
-            console.log(newElement.context);
             let arrayHead = parse.arrayOfHeaders( newElement.context);
-            console.log(arrayHead);
+
             //Add document to database
             await postComposition(arrayHead, newElement.title);
 

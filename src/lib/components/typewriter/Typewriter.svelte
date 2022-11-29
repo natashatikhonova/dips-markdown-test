@@ -125,7 +125,7 @@
         } 
       }
     }
-    async function postComposition(headings)
+    async function postComposition(headings, type)
     {
         var concept = "-4027:1003101";
         await $openEHR.compose(            

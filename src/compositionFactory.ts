@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 export default class CompositionFactory {
   getEhrNotesDocument(headings, type) {
 
-    let aql =  `
+    let composition =  `
     {
       "_type": "COMPOSITION",
       "archetype_node_id": "openEHR-EHR-COMPOSITION.report.v1",
@@ -70,7 +70,7 @@ export default class CompositionFactory {
       }, "content": [`;
 
     for (let i = 0; i < headings.length; i++){
-      aql += `{
+      composition += `{
         "_type": "EVALUATION",
         "archetype_node_id": "openEHR-EHR-EVALUATION.clinical_synopsis.v1",
         "name": {
@@ -166,10 +166,10 @@ export default class CompositionFactory {
         }
       } `
 
-      if (i != headings.length-1) aql += `,`
+      if (i != headings.length-1) composition += `,`
     }
     
-    aql += `]}`;
-    return aql;
+    composition += `]}`;
+    return composition;
   }
 }
